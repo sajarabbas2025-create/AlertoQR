@@ -1,0 +1,22 @@
+<div class="box">
+    <h3>Activate AlertoQR Sticker</h3>
+    <input type="text" id="custName" placeholder="Owner Name">
+    <input type="text" id="custMobile" placeholder="Mobile Number">
+    <input type="text" id="vNo" placeholder="Vehicle Number (UP80XX1234)">
+    <button onclick="registerSticker()">Activate Now</button>
+</div>
+
+<script>
+    function registerSticker() {
+        const payload = {
+            action: 'register',
+            id: new URLSearchParams(window.location.search).get('id'),
+            name: document.getElementById('custName').value,
+            mobile: document.getElementById('custMobile').value,
+            vNo: document.getElementById('vNo').value
+        };
+
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+            .then(() => alert("Sticker Activated Successfully!"));
+    }
+</script>
