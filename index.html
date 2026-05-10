@@ -2,25 +2,24 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR - Professional Dashboard</title>
+    <title>AlertoQR - Official</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { background-color: #0d1117; color: white; text-align: center; font-family: -apple-system, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .box { border: 1.5px solid #2ea043; padding: 25px; border-radius: 24px; background: #161b22; width: 100%; max-width: 340px; box-sizing: border-box; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin: 12px 0; border-radius: 14px; color: white; text-decoration: none; font-weight: 600; font-size: 15px; border: none; width: 100%; box-sizing: border-box; transition: 0.2s; }
-        .p-call { background: #238636; } /* Call - Green */
-        .parking { background: #f0883e; } /* Alert - Orange */
-        .tow { background: #8957e5; } /* Tow - Purple */
-        .loc { background: #1f6feb; } /* Location - Blue */
-        .amb { background: #da3633; margin-top: 25px; border: 1px solid rgba(255,255,255,0.1); } /* Emergency Red */
+        body { background-color: #0d1117; color: white; text-align: center; font-family: sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .box { border: 1.5px solid #2ea043; padding: 25px; border-radius: 24px; background: #161b22; width: 100%; max-width: 340px; box-sizing: border-box; }
+        .btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin: 12px 0; border-radius: 14px; color: white; text-decoration: none; font-weight: 600; font-size: 15px; border: none; width: 100%; box-sizing: border-box; cursor: pointer; }
+        .p-call { background: #238636; }
+        .parking { background: #f0883e; }
+        .tow { background: #8957e5; }
+        .loc { background: #1f6feb; }
+        .amb { background: #da3633; margin-top: 20px; }
         input { padding: 14px; margin: 10px 0; width: 100%; border-radius: 10px; border: 1px solid #30363d; background: #0d1117; color: white; box-sizing: border-box; font-size: 16px; }
-        .label-text { font-size: 12px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: block; }
     </style>
 </head>
 <body>
     <div class="box">
         <h2 style="color: #2ea043; margin-bottom: 5px;">AlertoQR</h2>
-        <span class="label-text">Smart Vehicle Security</span>
+        <p style="font-size: 12px; color: #8b949e; text-transform: uppercase;">Smart Vehicle Security</p>
         
         <div id="setupForm">
             <input type="text" id="num1" placeholder="Enter Mobile Number">
@@ -33,7 +32,6 @@
             <a id="parkBtn" href="#" class="btn parking">🚗 Wrong Parking Alert</a>
             <a id="towBtn" href="#" class="btn tow">⚠️ Vehicle Being Towed</a>
             <button onclick="shareLoc()" class="btn loc">📍 Share My Live Location</button>
-            <div style="height: 1px; background: #30363d; margin: 10px 0;"></div>
             <a href="tel:108" class="btn amb">🚑 Call Ambulance (108)</a>
         </div>
     </div>
@@ -46,22 +44,29 @@
             document.getElementById('setupForm').style.display = 'none';
             document.getElementById('helperPanel').style.display = 'block';
             document.getElementById('callBtn').href = "tel:" + num;
-            
-            // English WhatsApp Messages
-            document.getElementById('parkBtn').href = "https://wa.me/" + num + "?text=AlertoQR Alert: Your vehicle is blocking the way. Please move it as soon as possible.";
-            document.getElementById('towBtn').href = "https://wa.me/" + num + "?text=AlertoQR Urgent: Your vehicle is being towed by the authorities. Reach there immediately.";
+            document.getElementById('parkBtn').href = "https://wa.me/" + num + "?text=AlertoQR Alert: Your vehicle is blocking the way. Please move it.";
+            document.getElementById('towBtn').href = "https://wa.me/" + num + "?text=AlertoQR Urgent: Your vehicle is being towed!";
         }
 
         function shareLoc() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((pos) => {
-                    const mapLink = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                    const message = `AlertoQR Location Alert: I am standing near your vehicle. My Live Location: ${mapLink}`;
-                    window.location.href = `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
+                    const mapLink = `http://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                    window.location.href = `https://wa.me/${num}?text=AlertoQR Location Alert: ${mapLink}`;
                 });
-            } else { alert("Please enable GPS to share location."); }
+            } else { alert("Enable GPS"); }
         }
 
         function generateQR() {
-            let n1 = document.getElementById('num1').value;
-            let qrDiv = document
+            const n1 = document.getElementById('num1').value;
+            const qrDiv = document.getElementById('qrcode');
+            if(n1) {
+                qrDiv.innerHTML = "";
+                qrDiv.style.display = "block";
+                const link = window.location.href.split('?')[0] + "?num=" + n1;
+                new QRCode(qrDiv, { text: link, width: 180, height: 180 });
+            } else { alert("Please enter a number"); }
+        }
+    </script>
+</body>
+</html>
