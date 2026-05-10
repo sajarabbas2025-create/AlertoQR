@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate AlertoQR</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #1a1a1a; color: white; text-align: center; padding-top: 50px; }
+        .box { background: #2a2a2a; padding: 20px; border-radius: 15px; display: inline-block; width: 80%; max-width: 350px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+        button { background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h3>Activate Your Sticker</h3>
+        <input type="text" id="custName" placeholder="Owner Name">
+        <input type="text" id="custMobile" placeholder="Mobile Number">
+        <input type="text" id="vNo" placeholder="Vehicle Number">
+        <button onclick="registerSticker()">Activate Now</button>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyg0sAPJGzaW8khnJ2Z13TB6LjECy_GX3G6LZR-dv1Pn9JO3Yxp36wI1n9CxjbTseDs/exec";
+        const urlParams = new URLSearchParams(window.location.search);
+        const stickerId = urlParams.get('id');
+
+        function registerSticker() {
+            const payload = {
+                id: stickerId,
+                name: document.getElementById('custName').value,
+                mobile: document.getElementById('custMobile').value,
+                vNo: document.getElementById('vNo').value
+            };
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(payload)
+            }).then(() => {
+                alert("Sticker Activated Successfully!");
+                window.location.href = "index.html?id=" + stickerId;
+            });
+        }
+    </script>
+</body>
+</html>
