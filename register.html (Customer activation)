@@ -1,0 +1,20 @@
+<script>
+    const SCRIPT_URL = "APNA_WEB_APP_URL_YAHAN_PASTE_KAREIN";
+    const urlParams = new URLSearchParams(window.location.search);
+    const stickerId = urlParams.get('id');
+
+    // Check if ID is registered
+    if (stickerId) {
+        fetch(`${SCRIPT_URL}?action=check&id=${stickerId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "not_found") {
+                    // Agar registered nahi hai toh registration page par bhejein
+                    window.location.href = `register.html?id=${stickerId}`;
+                } else {
+                    // Agar registered hai toh helper dashboard dikhayein
+                    showHelperDashboard(data);
+                }
+            });
+    }
+</script>
