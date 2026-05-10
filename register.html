@@ -5,33 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activate AlertoQR</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #1a1a1a; color: white; text-align: center; padding-top: 50px; }
-        .box { background: #2a2a2a; padding: 20px; border-radius: 15px; display: inline-block; width: 80%; max-width: 350px; }
-        input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
-        button { background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
+        body { font-family: Arial, sans-serif; background: #1a1a1a; color: white; text-align: center; padding-top: 40px; }
+        .box { background: #2a2a2a; padding: 25px; border-radius: 15px; display: inline-block; width: 85%; max-width: 350px; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; }
+        .btn-reg { background: #007bff; color: white; padding: 12px; border: none; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h3>Activate Your Sticker</h3>
-        <input type="text" id="custName" placeholder="Owner Name">
-        <input type="text" id="custMobile" placeholder="Mobile Number">
-        <input type="text" id="vNo" placeholder="Vehicle Number">
-        <button onclick="registerSticker()">Activate Now</button>
+        <h2 style="color: #ffcc00;">Activate Sticker</h2>
+        <p id="stId" style="color: #888;"></p>
+        <input type="text" id="cName" placeholder="Enter Full Name">
+        <input type="text" id="cMobile" placeholder="Enter Mobile Number">
+        <input type="text" id="vNumber" placeholder="Enter Vehicle Number">
+        <button class="btn-reg" onclick="register()">ACTIVATE NOW</button>
     </div>
 
     <script>
+        // AAPKA NAYA LINK SET KAR DIYA HAI
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxx3RAI6sgGd8aJ4GNhj8qgLRkisaadACHW576jOymmfrTptqQPq77McXGc-9N4seVL/exec";
         const urlParams = new URLSearchParams(window.location.search);
         const stickerId = urlParams.get('id');
+        document.getElementById('stId').innerText = "ID: " + (stickerId || "Unknown");
 
-        function registerSticker() {
-            const payload = {
-                id: stickerId,
-                name: document.getElementById('custName').value,
-                mobile: document.getElementById('custMobile').value,
-                vNo: document.getElementById('vNo').value
-            };
+        function register() {
+            const name = document.getElementById('cName').value;
+            const mobile = document.getElementById('cMobile').value;
+            const vNo = document.getElementById('vNumber').value;
+
+            if(!name || !mobile || !vNo) { alert("Please fill all details!"); return; }
+
+            const payload = { id: stickerId, name: name, mobile: mobile, vNo: vNo };
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
@@ -40,7 +44,7 @@
             }).then(() => {
                 alert("Sticker Activated Successfully!");
                 window.location.href = "index.html?id=" + stickerId;
-            });
+            }).catch(err => alert("Error: " + err));
         }
     </script>
 </body>
