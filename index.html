@@ -1,53 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR Dashboard</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #1a1a1a; color: white; text-align: center; padding-top: 50px; }
-        .loader { font-size: 20px; color: #ffcc00; }
-        .dashboard { display: none; background: #2a2a2a; padding: 20px; border-radius: 15px; display: inline-block; width: 85%; max-width: 400px; }
-        .btn-call { background: #28a745; color: white; padding: 15px; text-decoration: none; border-radius: 10px; display: block; margin-top: 20px; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <div id="loading" class="loader">Checking Sticker...</div>
+// index.html mein script tag ke andar ye dalein
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxx3RAI6sgGd8aJ4GNhj8qgLRkisaadACHW576jOymmfrTptqQPq77McXGc-9N4seVL/exec";
+const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get('id');
 
-    <div id="mainDashboard" class="dashboard" style="display:none;">
-        <h1>AlertoQR</h1>
-        <p id="vDetail" style="font-size: 18px; color: #bbb;"></p>
-        <h2 id="ownerName"></h2>
-        <a id="callBtn" href="#" class="btn-call">CALL OWNER</a>
-    </div>
-
-    <script>
-        // AAPKA NAYA LINK SET KAR DIYA HAI
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxx3RAI6sgGd8aJ4GNhj8qgLRkisaadACHW576jOymmfrTptqQPq77McXGc-9N4seVL/exec";
-        const urlParams = new URLSearchParams(window.location.search);
-        const stickerId = urlParams.get('id');
-
-        if (stickerId) {
-            fetch(`${SCRIPT_URL}?action=check&id=${stickerId}`)
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById('loading').style.display = 'none';
-                    if (data.status === "found") {
-                        document.getElementById('mainDashboard').style.display = 'inline-block';
-                        document.getElementById('ownerName').innerText = "Owner: " + data.name;
-                        document.getElementById('vDetail').innerText = "Vehicle: " + data.vNo;
-                        document.getElementById('callBtn').href = "tel:" + data.mobile;
-                    } else {
-                        // Agar data nahi mila toh registration page par bhej dega
-                        window.location.href = "register.html?id=" + stickerId;
-                    }
-                })
-                .catch(err => {
-                    document.getElementById('loading').innerText = "Connection Error! Check Internet.";
-                });
-        } else {
-            document.getElementById('loading').innerText = "Invalid QR Code!";
-        }
-    </script>
-</body>
-</html>
+if (id) {
+    fetch(`${SCRIPT_URL}?action=check&id=${id}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "not_found") {
+                // AGAR REGISTERED NAHI HAI TO FORM PAR BHEJO
+                window.location.href = `register.html?id=${id}`;
+            } else {
+                // AGAR REGISTERED HAI TO DASHBOARD DIKHAYO
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('ownerDisplay').innerText = "Owner: " + data.name;
+                document.getElementById('btnCall').href = "tel:" + data.mobile;
+            }
+        });
+}
