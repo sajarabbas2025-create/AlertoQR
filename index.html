@@ -1,21 +1,40 @@
-// index.html mein script tag ke andar ye dalein
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxx3RAI6sgGd8aJ4GNhj8qgLRkisaadACHW576jOymmfrTptqQPq77McXGc-9N4seVL/exec";
-const urlParams = new URLSearchParams(window.location.search);
-const id = urlParams.get('id');
+<div id="loader">Checking Sticker...</div>
 
-if (id) {
-    fetch(`${SCRIPT_URL}?action=check&id=${id}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "not_found") {
-                // AGAR REGISTERED NAHI HAI TO FORM PAR BHEJO
-                window.location.href = `register.html?id=${id}`;
-            } else {
-                // AGAR REGISTERED HAI TO DASHBOARD DIKHAYO
+<div id="mainContent" style="display:none;" class="box">
+    <h2 style="color:#2ea043;">AlertoQR</h2>
+    <p id="ownerDisplay" style="font-size:14px; margin-bottom:20px;"></p>
+    
+    <a id="btnCall" class="btn p-call">📞 Call Vehicle Owner</a>
+    <a href="#" class="btn p-parking">🚗 Wrong Parking Alert</a>
+    <a href="tel:108" class="btn amb">🚑 Call Ambulance (108)</a>
+</div>
+
+<script>
+    // 1. AAPKA NAYA SCRIPT URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxx3RAI6sgGd8aJ4GNhj8qgLRkisaadACHW576jOymmfrTptqQPq77McXGc-9N4seVL/exec";
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+
+    if (id) {
+        fetch(`${SCRIPT_URL}?action=check&id=${id}`)
+            .then(res => res.json())
+            .then(data => {
                 document.getElementById('loader').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-                document.getElementById('ownerDisplay').innerText = "Owner: " + data.name;
-                document.getElementById('btnCall').href = "tel:" + data.mobile;
-            }
-        });
-}
+                
+                if (data.status === "not_found") {
+                    // AGAR REGISTER NAHI HAI TO FORM KHULEGA
+                    window.location.href = `register.html?id=${id}`;
+                } else {
+                    // AGAR REGISTER HAI TO DASHBOARD DIKHEGA
+                    document.getElementById('mainContent').style.display = 'block';
+                    document.getElementById('ownerDisplay').innerText = "Owner: " + data.name + " | Vehicle: " + data.vNo;
+                    document.getElementById('btnCall').href = "tel:" + data.mobile;
+                }
+            })
+            .catch(err => {
+                document.getElementById('loader').innerText = "Error loading data!";
+            });
+    } else {
+        document.getElementById('loader').innerText = "Invalid QR: No ID found!";
+    }
+</script>
