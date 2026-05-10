@@ -1,33 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AlertoQR - Pro Emergency System</title>
+    <title>AlertoQR - Live System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         body { background-color: #0f172a; color: white; text-align: center; font-family: 'Segoe UI', sans-serif; padding: 20px; }
-        .box { border: 1px solid #334155; padding: 25px; border-radius: 20px; display: inline-block; background: #1e293b; width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h1 { color: #22c55e; margin-bottom: 5px; }
+        .box { border: 2px solid #22c55e; padding: 25px; border-radius: 20px; display: inline-block; background: #1e293b; width: 380px; }
+        h1 { color: #22c55e; }
         input { padding: 12px; margin: 8px 0; width: 90%; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; }
-        .gen-btn { background: #22c55e; color: white; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 95%; margin-top: 10px; font-size: 16px; }
+        .gen-btn { background: #22c55e; color: white; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 95%; margin-top: 10px; }
         #qrcode { margin-top: 20px; background: white; padding: 15px; display: none; border-radius: 12px; }
         .qr-center { display: flex; justify-content: center; }
-        
-        /* Reporting Section */
         .report-section { display: none; margin-top: 25px; text-align: left; }
         .btn-call { display: block; padding: 12px; margin: 10px 0; border-radius: 10px; color: white; text-decoration: none; font-weight: bold; text-align: center; }
-        .p-call { background: #3b82f6; } /* Blue */
-        .s-call { background: #f59e0b; } /* Orange */
-        .amb-call { background: #ef4444; } /* Red */
-        
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .opt { background: #334155; color: white; padding: 10px; border-radius: 8px; border: 1px solid #475569; cursor: pointer; font-size: 11px; text-align: center; }
-        .loc-btn { background: #06b6d4; color: white; width: 95%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .p-call { background: #3b82f6; }
+        .s-call { background: #f59e0b; }
     </style>
 </head>
 <body>
     <div class="box">
         <h1>AlertoQR</h1>
-        <p style="font-size: 13px; color: #94a3b8;">Vehicle Emergency Dashboard</p>
+        <p>Vehicle Emergency System</p>
         
         <input type="text" id="name" placeholder="Owner Name">
         <input type="text" id="car" placeholder="Vehicle Number">
@@ -39,61 +32,39 @@
         <div class="qr-center"><div id="qrcode"></div></div>
 
         <div id="reportPanel" class="report-section">
-            <h3 style="border-top: 1px solid #334155; padding-top: 15px; color: #22c55e;">Actions:</h3>
-            
+            <h3 style="color: #22c55e;">Actions:</h3>
             <a id="c1" href="#" class="btn-call p-call">📞 Call Primary Owner</a>
             <a id="c2" href="#" class="btn-call s-call">📞 Call Secondary/Family</a>
-            
-            <button class="loc-btn" onclick="shareLocation()">📍 Share My Location with Owner</button>
-
-            <div class="grid">
-                <div class="opt" onclick="sendWp('Wrong Parking')">⚠️ Wrong Parking</div>
-                <div class="opt" onclick="sendWp('Vehicle Towed')">🚔 Towing Alert</div>
-                <div class="opt" onclick="sendWp('Car Damaged')">💥 Car Damaged</div>
-                <div class="opt" onclick="sendWp('Lights On')">💡 Lights On</div>
-            </div>
-            
-            <a href="tel:108" class="btn-call amb-call">🚑 Emergency Ambulance (108)</a>
         </div>
     </div>
 
     <script>
         function generateQR() {
-            let n = document.getElementById('name').value;
             let n1 = document.getElementById('num1').value;
-            let n2 = document.getElementById('num2').value;
-            if(n && n1) {
-                document.getElementById('qrcode').innerHTML = "";
-                document.getElementById('qrcode').style.display = "block";
-                document.getElementById('reportPanel').style.display = "block";
+            let qrDiv = document.getElementById('qrcode');
+            let panel = document.getElementById('reportPanel');
 
-                new QRCode(document.getElementById('qrcode'), {
-                    text: "https://alertoqr.com/v/" + n1,
-                    width: 180, height: 180
+            if(n1) {
+                qrDiv.innerHTML = "";
+                qrDiv.style.display = "block";
+                panel.style.display = "block";
+
+                // YAHAN AAPKA GITHUB LINK HAI
+                let liveLink = "https://sajarabbas2025-create.github.io/AlertoQR/index.html?num=" + n1;
+
+                new QRCode(qrDiv, {
+                    text: liveLink,
+                    width: 180,
+                    height: 180
                 });
 
                 document.getElementById('c1').href = "tel:" + n1;
-                document.getElementById('c2').href = "tel:" + (n2 || n1);
-            } else { alert("Details bhariye!"); }
-        }
-
-        function sendWp(issue) {
-            let car = document.getElementById('car').value;
-            let n1 = document.getElementById('num1').value;
-            let msg = `*ALERTO QR*\nVehicle: ${car}\nIssue: ${issue}\nCheck immediately!`;
-            window.open(`https://wa.me/${n1}?text=${encodeURIComponent(msg)}`);
-        }
-
-        function shareLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    let lat = position.coords.latitude;
-                    let lon = position.coords.longitude;
-                    let n1 = document.getElementById('num1').value;
-                    let locMsg = `My current location for vehicle assistance: https://www.google.com/maps?q=${lat},${lon}`;
-                    window.open(`https://wa.me/${n1}?text=${encodeURIComponent(locMsg)}`);
-                });
-            } else { alert("Location not supported."); }
+                document.getElementById('c2').href = "tel:" + (document.getElementById('num2').value || n1);
+                
+                console.log("QR Generated for: " + liveLink);
+            } else {
+                alert("Bhai, number toh daaliye!");
+            }
         }
     </script>
 </body>
