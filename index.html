@@ -1,39 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AlertoQR - Smart System</title>
+    <title>AlertoQR - Pro Emergency System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         body { background-color: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; }
-        .box { border: 2px solid #22c55e; padding: 25px; border-radius: 20px; display: inline-block; background: #1e293b; width: 320px; }
+        .box { border: 2px solid #22c55e; padding: 20px; border-radius: 20px; display: inline-block; background: #1e293b; width: 340px; }
+        .btn { display: block; padding: 15px; margin: 10px 0; border-radius: 12px; color: white; text-decoration: none; font-weight: bold; font-size: 16px; border: none; width: 100%; cursor: pointer; }
+        .p-call { background: #3b82f6; } /* Blue */
+        .parking { background: #f59e0b; } /* Orange */
+        .tow { background: #8b5cf6; } /* Purple */
+        .loc { background: #06b6d4; } /* Cyan */
+        .amb { background: #ef4444; } /* Red */
         input { padding: 12px; margin: 8px 0; width: 90%; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; }
-        .gen-btn { background: #22c55e; color: white; padding: 15px; border: none; border-radius: 8px; cursor: pointer; width: 95%; font-weight: bold; }
-        #qrcode { margin-top: 20px; background: white; padding: 15px; display: none; border-radius: 12px; }
-        .btn-call { display: block; padding: 15px; margin: 12px 0; border-radius: 12px; color: white; text-decoration: none; font-weight: bold; font-size: 18px; }
-        .p-call { background: #3b82f6; }
-        .amb-call { background: #ef4444; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h1 style="color: #22c55e;">AlertoQR</h1>
+        <h1 style="color: #22c55e; margin-bottom: 5px;">AlertoQR</h1>
         
         <div id="setupForm">
-            <p>Enter number to generate QR</p>
-            <input type="text" id="num1" placeholder="Mobile Number">
-            <button class="gen-btn" onclick="generateQR()">Generate Smart QR</button>
-            <center><div id="qrcode"></div></center>
+            <p>Enter number to create your Smart Sticker</p>
+            <input type="text" id="num1" placeholder="Your Mobile Number">
+            <button class="btn p-call" onclick="generateQR()">Generate Sticker QR</button>
+            <center><div id="qrcode" style="margin-top:20px; background:white; padding:10px; display:none; border-radius:10px;"></div></center>
         </div>
 
         <div id="helperPanel" style="display: none;">
-            <p style="color: #22c55e;">🚨 Emergency Dashboard</p>
-            <a id="callBtn" href="#" class="btn-call p-call">📞 Call Vehicle Owner</a>
-            <a href="tel:108" class="btn-call amb-call">🚑 Call Ambulance</a>
+            <p style="color: #22c55e; font-weight: bold;">🚨 Action Center</p>
+            <a id="callBtn" href="#" class="btn p-call">📞 Call Owner (Emergency)</a>
+            <a id="parkBtn" href="#" class="btn parking">🚗 Wrong Parking / Blocked</a>
+            <a id="towBtn" href="#" class="btn tow">⚠️ Vehicle Being Towed</a>
+            <button onclick="shareLoc()" class="btn loc">📍 Send My Location to Owner</button>
+            <a href="tel:108" class="btn amb">🚑 Call Ambulance</a>
         </div>
     </div>
 
     <script>
-        // SMART LOGIC: Check number in link
         const params = new URLSearchParams(window.location.search);
         const num = params.get('num');
 
@@ -41,14 +44,25 @@
             document.getElementById('setupForm').style.display = 'none';
             document.getElementById('helperPanel').style.display = 'block';
             document.getElementById('callBtn').href = "tel:" + num;
+            // WhatsApp Alerts for Parking & Towing
+            document.getElementById('parkBtn').href = "https://wa.me/" + num + "?text=Bhai, aapki gaadi galat park hai, please ise hata lijiye.";
+            document.getElementById('towBtn').href = "https://wa.me/" + num + "?text=Urgent! Aapki gaadi tow ho rahi hai, jaldi pahunchiye.";
+        }
+
+        function shareLoc() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    const mapLink = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                    window.location.href = `https://wa.me/${num}?text=Main yahan hoon aur aapki gaadi ke paas emergency hai: ${mapLink}`;
+                });
+            } else { alert("Location not supported"); }
         }
 
         function generateQR() {
             let n1 = document.getElementById('num1').value;
             let qrDiv = document.getElementById('qrcode');
             if(n1) {
-                qrDiv.innerHTML = "";
-                qrDiv.style.display = "block";
+                qrDiv.innerHTML = ""; qrDiv.style.display = "block";
                 let link = "https://sajarabbas2025-create.github.io/AlertoQR/index.html?num=" + n1;
                 new QRCode(qrDiv, { text: link, width: 180, height: 180 });
             }
