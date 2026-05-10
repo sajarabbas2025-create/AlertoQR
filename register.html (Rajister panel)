@@ -16,7 +16,32 @@
             vNo: document.getElementById('vNo').value
         };
 
-        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-            .then(() => alert("Sticker Activated Successfully!"));
+        <script>
+    // 1. URL ko hamesha upar alag se rakhein
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwfzBC2KBatL3NEbn51d3-IWgC3i6kFZb5hx17x5NZ8UCNMFtYY19nKAFgLgVh7zjZl/exec";
+
+    function registerSticker() {
+        const payload = {
+            action: 'register',
+            id: new URLSearchParams(window.location.search).get('id'),
+            name: document.getElementById('custName').value,
+            mobile: document.getElementById('custMobile').value,
+            vNo: document.getElementById('vNo').value
+        };
+
+        // 2. Fetch mein URL ke saath-saath payload bhejna zaroori hai
+        fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: JSON.stringify(payload) 
+        })
+        .then(() => {
+            alert("Sticker Activated Successfully!");
+            // Activation ke baad wapas dashboard par bhej dega
+            window.location.href = "index.html?id=" + payload.id;
+        })
+        .catch(err => alert("Error: " + err));
+    }
+</script>
     }
 </script>
