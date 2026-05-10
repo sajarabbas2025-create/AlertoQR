@@ -1,69 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AlertoQR - Live System</title>
+    <title>AlertoQR - Smart System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { background-color: #0f172a; color: white; text-align: center; font-family: 'Segoe UI', sans-serif; padding: 20px; }
-        .box { border: 2px solid #22c55e; padding: 25px; border-radius: 20px; display: inline-block; background: #1e293b; width: 380px; }
-        h1 { color: #22c55e; }
+        body { background-color: #0f172a; color: white; text-align: center; font-family: sans-serif; padding: 20px; }
+        .box { border: 2px solid #22c55e; padding: 25px; border-radius: 20px; display: inline-block; background: #1e293b; width: 320px; }
         input { padding: 12px; margin: 8px 0; width: 90%; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; }
-        .gen-btn { background: #22c55e; color: white; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 95%; margin-top: 10px; }
+        .gen-btn { background: #22c55e; color: white; padding: 15px; border: none; border-radius: 8px; cursor: pointer; width: 95%; font-weight: bold; }
         #qrcode { margin-top: 20px; background: white; padding: 15px; display: none; border-radius: 12px; }
-        .qr-center { display: flex; justify-content: center; }
-        .report-section { display: none; margin-top: 25px; text-align: left; }
-        .btn-call { display: block; padding: 12px; margin: 10px 0; border-radius: 10px; color: white; text-decoration: none; font-weight: bold; text-align: center; }
+        .btn-call { display: block; padding: 15px; margin: 12px 0; border-radius: 12px; color: white; text-decoration: none; font-weight: bold; font-size: 18px; }
         .p-call { background: #3b82f6; }
-        .s-call { background: #f59e0b; }
+        .amb-call { background: #ef4444; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h1>AlertoQR</h1>
-        <p>Vehicle Emergency System</p>
+        <h1 style="color: #22c55e;">AlertoQR</h1>
         
-        <input type="text" id="name" placeholder="Owner Name">
-        <input type="text" id="car" placeholder="Vehicle Number">
-        <input type="text" id="num1" placeholder="Primary Number">
-        <input type="text" id="num2" placeholder="Secondary Number">
-        
-        <button class="gen-btn" onclick="generateQR()">Generate Smart QR</button>
-        
-        <div class="qr-center"><div id="qrcode"></div></div>
+        <div id="setupForm">
+            <p>Enter number to generate QR</p>
+            <input type="text" id="num1" placeholder="Mobile Number">
+            <button class="gen-btn" onclick="generateQR()">Generate Smart QR</button>
+            <center><div id="qrcode"></div></center>
+        </div>
 
-        <div id="reportPanel" class="report-section">
-            <h3 style="color: #22c55e;">Actions:</h3>
-            <a id="c1" href="#" class="btn-call p-call">📞 Call Primary Owner</a>
-            <a id="c2" href="#" class="btn-call s-call">📞 Call Secondary/Family</a>
+        <div id="helperPanel" style="display: none;">
+            <p style="color: #22c55e;">🚨 Emergency Dashboard</p>
+            <a id="callBtn" href="#" class="btn-call p-call">📞 Call Vehicle Owner</a>
+            <a href="tel:108" class="btn-call amb-call">🚑 Call Ambulance</a>
         </div>
     </div>
 
     <script>
+        // SMART LOGIC: Check number in link
+        const params = new URLSearchParams(window.location.search);
+        const num = params.get('num');
+
+        if (num) {
+            document.getElementById('setupForm').style.display = 'none';
+            document.getElementById('helperPanel').style.display = 'block';
+            document.getElementById('callBtn').href = "tel:" + num;
+        }
+
         function generateQR() {
             let n1 = document.getElementById('num1').value;
             let qrDiv = document.getElementById('qrcode');
-            let panel = document.getElementById('reportPanel');
-
             if(n1) {
                 qrDiv.innerHTML = "";
                 qrDiv.style.display = "block";
-                panel.style.display = "block";
-
-                // YAHAN AAPKA GITHUB LINK HAI
-                let liveLink = "https://sajarabbas2025-create.github.io/AlertoQR/index.html?num=" + n1;
-
-                new QRCode(qrDiv, {
-                    text: liveLink,
-                    width: 180,
-                    height: 180
-                });
-
-                document.getElementById('c1').href = "tel:" + n1;
-                document.getElementById('c2').href = "tel:" + (document.getElementById('num2').value || n1);
-                
-                console.log("QR Generated for: " + liveLink);
-            } else {
-                alert("Bhai, number toh daaliye!");
+                let link = "https://sajarabbas2025-create.github.io/AlertoQR/index.html?num=" + n1;
+                new QRCode(qrDiv, { text: link, width: 180, height: 180 });
             }
         }
     </script>
