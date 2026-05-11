@@ -1,44 +1,10 @@
 <div id="loader">Checking Sticker...</div>
 
-<div id="mainContent" style="display:none; background:#1e1e1e; color:white; padding:20px; border-radius:15px; text-align:center;">
+<div id="mainContent" style="display:none; background:#1e1e1e; color:white; padding:20px; border-radius:15px; text-align:center; margin: 20px;">
     <h1 style="color:#2ea043;">AlertoQR</h1>
-    <p id="ownerDisplay" style="font-size:20px; font-weight:bold; margin-bottom:20px;"></p>
-    <a id="btnCall" style="display:block; background:#28a745; color:white; padding:15px; text-decoration:none; border-radius:10px; font-weight:bold; font-size:18px;">CALL OWNER</a>
-</div><div id="mainContent" style="display:none;" class="box">
-    <h2 style="color:#2ea043;">AlertoQR</h2>
-    <p id="ownerDisplay" style="font-size:14px; margin-bottom:20px;"></p>
+    <p id="ownerDisplay" style="font-size:18px; font-weight:bold; margin-bottom:20px;"></p>
     
-    <a id="btnCall" class="btn p-call">📞 Call Vehicle Owner</a>
-    <a href="#" class="btn p-parking">🚗 Wrong Parking Alert</a>
-    <a href="tel:108" class="btn amb">🚑 Call Ambulance (108)</a>
+    <a id="btnCall" href="#" style="display:block; background:#28a745; color:white; padding:15px; text-decoration:none; border-radius:10px; margin-bottom:10px; font-weight:bold;">📞 CALL OWNER</a>
+    <a href="#" style="display:block; background:#dc3545; color:white; padding:15px; text-decoration:none; border-radius:10px; margin-bottom:10px;">⚠️ WRONG PARKING ALERT</a>
+    <a href="tel:108" style="display:block; background:#007bff; color:white; padding:15px; text-decoration:none; border-radius:10px;">🚑 CALL AMBULANCE (108)</a>
 </div>
-
-<script>
-    // 1. AAPKA NAYA SCRIPT URL
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzytYi2Z_MjlgcMn-AbuKUCg2NC0_ZH1J0BnTuzENXW_yCqO74-stp52OAhqovClEWY/exec":
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-
-    if (id) {
-        fetch(`${SCRIPT_URL}?action=check&id=${id}`)
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('loader').style.display = 'none';
-                
-                if (data.status === "not_found") {
-                    // AGAR REGISTER NAHI HAI TO FORM KHULEGA
-                    window.location.href = `register.html?id=${id}`;
-                } else {
-                    // AGAR REGISTER HAI TO DASHBOARD DIKHEGA
-                    document.getElementById('mainContent').style.display = 'block';
-                    document.getElementById('ownerDisplay').innerText = "Owner: " + data.name + " | Vehicle: " + data.vNo;
-                    document.getElementById('btnCall').href = "tel:" + data.mobile;
-                }
-            })
-            .catch(err => {
-                document.getElementById('loader').innerText = "Error loading data!";
-            });
-    } else {
-        document.getElementById('loader').innerText = "Invalid QR: No ID found!";
-    }
-</script>
