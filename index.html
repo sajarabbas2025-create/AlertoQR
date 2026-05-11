@@ -3,73 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR - Dashboard</title>
+    <title>AlertoQR - Register Sticker</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #0d1117; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        #loader { font-size: 20px; color: #8b949e; }
-        .container { background: #161b22; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 400px; border: 1px solid #30363d; display: none; }
-        h1 { color: #2ea043; margin-bottom: 10px; font-size: 28px; }
-        .info-box { background: #0d1117; padding: 15px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #30363d; }
-        .info-label { color: #8b949e; font-size: 14px; display: block; margin-bottom: 5px; }
-        .info-value { font-size: 20px; font-weight: bold; color: #f0f6fc; }
-        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 16px; transition: 0.3s; box-sizing: border-box; }
-        .btn-call { background: #238636; color: white; border: none; }
-        .btn-call:hover { background: #2ea043; }
-        .btn-alert { background: #da3633; color: white; border: none; }
-        .btn-ambulance { background: #1f6feb; color: white; }
+        .container { background: #161b22; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 90%; max-width: 400px; border: 1px solid #30363d; }
+        h2 { color: #2ea043; text-align: center; margin-bottom: 20px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #8b949e; font-size: 14px; }
+        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; box-sizing: border-box; font-size: 16px; }
+        input:focus { border-color: #58a6ff; outline: none; }
+        .btn-submit { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background: #2ea043; }
+        #msg { text-align: center; margin-top: 15px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div id="loader">Checking Sticker...</div>
-
-    <div id="mainContent" class="container">
-        <h1>AlertoQR</h1>
+    <div class="container">
+        <h2>Activate Sticker</h2>
+        <p id="stickerInfo" style="text-align: center; color: #8b949e; margin-bottom: 20px;">ID: Loading...</p>
         
-        <div class="info-box">
-            <span class="info-label">Vehicle Number</span>
-            <div id="vNoDisplay" class="info-value">--</div>
-            <hr style="border: 0.5px solid #30363d; margin: 15px 0;">
-            <span class="info-label">Owner Name</span>
-            <div id="ownerDisplay" class="info-value">--</div>
-        </div>
-
-        <a id="btnCall" href="#" class="btn btn-call">📞 CALL OWNER</a>
-        <a href="#" class="btn btn-alert">⚠️ WRONG PARKING ALERT</a>
-        <a href="tel:108" class="btn btn-ambulance">🚑 CALL AMBULANCE (108)</a>
+        <form id="regForm">
+            <div class="input-group">
+                <label>Owner Name</label>
+                <input type="text" id="name" placeholder="Enter full name" required>
+            </div>
+            <div class="input-group">
+                <label>Mobile Number</label>
+                <input type="tel" id="mobile" placeholder="Enter 10 digit number" required>
+            </div>
+            <div class="input-group">
+                <label>Vehicle Number</label>
+                <input type="text" id="vNo" placeholder="e.g. UP32DD2420" required>
+            </div>
+            <button type="submit" class="btn-submit" id="submitBtn">ACTIVATE STICKER</button>
+        </form>
+        <div id="msg"></div>
     </div>
 
     <script>
-        // 1. APKA NAYA SCRIPT URL
+        // APKA GOOGLE SCRIPT URL
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzytYi2Z_MjlgcMn-AbuKUCg2NC0_ZH1J0BnTuzENXW_yCqO74-stp52OAhqovClEWY/exec";
         
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
-
+        
         if (id) {
-            fetch(`${SCRIPT_URL}?action=check&id=${id}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === "not_found") {
-                        // AGAR REGISTERED NAHI HAI TO FORM PAR BHEJO
-                        window.location.href = `register.html?id=${id}`;
-                    } else {
-                        // AGAR MIL GAYA TO DASHBOARD DIKHAYO
-                        document.getElementById('loader').style.display = 'none';
-                        document.getElementById('mainContent').style.display = 'block';
-                        
-                        document.getElementById('ownerDisplay').innerText = data.name;
-                        document.getElementById('vNoDisplay').innerText = data.vNo;
-                        document.getElementById('btnCall').href = "tel:" + data.mobile;
-                    }
-                })
-                .catch(err => {
-                    document.getElementById('loader').innerText = "Error connecting to server. Please try again.";
-                    console.error(err);
-                });
+            document.getElementById('stickerInfo').innerText = "Sticker ID: " + id;
         } else {
-            document.getElementById('loader').innerText = "Invalid QR Code (No ID Found).";
+            document.body.innerHTML = "<h2>Invalid Link</h2>";
         }
+
+        document.getElementById('regForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const msg = document.getElementById('msg');
+            
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            const formData = new URLSearchParams();
+            formData.append('action', 'register');
+            formData.append('id', id);
+            formData.append('name', document.getElementById('name').value);
+            formData.append('mobile', document.getElementById('mobile').value);
+            formData.append('vNo', document.getElementById('vNo').value);
+
+            // GOOGLE SHEET ME DATA BHEJNA
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "success") {
+                    alert("Sticker Activated Successfully!");
+                    window.location.href = `index.html?id=${id}`;
+                } else {
+                    msg.innerText = "Error: " + data.message;
+                    msg.style.color = "#da3633";
+                    btn.innerText = "ACTIVATE STICKER";
+                    btn.disabled = false;
+                }
+            })
+            .catch(err => {
+                msg.innerText = "Something went wrong. Please check internet.";
+                msg.style.color = "#da3633";
+                btn.innerText = "ACTIVATE STICKER";
+                btn.disabled = false;
+            });
+        });
     </script>
 </body>
 </html>
