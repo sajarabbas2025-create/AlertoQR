@@ -1,10 +1,75 @@
-<div id="loader">Checking Sticker...</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlertoQR - Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #0d1117; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #loader { font-size: 20px; color: #8b949e; }
+        .container { background: #161b22; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 90%; max-width: 400px; border: 1px solid #30363d; display: none; }
+        h1 { color: #2ea043; margin-bottom: 10px; font-size: 28px; }
+        .info-box { background: #0d1117; padding: 15px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #30363d; }
+        .info-label { color: #8b949e; font-size: 14px; display: block; margin-bottom: 5px; }
+        .info-value { font-size: 20px; font-weight: bold; color: #f0f6fc; }
+        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 16px; transition: 0.3s; box-sizing: border-box; }
+        .btn-call { background: #238636; color: white; border: none; }
+        .btn-call:hover { background: #2ea043; }
+        .btn-alert { background: #da3633; color: white; border: none; }
+        .btn-ambulance { background: #1f6feb; color: white; }
+    </style>
+</head>
+<body>
 
-<div id="mainContent" style="display:none; background:#1e1e1e; color:white; padding:20px; border-radius:15px; text-align:center; margin: 20px;">
-    <h1 style="color:#2ea043;">AlertoQR</h1>
-    <p id="ownerDisplay" style="font-size:18px; font-weight:bold; margin-bottom:20px;"></p>
-    
-    <a id="btnCall" href="#" style="display:block; background:#28a745; color:white; padding:15px; text-decoration:none; border-radius:10px; margin-bottom:10px; font-weight:bold;">📞 CALL OWNER</a>
-    <a href="#" style="display:block; background:#dc3545; color:white; padding:15px; text-decoration:none; border-radius:10px; margin-bottom:10px;">⚠️ WRONG PARKING ALERT</a>
-    <a href="tel:108" style="display:block; background:#007bff; color:white; padding:15px; text-decoration:none; border-radius:10px;">🚑 CALL AMBULANCE (108)</a>
-</div>
+    <div id="loader">Checking Sticker...</div>
+
+    <div id="mainContent" class="container">
+        <h1>AlertoQR</h1>
+        
+        <div class="info-box">
+            <span class="info-label">Vehicle Number</span>
+            <div id="vNoDisplay" class="info-value">--</div>
+            <hr style="border: 0.5px solid #30363d; margin: 15px 0;">
+            <span class="info-label">Owner Name</span>
+            <div id="ownerDisplay" class="info-value">--</div>
+        </div>
+
+        <a id="btnCall" href="#" class="btn btn-call">📞 CALL OWNER</a>
+        <a href="#" class="btn btn-alert">⚠️ WRONG PARKING ALERT</a>
+        <a href="tel:108" class="btn btn-ambulance">🚑 CALL AMBULANCE (108)</a>
+    </div>
+
+    <script>
+        // 1. APKA NAYA SCRIPT URL
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzytYi2Z_MjlgcMn-AbuKUCg2NC0_ZH1J0BnTuzENXW_yCqO74-stp52OAhqovClEWY/exec";
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+
+        if (id) {
+            fetch(`${SCRIPT_URL}?action=check&id=${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === "not_found") {
+                        // AGAR REGISTERED NAHI HAI TO FORM PAR BHEJO
+                        window.location.href = `register.html?id=${id}`;
+                    } else {
+                        // AGAR MIL GAYA TO DASHBOARD DIKHAYO
+                        document.getElementById('loader').style.display = 'none';
+                        document.getElementById('mainContent').style.display = 'block';
+                        
+                        document.getElementById('ownerDisplay').innerText = data.name;
+                        document.getElementById('vNoDisplay').innerText = data.vNo;
+                        document.getElementById('btnCall').href = "tel:" + data.mobile;
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('loader').innerText = "Error connecting to server. Please try again.";
+                    console.error(err);
+                });
+        } else {
+            document.getElementById('loader').innerText = "Invalid QR Code (No ID Found).";
+        }
+    </script>
+</body>
+</html>
