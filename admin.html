@@ -1,83 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR Admin</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
-        .welcome-bar { background: #d4edda; color: #155724; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-weight: bold; border-left: 5px solid #28a745; }
-        
-        /* Stats Grid - Exactly like your photo */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #ddd; border: 1px solid #ddd; margin-bottom: 30px; border-radius: 8px; overflow: hidden; }
-        .stat-box { background: #fff; padding: 25px; display: flex; flex-direction: column; }
-        .stat-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 10px; }
-        .stat-value { font-size: 32px; font-weight: 800; color: #000; }
-        .stat-value.active { color: #008080; }
-        .stat-value.paid { color: #000; }
-        .stat-value.unpaid { color: #dc3545; }
-        .stat-value.revenue { color: #0056b3; }
-
-        /* Sticker Generator Box */
-        .admin-card { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .admin-card h2 { margin-top: 0; font-size: 22px; font-weight: 800; }
-        .label-small { font-size: 12px; color: #666; margin-bottom: 8px; display: block; font-weight: 600; }
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 20px; background: #f9f9f9; box-sizing: border-box; }
-        .btn-gen { background: #000; color: #fff; border: none; padding: 15px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; margin: 0; }
+        .welcome { background: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 20px; font-size: 14px; border-left: 4px solid #28a745; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #ddd; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; margin-bottom: 25px; }
+        .stat-box { background: #fff; padding: 20px; }
+        .label { font-size: 10px; color: #888; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; display: block; }
+        .val { font-size: 28px; font-weight: 800; }
+        .active { color: #008080; } .unpaid { color: #dc3545; } .rev { color: #0056b3; }
+        .card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        input { width: 100%; padding: 12px; margin: 10px 0 20px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; background: #f9f9f9; }
+        button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 4px; font-weight: bold; }
     </style>
 </head>
 <body>
-
-    <div class="welcome-bar">✓ Welcome, admin.</div>
-
+    <div class="welcome">✓ Welcome, admin.</div>
     <div class="stats-grid">
-        <div class="stat-box">
-            <span class="stat-label">Total Stickers</span>
-            <span class="stat-value" id="total-s">7</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">Registered</span>
-            <span class="stat-value" id="reg-s">5</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">Active</span>
-            <span class="stat-value active" id="active-s">4</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">Paid</span>
-            <span class="stat-value paid" id="paid-s">4</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">Unpaid (Reg.)</span>
-            <span class="stat-value unpaid" id="unpaid-s">1</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">Revenue</span>
-            <span class="stat-value revenue" id="rev-s">₹1,196</span>
-        </div>
+        <div class="stat-box"><span class="label">Total Stickers</span><span class="val">7</span></div>
+        <div class="stat-box"><span class="label">Registered</span><span class="val" id="regCount">0</span></div>
+        <div class="stat-box"><span class="label">Active</span><span class="val active">4</span></div>
+        <div class="stat-box"><span class="label">Paid</span><span class="val">4</span></div>
+        <div class="stat-box"><span class="label">Unpaid (Reg.)</span><span class="val unpaid">1</span></div>
+        <div class="stat-box"><span class="label">Revenue</span><span class="val rev">₹1,196</span></div>
     </div>
-
-    <div class="admin-card">
-        <span class="stat-label" style="color:#666">Create Stickers</span>
-        <h2>Generate sticker IDs</h2>
-        
-        <span class="label-small">QUANTITY (1-100)</span>
+    <div class="card">
+        <span class="label">Create Stickers</span>
+        <h2 style="margin: 5px 0 20px;">Generate sticker IDs</h2>
+        <span class="label">Quantity (1-100)</span>
         <input type="number" value="1">
-        
-        <span class="label-small">CUSTOM ID (OPTIONAL, QTY=1)</span>
-        <input type="text" placeholder="E.G. CSQRDEMO01">
-        
-        <button class="btn-gen">Generate</button>
+        <button>Generate</button>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Yahan aap apna Supabase data fetch karne ka logic daal sakte hain
         const supabase = supabase.createClient('https://cefzsgchfdvtyfmcrsda.supabase.co', 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608');
-        
         async function fetchStats() {
-            const { count, error } = await supabase.from('registrations').select('*', { count: 'exact', head: true });
-            if (!error) document.getElementById('reg-s').innerText = count;
+            const { count } = await supabase.from('registrations').select('*', { count: 'exact', head: true });
+            document.getElementById('regCount').innerText = count || 0;
         }
         fetchStats();
     </script>
