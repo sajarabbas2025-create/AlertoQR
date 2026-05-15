@@ -7,12 +7,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        h2 { color: #1a73e8; font-size: 26px; margin-bottom: 5px; }
-        .id-text { color: #d93025; font-weight: 600; margin-bottom: 25px; display: block; }
+        .card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #1a73e8; margin-bottom: 5px; }
+        .id-text { color: #d93025; font-weight: bold; margin-bottom: 25px; display: block; }
         input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 16px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 15px; }
-        #status { margin-top: 20px; font-size: 15px; font-weight: 500; }
+        button { width: 100%; padding: 16px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        #status { margin-top: 20px; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -22,7 +22,7 @@
     <span class="id-text">Sticker ID: <span id="sticker-label">Detecting...</span></span>
 
     <input type="text" id="name" placeholder="Full Name">
-    <input type="text" id="v-num" placeholder="Vehicle Number (e.g. UP80...)">
+    <input type="text" id="v-num" placeholder="Vehicle Number">
     <input type="tel" id="p-num" placeholder="Mobile Number">
     
     <button id="save-btn" onclick="saveToSupabase()">Save Details</button>
@@ -30,18 +30,18 @@
 </div>
 
 <script>
-    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
-    // Aapki key yahan pehle se hai
-    const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608'; 
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
+    // URL se ID turant nikalne ke liye
     const urlParams = new URLSearchParams(window.location.search);
     const sid = urlParams.get('id');
-    
     if (sid) {
         document.getElementById('sticker-label').textContent = sid;
         document.getElementById('sticker-label').style.color = "#188038";
     }
+
+    // Supabase Configuration
+    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608'; 
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     async function saveToSupabase() {
         const name = document.getElementById('name').value;
@@ -58,7 +58,7 @@
         const { error } = await supabase
             .from('registrations')
             .insert([{ 
-                sticker_id: sid || "MANUAL_ENTRY", 
+                sticker_id: sid || "NO_ID", 
                 full_name: name, 
                 vehicle_number: veh, 
                 phone_number: ph 
@@ -72,7 +72,7 @@
         } else {
             status.innerText = "Registration Successful!";
             status.style.color = "#188038";
-            btn.innerText = "Saved Successfully";
+            btn.innerText = "Saved!";
             btn.style.backgroundColor = "#188038";
         }
     }
