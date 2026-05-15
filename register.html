@@ -1,0 +1,39 @@
+Registration page
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - AlertoQR</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+        .box { background: white; padding: 20px; border-radius: 10px; border: 1px solid #ddd; }
+        input { display: block; width: 100%; margin: 10px 0; padding: 12px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
+        button { background: black; color: white; width: 100%; padding: 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Register your vehicle</h2>
+        <p>Apna naam aur contact details bharein.</p>
+        <input id="name" type="text" placeholder="Owner Full Name">
+        <input id="vNumber" type="text" placeholder="Vehicle Number (e.g. UP80...)">
+        <input id="phone" type="number" placeholder="Mobile Number">
+        <button onclick="saveData()">Save Details</button>
+    </div>
+
+    <script>
+        function saveData() {
+            const data = {
+                name: document.getElementById('name').value,
+                vNum: document.getElementById('vNumber').value,
+                phone: document.getElementById('phone').value
+            };
+            // Ye line data ko laptop ki temporary memory mein save kar degi
+            localStorage.setItem('vehicleData', JSON.stringify(data));
+            alert("Badhiya! Data save ho gaya. Ab dusri file kholiye.");
+        }
+    </script>
+</body>
+</html>
