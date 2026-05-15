@@ -1,70 +1,92 @@
-
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Vehicle - AlertoQR</title>
+    <title>Vehicle Registration - AlertoQR</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #0056b3; margin-bottom: 5px; }
+        .id-badge { color: #d9534f; font-weight: bold; margin-bottom: 20px; display: block; }
         input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 15px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.3s; }
-        button:hover { background-color: #1557b0; }
-        .info { font-size: 14px; color: #666; text-align: center; margin-bottom: 10px; }
-        #sticker-display { font-weight: bold; color: #d93025; }
+        button { width: 100%; padding: 15px; background-color: #0056b3; color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; transition: 0.3s; }
+        button:disabled { background-color: #cccccc; cursor: not-allowed; }
+        button:hover:not(:disabled) { background-color: #004494; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <h2>Vehicle Registration</h2>
-    <p class="info">Sticker ID: <span id="sticker-display">Detecting...</span></p>
+    <span class="id-badge">Sticker ID: <span id="sticker-id-display">Detecting...</span></span>
+
+    <input type="text" id="full-name" placeholder="Full Name" required>
+    <input type="text" id="vehicle-number" placeholder="Vehicle Number (e.g. UP80...)" required>
+    <input type="tel" id="phone-number" placeholder="Mobile Number" required>
     
-    <input type="text" id="fullName" placeholder="FullName">
-    <input type="text" id="vehicleNumber" placeholder="VehicleNumber (e.g. UP80...)">
-    <input type="tel" id="phoneNumber" placeholder="Mobile Number">
-    
-    <button onclick="saveData()">Save Details</button>
+    <button id="save-btn" onclick="saveData()" disabled>Save Details</button>
+    <p id="status-msg" style="margin-top:15px;"></p>
 </div>
 
 <script>
-    // Supabase Setup
-    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
-    const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9FoRRsmU';
+    // 1. Supabase Setup (Apni keys yahan check karein)
+    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co'; 
+    const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'; // <--- Yahan apni Anon Key dalein
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // URL se Sticker ID nikalna
+    // 2. URL se ID nikaalna
     const urlParams = new URLSearchParams(window.location.search);
-    const stickerId = urlParams.get('id') || 'MANUAL';
-    document.getElementById('sticker-display').innerText = stickerId;
+    const stickerId = urlParams.get('id');
 
+    const displayElement = document.getElementById('sticker-id-display');
+    const saveBtn = document.getElementById('save-btn');
+
+    if (stickerId) {
+        displayElement.textContent = stickerId;
+        displayElement.style.color = "green";
+        saveBtn.disabled = false; // ID milte hi button unlock ho jayega
+    } else {
+        displayElement.textContent = "Not Found (Link Error)";
+    }
+
+    // 3. Data Save karne ka function
     async function saveData() {
-        const name = document.getElementById('fullName').value;
-        const vehicle = document.getElementById('vehicleNumber').value.toUpperCase();
-        const phone = document.getElementById('phoneNumber').value;
+        const fullName = document.getElementById('full-name').value;
+        const vehicleNumber = document.getElementById('vehicle-number').value;
+        const phoneNumber = document.getElementById('phone-number').value;
+        const msg = document.getElementById('status-msg');
 
-        if(!name || !vehicle || !phone) {
-            alert("Please enter your contact details!");
+        if(!fullName || !vehicleNumber || !phoneNumber) {
+            alert("Please fill all fields");
             return;
         }
 
+        saveBtn.innerText = "Saving...";
+        saveBtn.disabled = true;
+
         const { data, error } = await supabase
             .from('registrations')
-            .insert([{ 
-                full_name: name, 
-                vehicle_number: vehicle, 
-                phone_number: phone,
-                sticker_id: stickerId 
-            }]);
+            .insert([
+                { 
+                    sticker_id: stickerId, 
+                    full_name: fullName, 
+                    vehicle_number: vehicleNumber, 
+                    phone_number: phoneNumber 
+                }
+            ]);
 
         if (error) {
-            alert("Error: " + error.message);
+            console.error(error);
+            msg.innerText = "Error: " + error.message;
+            msg.style.color = "red";
+            saveBtn.innerText = "Save Details";
+            saveBtn.disabled = false;
         } else {
-            alert("Activate.");
-            window.location.href = "index.html"; 
+            msg.innerText = "Registration Successful!";
+            msg.style.color = "green";
+            saveBtn.innerText = "Saved!";
         }
     }
 </script>
