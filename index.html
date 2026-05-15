@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helper Page - AlertoQR</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; background: #f8f9fa; text-align: center; padding: 20px; }
+        .container { background: white; max-width: 500px; margin: auto; padding: 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .owner-box { background: #e8f0fe; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .btn-call { background: #28a745; color: white; }
+        .btn-alert { background: #dc3545; color: white; }
+        #loading { font-size: 20px; color: #666; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="loading">Scanning Sticker...</div>
+    <div id="main-content" style="display:none;">
+        <h2>Vehicle Alert System</h2>
+        <div class="owner-box">
+            <h3 id="owner-name">Loading...</h3>
+            <p id="veh-num">UP00XXXX</p>
+        </div>
+        
+        <a id="call-btn" href="#" class="btn btn-call">📞 Call Owner</a>
+        <button onclick="sendAlert('Wrong Parking')" class="btn btn-alert">⚠️ Wrong Parking</button>
+        <button onclick="sendAlert('Toe Alert')" class="btn btn-alert">🚜 Tow Alert</button>
+    </div>
+</div>
+
+<script>
+    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9FoRRsmU';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const stickerId = urlParams.get('id');
+
+    async function loadOwner() {
+        if(!stickerId) {
+            document.getElementById('loading').innerText = "Invalid QR Code!";
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from('registrations')
+            .select('*')
+            .eq('sticker_id', stickerId)
+            .single();
+
+        if (data) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            document.getElementById('owner-name').innerText = data.full_name;
+            document.getElementById('veh-num').innerText = data.vehicle_number;
+            document.getElementById('call-btn').href = "tel:" + data.phone_number;
+        } else {
+            document.getElementById('loading').innerText = "Sticker Not Registered!";
+        }
+    }
+
+    function sendAlert(type) {
+        alert("Alert Sent: " + type + " (Feature coming soon)");
+    }
+
+    loadOwner();
+</script>
+
+</body>
+</html>
