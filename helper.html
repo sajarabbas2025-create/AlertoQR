@@ -5,43 +5,50 @@
     <style>
         body { font-family: sans-serif; margin: 0; padding: 20px; background: #fff; }
         .header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; font-size: 12px; color: #888; }
-        .owner-box { background: #f9f9f9; padding: 20px; border-radius: 4px; margin-bottom: 20px; }
+        .owner-box { background: #f9f9f9; padding: 20px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #f0f0f0; }
         .owner-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: bold; }
         .owner-name { font-size: 24px; font-weight: bold; margin: 5px 0; }
-        .v-plate { display: inline-block; background: #000; color: #fff; padding: 5px 10px; font-weight: bold; font-size: 14px; }
-        
+        .v-plate { display: inline-block; background: #000; color: #fff; padding: 5px 12px; font-weight: bold; border-radius: 2px; }
         .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; }
-        .btn-black { background: #000; color: #fff; padding: 15px; text-align: center; text-decoration: none; font-weight: bold; border-radius: 4px; }
+        .btn-black { background: #000; color: #fff; padding: 15px; text-align: center; text-decoration: none; font-weight: bold; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-white { background: #fff; color: #000; border: 1px solid #ddd; padding: 15px; text-align: center; text-decoration: none; font-weight: bold; border-radius: 4px; }
-        
-        .quick-alerts { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .alert-card { border: 1px solid #eee; padding: 20px; border-radius: 4px; text-align: left; font-size: 13px; font-weight: bold; color: #333; }
-        .alert-icon { font-size: 20px; margin-bottom: 10px; display: block; }
+        .quick-alerts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .alert-card { border: 1px solid #eee; padding: 20px; border-radius: 4px; font-size: 13px; font-weight: bold; display: flex; flex-direction: column; gap: 10px; }
+        .icon { font-size: 22px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <b>AlertoQR Helper</b>
-        <span>ID: AGRA001</span>
-    </div>
-    
+    <div class="header"><b>AlertoQR Helper</b> <span id="sid">ID: --</span></div>
     <div class="owner-box">
         <div class="owner-label">Vehicle Owner</div>
-        <div class="owner-name" id="owner_name">Akash</div>
-        <div class="v-plate" id="v_num">UP14AB1234</div>
+        <div class="owner-name" id="name">Loading...</div>
+        <div class="v-plate" id="vnum">----</div>
     </div>
-
     <div class="action-btns">
-        <a href="tel:9912345678" class="btn-black">📞 Call Owner</a>
+        <a href="#" id="callBtn" class="btn-black">📞 Call Owner</a>
         <a href="#" class="btn-white">📞 Call Alternate</a>
     </div>
-
-    <div class="owner-label" style="margin-bottom: 15px;">Quick Alerts</div>
+    <div class="owner-label" style="margin-bottom:15px">Quick Alerts</div>
     <div class="quick-alerts">
-        <div class="alert-card"><span class="alert-icon">⚠️</span> Wrong Parking</div>
-        <div class="alert-card"><span class="alert-icon">🚚</span> Tow Alert</div>
-        <div class="alert-card"><span class="alert-icon">🪟</span> Open Window</div>
-        <div class="alert-card"><span class="alert-icon">📍</span> Share Location</div>
+        <div class="alert-card"><span class="icon">⚠️</span> Wrong Parking</div>
+        <div class="alert-card"><span class="icon">🚚</span> Tow Alert</div>
+        <div class="alert-card"><span class="icon">🪟</span> Open Window</div>
+        <div class="alert-card"><span class="icon">📍</span> Share Location</div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabase = supabase.createClient('https://cefzsgchfdvtyfmcrsda.supabase.co', 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608');
+        const id = new URLSearchParams(window.location.search).get('id');
+        document.getElementById('sid').innerText = 'ID: ' + id;
+        async function load() {
+            const { data } = await supabase.from('registrations').select('*').eq('sticker_id', id).single();
+            if(data) {
+                document.getElementById('name').innerText = data.full_name;
+                document.getElementById('vnum').innerText = data.vehicle_number;
+                document.getElementById('callBtn').href = 'tel:' + data.phone_number;
+            }
+        }
+        load();
+    </script>
 </body>
 </html>
