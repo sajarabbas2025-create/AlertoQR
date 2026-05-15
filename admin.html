@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlertoQR Admin - Bulk Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; background: #f4f4f9; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        input { padding: 10px; width: 80%; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #218838; }
+        #status { margin-top: 20px; color: #555; }
+        #qrcode-canvas { display: none; } /* Hidden canvas for generation */
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>AlertoQR Bulk Generator</h2>
+    <p>Kitne QR Stickers banane hain?</p>
+    <input type="number" id="qrCount" value="100" min="1" max="500">
+    <br>
+    <button onclick="generateBulkQR()">Generate & Download ZIP</button>
+    <div id="status"></div>
+</div>
+
+<div id="qrcode-canvas"></div>
+
+<script>
+    async function generateBulkQR() {
+        const count = document.getElementById('qrCount').value;
+        const status = document.getElementById('status');
+        const zip = new JSZip();
+        const qrContainer = document.getElementById('qrcode-canvas');
+        
+        status.innerHTML = "Processing... Please wait.";
+        
+        for (let i = 1; i <= count; i++) {
+            // Unique ID format: AQR-DATE-NUMBER
+            const uniqueId = "AQR" + Date.now().toString().slice(-4) + i.toString().padStart(3, '0');
+            const url = `https://www.alertoqr.in/register.html?id=${uniqueId}`;
+            
+            // Clear previous QR
+            qrContainer.innerHTML = "";
+            
+            // Generate QR
+            const qr = new QRCode(qrContainer, {
+                text: url,
+                width: 256,
+                height: 256
+            });
+
+            // Wait a bit for QR to render
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            const img = qrContainer.querySelector('img');
+            const imgSrc = img.src;
+            const data = imgSrc.replace(/^data:image\/(png|jpg);base64,/, "");
+            
+            // Add to ZIP
+            zip.file(`sticker_${uniqueId}.png`, data, {base64: true});
+            status.innerHTML = `Generating: ${i}/${count}`;
+        }
+
+        // Generate and Download ZIP
+        zip.generateAsync({type:"blob"}).then(function(content) {
+            saveAs(content, `AlertoQR_Batch_${Date.now()}.zip`);
+            status.innerHTML = "Done! Check your downloads.";
+        });
+    }
+</script>
+
+</body>
+</html>
