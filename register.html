@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Vehicle - AlertoQR</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 15px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.3s; }
+        button:hover { background-color: #1557b0; }
+        .info { font-size: 14px; color: #666; text-align: center; margin-bottom: 10px; }
+        #sticker-display { font-weight: bold; color: #d93025; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Vehicle Registration</h2>
+    <p class="info">Sticker ID: <span id="sticker-display">Detecting...</span></p>
+    
+    <input type="text" id="fullName" placeholder="Apna Poora Naam">
+    <input type="text" id="vehicleNumber" placeholder="Gaadi ka Number (e.g. UP80...)">
+    <input type="tel" id="phoneNumber" placeholder="Mobile Number">
+    
+    <button onclick="saveData()">Save Details</button>
+</div>
+
+<script>
+    // Supabase Setup
+    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9FoRRsmU';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // URL se Sticker ID nikalna
+    const urlParams = new URLSearchParams(window.location.search);
+    const stickerId = urlParams.get('id') || 'MANUAL';
+    document.getElementById('sticker-display').innerText = stickerId;
+
+    async function saveData() {
+        const name = document.getElementById('fullName').value;
+        const vehicle = document.getElementById('vehicleNumber').value.toUpperCase();
+        const phone = document.getElementById('phoneNumber').value;
+
+        if(!name || !vehicle || !phone) {
+            alert("Kripya saari details bharein!");
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from('registrations')
+            .insert([{ 
+                full_name: name, 
+                vehicle_number: vehicle, 
+                phone_number: phone,
+                sticker_id: stickerId 
+            }]);
+
+        if (error) {
+            alert("Error: " + error.message);
+        } else {
+            alert("Badhiya! Data save ho gaya. Ab aapka QR active hai.");
+            window.location.href = "index.html"; 
+        }
+    }
+</script>
+
+</body>
+</html>
