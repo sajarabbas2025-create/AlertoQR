@@ -1,0 +1,56 @@
+Helper Page
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helper Page - AlertoQR</title>
+    <style>
+        body { font-family: sans-serif; background:#f4f4f4; padding:15px; }
+        .card { background:white; padding:20px; border-radius:10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .v-box { background:black; color:white; padding:5px 10px; border-radius:5px; font-weight: bold; }
+        .btn-call { background:black; color:white; padding:15px; border:none; border-radius:5px; width:48%; cursor:pointer; }
+        .btn-alt { background:white; border:1px solid #ccc; padding:15px; border-radius:5px; width:48%; cursor:pointer; }
+        .grid { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px; }
+        .item { border:1px solid #eee; padding:20px; text-align:center; background:white; border-radius:5px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <p style="color:gray; font-size:12px;">VEHICLE OWNER</p>
+        <h2 id="ownerName" style="margin: 5px 0;">Loading...</h2>
+        <span id="vehicleNo" class="v-box">UP80...</span>
+        
+        <div style="display:flex; justify-content:space-between; margin-top:20px;">
+            <button onclick="makeCall()" class="btn-call">📞 Call Owner</button>
+            <button class="btn-alt">📞 Call Alternate</button>
+        </div>
+
+        <p style="margin-top:25px; color:gray; font-size:12px; font-weight:bold;">QUICK ALERTS</p>
+        <div class="grid">
+            <div class="item">⚠️ Wrong Parking</div>
+            <div class="item">🚛 Tow Alert</div>
+            <div class="item">🪟 Open Window</div>
+            <div class="item">🚑 Ambulance</div>
+        </div>
+    </div>
+
+    <script>
+        // Data load karna memory se
+        const savedData = JSON.parse(localStorage.getItem('vehicleData'));
+        if(savedData) {
+            document.getElementById('ownerName').innerText = savedData.name;
+            document.getElementById('vehicleNo').innerText = savedData.vNum;
+        }
+
+        function makeCall() {
+            if(savedData) {
+                // Abhi ye seedha dialer kholega (Free method)
+                window.location.href = "tel:" + savedData.phone;
+            } else {
+                alert("Pehle register.html mein data bhariye!");
+            }
+        }
+    </script>
+</body>
+</html>
