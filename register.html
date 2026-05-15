@@ -23,8 +23,8 @@
     <h2>Vehicle Registration</h2>
     <p class="info">Sticker ID: <span id="sticker-display">Detecting...</span></p>
     
-    <input type="text" id="fullName" placeholder="Apna Poora Naam">
-    <input type="text" id="vehicleNumber" placeholder="Gaadi ka Number (e.g. UP80...)">
+    <input type="text" id="fullName" placeholder="FullName">
+    <input type="text" id="vehicleNumber" placeholder="VehicleNumber (e.g. UP80...)">
     <input type="tel" id="phoneNumber" placeholder="Mobile Number">
     
     <button onclick="saveData()">Save Details</button>
@@ -47,7 +47,7 @@
         const phone = document.getElementById('phoneNumber').value;
 
         if(!name || !vehicle || !phone) {
-            alert("Kripya saari details bharein!");
+            alert("Please enter your contact details!");
             return;
         }
 
@@ -63,7 +63,7 @@
         if (error) {
             alert("Error: " + error.message);
         } else {
-            alert("Badhiya! Data save ho gaya. Ab aapka QR active hai.");
+            alert("Activate.");
             window.location.href = "index.html"; 
         }
     }
