@@ -1,0 +1,63 @@
+Admin page
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AlertoQR</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f8f9fa; }
+        .header { background: white; padding: 15px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; }
+        .stat-card { background: white; padding: 20px; border: 1px solid #eee; border-radius: 8px; }
+        .stat-card span { color: gray; font-size: 12px; text-transform: uppercase; }
+        .stat-card h2 { margin: 5px 0 0 0; font-size: 24px; }
+        .revenue { color: #0052cc; }
+        .main-box { background: white; margin: 15px; padding: 20px; border-radius: 10px; border: 1px solid #eee; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .btn-create { background: black; color: white; width: 100%; padding: 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <span style="font-weight: bold;">AlertoQR Dashboard</span>
+        <span style="color: green; font-size: 14px;">● Welcome, Admin</span>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span>Total Stickers</span>
+            <h2>107</h2>
+        </div>
+        <div class="stat-card">
+            <span>Registered</span>
+            <h2>84</h2>
+        </div>
+        <div class="stat-card">
+            <span>Active</span>
+            <h2 style="color: #2ecc71;">72</h2>
+        </div>
+        <div class="stat-card">
+            <span>Revenue</span>
+            <h2 class="revenue">₹1,196</h2>
+        </div>
+    </div>
+
+    <div class="main-box">
+        <p style="color: gray; font-size: 12px;">CREATE STICKERS</p>
+        <h3 style="margin-top: 0;">Generate Sticker IDs</h3>
+        <label>Quantity (1-100)</label>
+        <input type="number" value="1" min="1" max="100">
+        <label>Custom ID (Optional)</label>
+        <input type="text" placeholder="e.g. ALERTO001">
+        <button class="btn-create">+ Create Stickers</button>
+    </div>
+
+    <script>
+        // Future mein yahan stickers generate karne ka asli logic aayega
+        document.querySelector('.btn-create').onclick = function() {
+            alert("Stickers generation feature coming soon with Database!");
+        };
+    </script>
+</body>
+</html>
