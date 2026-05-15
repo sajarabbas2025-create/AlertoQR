@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Vehicle</title>
+    <title>Vehicle Registration | AlertoQR</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #ffffff; margin: 0; padding: 20px; color: #1a1a1a; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 30px; }
-        .header b { font-size: 18px; }
-        .step { color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-        h1 { font-size: 28px; margin: 5px 0; font-weight: 800; }
-        p { color: #666; font-size: 14px; line-height: 1.5; margin-bottom: 30px; }
+        body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; padding: 20px; color: #1a1a1a; }
+        .header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 25px; }
+        .step { color: #888; font-size: 11px; text-transform: uppercase; font-weight: bold; }
+        h1 { font-size: 26px; font-weight: 800; margin: 5px 0; }
+        p { color: #666; font-size: 14px; margin-bottom: 30px; line-height: 1.4; }
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 11px; font-weight: bold; color: #888; margin-bottom: 8px; text-transform: uppercase; }
-        input { width: 100%; padding: 15px; border: 1px solid #e0e0e0; border-radius: 4px; background-color: #f9f9f9; box-sizing: border-box; font-size: 16px; }
-        .btn-save { width: 100%; padding: 18px; background-color: #000; color: #fff; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; }
-        .footer-tag { text-align: center; margin-top: 30px; font-size: 12px; color: #888; }
+        label { display: block; font-size: 11px; font-weight: 700; color: #888; margin-bottom: 8px; text-transform: uppercase; }
+        input { width: 100%; padding: 14px; border: 1px solid #e0e0e0; border-radius: 4px; background: #f9f9f9; box-sizing: border-box; font-size: 16px; }
+        .btn-save { width: 100%; padding: 16px; background: #000; color: #fff; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .id-badge { color: #d9534f; font-weight: bold; font-size: 12px; }
     </style>
 </head>
 <body>
     <div class="header">
-        <b>AlertoQR</b>
-        <span id="display-id" style="color:#888; font-size:12px;">ID: LOADING...</span>
+        <b style="font-size: 18px;">AlertoQR</b>
+        <span id="display-id" class="id-badge">ID: LOADING...</span>
     </div>
     <div class="step">Step 1 of 2</div>
     <h1>Register your vehicle</h1>
@@ -30,38 +29,67 @@
 
     <div class="form-group">
         <label>Full Name *</label>
-        <input type="text" id="full_name" placeholder="Rahul Sharma">
+        <input type="text" id="full_name" placeholder="Sajar Abbas">
     </div>
     <div class="form-group">
         <label>Vehicle Number *</label>
-        <input type="text" id="vehicle_number" placeholder="UP80 XX 0000">
+        <input type="text" id="vehicle_number" placeholder="UP32XX0000">
     </div>
     <div class="form-group">
         <label>Primary Mobile *</label>
-        <input type="tel" id="phone_number" placeholder="9876543210">
+        <input type="tel" id="phone_number" placeholder="63885XXXXX">
     </div>
 
-    <button class="btn-save" onclick="saveData()">
-        <span>✓</span> Save details
-    </button>
-
-    <div class="footer-tag">Made with AlertoQR</div>
+    <button class="btn-save" onclick="saveData()">✓ Save details</button>
 
     <script>
-        const supabase = supabase.createClient('https://cefzsgchfdvtyfmcrsda.supabase.co', 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608');
+        // 1. Supabase Connection (Aapki Key ke saath)
+        const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+        const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // 2. URL se Sticker ID nikalna
         const urlParams = new URLSearchParams(window.location.search);
-        const stickerId = urlParams.get('id') || 'manual_entry';
+        let stickerId = urlParams.get('id');
+        
+        // Agar link mein ID nahi hai toh test ID de dega taaki button chale
+        if (!stickerId) {
+            stickerId = "TEST001"; 
+        }
         document.getElementById('display-id').innerText = 'ID: ' + stickerId;
 
+        // 3. Data Save Karne Wala Function
         async function saveData() {
-            const { error } = await supabase.from('registrations').insert([{ 
-                sticker_id: stickerId, 
-                full_name: document.getElementById('full_name').value, 
-                vehicle_number: document.getElementById('vehicle_number').value, 
-                phone_number: document.getElementById('phone_number').value 
-            }]);
-            if (error) alert("Error: " + error.message);
-            else alert("Registration Successful!");
+            const name = document.getElementById('full_name').value;
+            const vnum = document.getElementById('vehicle_number').value;
+            const phone = document.getElementById('phone_number').value;
+
+            // Khali fields check karna
+            if(!name || !vnum || !phone) { 
+                alert("Bhai, saari details bhariye!"); 
+                return; 
+            }
+
+            // Database mein insert karna
+            const { data, error } = await supabase
+                .from('registrations')
+                .insert([
+                    { 
+                        sticker_id: stickerId, 
+                        full_name: name, 
+                        vehicle_number: vnum, 
+                        phone_number: phone 
+                    }
+                ]);
+
+            if (error) {
+                console.error("Error details:", error);
+                alert("Galti hui: " + error.message);
+            } else {
+                alert("Mubarak ho! Data save ho gaya.");
+                // Registration ke baad helper page par bhej dega
+                window.location.href = `helper.html?id=${stickerId}`;
+            }
         }
     </script>
 </body>
