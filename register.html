@@ -30,22 +30,19 @@
 </div>
 
 <script>
-    // 1. Supabase Setup (Aapki photo se copy ki hui key)
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    // Aapki key yahan pehle se hai
     const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608'; 
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // 2. Link se ID nikalne ka logic (Ye zaroori hai "Detecting" hatane ke liye)
     const urlParams = new URLSearchParams(window.location.search);
     const sid = urlParams.get('id');
     
     if (sid) {
-        // Agar link mein ID hai toh yahan dikhayega
         document.getElementById('sticker-label').textContent = sid;
         document.getElementById('sticker-label').style.color = "#188038";
     }
 
-    // 3. Data Save karne ka function
     async function saveToSupabase() {
         const name = document.getElementById('name').value;
         const veh = document.getElementById('v-num').value;
