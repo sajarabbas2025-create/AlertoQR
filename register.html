@@ -1,1 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Registration - AlertoQR</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #1a73e8; font-size: 26px; margin-bottom: 5px; }
+        .id-text { color: #d93025; font-weight: 600; margin-bottom: 25px; display: block; }
+        input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: 0.2s; }
+        input:focus { border-color: #1a73e8; outline: none; box-shadow: 0 0 0 2px rgba(26,115,232,0.2); }
+        button { width: 100%; padding: 16px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        button:hover { background-color: #1557b0; }
+        #status { margin-top: 20px; font-size: 15px; font-weight: 500; }
+    </style>
+</head>
+<body>
 
+<div class="card">
+    <h2>Vehicle Registration</h2>
+    <span class="id-text">Sticker ID: <span id="sticker-label">Detecting...</span></span>
+
+    <input type="text" id="name" placeholder="Full Name">
+    <input type="text" id="v-num" placeholder="Vehicle Number (e.g. UP80...)">
+    <input type="tel" id="p-num" placeholder="Mobile Number">
+    
+    <button id="save-btn" onclick="saveToSupabase()">Save Details</button>
+    <div id="status"></div>
+</div>
+
+<script>
+    // 1. Supabase Setup (Maine aapki key yahan paste kar di hai)
+    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608'; 
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // 2. Link se ID nikalna
+    const urlParams = new URLSearchParams(window.location.search);
+    const sid = urlParams.get('id');
+    if (sid) {
+        document.getElementById('sticker-label').textContent = sid;
+        document.getElementById('sticker-label').style.color = "#188038";
+    }
+
+    // 3. Save Function
+    async function saveToSupabase() {
+        const name = document.getElementById('name').value;
+        const veh = document.getElementById('v-num').value;
+        const ph = document.getElementById('p-num').value;
+        const status = document.getElementById('status');
+        const btn = document.getElementById('save-btn');
+
+        if(!name || !veh || !ph) { alert("Please fill all fields"); return; }
+
+        btn.innerText = "Saving...";
+        btn.disabled = true;
+
+        const { error } = await supabase
+            .from('registrations')
+            .insert([{ 
+                sticker_id: sid || "MANUAL", 
+                full_name: name, 
+                vehicle_number: veh, 
+                phone_number: ph 
+            }]);
+
+        if (error) {
+            status.innerText = "Error: " + error.message;
+            status.style.color = "#d93025";
+            btn.innerText = "Save Details";
+            btn.disabled = false;
+        } else {
+            status.innerText = "Registration Successful!";
+            status.style.color = "#188038";
+            btn.innerText = "Saved!";
+            btn.style.backgroundColor = "#188038";
+        }
+    }
+</script>
+</body>
+</html>
