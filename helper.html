@@ -8,19 +8,20 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #fafafa;
+            background-color: #f7f7f9;
             margin: 0;
             padding: 15px;
             color: #1c1c1e;
         }
         .helper-container {
             max-width: 450px;
-            margin: 0 auto;
+            margin: 10px auto;
             background: #fff;
             padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             border: 1px solid #e5e5ea;
+            box-sizing: border-box;
         }
         .brand-header {
             display: flex;
@@ -30,26 +31,29 @@
             padding-bottom: 15px;
             margin-bottom: 20px;
         }
-        .brand-title { font-size: 20px; font-weight: 700; margin: 0; }
-        .sticker-badge { font-weight: 600; color: #8e8e93; font-size: 14px; }
+        .brand-title { font-size: 20px; font-weight: 800; margin: 0; color: #000; }
+        .sticker-badge { font-weight: 700; color: #007aff; background: #e1f0ff; padding: 4px 8px; border-radius: 4px; font-size: 13px; }
 
         .owner-card {
             background: #f2f2f7;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 15px;
+            border-radius: 12px;
             margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #e5e5ea;
         }
-        .card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #8e8e93; font-weight: 600; }
-        .owner-name { font-size: 24px; font-weight: 700; margin: 5px 0 10px 0; color: #000; }
+        .card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; font-weight: 700; margin-bottom: 5px; }
+        .owner-name { font-size: 22px; font-weight: 700; margin: 5px 0 10px 0; color: #000; }
         .vehicle-number {
             background: #000;
             color: #fff;
-            padding: 4px 10px;
-            border-radius: 4px;
+            padding: 6px 14px;
+            border-radius: 6px;
             font-family: monospace;
             font-size: 16px;
             font-weight: 700;
             display: inline-block;
+            letter-spacing: 0.5px;
         }
 
         .action-buttons {
@@ -61,22 +65,22 @@
         .btn {
             padding: 14px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
         }
         .btn-primary { background: #000; color: #fff; }
         .btn-secondary { background: #fff; color: #000; border: 1px solid #d1d1d6; }
 
-        .alerts-section-title { font-size: 13px; text-transform: uppercase; color: #8e8e93; font-weight: 600; margin-bottom: 12px; }
+        .alerts-section-title { font-size: 13px; text-transform: uppercase; color: #666; font-weight: 700; margin-bottom: 12px; letter-spacing: 0.5px; }
         
-        /* 2x3 Grid Layout for 6 Alert Buttons */
         .alerts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -85,17 +89,33 @@
         .alert-card {
             background: #fff;
             border: 1px solid #e5e5ea;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: left;
+            border-radius: 12px;
+            padding: 16px 12px;
+            text-align: center;
             cursor: pointer;
-            transition: transform 0.1s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 95px;
         }
-        .alert-card:active { transform: scale(0.97); background: #f2f2f7; }
-        .alert-icon { font-size: 24px; margin-bottom: 8px; display: block; }
-        .alert-label { font-size: 14px; font-weight: 600; color: #1c1c1e; }
+        .alert-card:active { transform: scale(0.96); background: #f2f2f7; }
+        .alert-icon { font-size: 26px; margin-bottom: 6px; display: block; }
+        .alert-label { font-size: 13px; font-weight: 700; color: #1c1c1e; }
 
-        .status-msg { text-align: center; color: #8e8e93; font-style: italic; padding: 30px 0; }
+        .alert-card.emergency {
+            border-color: #ff3b30;
+            background: #fff5f5;
+        }
+        .alert-card.emergency:active { background: #ffe5e5; }
+        .alert-card.emergency .alert-label { color: #df2c25; }
+
+        /* Hidden File Input for Camera */
+        #camera-input { display: none; }
+
+        .status-msg { text-align: center; color: #8e8e93; font-style: italic; padding: 30px 0; font-size: 15px; }
     </style>
 </head>
 <body>
@@ -111,26 +131,29 @@
     </div>
 </div>
 
+<input type="file" id="camera-input" accept="image/*" capture="environment">
+
 <script>
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Get ID from URL parameters (?id=AGRA001)
     const urlParams = new URLSearchParams(window.location.search);
     const stickerId = urlParams.get('id');
+    
+    let globalOwnerPhone = "";
+    let globalVehicleNumber = "";
 
     async function loadHelperDashboard() {
         if (!stickerId) {
-            document.getElementById('main-content').innerHTML = '<div class="status-msg" style="color:#ff3b30;">❌ Error: No Sticker ID detected in URL.</div>';
+            document.getElementById('main-content').innerHTML = '<div class="status-msg" style="color:#ff3b30; font-weight:bold;">❌ Error: No Sticker ID found in link.</div>';
             return;
         }
 
         document.getElementById('display-id').innerText = `ID: ${stickerId}`;
 
         try {
-            // Smart auto-checking for registrations table spelling
             let response = await _supabase.from('registrations').select('*').eq('sticker_id', stickerId).maybeSingle();
             
             if (response.error || !response.data) {
@@ -145,14 +168,16 @@
             if (!response.data) {
                 document.getElementById('main-content').innerHTML = `
                     <div style="text-align:center; padding:20px 0;">
-                        <p style="font-weight:600; font-size:16px; margin-bottom:15px;">This QR Sticker is not registered yet.</p>
-                        <a href="register.html?id=${stickerId}" class="btn btn-primary" style="display:inline-flex;">Register Vehicle Now</a>
+                        <p style="font-weight:700; font-size:16px; margin-bottom:15px; color:#333;">This QR Sticker is not registered yet.</p>
+                        <a href="register.html?id=${stickerId}" class="btn btn-primary" style="display:inline-flex; margin:0 auto;">Register Vehicle Now</a>
                     </div>`;
                 return;
             }
 
-            const owner = response.data;
-            renderDashboardHTML(owner);
+            globalOwnerPhone = response.data.phone_number;
+            globalVehicleNumber = response.data.vehicle_number || "Vehicle";
+            renderDashboardHTML(response.data);
+            setupCameraListener();
 
         } catch (error) {
             console.error(error);
@@ -160,56 +185,85 @@
     }
 
     function renderDashboardHTML(owner) {
+        // Cleaning phone number format for WhatsApp linking (adding 91 if needed)
+        let formattedPhone = owner.phone_number.replace(/\D/g, '');
+        if(formattedPhone.length === 10) formattedPhone = "91" + formattedPhone;
+
         const contentDiv = document.getElementById('main-content');
         contentDiv.innerHTML = `
             <div class="owner-card">
                 <div class="card-label">Vehicle Owner</div>
                 <div class="owner-name">${owner.full_name || 'Registered Driver'}</div>
-                <div class="vehicle-number">${owner.vehicle_number || 'N/A'}</div>
+                <div class="vehicle-number">${globalVehicleNumber}</div>
             </div>
 
             <div class="action-buttons">
                 <a href="tel:${owner.phone_number}" class="btn btn-primary">
                     📞 Call Owner
                 </a>
-                <a href="tel:${owner.phone_number}" class="btn btn-secondary">
-                    📞 Call Alternate
+                <a href="https://wa.me/${formattedPhone}?text=Hello,%20I%20need%20to%20connect%20regarding%20your%20vehicle%20${encodeURIComponent(globalVehicleNumber)}" target="_blank" class="btn btn-secondary">
+                    💬 WhatsApp
                 </a>
             </div>
 
             <div class="alerts-section-title">Quick Alerts</div>
             
             <div class="alerts-grid">
-                <div class="alert-card" onclick="triggerAlert('Wrong Parking')">
+                <div class="alert-card" onclick="sendWhatsAppAlert('Wrong Parking')">
                     <span class="alert-icon">⚠️</span>
                     <span class="alert-label">Wrong Parking</span>
                 </div>
-                <div class="alert-card" onclick="triggerAlert('Tow Alert')">
+                <div class="alert-card" onclick="sendWhatsAppAlert('Tow Alert')">
                     <span class="alert-icon">🚛</span>
                     <span class="alert-label">Tow Alert</span>
                 </div>
-                <div class="alert-card" onclick="triggerAlert('Share Photo')">
+                <div class="alert-card" onclick="triggerCameraInput()">
                     <span class="alert-icon">📸</span>
                     <span class="alert-label">Share Photo</span>
                 </div>
-                <div class="alert-card" onclick="triggerAlert('Share Location')">
+                <div class="alert-card" onclick="shareLiveLocation()">
                     <span class="alert-icon">📍</span>
                     <span class="alert-label">Share Location</span>
                 </div>
-                <div class="alert-card" onclick="triggerAlert('Ambulance Required')" style="border-color: #ff3b30; background: #fff5f5;">
+                <div class="alert-card emergency" onclick="sendWhatsAppAlert('Ambulance Required')">
                     <span class="alert-icon">🚑</span>
-                    <span class="alert-label" style="color: #df2c25;">Ambulance</span>
+                    <span class="alert-label">Ambulance</span>
                 </div>
             </div>
         `;
     }
 
-    function triggerAlert(type) {
-        alert(`Bhai, "${type}" ka alert trigger ho gaya hai! Next step me iska WhatsApp/SMS notification setup karenge.`);
+    // Dynamic WhatsApp Messaging Logic
+    function sendWhatsAppAlert(alertType) {
+        if (!globalOwnerPhone) return alert("Owner phone missing.");
+        
+        let cleanedPhone = globalOwnerPhone.replace(/\D/g, '');
+        if(cleanedPhone.length === 10) cleanedPhone = "91" + cleanedPhone;
+
+        let messageText = "";
+        
+        if (alertType === 'Wrong Parking') {
+            messageText = `🚨 *ALERTO QR ALERT* 🚨\n\nDear Owner, your vehicle *${globalVehicleNumber}* is *wrongly parked* or causing an issue. Please check/move it immediately.`;
+        } else if (alertType === 'Tow Alert') {
+            messageText = `🚛 *ALERTO QR ALERT* 🚛\n\nUrgent! Your vehicle *${globalVehicleNumber}* is in a *TOWING ZONE* or being towed. Please reach your vehicle fast.`;
+        } else if (alertType === 'Ambulance Required') {
+            messageText = `🚑 *EMERGENCY ALERTO QR ALERT* 🚑\n\nURGENT MEDICAL EMERGENCY! An *Ambulance* is required or there is a medical issue near your vehicle *${globalVehicleNumber}*. Please respond quickly!`;
+        }
+
+        // Open official WhatsApp with pre-filled custom message text
+        const waUrl = `https://wa.me/${cleanedPhone}?text=${encodeURIComponent(messageText)}`;
+        window.open(waUrl, '_blank');
     }
 
-    loadHelperDashboard();
-</script>
+    // Live Geolocation Handling (Share Location)
+    function shareLiveLocation() {
+        if (!globalOwnerPhone) return;
 
-</body>
-</html>
+        let cleanedPhone = globalOwnerPhone.replace(/\D/g, '');
+        if(cleanedPhone.length === 10) cleanedPhone = "91" + cleanedPhone;
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                const mapLink = `
