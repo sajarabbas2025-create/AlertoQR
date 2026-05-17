@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Vehicle | AlertoQR</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; padding: 20px; color: #1a1a1a; }
         .header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 25px; }
@@ -21,7 +21,7 @@
 <body>
     <div class="header">
         <b style="font-size: 18px;">AlertoQR</b>
-        <span id="display-id" class="id-badge">ID: Initializing...</span>
+        <span id="display-id" class="id-badge">ID: Loading...</span>
     </div>
     <div class="step">Step 1 of 2</div>
     <h1>Register your vehicle</h1>
@@ -43,25 +43,17 @@
     <button class="btn-save" onclick="saveData()">✓ Save details</button>
 
     <script>
-        // Supabase configuration
+        // Supabase URL aur aapki bheji hui asli Anon Public Key
         const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
-        const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608';
-        
-        let _supabase;
-        try {
-            // Window ya direct library client initialize karne ka sabse safe tarika
-            const supabaseClient = window.supabase ? window.supabase : supabase;
-            _supabase = supabaseClient.createClient(supabaseUrl, supabaseKey);
-        } catch(e) {
-            console.error("Supabase load failed:", e);
-        }
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
 
-        // URL se Sticker ID nikalna
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // URL se ID nikalna
         const urlParams = new URLSearchParams(window.location.search);
         let stickerId = urlParams.get('id');
 
-        // Agar URL mein ID nahi hai ya loading pe atka hai, toh default set karein
-        if (!stickerId || stickerId.trim() === "") {
+        if (!stickerId) {
             stickerId = "AGRA001";
         }
         document.getElementById('display-id').innerText = 'ID: ' + stickerId;
@@ -76,21 +68,18 @@
                 return; 
             }
 
-            if (!_supabase) {
-                alert("Database library initialize nahi ho payi. Page refresh karein.");
-                return;
-            }
-
             try {
-                // Upsert data command
+                // Table mein data insert/update karne ke liye query
                 const { data, error } = await _supabase
                     .from('registrations')
-                    .upsert({ 
-                        sticker_id: stickerId, 
-                        full_name: name, 
-                        vehicle_number: vnum, 
-                        phone_number: phone 
-                    }, { onConflict: 'sticker_id' });
+                    .upsert([
+                        { 
+                            sticker_id: stickerId, 
+                            full_name: name, 
+                            vehicle_number: vnum, 
+                            phone_number: phone 
+                        }
+                    ], { onConflict: 'sticker_id' });
 
                 if (error) {
                     alert("Database Error: " + error.message);
@@ -100,7 +89,7 @@
                 }
             } catch (err) {
                 console.error(err);
-                alert("Connection ya syntax ki dikkat hai.");
+                alert("Technical issue hai, please fir se try karein.");
             }
         }
     </script>
