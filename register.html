@@ -42,15 +42,14 @@
     <button class="btn-save" onclick="saveData()">✓ Save details</button>
 
     <script>
-        // Supabase URL aur Key set
+        // Supabase URL aur Key
         const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
         const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608';
 
-        // URL se ID lena
+        // URL se ID read karna
         const urlParams = new URLSearchParams(window.location.search);
         let stickerId = urlParams.get('id');
 
-        // Agar URL me ID nahi h toh testing k liye fix ID de rahe h
         if (!stickerId) {
             stickerId = "AGRA001";
         }
@@ -66,7 +65,7 @@
                 return; 
             }
 
-            // Direct REST API call bina kisi library tension ke
+            // Supabase REST endpoint URL
             const apiUrl = `${supabaseUrl}/rest/v1/registrations`;
             
             const payload = {
@@ -77,13 +76,14 @@
             };
 
             try {
+                // FIXED HEADERS FOR REST API
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'apikey': supabaseKey,
                         'Authorization': `Bearer ${supabaseKey}`,
                         'Content-Type': 'application/json',
-                        'Prefer': 'resolution=merge-duplicates' // Yeh hi 'upsert' ka kaam karega
+                        'Prefer': 'resolution=merge-duplicates' // Upsert function ka kaam karega
                     },
                     body: JSON.stringify(payload)
                 });
@@ -93,11 +93,11 @@
                     window.location.href = `helper.html?id=${stickerId}`;
                 } else {
                     const resData = await response.json();
-                    alert("Error: " + (resData.message || "Database entry failed"));
+                    alert("Database Error: " + (resData.message || "Entry failed"));
                 }
             } catch (err) {
                 console.error(err);
-                alert("Network error, check connection!");
+                alert("Network diqqat hai, internet connection check karein!");
             }
         }
     </script>
