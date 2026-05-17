@@ -1,45 +1,133 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlertoQR | Admin Panel</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; margin: 0; }
-        .welcome { background: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 20px; font-size: 14px; border-left: 4px solid #28a745; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #ddd; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; margin-bottom: 25px; }
-        .stat-box { background: #fff; padding: 20px; }
-        .label { font-size: 10px; color: #888; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; display: block; }
-        .val { font-size: 28px; font-weight: 800; }
-        .active { color: #008080; } .unpaid { color: #dc3545; } .rev { color: #0056b3; }
-        .card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        input { width: 100%; padding: 12px; margin: 10px 0 20px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; background: #f9f9f9; }
-        button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 4px; font-weight: bold; }
+        body { font-family: -apple-system, sans-serif; background: #f5f5f7; margin: 0; padding: 20px; color: #1a1a1a; }
+        .admin-container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px; }
+        h1 { font-size: 24px; font-weight: 800; margin: 0; text-transform: uppercase; }
+        .stats-badge { background: #000; color: #fff; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+        .search-box { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; margin-bottom: 20px; background: #fafafa; }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; font-size: 15px; }
+        th { background: #f9f9f9; padding: 12px; font-weight: 700; color: #666; text-transform: uppercase; font-size: 12px; border-bottom: 2px solid #eee; }
+        td { padding: 14px 12px; border-bottom: 1px solid #eee; color: #333; }
+        tr:hover { background: #fcfcfc; }
+        .loading-text { text-align: center; color: #888; font-style: italic; padding: 20px; }
+        .no-data { text-align: center; color: #ff3333; font-weight: bold; padding: 20px; }
     </style>
 </head>
 <body>
-    <div class="welcome">✓ Welcome, admin.</div>
-    <div class="stats-grid">
-        <div class="stat-box"><span class="label">Total Stickers</span><span class="val">7</span></div>
-        <div class="stat-box"><span class="label">Registered</span><span class="val" id="regCount">0</span></div>
-        <div class="stat-box"><span class="label">Active</span><span class="val active">4</span></div>
-        <div class="stat-box"><span class="label">Paid</span><span class="val">4</span></div>
-        <div class="stat-box"><span class="label">Unpaid (Reg.)</span><span class="val unpaid">1</span></div>
-        <div class="stat-box"><span class="label">Revenue</span><span class="val rev">₹1,196</span></div>
+
+<div class="admin-container">
+    <div class="header">
+        <h1>AlertoQR Admin Panel</h1>
+        <span id="total-count" class="stats-badge">Total: 0</span>
     </div>
-    <div class="card">
-        <span class="label">Create Stickers</span>
-        <h2 style="margin: 5px 0 20px;">Generate sticker IDs</h2>
-        <span class="label">Quantity (1-100)</span>
-        <input type="number" value="1">
-        <button>Generate</button>
+
+    <input type="text" id="search-input" class="search-box" placeholder="🔍 Search by Sticker ID, Name, or Vehicle Number..." oninput="filterTable()">
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Sticker ID</th>
+                    <th>Full Name</th>
+                    <th>Vehicle Number</th>
+                    <th>Mobile Number</th>
+                    <th>Registered At</th>
+                </tr>
+            </thead>
+            <tbody id="data-rows">
+                <tr>
+                    <td colspan="5" class="loading-text">Fetching registrations from Supabase...</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const supabase = supabase.createClient('https://cefzsgchfdvtyfmcrsda.supabase.co', 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608');
-        async function fetchStats() {
-            const { count } = await supabase.from('registrations').select('*', { count: 'exact', head: true });
-            document.getElementById('regCount').innerText = count || 0;
+</div>
+
+<script>
+    // Supabase Configuration
+    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
+    
+    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    let allRegistrations = []; // Local array data store karne ke liye
+
+    // Database se saara data load karne ka function
+    async function fetchAdminData() {
+        try {
+            const { data, error } = await _supabase
+                .from('registrations')
+                .select('*')
+                .order('created_at', { ascending: false }); // Naye registrations upar dikhenge
+
+            if (error) {
+                document.getElementById('data-rows').innerHTML = `<tr><td colspan="5" class="no-data">Error: ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (data && data.length > 0) {
+                allRegistrations = data;
+                document.getElementById('total-count').innerText = 'Total: ' + data.length;
+                renderTable(data);
+            } else {
+                document.getElementById('data-rows').innerHTML = '<tr><td colspan="5" class="no-data">Abhi tak koi registration nahi hua hai.</td></tr>';
+            }
+        } catch (err) {
+            console.error(err);
         }
-        fetchStats();
-    </script>
+    }
+
+    // Table rows generate karne ka function
+    function renderTable(dataList) {
+        const tbody = document.getElementById('data-rows');
+        tbody.innerHTML = ''; // Clear old rows
+
+        dataList.forEach(row => {
+            const tr = document.createElement('tr');
+            
+            // Time format thoda saaf karne ke liye
+            const regDate = row.created_at ? new Date(row.created_at).toLocaleString('en-IN') : 'N/A';
+
+            tr.innerHTML = `
+                <td style="font-weight: bold; color: #000;">${row.sticker_id}</td>
+                <td>${row.full_name}</td>
+                <td><span style="background: #eee; padding: 3px 8px; border-radius: 4px; font-weight: bold;">${row.vehicle_number}</span></td>
+                <td><a href="tel:${row.phone_number}" style="color: #0066cc; text-decoration: none;">📞 ${row.phone_number}</a></td>
+                <td style="color: #666; font-size: 13px;">${regDate}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Live Search Filter Logic
+    function filterTable() {
+        const query = document.getElementById('search-input').value.toLowerCase().trim();
+        
+        const filteredData = allRegistrations.filter(item => {
+            return (
+                item.sticker_id.toLowerCase().includes(query) ||
+                item.full_name.toLowerCase().includes(query) ||
+                item.vehicle_number.toLowerCase().includes(query)
+            );
+        });
+
+        if (filteredData.length > 0) {
+            renderTable(filteredData);
+        } else {
+            document.getElementById('data-rows').innerHTML = '<tr><td colspan="5" class="no-data">Koi matching data nahi mila!</td></tr>';
+        }
+    }
+
+    // Load data on page start
+    fetchAdminData();
+</script>
+
 </body>
 </html>
