@@ -1,54 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlertoQR Helper</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: sans-serif; margin: 0; padding: 20px; background: #fff; }
-        .header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; font-size: 12px; color: #888; }
-        .owner-box { background: #f9f9f9; padding: 20px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #f0f0f0; }
-        .owner-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: bold; }
-        .owner-name { font-size: 24px; font-weight: bold; margin: 5px 0; }
-        .v-plate { display: inline-block; background: #000; color: #fff; padding: 5px 12px; font-weight: bold; border-radius: 2px; }
-        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; }
-        .btn-black { background: #000; color: #fff; padding: 15px; text-align: center; text-decoration: none; font-weight: bold; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-white { background: #fff; color: #000; border: 1px solid #ddd; padding: 15px; text-align: center; text-decoration: none; font-weight: bold; border-radius: 4px; }
-        .quick-alerts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .alert-card { border: 1px solid #eee; padding: 20px; border-radius: 4px; font-size: 13px; font-weight: bold; display: flex; flex-direction: column; gap: 10px; }
-        .icon { font-size: 22px; }
+        body { font-family: -apple-system, sans-serif; background: #fdfdfd; margin: 0; padding: 20px; color: #1a1a1a; }
+        .header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 25px; }
+        .id-badge { color: #888; font-size: 14px; font-weight: bold; }
+        .card { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .card-label { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+        .owner-name { font-size: 28px; font-weight: 800; margin: 5px 0; color: #000; }
+        .vehicle-num { font-size: 18px; font-weight: 700; background: #000; color: #fff; display: inline-block; padding: 4px 10px; border-radius: 4px; margin-top: 5px; }
+        .btn-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; }
+        .btn { padding: 16px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; box-sizing: border-box; }
+        .btn-primary { background: #000; color: #fff; border: none; }
+        .btn-secondary { background: #fff; color: #000; border: 1px solid #ccc; }
+        .section-title { font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 15px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .alert-box { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; font-weight: bold; font-size: 14px; transition: transform 0.1s; }
+        .alert-box:active { transform: scale(0.95); background: #f9f9f9; }
+        .icon { font-size: 24px; display: block; margin-bottom: 8px; }
     </style>
 </head>
 <body>
-    <div class="header"><b>AlertoQR Helper</b> <span id="sid">ID: --</span></div>
-    <div class="owner-box">
-        <div class="owner-label">Vehicle Owner</div>
-        <div class="owner-name" id="name">Loading...</div>
-        <div class="v-plate" id="vnum">----</div>
+
+    <div class="header">
+        <b style="font-size: 18px; color: #000;">AlertoQR Helper</b>
+        <span id="display-id" class="id-badge">ID: --</span>
     </div>
-    <div class="action-btns">
-        <a href="#" id="callBtn" class="btn-black">📞 Call Owner</a>
-        <a href="#" class="btn-white">📞 Call Alternate</a>
+
+    <div class="card">
+        <div class="card-label">Vehicle Owner</div>
+        <div id="owner_name" class="owner-name">Loading...</div>
+        <div id="vehicle_number" class="vehicle-num">----</div>
     </div>
-    <div class="owner-label" style="margin-bottom:15px">Quick Alerts</div>
-    <div class="quick-alerts">
-        <div class="alert-card"><span class="icon">⚠️</span> Wrong Parking</div>
-        <div class="alert-card"><span class="icon">🚚</span> Tow Alert</div>
-        <div class="alert-card"><span class="icon">🪟</span> Open Window</div>
-        <div class="alert-card"><span class="icon">📍</span> Share Location</div>
+
+    <div class="btn-container">
+        <a id="call_btn" href="#" class="btn btn-primary">📞 Call Owner</a>
+        <a id="alt_call_btn" href="#" class="btn btn-secondary">📞 Call Alternate</a>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <div class="section-title">Quick Alerts</div>
+    <div class="grid">
+        <div class="alert-box" onclick="triggerAlert('Wrong Parking')">
+            <span class="icon">⚠️</span> Wrong Parking
+        </div>
+        <div class="alert-box" onclick="triggerAlert('Tow Alert')">
+            <span class="icon">🚛</span> Tow Alert
+        </div>
+        <div class="alert-box" onclick="triggerAlert('Open Window')">
+            <span class="icon">🪟</span> Open Window
+        </div>
+        <div class="alert-box" onclick="triggerAlert('Share Location')">
+            <span class="icon">📍</span> Share Location
+        </div>
+    </div>
+
     <script>
-        const supabase = supabase.createClient('https://cefzsgchfdvtyfmcrsda.supabase.co', 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608');
-        const id = new URLSearchParams(window.location.search).get('id');
-        document.getElementById('sid').innerText = 'ID: ' + id;
-        async function load() {
-            const { data } = await supabase.from('registrations').select('*').eq('sticker_id', id).single();
-            if(data) {
-                document.getElementById('name').innerText = data.full_name;
-                document.getElementById('vnum').innerText = data.vehicle_number;
-                document.getElementById('callBtn').href = 'tel:' + data.phone_number;
+        // Supabase Configuration
+        const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
+        
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Get Sticker ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const stickerId = urlParams.get('id') || "AGRA001";
+        document.getElementById('display-id').innerText = 'ID: ' + stickerId;
+
+        // Fetch Data from Supabase
+        async function loadOwnerDetails() {
+            try {
+                const { data, error } = await _supabase
+                    .from('registrations')
+                    .select('*')
+                    .eq('sticker_id', stickerId)
+                    .maybeSingle();
+
+                if (error) {
+                    console.error(error);
+                    document.getElementById('owner_name').innerText = "Error loading";
+                    return;
+                }
+
+                if (data) {
+                    // Update Text on screen
+                    document.getElementById('owner_name').innerText = data.full_name;
+                    document.getElementById('vehicle_number').innerText = data.vehicle_number;
+                    
+                    // Update Calling links
+                    document.getElementById('call_btn').href = "tel:" + data.phone_number;
+                    // Agar alternate number na ho toh main number par hi dial hoga
+                    document.getElementById('alt_call_btn').href = "tel:" + data.phone_number; 
+                } else {
+                    document.getElementById('owner_name').innerText = "Not Registered";
+                    document.getElementById('vehicle_number').innerText = "No Data";
+                }
+            } catch (err) {
+                console.error(err);
             }
         }
-        load();
+
+        // Quick Notification Alerts Click handler
+        function triggerAlert(type) {
+            alert("Alert sent: " + type + "\n(Bhai, automated call setup agle step me karenge!)");
+        }
+
+        // Initialize Page Load
+        loadOwnerDetails();
     </script>
 </body>
 </html>
