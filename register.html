@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Vehicle | AlertoQR</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; padding: 20px; color: #1a1a1a; }
         .header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 25px; }
@@ -21,7 +20,7 @@
 <body>
     <div class="header">
         <b style="font-size: 18px;">AlertoQR</b>
-        <span id="display-id" class="id-badge">ID: Initializing...</span>
+        <span id="display-id" class="id-badge">ID: Loading...</span>
     </div>
     <div class="step">Step 1 of 2</div>
     <h1>Register your vehicle</h1>
@@ -43,20 +42,18 @@
     <button class="btn-save" onclick="saveData()">✓ Save details</button>
 
     <script>
-        // Supabase configuration
+        // Supabase URL aur Key set
         const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
         const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // URL se ID read karna
+        // URL se ID lena
         const urlParams = new URLSearchParams(window.location.search);
         let stickerId = urlParams.get('id');
 
-        // FIX: Agar URL mein id= bhool gaye hain toh test ID set karein taaki data save ho sake
+        // Agar URL me ID nahi h toh testing k liye fix ID de rahe h
         if (!stickerId) {
-            stickerId = "AGRA001"; 
+            stickerId = "AGRA001";
         }
-        
         document.getElementById('display-id').innerText = 'ID: ' + stickerId;
 
         async function saveData() {
@@ -65,29 +62,42 @@
             const phone = document.getElementById('phone_number').value;
 
             if (!name || !vnum || !phone) { 
-                alert("Bhai, saari details bhariye!"); 
+                alert("Bhai, pehle saari details fill karo!"); 
                 return; 
             }
 
-            // UPSERT data ko table mein overwrite ya insert karega
-            const { data, error } = await supabase
-                .from('registrations')
-                .upsert([
-                    { 
-                        sticker_id: stickerId, 
-                        full_name: name, 
-                        vehicle_number: vnum, 
-                        phone_number: phone 
-                    }
-                ]);
+            // Direct REST API call bina kisi library tension ke
+            const apiUrl = `${supabaseUrl}/rest/v1/registrations`;
+            
+            const payload = {
+                sticker_id: stickerId,
+                full_name: name,
+                vehicle_number: vnum,
+                phone_number: phone
+            };
 
-            if (error) { 
-                console.error("Supabase Error:", error);
-                alert("Galti hui: " + error.message); 
-            } else { 
-                alert("Mubarak ho! Vehicle Registered Successfully!"); 
-                // Save hone ke baad automatic helper page khulega
-                window.location.href = `helper.html?id=${stickerId}`;
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': supabaseKey,
+                        'Authorization': `Bearer ${supabaseKey}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'resolution=merge-duplicates' // Yeh hi 'upsert' ka kaam karega
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert("Mubarak ho! Vehicle Registered Successfully!");
+                    window.location.href = `helper.html?id=${stickerId}`;
+                } else {
+                    const resData = await response.json();
+                    alert("Error: " + (resData.message || "Database entry failed"));
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Network error, check connection!");
             }
         }
     </script>
