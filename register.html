@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Registration | AlertoQR</title>
+    <title>Register Vehicle | AlertoQR</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; padding: 20px; color: #1a1a1a; }
@@ -14,14 +14,14 @@
         .form-group { margin-bottom: 20px; }
         label { display: block; font-size: 11px; font-weight: 700; color: #888; margin-bottom: 8px; text-transform: uppercase; }
         input { width: 100%; padding: 14px; border: 1px solid #e0e0e0; border-radius: 4px; background: #f9f9f9; box-sizing: border-box; font-size: 16px; }
-        .btn-save { width: 100%; padding: 16px; background: #000; color: #fff; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .id-badge { color: #d9534f; font-weight: bold; font-size: 12px; }
+        .btn-save { width: 100%; padding: 16px; background: #000; color: #fff; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .id-badge { color: #000; font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="header">
         <b style="font-size: 18px;">AlertoQR</b>
-        <span id="display-id" class="id-badge">ID: LOADING...</span>
+        <span id="display-id" class="id-badge">ID: Loading...</span>
     </div>
     <div class="step">Step 1 of 2</div>
     <h1>Register your vehicle</h1>
@@ -29,65 +29,58 @@
 
     <div class="form-group">
         <label>Full Name *</label>
-        <input type="text" id="full_name" placeholder="Sajar Abbas">
+        <input type="text" id="full_name" placeholder="Rahul Sharma">
     </div>
     <div class="form-group">
         <label>Vehicle Number *</label>
-        <input type="text" id="vehicle_number" placeholder="UP32XX0000">
+        <input type="text" id="vehicle_number" placeholder="UP80 XX 0000">
     </div>
     <div class="form-group">
         <label>Primary Mobile *</label>
-        <input type="tel" id="phone_number" placeholder="63885XXXXX">
+        <input type="tel" id="phone_number" placeholder="9876543210">
     </div>
 
     <button class="btn-save" onclick="saveData()">✓ Save details</button>
 
     <script>
-        // 1. Supabase Connection (Aapki Key ke saath)
         const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
         const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // 2. URL se Sticker ID nikalna
         const urlParams = new URLSearchParams(window.location.search);
-        let stickerId = urlParams.get('id');
-        
-        // Agar link mein ID nahi hai toh test ID de dega taaki button chale
-        if (!stickerId) {
-            stickerId = "TEST001"; 
-        }
-        document.getElementById('display-id').innerText = 'ID: ' + stickerId;
+        const stickerId = urlParams.get('id');
 
-        // 3. Data Save Karne Wala Function
+        if(!stickerId) {
+            document.getElementById('display-id').innerText = 'ID: Missing (?id=bhool-gaye)';
+            document.getElementById('display-id').style.color = 'red';
+        } else {
+            document.getElementById('display-id').innerText = 'ID: ' + stickerId;
+        }
+
         async function saveData() {
+            if(!stickerId) {
+                alert("URL mein Sticker ID nahi mili! Link ke aage ?id=AGRA001 lagakar kholein.");
+                return;
+            }
+
             const name = document.getElementById('full_name').value;
             const vnum = document.getElementById('vehicle_number').value;
             const phone = document.getElementById('phone_number').value;
 
-            // Khali fields check karna
-            if(!name || !vnum || !phone) { 
-                alert("Bhai, saari details bhariye!"); 
-                return; 
-            }
+            if(!name || !vnum || !phone) { alert("Please fill all fields"); return; }
 
-            // Database mein insert karna
+            // UPSERT Logic: Yeh pehle se maujood ID par hi data ko over-write karega
             const { data, error } = await supabase
                 .from('registrations')
-                .insert([
-                    { 
-                        sticker_id: stickerId, 
-                        full_name: name, 
-                        vehicle_number: vnum, 
-                        phone_number: phone 
-                    }
+                .upsert([
+                    { sticker_id: stickerId, full_name: name, vehicle_number: vnum, phone_number: phone }
                 ]);
 
-            if (error) {
-                console.error("Error details:", error);
-                alert("Galti hui: " + error.message);
-            } else {
-                alert("Mubarak ho! Data save ho gaya.");
-                // Registration ke baad helper page par bhej dega
+            if (error) { 
+                alert("Galti hui: " + error.message); 
+            } else { 
+                alert("Vehicle Registered Successfully!"); 
+                // Kamyabi ke baad sidha Helper page par transfer
                 window.location.href = `helper.html?id=${stickerId}`;
             }
         }
