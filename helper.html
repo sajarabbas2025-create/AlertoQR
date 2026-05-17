@@ -79,4 +79,224 @@
         .btn-primary { background: #000; color: #fff; }
         .btn-secondary { background: #fff; color: #000; border: 1px solid #d1d1d6; }
 
-        .
+        .alerts-section-title { font-size: 13px; text-transform: uppercase; color: #666; font-weight: 700; margin-bottom: 12px; letter-spacing: 0.5px; }
+        
+        .alerts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .alert-card {
+            background: #fff;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            padding: 16px 12px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+        .alert-card:active { transform: scale(0.96); background: #f2f2f7; }
+        .alert-icon { font-size: 26px; margin-bottom: 6px; display: block; }
+        .alert-label { font-size: 13px; font-weight: 700; color: #1c1c1e; }
+
+        .alert-card.emergency {
+            border-color: #ff3b30;
+            background: #fff5f5;
+        }
+        .alert-card.emergency:active { background: #ffe5e5; }
+        .alert-card.emergency .alert-label { color: #df2c25; }
+
+        #camera-input { display: none; }
+
+        .status-msg { text-align: center; color: #8e8e93; font-style: italic; padding: 30px 0; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="helper-container">
+    <div class="brand-header">
+        <h1 class="brand-title">AlertoQR Helper</h1>
+        <span id="display-id" class="sticker-badge">ID: --</span>
+    </div>
+
+    <div id="main-content">
+        <div class="status-msg">Fetching vehicle details...</div>
+    </div>
+</div>
+
+<input type="file" id="camera-input" accept="image/*" capture="environment">
+
+<script>
+    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
+    
+    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const stickerId = urlParams.get('id');
+    
+    let globalOwnerPhone = "";
+    let globalVehicleNumber = "";
+
+    async function loadHelperDashboard() {
+        if (!stickerId) {
+            document.getElementById('main-content').innerHTML = '<div class="status-msg" style="color:#ff3b30; font-weight:bold;">❌ Error: No Sticker ID detected in link.</div>';
+            return;
+        }
+
+        document.getElementById('display-id').innerText = `ID: ${stickerId}`;
+
+        try {
+            // Straightforward check on your active table name
+            let { data, error } = await _supabase.from('ragistrations').select('*').eq('sticker_id', stickerId).maybeSingle();
+            
+            if (error || !data) {
+                let fallback = await _supabase.from('registrations').select('*').eq('sticker_id', stickerId).maybeSingle();
+                if(!fallback.error && fallback.data) {
+                    data = fallback.data;
+                    error = null;
+                }
+            }
+
+            if (error) {
+                document.getElementById('main-content').innerHTML = `<div class="status-msg" style="color:#ff3b30;">Database connection error.</div>`;
+                return;
+            }
+
+            if (!data) {
+                document.getElementById('main-content').innerHTML = `
+                    <div style="text-align:center; padding:20px 0;">
+                        <p style="font-weight:700; font-size:16px; margin-bottom:15px; color:#333;">QR Sticker [${stickerId}] is not registered yet.</p>
+                        <a href="register.html?id=${stickerId}" class="btn btn-primary" style="display:inline-flex; margin:0 auto;">Register Vehicle Now</a>
+                    </div>`;
+                return;
+            }
+
+            globalOwnerPhone = data.phone_number || "";
+            globalVehicleNumber = data.vehicle_number || "Vehicle";
+            
+            renderDashboardHTML(data);
+            setupCameraListener();
+
+        } catch (err) {
+            document.getElementById('main-content').innerHTML = '<div class="status-msg" style="color:#ff3b30;">Dashboard load error.</div>';
+        }
+    }
+
+    function renderDashboardHTML(owner) {
+        const contentDiv = document.getElementById('main-content');
+        contentDiv.innerHTML = `
+            <div class="owner-card">
+                <div class="card-label">Vehicle Owner</div>
+                <div class="owner-name">${owner.full_name || 'Registered Driver'}</div>
+                <div class="vehicle-number">${globalVehicleNumber}</div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="tel:${globalOwnerPhone}" class="btn btn-primary">📞 Call Owner</a>
+                <a href="tel:${globalOwnerPhone}" class="btn btn-secondary">📞 Call Alternate</a>
+            </div>
+
+            <div class="alerts-section-title">Quick Alerts</div>
+            
+            <div class="alerts-grid">
+                <div class="alert-card" onclick="sendWhatsAppAlert('Wrong Parking')">
+                    <span class="alert-icon">⚠️</span>
+                    <span class="alert-label">Wrong Parking</span>
+                </div>
+                <div class="alert-card" onclick="sendWhatsAppAlert('Tow Alert')">
+                    <span class="alert-icon">🚛</span>
+                    <span class="alert-label">Tow Alert</span>
+                </div>
+                <div class="alert-card" onclick="sendWhatsAppAlert('Open Window')">
+                    <span class="alert-icon">🪟</span>
+                    <span class="alert-label">Open Window</span>
+                </div>
+                <div class="alert-card" onclick="shareLiveLocation()">
+                    <span class="alert-icon">📍</span>
+                    <span class="alert-label">Share Location</span>
+                </div>
+                <div class="alert-card" onclick="triggerCameraInput()">
+                    <span class="alert-icon">📸</span>
+                    <span class="alert-label">Share Photo</span>
+                </div>
+                <div class="alert-card emergency" onclick="sendWhatsAppAlert('Ambulance Required')">
+                    <span class="alert-icon">🚑</span>
+                    <span class="alert-label">Ambulance</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function sendWhatsAppAlert(alertType) {
+        if (!globalOwnerPhone) return alert("Owner phone number missing.");
+        
+        let cleanedPhone = globalOwnerPhone.replace(/\D/g, '');
+        if(cleanedPhone.length === 10) cleanedPhone = "91" + cleanedPhone;
+
+        let messageText = "";
+        if (alertType === 'Wrong Parking') {
+            messageText = `🚨 *ALERTO QR ALERT* 🚨\n\nDear Owner, your vehicle *${globalVehicleNumber}* is wrongly parked or blocking the way. Please move it immediately.`;
+        } else if (alertType === 'Tow Alert') {
+            messageText = `🚛 *ALERTO QR ALERT* 🚛\n\nUrgent! Your vehicle *${globalVehicleNumber}* is in a towing zone or a tow truck is nearby.`;
+        } else if (alertType === 'Open Window') {
+            messageText = `🪟 *ALERTO QR ALERT* 🪟\n\nHello, someone noticed that the window or door of your vehicle *${globalVehicleNumber}* is left open. Please check it.`;
+        } else if (alertType === 'Ambulance Required') {
+            messageText = `🚑 *EMERGENCY ALERTO QR ALERT* 🚑\n\nCRITICAL! There is an emergency near your vehicle *${globalVehicleNumber}*. Please check instantly!`;
+        }
+
+        window.open(`https://wa.me/${cleanedPhone}?text=${encodeURIComponent(messageText)}`, '_blank');
+    }
+
+    function shareLiveLocation() {
+        if (!globalOwnerPhone) return alert("Phone number missing.");
+
+        let cleanedPhone = globalOwnerPhone.replace(/\D/g, '');
+        if(cleanedPhone.length === 10) cleanedPhone = "91" + cleanedPhone;
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                // Fixed Perfectly Formatted URL
+                const mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
+                
+                const locationMessage = `📍 *ALERTO QR LOCATION* 📍\n\nHelper has shared their current location near your vehicle *${globalVehicleNumber}*:\n${mapLink}`;
+                window.open(`https://wa.me/${cleanedPhone}?text=${encodeURIComponent(locationMessage)}`, '_blank');
+            }, function(error) {
+                window.open(`https://wa.me/${cleanedPhone}?text=Helper%20is%20trying%20to%20alert%20location%20near%20your%20vehicle%20${globalVehicleNumber}`, '_blank');
+            });
+        } else {
+            alert("Location features are not supported by this browser.");
+        }
+    }
+
+    function triggerCameraInput() {
+        document.getElementById('camera-input').click();
+    }
+
+    function setupCameraListener() {
+        document.getElementById('camera-input').addEventListener('change', function() {
+            if(this.files && this.files[0]) {
+                let cleanedPhone = globalOwnerPhone.replace(/\D/g, '');
+                if(cleanedPhone.length === 10) cleanedPhone = "91" + cleanedPhone;
+
+                alert("📸 Photo captured! WhatsApp open hote hi clip 📎 icon par click karke is photo ko attach karke send kar dein.");
+                
+                const photoFallbackMsg = `📸 *ALERTO QR PHOTO ALERT* 📸\n\nHelper has taken a photo regarding your vehicle *${globalVehicleNumber}*. (Helper will attach the photo in chat now)`;
+                window.open(`https://wa.me/${cleanedPhone}?text=${encodeURIComponent(photoFallbackMsg)}`, '_blank');
+            }
+        });
+    }
+
+    loadHelperDashboard();
+</script>
+
+</body>
+</html>
