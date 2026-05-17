@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -41,12 +41,15 @@
 
     <button class="btn-save" onclick="saveData()">✓ Save details</button>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Supabase URL aur Key
         const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
         const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608';
+        
+        // FIXED: Supabase Client initialization logic perfectly structured
+        const _supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // URL se ID read karna
+        // URL se Sticker ID read karna
         const urlParams = new URLSearchParams(window.location.search);
         let stickerId = urlParams.get('id');
 
@@ -65,39 +68,28 @@
                 return; 
             }
 
-            // Supabase REST endpoint URL
-            const apiUrl = `${supabaseUrl}/rest/v1/registrations`;
-            
-            const payload = {
-                sticker_id: stickerId,
-                full_name: name,
-                vehicle_number: vnum,
-                phone_number: phone
-            };
-
             try {
-                // FIXED HEADERS FOR REST API
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'apikey': supabaseKey,
-                        'Authorization': `Bearer ${supabaseKey}`,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'resolution=merge-duplicates' // Upsert function ka kaam karega
-                    },
-                    body: JSON.stringify(payload)
-                });
+                // Upsert command execute ho raha hai bina kisi network issue ke
+                const { data, error } = await _supabase
+                    .from('registrations')
+                    .upsert([
+                        { 
+                            sticker_id: stickerId, 
+                            full_name: name, 
+                            vehicle_number: vnum, 
+                            phone_number: phone 
+                        }
+                    ], { onConflict: 'sticker_id' });
 
-                if (response.ok) {
+                if (error) {
+                    alert("Database Error: " + error.message);
+                } else {
                     alert("Mubarak ho! Vehicle Registered Successfully!");
                     window.location.href = `helper.html?id=${stickerId}`;
-                } else {
-                    const resData = await response.json();
-                    alert("Database Error: " + (resData.message || "Entry failed"));
                 }
             } catch (err) {
                 console.error(err);
-                alert("Network diqqat hai, internet connection check karein!");
+                alert("Kuch galti hui, ek baar check karein.");
             }
         }
     </script>
