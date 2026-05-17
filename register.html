@@ -21,7 +21,7 @@
 <body>
     <div class="header">
         <b style="font-size: 18px;">AlertoQR</b>
-        <span id="display-id" class="id-badge">ID: Loading...</span>
+        <span id="display-id" class="id-badge">ID: Initializing...</span>
     </div>
     <div class="step">Step 1 of 2</div>
     <h1>Register your vehicle</h1>
@@ -29,58 +29,64 @@
 
     <div class="form-group">
         <label>Full Name *</label>
-        <input type="text" id="full_name" placeholder="Rahul Sharma">
+        <input type="text" id="full_name" placeholder="Sajar Abbas">
     </div>
     <div class="form-group">
         <label>Vehicle Number *</label>
-        <input type="text" id="vehicle_number" placeholder="UP80 XX 0000">
+        <input type="text" id="vehicle_number" placeholder="Up32dd2420">
     </div>
     <div class="form-group">
         <label>Primary Mobile *</label>
-        <input type="tel" id="phone_number" placeholder="9876543210">
+        <input type="tel" id="phone_number" placeholder="6388522427">
     </div>
 
     <button class="btn-save" onclick="saveData()">✓ Save details</button>
 
     <script>
+        // Supabase configuration
         const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
         const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+        // URL se ID read karna
         const urlParams = new URLSearchParams(window.location.search);
-        const stickerId = urlParams.get('id');
+        let stickerId = urlParams.get('id');
 
-        if(!stickerId) {
-            document.getElementById('display-id').innerText = 'ID: Missing (?id=bhool-gaye)';
-            document.getElementById('display-id').style.color = 'red';
-        } else {
-            document.getElementById('display-id').innerText = 'ID: ' + stickerId;
+        // FIX: Agar URL mein id= bhool gaye hain toh test ID set karein taaki data save ho sake
+        if (!stickerId) {
+            stickerId = "AGRA001"; 
         }
+        
+        document.getElementById('display-id').innerText = 'ID: ' + stickerId;
 
         async function saveData() {
-            if(!stickerId) {
-                alert("URL mein Sticker ID nahi mili! Link ke aage ?id=AGRA001 lagakar kholein.");
-                return;
-            }
-
             const name = document.getElementById('full_name').value;
             const vnum = document.getElementById('vehicle_number').value;
             const phone = document.getElementById('phone_number').value;
 
-            if(!name || !vnum || !phone) { alert("Please fill all fields"); return; }
+            if (!name || !vnum || !phone) { 
+                alert("Bhai, saari details bhariye!"); 
+                return; 
+            }
 
-            // UPSERT Logic: Yeh pehle se maujood ID par hi data ko over-write karega
+            // UPSERT data ko table mein overwrite ya insert karega
             const { data, error } = await supabase
                 .from('registrations')
                 .upsert([
-                    { sticker_id: stickerId, full_name: name, vehicle_number: vnum, phone_number: phone }
+                    { 
+                        sticker_id: stickerId, 
+                        full_name: name, 
+                        vehicle_number: vnum, 
+                        phone_number: phone 
+                    }
                 ]);
 
             if (error) { 
+                console.error("Supabase Error:", error);
                 alert("Galti hui: " + error.message); 
             } else { 
-                alert("Vehicle Registered Successfully!"); 
-                // Kamyabi ke baad sidha Helper page par transfer
+                alert("Mubarak ho! Vehicle Registered Successfully!"); 
+                // Save hone ke baad automatic helper page khulega
                 window.location.href = `helper.html?id=${stickerId}`;
             }
         }
