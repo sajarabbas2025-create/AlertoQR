@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Vehicle | AlertoQR</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; padding: 20px; color: #1a1a1a; }
         .header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 25px; }
@@ -21,7 +21,7 @@
 <body>
     <div class="header">
         <b style="font-size: 18px;">AlertoQR</b>
-        <span id="display-id" class="id-badge">ID: Loading...</span>
+        <span id="display-id" class="id-badge">ID: Initializing...</span>
     </div>
     <div class="step">Step 1 of 2</div>
     <h1>Register your vehicle</h1>
@@ -43,43 +43,54 @@
     <button class="btn-save" onclick="saveData()">✓ Save details</button>
 
     <script>
-        // Aapke dashboard se nikala hua sahi URL aur Key
+        // Supabase configuration
         const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
         const supabaseKey = 'sb_publishable_8jfL5f4ayg8oNGIo_BrWwQ_9fORRRn7C7Yp192Aba3a059d9f67a6bc66a4f89d3a17e089608';
         
-        // Initialization bina window prefix ke fresh library style mein
-        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        let _supabase;
+        try {
+            // Window ya direct library client initialize karne ka sabse safe tarika
+            const supabaseClient = window.supabase ? window.supabase : supabase;
+            _supabase = supabaseClient.createClient(supabaseUrl, supabaseKey);
+        } catch(e) {
+            console.error("Supabase load failed:", e);
+        }
 
+        // URL se Sticker ID nikalna
         const urlParams = new URLSearchParams(window.location.search);
         let stickerId = urlParams.get('id');
 
-        if (!stickerId) {
+        // Agar URL mein ID nahi hai ya loading pe atka hai, toh default set karein
+        if (!stickerId || stickerId.trim() === "") {
             stickerId = "AGRA001";
         }
         document.getElementById('display-id').innerText = 'ID: ' + stickerId;
 
         async function saveData() {
-            const name = document.getElementById('full_name').value;
-            const vnum = document.getElementById('vehicle_number').value;
-            const phone = document.getElementById('phone_number').value;
+            const name = document.getElementById('full_name').value.trim();
+            const vnum = document.getElementById('vehicle_number').value.trim();
+            const phone = document.getElementById('phone_number').value.trim();
 
             if (!name || !vnum || !phone) { 
                 alert("Bhai, pehle saari details fill karo!"); 
                 return; 
             }
 
+            if (!_supabase) {
+                alert("Database library initialize nahi ho payi. Page refresh karein.");
+                return;
+            }
+
             try {
-                // Upsert operation execute hoga bina kisi security restriction ke
+                // Upsert data command
                 const { data, error } = await _supabase
                     .from('registrations')
-                    .upsert([
-                        { 
-                            sticker_id: stickerId, 
-                            full_name: name, 
-                            vehicle_number: vnum, 
-                            phone_number: phone 
-                        }
-                    ]);
+                    .upsert({ 
+                        sticker_id: stickerId, 
+                        full_name: name, 
+                        vehicle_number: vnum, 
+                        phone_number: phone 
+                    }, { onConflict: 'sticker_id' });
 
                 if (error) {
                     alert("Database Error: " + error.message);
@@ -89,7 +100,7 @@
                 }
             } catch (err) {
                 console.error(err);
-                alert("Nework ya technical dikkat hai, fir se koshish karein.");
+                alert("Connection ya syntax ki dikkat hai.");
             }
         }
     </script>
