@@ -3,113 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR Helper</title>
+    <title>AlertoQR | Helper Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #fdfdfd; margin: 0; padding: 20px; color: #1a1a1a; }
-        .header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 25px; }
-        .id-badge { color: #888; font-size: 14px; font-weight: bold; }
-        .card { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .card-label { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
-        .owner-name { font-size: 28px; font-weight: 800; margin: 5px 0; color: #000; }
-        .vehicle-num { font-size: 18px; font-weight: 700; background: #000; color: #fff; display: inline-block; padding: 4px 10px; border-radius: 4px; margin-top: 5px; }
-        .btn-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 30px; }
-        .btn { padding: 16px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; box-sizing: border-box; }
-        .btn-primary { background: #000; color: #fff; border: none; }
-        .btn-secondary { background: #fff; color: #000; border: 1px solid #ccc; }
-        .section-title { font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 15px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .alert-box { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; font-weight: bold; font-size: 14px; transition: transform 0.1s; }
-        .alert-box:active { transform: scale(0.95); background: #f9f9f9; }
-        .icon { font-size: 24px; display: block; margin-bottom: 8px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 15px;
+            color: #1c1c1e;
+        }
+        .helper-container {
+            max-width: 450px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e5e5ea;
+        }
+        .brand-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e5ea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .brand-title { font-size: 20px; font-weight: 700; margin: 0; }
+        .sticker-badge { font-weight: 600; color: #8e8e93; font-size: 14px; }
+
+        .owner-card {
+            background: #f2f2f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #8e8e93; font-weight: 600; }
+        .owner-name { font-size: 24px; font-weight: 700; margin: 5px 0 10px 0; color: #000; }
+        .vehicle-number {
+            background: #000;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .btn {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn-primary { background: #000; color: #fff; }
+        .btn-secondary { background: #fff; color: #000; border: 1px solid #d1d1d6; }
+
+        .alerts-section-title { font-size: 13px; text-transform: uppercase; color: #8e8e93; font-weight: 600; margin-bottom: 12px; }
+        
+        /* 2x3 Grid Layout for 6 Alert Buttons */
+        .alerts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .alert-card {
+            background: #fff;
+            border: 1px solid #e5e5ea;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .alert-card:active { transform: scale(0.97); background: #f2f2f7; }
+        .alert-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+        .alert-label { font-size: 14px; font-weight: 600; color: #1c1c1e; }
+
+        .status-msg { text-align: center; color: #8e8e93; font-style: italic; padding: 30px 0; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <b style="font-size: 18px; color: #000;">AlertoQR Helper</b>
-        <span id="display-id" class="id-badge">ID: --</span>
+<div class="helper-container">
+    <div class="brand-header">
+        <h1 class="brand-title">AlertoQR Helper</h1>
+        <span id="display-id" class="sticker-badge">ID: --</span>
     </div>
 
-    <div class="card">
-        <div class="card-label">Vehicle Owner</div>
-        <div id="owner_name" class="owner-name">Loading...</div>
-        <div id="vehicle_number" class="vehicle-num">----</div>
+    <div id="main-content">
+        <div class="status-msg">Fetching vehicle details...</div>
     </div>
+</div>
 
-    <div class="btn-container">
-        <a id="call_btn" href="#" class="btn btn-primary">📞 Call Owner</a>
-        <a id="alt_call_btn" href="#" class="btn btn-secondary">📞 Call Alternate</a>
-    </div>
+<script>
+    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
+    
+    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    <div class="section-title">Quick Alerts</div>
-    <div class="grid">
-        <div class="alert-box" onclick="triggerAlert('Wrong Parking')">
-            <span class="icon">⚠️</span> Wrong Parking
-        </div>
-        <div class="alert-box" onclick="triggerAlert('Tow Alert')">
-            <span class="icon">🚛</span> Tow Alert
-        </div>
-        <div class="alert-box" onclick="triggerAlert('Open Window')">
-            <span class="icon">🪟</span> Open Window
-        </div>
-        <div class="alert-box" onclick="triggerAlert('Share Location')">
-            <span class="icon">📍</span> Share Location
-        </div>
-    </div>
+    // Get ID from URL parameters (?id=AGRA001)
+    const urlParams = new URLSearchParams(window.location.search);
+    const stickerId = urlParams.get('id');
 
-    <script>
-        // Supabase Configuration
-        const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
-        
-        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    async function loadHelperDashboard() {
+        if (!stickerId) {
+            document.getElementById('main-content').innerHTML = '<div class="status-msg" style="color:#ff3b30;">❌ Error: No Sticker ID detected in URL.</div>';
+            return;
+        }
 
-        // Get Sticker ID from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const stickerId = urlParams.get('id') || "AGRA001";
-        document.getElementById('display-id').innerText = 'ID: ' + stickerId;
+        document.getElementById('display-id').innerText = `ID: ${stickerId}`;
 
-        // Fetch Data from Supabase
-        async function loadOwnerDetails() {
-            try {
-                const { data, error } = await _supabase
-                    .from('registrations')
-                    .select('*')
-                    .eq('sticker_id', stickerId)
-                    .maybeSingle();
-
-                if (error) {
-                    console.error(error);
-                    document.getElementById('owner_name').innerText = "Error loading";
-                    return;
-                }
-
-                if (data) {
-                    // Update Text on screen
-                    document.getElementById('owner_name').innerText = data.full_name;
-                    document.getElementById('vehicle_number').innerText = data.vehicle_number;
-                    
-                    // Update Calling links
-                    document.getElementById('call_btn').href = "tel:" + data.phone_number;
-                    // Agar alternate number na ho toh main number par hi dial hoga
-                    document.getElementById('alt_call_btn').href = "tel:" + data.phone_number; 
-                } else {
-                    document.getElementById('owner_name').innerText = "Not Registered";
-                    document.getElementById('vehicle_number').innerText = "No Data";
-                }
-            } catch (err) {
-                console.error(err);
+        try {
+            // Smart auto-checking for registrations table spelling
+            let response = await _supabase.from('registrations').select('*').eq('sticker_id', stickerId).maybeSingle();
+            
+            if (response.error || !response.data) {
+                response = await _supabase.from('ragistrations').select('*').eq('sticker_id', stickerId).maybeSingle();
             }
-        }
 
-        // Quick Notification Alerts Click handler
-        function triggerAlert(type) {
-            alert("Alert sent: " + type + "\n(Bhai, automated call setup agle step me karenge!)");
-        }
+            if (response.error) {
+                document.getElementById('main-content').innerHTML = `<div class="status-msg" style="color:#ff3b30;">Database Error: ${response.error.message}</div>`;
+                return;
+            }
 
-        // Initialize Page Load
-        loadOwnerDetails();
-    </script>
+            if (!response.data) {
+                document.getElementById('main-content').innerHTML = `
+                    <div style="text-align:center; padding:20px 0;">
+                        <p style="font-weight:600; font-size:16px; margin-bottom:15px;">This QR Sticker is not registered yet.</p>
+                        <a href="register.html?id=${stickerId}" class="btn btn-primary" style="display:inline-flex;">Register Vehicle Now</a>
+                    </div>`;
+                return;
+            }
+
+            const owner = response.data;
+            renderDashboardHTML(owner);
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function renderDashboardHTML(owner) {
+        const contentDiv = document.getElementById('main-content');
+        contentDiv.innerHTML = `
+            <div class="owner-card">
+                <div class="card-label">Vehicle Owner</div>
+                <div class="owner-name">${owner.full_name || 'Registered Driver'}</div>
+                <div class="vehicle-number">${owner.vehicle_number || 'N/A'}</div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="tel:${owner.phone_number}" class="btn btn-primary">
+                    📞 Call Owner
+                </a>
+                <a href="tel:${owner.phone_number}" class="btn btn-secondary">
+                    📞 Call Alternate
+                </a>
+            </div>
+
+            <div class="alerts-section-title">Quick Alerts</div>
+            
+            <div class="alerts-grid">
+                <div class="alert-card" onclick="triggerAlert('Wrong Parking')">
+                    <span class="alert-icon">⚠️</span>
+                    <span class="alert-label">Wrong Parking</span>
+                </div>
+                <div class="alert-card" onclick="triggerAlert('Tow Alert')">
+                    <span class="alert-icon">🚛</span>
+                    <span class="alert-label">Tow Alert</span>
+                </div>
+                <div class="alert-card" onclick="triggerAlert('Share Photo')">
+                    <span class="alert-icon">📸</span>
+                    <span class="alert-label">Share Photo</span>
+                </div>
+                <div class="alert-card" onclick="triggerAlert('Share Location')">
+                    <span class="alert-icon">📍</span>
+                    <span class="alert-label">Share Location</span>
+                </div>
+                <div class="alert-card" onclick="triggerAlert('Ambulance Required')" style="border-color: #ff3b30; background: #fff5f5;">
+                    <span class="alert-icon">🚑</span>
+                    <span class="alert-label" style="color: #df2c25;">Ambulance</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function triggerAlert(type) {
+        alert(`Bhai, "${type}" ka alert trigger ho gaya hai! Next step me iska WhatsApp/SMS notification setup karenge.`);
+    }
+
+    loadHelperDashboard();
+</script>
+
 </body>
 </html>
