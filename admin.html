@@ -23,7 +23,6 @@
             border: 1px solid #e5e5ea; 
         }
         
-        /* Dashboard Header */
         .header { 
             display: flex; 
             justify-content: space-between; 
@@ -42,7 +41,6 @@
             font-size: 12px; 
         }
         
-        /* Search Box */
         .search-box { 
             width: 100%; 
             padding: 12px; 
@@ -65,7 +63,6 @@
             line-height: 1.4; 
         }
         
-        /* Supabase Spreadsheet Grid Layout */
         .table-wrapper { 
             overflow-x: auto; 
             border: 1px solid #e5e5ea; 
@@ -103,7 +100,6 @@
         td:last-child { border-right: none; }
         tr:hover { background: #f9f9f9; }
         
-        /* Live Content Editable Cell */
         .editable-cell { 
             background: transparent; 
             cursor: pointer; 
@@ -122,7 +118,6 @@
             cursor: text; 
         }
         
-        /* Badges matching Supabase Grid Table */
         .id-label { 
             font-weight: 700; 
             color: #007aff; 
@@ -178,30 +173,41 @@
 </div>
 
 <script>
-    // Supabase Credentials
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
     let allRegistrations = [];
+    let activeTableName = 'registrations'; // Default fallback
 
-    // Load Data Function (Fixed to 'ragistrations')
+    // Smart Auto-Detect Fetch Function
     async function fetchAdminData() {
         try {
-            const { data, error } = await _supabase
-                .from('ragistrations')
+            // First attempt with 'registrations'
+            let response = await _supabase
+                .from('registrations')
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error) {
-                document.getElementById('data-rows').innerHTML = `<tr><td colspan="5" class="no-data">Error: ${error.message}</td></tr>`;
+            // If it fails, fallback to 'ragistrations'
+            if (response.error && response.error.message.includes('not find')) {
+                console.log("Switching to ragistrations table...");
+                activeTableName = 'ragistrations';
+                response = await _supabase
+                    .from('ragistrations')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+            }
+
+            if (response.error) {
+                document.getElementById('data-rows').innerHTML = `<tr><td colspan="5" class="no-data">Error: ${response.error.message}</td></tr>`;
                 return;
             }
 
-            if (data && data.length > 0) {
-                allRegistrations = data;
-                document.getElementById('total-count').innerText = 'Rows: ' + data.length;
-                renderTableSheet(data);
+            if (response.data && response.data.length > 0) {
+                allRegistrations = response.data;
+                document.getElementById('total-count').innerText = 'Rows: ' + response.data.length;
+                renderTableSheet(response.data);
             } else {
                 document.getElementById('data-rows').innerHTML = '<tr><td colspan="5" class="no-data">No data rows found inside table.</td></tr>';
             }
@@ -210,7 +216,6 @@
         }
     }
 
-    // Grid Renderer Layout
     function renderTableSheet(dataList) {
         const tbody = document.getElementById('data-rows');
         tbody.innerHTML = ''; 
@@ -220,15 +225,15 @@
             const regDate = row.created_at ? new Date(row.created_at).toLocaleString('en-IN') : 'N/A';
 
             tr.innerHTML = `
-                <td><span class="id-label">${row.sticker_id}</span></td>
+                <td><span class="id-label">${row.sticker_id || 'N/A'}</span></td>
                 <td>
-                    <div class="editable-cell" contenteditable="true" onblur="updateCell('${row.sticker_id}', 'full_name', this)">${row.full_name}</div>
+                    <div class="editable-cell" contenteditable="true" onblur="updateCell('${row.sticker_id}', 'full_name', this)">${row.full_name || ''}</div>
                 </td>
                 <td>
-                    <div class="editable-cell vehicle-label" contenteditable="true" onblur="updateCell('${row.sticker_id}', 'vehicle_number', this)">${row.vehicle_number}</div>
+                    <div class="editable-cell vehicle-label" contenteditable="true" onblur="updateCell('${row.sticker_id}', 'vehicle_number', this)">${row.vehicle_number || ''}</div>
                 </td>
                 <td>
-                    <div class="editable-cell" contenteditable="true" onblur="updateCell('${row.sticker_id}', 'phone_number', this)">${row.phone_number}</div>
+                    <div class="editable-cell" contenteditable="true" onblur="updateCell('${row.sticker_id}', 'phone_number', this)">${row.phone_number || ''}</div>
                 </td>
                 <td style="color: #8e8e93; font-size: 11px; white-space: nowrap;">${regDate}</td>
             `;
@@ -236,7 +241,6 @@
         });
     }
 
-    // Live Auto Save Execution (Fixed to 'ragistrations')
     async function updateCell(id, columnName, element) {
         const newValue = element.innerText.trim();
         
@@ -251,7 +255,7 @@
             updateData[columnName] = newValue;
 
             const { error } = await _supabase
-                .from('ragistrations')
+                .from(activeTableName)
                 .update(updateData)
                 .eq('sticker_id', id);
 
@@ -259,7 +263,6 @@
                 alert("Update Failed: " + error.message);
                 fetchAdminData();
             } else {
-                // Background update
                 const index = allRegistrations.findIndex(item => item.sticker_id === id);
                 if (index !== -1) {
                     allRegistrations[index][columnName] = newValue;
@@ -270,15 +273,14 @@
         }
     }
 
-    // Setup Live Search Listener
     document.getElementById('search-input').addEventListener('input', function() {
         const query = this.value.toLowerCase().trim();
         
         const filteredData = allRegistrations.filter(item => {
             return (
-                item.sticker_id.toLowerCase().includes(query) ||
-                item.full_name.toLowerCase().includes(query) ||
-                item.vehicle_number.toLowerCase().includes(query)
+                (item.sticker_id && item.sticker_id.toLowerCase().includes(query)) ||
+                (item.full_name && item.full_name.toLowerCase().includes(query)) ||
+                (item.vehicle_number && item.vehicle_number.toLowerCase().includes(query))
             );
         });
 
@@ -289,7 +291,6 @@
         }
     });
 
-    // Run on startup
     fetchAdminData();
 </script>
 
