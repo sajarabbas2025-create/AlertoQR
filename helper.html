@@ -112,6 +112,7 @@
         .alert-card.emergency:active { background: #ffe5e5; }
         .alert-card.emergency .alert-label { color: #df2c25; }
 
+        /* Hidden Native Systems */
         #camera-input { display: none; }
 
         .status-msg { text-align: center; color: #8e8e93; font-style: italic; padding: 30px 0; font-size: 15px; }
@@ -146,14 +147,13 @@
 
     async function loadHelperDashboard() {
         if (!stickerId) {
-            document.getElementById('main-content').innerHTML = '<div class="status-msg" style="color:#ff3b30; font-weight:bold;">❌ Error: No Sticker ID detected in link.</div>';
+            document.getElementById('main-content').innerHTML = '<div class="status-msg" style="color:#ff3b30; font-weight:bold;">❌ Error: No Sticker ID found in link.</div>';
             return;
         }
 
         document.getElementById('display-id').innerText = `ID: ${stickerId}`;
 
         try {
-            // Straightforward check on your active table name
             let { data, error } = await _supabase.from('ragistrations').select('*').eq('sticker_id', stickerId).maybeSingle();
             
             if (error || !data) {
@@ -214,9 +214,9 @@
                     <span class="alert-icon">🚛</span>
                     <span class="alert-label">Tow Alert</span>
                 </div>
-                <div class="alert-card" onclick="sendWhatsAppAlert('Open Window')">
-                    <span class="alert-icon">🪟</span>
-                    <span class="alert-label">Open Window</span>
+                <div class="alert-card" onclick="sendWhatsAppAlert('Attention')">
+                    <span class="alert-icon">🚗💨</span>
+                    <span class="alert-label">ATTENTION: Door/Lights</span>
                 </div>
                 <div class="alert-card" onclick="shareLiveLocation()">
                     <span class="alert-icon">📍</span>
@@ -245,8 +245,8 @@
             messageText = `🚨 *ALERTO QR ALERT* 🚨\n\nDear Owner, your vehicle *${globalVehicleNumber}* is wrongly parked or blocking the way. Please move it immediately.`;
         } else if (alertType === 'Tow Alert') {
             messageText = `🚛 *ALERTO QR ALERT* 🚛\n\nUrgent! Your vehicle *${globalVehicleNumber}* is in a towing zone or a tow truck is nearby.`;
-        } else if (alertType === 'Open Window') {
-            messageText = `🪟 *ALERTO QR ALERT* 🪟\n\nHello, someone noticed that the window or door of your vehicle *${globalVehicleNumber}* is left open. Please check it.`;
+        } else if (alertType === 'Attention') {
+            messageText = `🚗💡 *ALERTO QR ATTENTION ALERT* 💡🚗\n\nHello, someone noticed that a *Door/Window* is open or *Headlights* are ON for your vehicle *${globalVehicleNumber}*. Please check it immediately.`;
         } else if (alertType === 'Ambulance Required') {
             messageText = `🚑 *EMERGENCY ALERTO QR ALERT* 🚑\n\nCRITICAL! There is an emergency near your vehicle *${globalVehicleNumber}*. Please check instantly!`;
         }
@@ -264,7 +264,7 @@
             navigator.geolocation.getCurrentPosition(function(position) {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
-                // Fixed Perfectly Formatted URL
+                // Perfectly Formatted and Safe URL Syntax
                 const mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
                 
                 const locationMessage = `📍 *ALERTO QR LOCATION* 📍\n\nHelper has shared their current location near your vehicle *${globalVehicleNumber}*:\n${mapLink}`;
