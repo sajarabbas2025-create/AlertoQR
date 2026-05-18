@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlertoQR | Owner Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f4f5f7; padding: 15px; margin: 0; }
+        .card { max-width: 450px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 12px; }
+        .badge { font-weight: bold; padding: 5px 12px; border-radius: 20px; font-size: 12px; text-transform: uppercase; }
+        .badge-active { background: #e2fbe6; color: #1a7f37; }
+        .badge-expired { background: #ffebe9; color: #cf222e; }
+        .info-row { display: flex; justify-content: space-between; margin: 12px 0; font-size: 14px; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .btn-pay { background: #007aff; color: #fff; }
+        .trust-box { margin-top: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px dashed #cccccc; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h2 style="margin:0; font-size:20px;">AlertoQR Dashboard</h2>
+        <span id="status-badge" class="badge">Loading...</span>
+    </div>
+    
+    <div id="content" style="margin-top:20px;"></div>
+</div>
+
+<script>
+    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
+    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    const stickerId = new URLSearchParams(window.location.search).get('id');
+
+    async function loadDashboard() {
+        if(!stickerId) { document.getElementById('content').innerHTML = "Sticker ID Missing"; return; }
+        
+        let { data: owner } = await _supabase.from('ragistrations').select('*').eq('sticker_id', stickerId).maybeSingle();
+        
+        if(!owner) { document.getElementById('content').innerHTML = "Account Not Found"; return; }
+
+        // Checking column 'expiary_date'
+        const isExpired = owner.status === 'Expired' || (owner.expiary_date && new Date() > new Date(owner.expiary_date));
+        document.getElementById('status-badge').innerText = isExpired ? "Expired" : "Active";
+        document.getElementById('status-badge').className = isExpired ? "badge badge-expired" : "badge badge-active";
+
+        document.getElementById('content').innerHTML = `
+            <div class="info-row"><span>Owner:</span><strong>${owner.full_name}</strong></div>
+            <div class="info-row"><span>Vehicle:</span><strong>${owner.vehicle_number}</strong></div>
+            <div class="info-row"><span>Valid Till:</span><strong>${owner.expiary_date || 'N/A'}</strong></div>
+            
+            ${isExpired ? `
+                <div style="background:#fff8e6; border:1px solid #ffd875; padding:15px; border-radius:10px; margin-top:15px;">
+                    <p style="margin:0 0 10px 0; font-size:14px; color:#b06000; font-weight:bold;">⚠️ Subscription Expired! Renew now to keep alerts active.</p>
+                    <button class="btn btn-pay" onclick="payRenewal()">🔄 Renew Subscription (₹199 / Year)</button>
+                    
+                    <div class="trust-box">
+                        <p style="margin: 0; font-size: 11px; color: #666; line-height: 1.4;">
+                            🔒 **Banking Verification Note:** <br>
+                            AlertoQR payments secure network par process hote hain. Pay button par click karne ke baad banking screen par aapko humare system head ka naam **'Mr Sajar Abbas'** dikhai dega. Yeh 100% safe aur certified hai.
+                        </p>
+                    </div>
+                </div>
+            ` : `<p style="color:green; text-align:center; font-weight:bold;">Your emergency alerts are live and running smoothly! 🟢</p>`}
+        `;
+    }
+
+    function payRenewal() {
+        const upiUrl = `upi://pay?pa=BHARATPE2V0N0K2G1X51584@unitype&pn=AlertoQR&am=199.00&cu=INR&tn=AlertoQR%20Renewal%20ID%20${stickerId}`;
+        window.location.href = upiUrl;
+    }
+
+    loadDashboard();
+</script>
+</body>
+</html>
