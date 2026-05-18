@@ -6,27 +6,31 @@
     <title>AlertoQR | Owner Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f4f5f7; padding: 15px; margin: 0; }
-        .card { max-width: 450px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 12px; }
-        .badge { font-weight: bold; padding: 5px 12px; border-radius: 20px; font-size: 12px; text-transform: uppercase; }
-        .badge-active { background: #e2fbe6; color: #1a7f37; }
-        .badge-expired { background: #ffebe9; color: #cf222e; }
-        .info-row { display: flex; justify-content: space-between; margin: 12px 0; font-size: 14px; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; }
-        .btn-pay { background: #007aff; color: #fff; }
-        .trust-box { margin-top: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px dashed #cccccc; text-align: left; }
+        body { font-family: sans-serif; background: #0f172a; color: #e2e8f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
+        .card { background: #1e293b; padding: 24px; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); border: 1px solid #334155; position: relative; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h2 { margin: 0; font-size: 22px; color: #fff; }
+        .badge { padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .badge-active { background: #16a34a; color: #fff; }
+        .badge-expired { background: #dc2626; color: #fff; }
+        .info-group { margin-bottom: 14px; background: #334155; padding: 10px 14px; border-radius: 8px; }
+        .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; margin-bottom: 2px; }
+        .value { font-size: 16px; font-weight: bold; color: #f8fafc; }
+        .edit-input { background: #1e293b; color: #fff; border: 1px solid #475569; padding: 4px 8px; border-radius: 4px; font-size: 15px; width: 90%; margin-top: 2px; font-weight: bold; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 10px; text-align: center; text-decoration: none; display: block; box-sizing: border-box; }
+        .btn-renew { background: #2563eb; color: #fff; }
+        .btn-renew:hover { background: #1d4ed8; }
+        .btn-edit { background: #f59e0b; color: #fff; }
+        .btn-save { background: #10b981; color: #fff; }
+        .btn-cancel { background: #64748b; color: #fff; }
+        .notice-box { background: #451a03; border: 1px solid #78350f; color: #fef3c7; padding: 12px; border-radius: 8px; font-size: 13px; margin-top: 15px; line-height: 1.4; }
+        .loading { text-align: center; font-size: 16px; color: #94a3b8; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="header">
-        <h2 style="margin:0; font-size:20px;">AlertoQR Dashboard</h2>
-        <span id="status-badge" class="badge">Loading...</span>
-    </div>
-    
-    <div id="content" style="margin-top:20px;"></div>
+<div class="card" id="main-card">
+    <div class="loading" id="loader-text">Loading Dashboard Records...</div>
 </div>
 
 <script>
@@ -34,50 +38,135 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    const stickerId = new URLSearchParams(window.location.search).get('id');
+    // URL se sticker ID nikalna (?id=AGRA001)
+    const urlParams = new URLSearchParams(window.location.search);
+    const stickerId = urlParams.get('id');
 
-    async function loadDashboard() {
-        if(!stickerId) { document.getElementById('content').innerHTML = "Sticker ID Missing"; return; }
-        
-        let { data: owner, error } = await _supabase.from('registrations').select('*').eq('sticker_id', stickerId).maybeSingle();
-        if(error || !owner) {
-            let { data: ownerAlt } = await _supabase.from('ragistrations').select('*').eq('sticker_id', stickerId).maybeSingle();
-            owner = ownerAlt;
+    let userData = null;
+    let isEditing = false;
+
+    async function fetchDashboardData() {
+        if (!stickerId) {
+            document.getElementById('main-card').innerHTML = `<div style="text-align:center;color:#ef4444;font-weight:bold;">❌ Error: Sticker ID Missing in URL!</div>`;
+            return;
         }
-        
-        if(!owner) { document.getElementById('content').innerHTML = "Account Not Found"; return; }
 
-        const isExpired = owner.status === 'Expired' || (owner.expiary_date && new Date() > new Date(owner.expiary_date));
-        document.getElementById('status-badge').innerText = isExpired ? "Expired" : "Active";
-        document.getElementById('status-badge').className = isExpired ? "badge badge-expired" : "badge badge-active";
+        let { data: user, error } = await _supabase.from('ragistrations').select('*').eq('sticker_id', stickerId).single();
+        if (error || !user) {
+            let { data: userAlt } = await _supabase.from('registrations').select('*').eq('sticker_id', stickerId).single();
+            user = userAlt;
+        }
 
-        document.getElementById('content').innerHTML = `
-            <div class="info-row"><span>Owner:</span><strong>${owner.full_name || 'N/A'}</strong></div>
-            <div class="info-row"><span>Vehicle:</span><strong>${owner.vehicle_number || 'N/A'}</strong></div>
-            <div class="info-row"><span>Valid Till:</span><strong>${owner.expiary_date || 'N/A'}</strong></div>
+        if (!user) {
+            document.getElementById('main-card').innerHTML = `<div style="text-align:center;color:#ef4444;font-weight:bold;">❌ Profile Not Found for ID: ${stickerId}</div>`;
+            return;
+        }
+
+        userData = user;
+        renderDashboard();
+    }
+
+    function renderDashboard() {
+        // Pure Date Logic: Aaj ki tarikh se expiry date compare karna
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        let isExpired = true;
+        let formattedDate = "N/A";
+
+        if (userData.expiary_date) {
+            const expDate = new Date(userData.expiary_date);
+            expDate.setHours(0,0,0,0);
+            if (expDate > today) {
+                isExpired = false;
+            }
             
-            ${isExpired ? `
-                <div style="background:#fff8e6; border:1px solid #ffd875; padding:15px; border-radius:10px; margin-top:15px;">
-                    <p style="margin:0 0 10px 0; font-size:14px; color:#b06000; font-weight:bold;">⚠️ Subscription Expired! Renew now to keep alerts active.</p>
-                    <button class="btn btn-pay" onclick="payRenewal()">🔄 Renew Subscription (₹199 / Year)</button>
-                    
-                    <div class="trust-box">
-                        <p style="margin: 0; font-size: 11px; color: #666; line-height: 1.4;">
-                            🔒 **Banking Verification Note:** <br>
-                            AlertoQR payments secure network par process hote hain. Pay button par click karne ke baad banking screen par aapko humare system head ka naam **'Mr Sajar Abbas'** dikhai dega. Yeh 100% safe aur certified hai.
-                        </p>
-                    </div>
+            // Date ko readable format me badalna (DD-MM-YYYY)
+            const day = String(expDate.getDate()).padStart(2, '0');
+            const month = String(expDate.getMonth() + 1).padStart(2, '0');
+            const year = expDate.getFullYear();
+            formattedDate = `${day}-${month}-${year}`;
+        }
+
+        let cardHtml = `
+            <div class="header-flex">
+                <h2>AlertoQR Dashboard</h2>
+                <span class="badge ${!isExpired ? 'badge-active' : 'badge-expired'}">${isExpired ? 'Expired' : 'Active'}</span>
+            </div>
+
+            <div class="info-group">
+                <div class="label">Owner Name</div>
+                <div class="value" id="name-field">
+                    ${isEditing ? `<input type="text" class="edit-input" id="edit-name" value="${userData.full_name || ''}">` : (userData.full_name || 'N/A')}
                 </div>
-            ` : `<p style="color:green; text-align:center; font-weight:bold;">Your emergency alerts are live and running smoothly! 🟢</p>`}
+            </div>
+
+            <div class="info-group">
+                <div class="label">Vehicle Number</div>
+                <div class="value" id="vehicle-field">
+                    ${isEditing ? `<input type="text" class="edit-input" id="edit-vehicle" value="${userData.vehicle_number || ''}">` : (userData.vehicle_number || 'N/A')}
+                </div>
+            </div>
+
+            <div class="info-group">
+                <div class="label">Valid Till</div>
+                <div class="value" style="color: ${!isExpired ? '#22c55e' : '#ef4444'};">${formattedDate}</div>
+            </div>
         `;
+
+        // Edit aur Save ke buttons ka control
+        if (!isEditing) {
+            cardHtml += `<button class="btn btn-edit" onclick="toggleEdit(true)">✏️ Edit Profile Details</button>`;
+        } else {
+            cardHtml += `
+                <button class="btn btn-save" onclick="saveProfileChanges()">💾 Save Updates</button>
+                <button class="btn btn-cancel" onclick="toggleEdit(false)">Cancel</button>
+            `;
+        }
+
+        // Agar account expired hai tabhi Renew ka option aur alert dikhana
+        if (isExpired) {
+            cardHtml += `
+                <div class="notice-box">
+                    ⚠️ <b>Subscription Expired!</b> Please renew to keep your vehicle emergency alerts active.
+                </div>
+                <a href="https://pwa.bharatpe.com/pay/23588960" class="btn btn-renew">🔄 Renew Subscription (₹199 / Year)</a>
+            `;
+        }
+
+        document.getElementById('main-card').innerHTML = cardHtml;
     }
 
-    function payRenewal() {
-        const upiUrl = `upi://pay?pa=BHARATPE2V0N0K2G1X51584@unitype&pn=AlertoQR&am=199.00&cu=INR&tn=AlertoQR%20Renewal%20ID%20${stickerId}`;
-        window.location.href = upiUrl;
+    function toggleEdit(status) {
+        isEditing = status;
+        renderDashboard();
     }
 
-    loadDashboard();
+    async function saveProfileChanges() {
+        const newName = document.getElementById('edit-name').value.trim();
+        const newVehicle = document.getElementById('edit-vehicle').value.trim();
+
+        if (!newName || !newVehicle) {
+            alert("Fields cannot be empty!");
+            return;
+        }
+
+        let updateData = { full_name: newName, vehicle_number: newVehicle };
+
+        let { error } = await _supabase.from('ragistrations').update(updateData).eq('sticker_id', stickerId);
+        if (error) {
+            await _supabase.from('registrations').update(updateData).eq('sticker_id', stickerId);
+        }
+
+        alert("Your details updated successfully! 🎉");
+        userData.full_name = newName;
+        userData.vehicle_number = newVehicle;
+        isEditing = false;
+        fetchDashboardData(); // Fresh data pull karega
+    }
+
+    fetchDashboardData();
 </script>
+
 </body>
 </html>
