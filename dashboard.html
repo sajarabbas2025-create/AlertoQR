@@ -39,18 +39,21 @@
     async function loadDashboard() {
         if(!stickerId) { document.getElementById('content').innerHTML = "Sticker ID Missing"; return; }
         
-        let { data: owner } = await _supabase.from('ragistrations').select('*').eq('sticker_id', stickerId).maybeSingle();
+        let { data: owner, error } = await _supabase.from('registrations').select('*').eq('sticker_id', stickerId).maybeSingle();
+        if(error || !owner) {
+            let { data: ownerAlt } = await _supabase.from('ragistrations').select('*').eq('sticker_id', stickerId).maybeSingle();
+            owner = ownerAlt;
+        }
         
         if(!owner) { document.getElementById('content').innerHTML = "Account Not Found"; return; }
 
-        // Checking column 'expiary_date'
         const isExpired = owner.status === 'Expired' || (owner.expiary_date && new Date() > new Date(owner.expiary_date));
         document.getElementById('status-badge').innerText = isExpired ? "Expired" : "Active";
         document.getElementById('status-badge').className = isExpired ? "badge badge-expired" : "badge badge-active";
 
         document.getElementById('content').innerHTML = `
-            <div class="info-row"><span>Owner:</span><strong>${owner.full_name}</strong></div>
-            <div class="info-row"><span>Vehicle:</span><strong>${owner.vehicle_number}</strong></div>
+            <div class="info-row"><span>Owner:</span><strong>${owner.full_name || 'N/A'}</strong></div>
+            <div class="info-row"><span>Vehicle:</span><strong>${owner.vehicle_number || 'N/A'}</strong></div>
             <div class="info-row"><span>Valid Till:</span><strong>${owner.expiary_date || 'N/A'}</strong></div>
             
             ${isExpired ? `
