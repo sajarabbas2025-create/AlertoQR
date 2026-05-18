@@ -20,7 +20,7 @@
         /* Bulk QR Section Styling */
         .panel-card { background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 20px; margin-bottom: 30px; }
         h2 { margin-top: 0; font-size: 18px; color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .input-group { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .input-field { background: #0f172a; color: #fff; border: 1px solid #475569; padding: 10px; border-radius: 6px; font-size: 14px; flex: 1; min-width: 120px; }
         
         /* QR Output Display Grid */
@@ -53,20 +53,22 @@
         .edit-input { background: #0f172a; color: #fff; border: 1px solid #475569; padding: 4px 8px; border-radius: 4px; font-size: 14px; width: 120px; }
         .loading { text-align: center; color: #94a3b8; padding: 20px; }
 
-        /* 🖨️ PRINT CONTROL: Print karte waqt baki sab gayab ho jayega, sirf QR stickers dikhenge */
+        /* 🖨️ PRINT STYLE CONTROL */
         @media print {
             body { background: white; color: black; padding: 0; }
-            .container > *:not(#qr-print-section) { display: none !notimportant; }
+            .container > *:not(#qr-print-section-wrapper) { display: none !important; }
             .container { max-width: 100%; }
-            #qr-print-section { border: none; background: transparent; padding: 0; max-height: none; overflow: visible; display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 20px; }
-            .qr-card { border: 1px dashed #000; box-shadow: none; page-break-inside: avoid; }
+            #qr-print-section-wrapper { border: none; background: transparent; padding: 0; }
+            #qr-print-section-wrapper h2, #qr-print-section-wrapper div:not(.qr-display-grid) { display: none !important; }
+            .qr-display-grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 20px !important; max-height: none !important; overflow: visible !important; background: transparent !important; border: none !important; padding: 0 !important; }
+            .qr-card { border: 1px dashed #000 !important; box-shadow: none !important; page-break-inside: avoid !important; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>AlertoQR Control Control Panel</h1>
+    <h1>AlertoQR Super Control Center</h1>
 
     <div class="stats-grid">
         <div class="stat-card"><h3>Total Earnings</h3><p id="stat-earnings">₹0</p></div>
@@ -74,17 +76,35 @@
         <div class="stat-card"><h3>Expired Users</h3><p id="stat-expired" style="color: #f87171;">0</p></div>
     </div>
 
-    <div class="panel-card">
-        <h2>🖨️ Bulk QR Code Generator</h2>
-        <div class="input-group">
-            <input type="text" id="qr-prefix" class="input-field" value="AGRA" placeholder="Prefix (e.g. AGRA)">
-            <input type="number" id="qr-start" class="input-field" value="1" placeholder="Start No.">
-            <input type="number" id="qr-end" class="input-field" value="10" placeholder="End No.">
+    <div class="panel-card" id="qr-print-section-wrapper">
+        <h2>🖨️ Smart Bulk QR Code Generator</h2>
+        
+        <div id="counter-reminder" style="background: #334155; padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; color: #38bdf8; display: inline-block; border-left: 4px solid #38bdf8;">
+            ℹ️ Type Unique Code below to fetch print history...
         </div>
+
+        <div class="input-group">
+            <div style="flex: 1; min-width: 150px;">
+                <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px; font-weight: bold;">Series Code (Prefix)</label>
+                <input type="text" id="qr-prefix" class="input-field" style="width: 100%; box-sizing: border-box;" value="ALQR" placeholder="e.g. ALQR, DL, LKO" oninput="checkLastUsedNumber()">
+            </div>
+            
+            <div style="flex: 1; min-width: 120px;">
+                <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px; font-weight: bold;">Start No.</label>
+                <input type="number" id="qr-start" class="input-field" style="width: 100%; box-sizing: border-box;" value="1" placeholder="e.g. 1">
+            </div>
+            
+            <div style="flex: 1; min-width: 120px;">
+                <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px; font-weight: bold;">End No.</label>
+                <input type="number" id="qr-end" class="input-field" style="width: 100%; box-sizing: border-box;" value="10" placeholder="e.g. 100">
+            </div>
+        </div>
+        
         <div style="display: flex; gap: 10px;">
             <button class="btn btn-primary" onclick="generateAdminBulkQRs()">🚀 Generate QR Codes</button>
             <button class="btn btn-success" id="btn-print-qr" onclick="window.print()" style="display: none;">🖨️ Print Generated QR Sheets</button>
         </div>
+        
         <div class="qr-display-grid" id="qr-print-section" style="display: none;"></div>
     </div>
 
@@ -117,7 +137,46 @@
     let allRecords = [];
     let editingId = null;
 
-    // ⚡ BULK QR GENERATOR FUNCTION
+    // 🔍 AUTOMATIC HISTORY DETECTOR FROM DATABASE
+    async function checkLastUsedNumber() {
+        const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
+        const reminderBox = document.getElementById('counter-reminder');
+        
+        if (prefix.length < 2) {
+            reminderBox.innerHTML = "ℹ️ Type Unique Code below to fetch print history...";
+            return;
+        }
+
+        reminderBox.innerHTML = `⏳ Checking database history for "${prefix}"...`;
+
+        let { data: records, error } = await _supabase
+            .from('registrations')
+            .select('sticker_id')
+            .like('sticker_id', `${prefix}%`);
+
+        if (error || !records || records.length === 0) {
+            reminderBox.innerHTML = `✅ <b>${prefix}</b> is completely fresh! No previous records found. Start from <b>No. 1</b>.`;
+            document.getElementById('qr-start').value = 1;
+            return;
+        }
+
+        let maxNum = 0;
+        records.forEach(r => {
+            const numPart = r.sticker_id.replace(prefix, '');
+            const parsed = parseInt(numPart);
+            if (!isNaN(parsed) && parsed > maxNum) {
+                maxNum = parsed;
+            }
+        });
+
+        const nextSuggestedNum = maxNum + 1;
+        reminderBox.innerHTML = `📢 History Found! Last sticker was <b>${prefix}${String(maxNum).padStart(3, '0')}</b>. Next print should start from <b>Start No. ${nextSuggestedNum}</b>.`;
+        
+        document.getElementById('qr-start').value = nextSuggestedNum;
+        document.getElementById('qr-end').value = nextSuggestedNum + 9; // Sets 10 items batch length automatically
+    }
+
+    // 🚀 BULK QR RENDERING AND ENCODING LOGIC
     function generateAdminBulkQRs() {
         const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
         const startNum = parseInt(document.getElementById('qr-start').value);
@@ -125,14 +184,14 @@
         const displayGrid = document.getElementById('qr-print-section');
         
         if (!prefix || isNaN(startNum) || isNaN(endNum) || startNum > endNum) {
-            alert("Please enter a valid Prefix, Start Number, and End Number.");
+            alert("Please input valid Series Configuration bounds.");
             return;
         }
 
         displayGrid.innerHTML = '';
         displayGrid.style.display = 'grid';
 
-        // 🧠 AUTOMATIC LIVE DOMAIN BASE DETECTOR (Aapki live link automatic pakad lega)
+        // Captures base domain and points automatically to dashboard file route
         const currentDomain = window.location.origin + window.location.pathname.replace('admin.html', 'dashboard.html');
         const baseDashboardUrl = `${currentDomain}?id=`;
 
@@ -163,7 +222,7 @@
         document.getElementById('btn-print-qr').style.display = 'inline-block';
     }
 
-    // 📋 DATABASE TABLE LOGIC
+    // 📋 LIVE DATABASE REAL-TIME RENDER TRUCKS
     async function loadAdminPanelData() {
         document.getElementById('loading-text').style.display = 'block';
         document.getElementById('data-table').style.display = 'none';
@@ -178,6 +237,9 @@
         allRecords = records;
         calculateStats();
         renderTableRows();
+        
+        // Triggers historical check for default 'ALQR' code when page loads
+        checkLastUsedNumber();
 
         document.getElementById('loading-text').style.display = 'none';
         document.getElementById('data-table').style.display = 'table';
@@ -261,7 +323,7 @@
 
     async function activateSubscription(stickerId) {
         const newExpiry = new Date();
-        newExpiry.setFullYear(newExpiry.getFullYear() + 1); // 2027 Expiry logic
+        newExpiry.setFullYear(newExpiry.getFullYear() + 1);
         
         const yyyy = newExpiry.getFullYear();
         const mm = String(newExpiry.getMonth() + 1).padStart(2, '0');
@@ -271,7 +333,7 @@
         const updatePayload = { status: 'Active', expiry_date: dbDateFormat };
         let { error } = await _supabase.from('registrations').update(updatePayload).eq('sticker_id', stickerId);
 
-        if(error) { alert("Error activating subscription!"); return; }
+        if(error) { alert("Error updating subscription table record!"); return; }
 
         alert(`Status Updated Successfully! 🚀 Sticker ${stickerId} activated till ${dd}-${mm}-${yyyy}`);
         loadAdminPanelData();
