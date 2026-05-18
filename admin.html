@@ -53,8 +53,17 @@
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     async function loadAdminData() {
-        let { data: users, error } = await _supabase.from('ragistrations').select('*');
-        if(error) return;
+        // Dono spellings ko support karne ke liye safe check
+        let { data: users, error } = await _supabase.from('registrations').select('*');
+        if(error || !users) {
+            let { data: usersAlt } = await _supabase.from('ragistrations').select('*');
+            users = usersAlt;
+        }
+        
+        if(!users) {
+            document.getElementById('user-rows').innerHTML = "<tr><td colspan='5' style='text-align:center; color:#ef4444;'>Table not found in Supabase! Please check table name.</td></tr>";
+            return;
+        }
 
         let totalRevenue = 0;
         let activeCount = 0;
@@ -76,7 +85,7 @@
                     <td><strong>${user.sticker_id || 'N/A'}</strong></td>
                     <td>${user.full_name || 'N/A'}</td>
                     <td style="font-family:monospace;">${user.vehicle_number || 'N/A'}</td>
-                    <td><span style="color:${isCurrentlyActive ? '#22c55e' : '#ef4444'}; font-weight:bold;">${user.status}</span></td>
+                    <td><span style="color:${isCurrentlyActive ? '#22c55e' : '#ef4444'}; font-weight:bold;">${user.status || 'Active'}</span></td>
                     <td>${actionButton}</td>
                 </tr>
             `;
@@ -94,16 +103,15 @@
         if(newStatus === 'Active') {
             const d = new Date();
             d.setFullYear(d.getFullYear() + 1);
-            // Aapki table spelling ke mutabik 'expiary_date' likha hai yahan
             updateData.expiary_date = d.toISOString().split('T')[0];
         }
 
-        const { error } = await _supabase.from('ragistrations').update(updateData).eq('sticker_id', id);
-        if(!error) {
-            loadAdminData(); 
-        } else {
-            alert("Status update failed!");
+        // Dono table names par try karega update karne ka
+        let { error } = await _supabase.from('registrations').update(updateData).eq('sticker_id', id);
+        if(error) {
+            await _supabase.from('ragistrations').update(updateData).eq('sticker_id', id);
         }
+        loadAdminData(); 
     }
 
     loadAdminData();
