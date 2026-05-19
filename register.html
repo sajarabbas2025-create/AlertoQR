@@ -41,24 +41,28 @@
         <button class="btn btn-danger" onclick="window.location.href=`tel:${targetOwnerMobile}`">📞 Contact Vehicle Owner</button>
     </div>
 
+    <div id="awaiting-approval-section" style="display: none; padding: 20px; border: 1px dashed #eab308; border-radius: 8px; margin-top: 20px; background: #1e1b4b;">
+        <h3 style="color: #eab308; margin: 0 0 10px 0;">⏳ Verification Pending</h3>
+        <p style="font-size: 13px; color: #94a3b8; margin: 0;">This sticker is registered but waiting for activation/payment approval from AlertoQR Admin.</p>
+    </div>
+
     <div id="registration-section" style="display: none; text-align: left; margin-top: 20px; border-top: 1px solid #334155; padding-top: 20px;">
         <div class="form-group"><label>Owner Full Name</label><input type="text" id="reg-name" placeholder="Enter your full name"></div>
         <div class="form-group"><label>Mobile Number (For Alerts)</label><input type="tel" id="reg-mobile" placeholder="Enter 10-digit mobile number"></div>
         <div class="form-group"><label>Vehicle Number</label><input type="text" id="reg-vehicle" placeholder="e.g. UP32DD2420"></div>
         
-        <button class="btn btn-primary" id="btn-pay-trigger" onclick="showPaymentScreen()">🔒 Proceed to Pay ₹299</button>
+        <button class="btn btn-primary" id="btn-pay-trigger" onclick="showPaymentScreen()">🔒 Proceed to Options</button>
 
         <div id="payment-gateway-box" class="payment-box">
-            <h3 style="margin:0; font-size:16px; color:#eab308;">Secure UPI Payment</h3>
-            <p style="font-size:12px; color:#94a3b8; margin:5px 0;">Sticker Activation Charges</p>
+            <h3 style="margin:0; font-size:16px; color:#eab308;">Secure Registration</h3>
             <div class="price-tag">₹299.00</div>
             
-            <p style="font-size:11px; color:#94a3b8; margin-bottom:12px;">Click below to pay via GPay/PhonePe/Paytm</p>
-            <button class="btn btn-success" onclick="openUPIIntent()">📱 Pay via UPI App</button>
+            <button class="btn btn-success" onclick="openUPIIntent()">📱 Pay via UPI App (Live)</button>
+            <button class="btn btn-primary" style="background: #475569; margin-top: 8px;" onclick="registerCustomer('Pending')">⏱️ Request Demo/Admin Activation</button>
             
             <div style="margin-top: 15px; border-top: 1px solid #334155; padding-top: 10px;">
-                <p style="font-size:11px; color:#94a3b8;">Paid successfully? Click verify to complete registration.</p>
-                <button class="btn btn-primary" style="padding:8px; font-size:12px; margin-top:5px;" onclick="registerNewVehicle()">✅ Verify & Activate Sticker</button>
+                <p style="font-size:11px; color:#94a3b8;">If paid via UPI, click below to complete submission.</p>
+                <button class="btn btn-success" style="font-size:13px;" onclick="registerCustomer('Pending')">✅ Submit Registration Data</button>
             </div>
         </div>
     </div>
@@ -70,7 +74,7 @@
         <button class="btn btn-success" onclick="updateOwnerProfile()">💾 Save New Details</button>
     </div>
 
-    <div id="owner-toggle-div">
+    <div id="owner-toggle-div" style="display: none;">
         <button class="owner-zone-btn" id="btn-toggle-zone" onclick="toggleOwnerZone()">Are you the Owner? Login to Edit</button>
     </div>
 
@@ -91,16 +95,24 @@
     async function loadPageFlow() {
         if (!stickerId) { return; }
         let { data } = await _supabase.from('registrations').select('*').eq('sticker_id', stickerId).maybeSingle();
+        
         if (data) {
             globalUserData = data;
             targetOwnerMobile = data.mobile_number;
             document.getElementById('vehicle-display').value = `${data.vehicle_number} (${data.sticker_id})`;
-            document.getElementById('public-helper-section').style.display = 'block';
+            document.getElementById('owner-toggle-div').style.display = 'block';
+
+            if(data.status === 'Active') {
+                document.getElementById('public-helper-section').style.display = 'block';
+                document.getElementById('awaiting-approval-section').style.display = 'none';
+            } else {
+                document.getElementById('public-helper-section').style.display = 'none';
+                document.getElementById('awaiting-approval-section').style.display = 'block';
+            }
         } else {
             document.getElementById('page-title').innerText = "Sticker Activation";
             document.getElementById('vehicle-display').value = stickerId;
             document.getElementById('registration-section').style.display = 'block';
-            document.getElementById('owner-toggle-div').style.display = 'none';
         }
     }
 
@@ -108,41 +120,43 @@
         const name = document.getElementById('reg-name').value.trim();
         const mobile = document.getElementById('reg-mobile').value.trim();
         const vehicle = document.getElementById('reg-vehicle').value.trim();
-
         if(!name || !mobile || !vehicle) { alert("Please complete form details first!"); return; }
-
         document.getElementById('btn-pay-trigger').style.display = 'none';
         document.getElementById('payment-gateway-box').style.display = 'block';
     }
 
-    // 📱 YOUR BHARATPE UPI DEEP LINK LOGIC
     function openUPIIntent() {
         const vehicle = document.getElementById('reg-vehicle').value.trim().toUpperCase();
-        
-        // 🎯 YOUR FIXED BHARATPE UPI CONFIGURATION
         const yourUPI = "bhartipay905852@ibh"; 
-        const merchantName = "AlertoQR - Sajar Abbas"; // It will display both branding + name
+        const merchantName = "AlertoQR - Sajar Abbas";
         const amount = "299.00";
         const transactionNote = `Sticker Activation for ${vehicle}`;
-
-        // Standard NCI URI Intent Link
-        const upiUrl = `upi://pay?pa=${yourUPI}&pn=${encodeURIComponent(merchantName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
-        
-        window.location.href = upiUrl;
+        window.location.href = `upi://pay?pa=${yourUPI}&pn=${encodeURIComponent(merchantName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
     }
 
-    async function registerNewVehicle() {
+    async function registerCustomer(initialStatus) {
         const name = document.getElementById('reg-name').value.trim();
         const mobile = document.getElementById('reg-mobile').value.trim();
         const vehicle = document.getElementById('reg-vehicle').value.trim().toUpperCase();
 
+        let expiryDate = new Date();
+        expiryDate.setFullYear(expiryDate.getFullYear() + 1); // 1 Year validity default string
+        const formattedExpiry = expiryDate.toISOString().split('T')[0];
+
         let { error } = await _supabase.from('registrations').insert([
-            { sticker_id: stickerId, full_name: name, mobile_number: mobile, vehicle_number: vehicle }
+            { 
+                sticker_id: stickerId, 
+                full_name: name, 
+                mobile_number: mobile, 
+                vehicle_number: vehicle, 
+                status: initialStatus,
+                expiry_date: formattedExpiry
+            }
         ]);
 
         if (error) { alert("Error saving record!"); } 
         else {
-            alert("🎉 Payment Confirmed & Sticker Activated!");
+            alert("📥 Data submitted successfully! Awaiting Admin activation.");
             window.location.reload();
         }
     }
@@ -150,14 +164,18 @@
     function toggleOwnerZone() {
         const editPanel = document.getElementById('owner-edit-section');
         const helperPanel = document.getElementById('public-helper-section');
+        const awaitPanel = document.getElementById('awaiting-approval-section');
+        
         if (editPanel.style.display === 'none') {
             document.getElementById('edit-name').value = globalUserData.full_name;
             document.getElementById('edit-mobile').value = globalUserData.mobile_number;
             editPanel.style.display = 'block';
             helperPanel.style.display = 'none';
+            awaitPanel.style.display = 'none';
         } else {
             editPanel.style.display = 'none';
-            helperPanel.style.display = 'block';
+            if(globalUserData.status === 'Active') helperPanel.style.display = 'block';
+            else awaitPanel.style.display = 'block';
         }
     }
 
