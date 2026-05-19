@@ -3,95 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Vehicle | AlertoQR</title>
+    <title>AlertoQR | Vehicle Assistance</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; padding: 20px; color: #1a1a1a; }
-        .header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 25px; }
-        .step { color: #888; font-size: 11px; text-transform: uppercase; font-weight: bold; }
-        h1 { font-size: 26px; font-weight: 800; margin: 5px 0; }
-        p { color: #666; font-size: 14px; margin-bottom: 30px; line-height: 1.4; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 11px; font-weight: 700; color: #888; margin-bottom: 8px; text-transform: uppercase; }
-        input { width: 100%; padding: 14px; border: 1px solid #e0e0e0; border-radius: 4px; background: #f9f9f9; box-sizing: border-box; font-size: 16px; }
-        .btn-save { width: 100%; padding: 16px; background: #000; color: #fff; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .id-badge { color: #000; font-weight: bold; font-size: 14px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #fff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; box-sizing: border-box; }
+        .card { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 12px; width: 100%; max-width: 420px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center; }
+        h2 { margin-top: 0; color: #38bdf8; margin-bottom: 5px; font-size: 24px; }
+        .tagline { color: #94a3b8; font-size: 13px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; font-weight: 600; }
+        input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 15px; }
+        input:disabled { background: #1e293b; color: #cbd5e1; border-color: #334155; cursor: not-allowed; text-align: center; font-weight: bold; font-size: 18px; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; margin-top: 10px; display: block; box-sizing: border-box; }
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-success { background: #10b981; color: #fff; }
+        .btn-danger { background: #dc2626; color: #fff; font-size: 16px; }
+        .owner-zone-btn { background: none; border: 1px dashed #475569; color: #94a3b8; font-size: 12px; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-top: 25px; }
+        .status-msg { text-align: center; font-size: 14px; margin-top: 12px; font-weight: 500; }
+        .payment-box { display: none; background: #0f172a; border: 1px dashed #eab308; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center; }
+        .price-tag { font-size: 28px; font-weight: bold; color: #4ade80; margin: 10px 0; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <b style="font-size: 18px;">AlertoQR</b>
-        <span id="display-id" class="id-badge">ID: Loading...</span>
-    </div>
-    <div class="step">Step 1 of 2</div>
-    <h1>Register your vehicle</h1>
-    <p>Apna naam, vehicle number aur contact numbers daalein. Ye numbers QR scan karne wale helper ko show honge.</p>
 
-    <div class="form-group">
-        <label>Full Name *</label>
-        <input type="text" id="full_name" placeholder="Sajar Abbas">
-    </div>
-    <div class="form-group">
-        <label>Vehicle Number *</label>
-        <input type="text" id="vehicle_number" placeholder="Up32dd2420">
-    </div>
-    <div class="form-group">
-        <label>Primary Mobile *</label>
-        <input type="tel" id="phone_number" placeholder="6388522427">
+<div class="card">
+    <div style="font-size: 14px; font-weight: bold; color: #64748b; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;">AlertoQR Safety</div>
+    <h2 id="page-title">Vehicle Alert System</h2>
+    <p id="page-desc" class="tagline">Scan QR to contact the vehicle owner instantly.</p>
+    
+    <div class="form-group" style="margin-top: 20px;">
+        <label style="text-align: center; display: block;">VEHICLE NUMBER / STICKER ID</label>
+        <input type="text" id="vehicle-display" disabled value="Fetching...">
     </div>
 
-    <button class="btn-save" onclick="saveData()">✓ Save details</button>
+    <div id="public-helper-section" style="display: none;">
+        <p style="font-size: 14px; color: #e2e8f0; margin: 20px 0 10px;">Is this vehicle wrongly parked or in an emergency?</p>
+        <button class="btn btn-danger" onclick="window.location.href=`tel:${targetOwnerMobile}`">📞 Contact Vehicle Owner</button>
+    </div>
 
-    <script>
-        // Supabase URL aur aapki bheji hui asli Anon Public Key
-        const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
+    <div id="registration-section" style="display: none; text-align: left; margin-top: 20px; border-top: 1px solid #334155; padding-top: 20px;">
+        <div class="form-group"><label>Owner Full Name</label><input type="text" id="reg-name" placeholder="Enter your full name"></div>
+        <div class="form-group"><label>Mobile Number (For Alerts)</label><input type="tel" id="reg-mobile" placeholder="Enter 10-digit mobile number"></div>
+        <div class="form-group"><label>Vehicle Number</label><input type="text" id="reg-vehicle" placeholder="e.g. UP32DD2420"></div>
+        
+        <button class="btn btn-primary" id="btn-pay-trigger" onclick="showPaymentScreen()">🔒 Proceed to Pay ₹299</button>
 
-        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        <div id="payment-gateway-box" class="payment-box">
+            <h3 style="margin:0; font-size:16px; color:#eab308;">Secure UPI Payment</h3>
+            <p style="font-size:12px; color:#94a3b8; margin:5px 0;">Sticker Activation Charges</p>
+            <div class="price-tag">₹299.00</div>
+            
+            <p style="font-size:11px; color:#94a3b8; margin-bottom:12px;">Click below to pay via GPay/PhonePe/Paytm</p>
+            <button class="btn btn-success" onclick="openUPIIntent()">📱 Pay via UPI App</button>
+            
+            <div style="margin-top: 15px; border-top: 1px solid #334155; padding-top: 10px;">
+                <p style="font-size:11px; color:#94a3b8;">Paid successfully? Click verify to complete registration.</p>
+                <button class="btn btn-primary" style="padding:8px; font-size:12px; margin-top:5px;" onclick="registerNewVehicle()">✅ Verify & Activate Sticker</button>
+            </div>
+        </div>
+    </div>
 
-        // URL se ID nikalna
-        const urlParams = new URLSearchParams(window.location.search);
-        let stickerId = urlParams.get('id');
+    <div id="owner-edit-section" style="display: none; text-align: left; margin-top: 20px; border-top: 1px solid #eab308; padding-top: 20px; background: #1e1b4b; padding: 15px; border-radius: 8px;">
+        <h4 style="margin: 0 0 10px 0; color: #eab308; text-align: center;">⚙️ Owner Control Dashboard</h4>
+        <div class="form-group"><label>Update Name</label><input type="text" id="edit-name"></div>
+        <div class="form-group"><label>Update Mobile Number</label><input type="tel" id="edit-mobile"></div>
+        <button class="btn btn-success" onclick="updateOwnerProfile()">💾 Save New Details</button>
+    </div>
 
-        if (!stickerId) {
-            stickerId = "AGRA001";
+    <div id="owner-toggle-div">
+        <button class="owner-zone-btn" id="btn-toggle-zone" onclick="toggleOwnerZone()">Are you the Owner? Login to Edit</button>
+    </div>
+
+    <div id="msg" class="status-msg"></div>
+</div>
+
+<script>
+    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
+    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const stickerId = urlParams.get('id');
+    
+    let targetOwnerMobile = ""; 
+    let globalUserData = null;
+
+    async function loadPageFlow() {
+        if (!stickerId) { return; }
+        let { data } = await _supabase.from('registrations').select('*').eq('sticker_id', stickerId).maybeSingle();
+        if (data) {
+            globalUserData = data;
+            targetOwnerMobile = data.mobile_number;
+            document.getElementById('vehicle-display').value = `${data.vehicle_number} (${data.sticker_id})`;
+            document.getElementById('public-helper-section').style.display = 'block';
+        } else {
+            document.getElementById('page-title').innerText = "Sticker Activation";
+            document.getElementById('vehicle-display').value = stickerId;
+            document.getElementById('registration-section').style.display = 'block';
+            document.getElementById('owner-toggle-div').style.display = 'none';
         }
-        document.getElementById('display-id').innerText = 'ID: ' + stickerId;
+    }
 
-        async function saveData() {
-            const name = document.getElementById('full_name').value.trim();
-            const vnum = document.getElementById('vehicle_number').value.trim();
-            const phone = document.getElementById('phone_number').value.trim();
+    function showPaymentScreen() {
+        const name = document.getElementById('reg-name').value.trim();
+        const mobile = document.getElementById('reg-mobile').value.trim();
+        const vehicle = document.getElementById('reg-vehicle').value.trim();
 
-            if (!name || !vnum || !phone) { 
-                alert("Bhai, pehle saari details fill karo!"); 
-                return; 
-            }
+        if(!name || !mobile || !vehicle) { alert("Please complete form details first!"); return; }
 
-            try {
-                // Table mein data insert/update karne ke liye query
-                const { data, error } = await _supabase
-                    .from('registrations')
-                    .upsert([
-                        { 
-                            sticker_id: stickerId, 
-                            full_name: name, 
-                            vehicle_number: vnum, 
-                            phone_number: phone 
-                        }
-                    ], { onConflict: 'sticker_id' });
+        document.getElementById('btn-pay-trigger').style.display = 'none';
+        document.getElementById('payment-gateway-box').style.display = 'block';
+    }
 
-                if (error) {
-                    alert("Database Error: " + error.message);
-                } else {
-                    alert("Mubarak ho! Vehicle Registered Successfully!");
-                    window.location.href = `helper.html?id=${stickerId}`;
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Technical issue hai, please fir se try karein.");
-            }
+    // 📱 YOUR BHARATPE UPI DEEP LINK LOGIC
+    function openUPIIntent() {
+        const vehicle = document.getElementById('reg-vehicle').value.trim().toUpperCase();
+        
+        // 🎯 YOUR FIXED BHARATPE UPI CONFIGURATION
+        const yourUPI = "bhartipay905852@ibh"; 
+        const merchantName = "AlertoQR - Sajar Abbas"; // It will display both branding + name
+        const amount = "299.00";
+        const transactionNote = `Sticker Activation for ${vehicle}`;
+
+        // Standard NCI URI Intent Link
+        const upiUrl = `upi://pay?pa=${yourUPI}&pn=${encodeURIComponent(merchantName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+        
+        window.location.href = upiUrl;
+    }
+
+    async function registerNewVehicle() {
+        const name = document.getElementById('reg-name').value.trim();
+        const mobile = document.getElementById('reg-mobile').value.trim();
+        const vehicle = document.getElementById('reg-vehicle').value.trim().toUpperCase();
+
+        let { error } = await _supabase.from('registrations').insert([
+            { sticker_id: stickerId, full_name: name, mobile_number: mobile, vehicle_number: vehicle }
+        ]);
+
+        if (error) { alert("Error saving record!"); } 
+        else {
+            alert("🎉 Payment Confirmed & Sticker Activated!");
+            window.location.reload();
         }
-    </script>
+    }
+
+    function toggleOwnerZone() {
+        const editPanel = document.getElementById('owner-edit-section');
+        const helperPanel = document.getElementById('public-helper-section');
+        if (editPanel.style.display === 'none') {
+            document.getElementById('edit-name').value = globalUserData.full_name;
+            document.getElementById('edit-mobile').value = globalUserData.mobile_number;
+            editPanel.style.display = 'block';
+            helperPanel.style.display = 'none';
+        } else {
+            editPanel.style.display = 'none';
+            helperPanel.style.display = 'block';
+        }
+    }
+
+    async function updateOwnerProfile() {
+        const newName = document.getElementById('edit-name').value.trim();
+        const newMobile = document.getElementById('edit-mobile').value.trim();
+        await _supabase.from('registrations').update({ full_name: newName, mobile_number: newMobile }).eq('sticker_id', stickerId);
+        alert("✅ Updated!");
+        window.location.reload();
+    }
+
+    loadPageFlow();
+</script>
 </body>
 </html>
