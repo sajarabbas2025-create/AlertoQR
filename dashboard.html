@@ -3,130 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR | Super Admin Panel</title>
+    <title>AlertoQR | Gatekeeper</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 20px; }
-        .container { max-width: 1100px; margin: 0 auto; }
-        h1 { color: #fff; font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #334155; padding-bottom: 10px; }
-        
-        /* Stats Styling */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; text-align: center; }
-        .stat-card h3 { margin: 0 0 10px 0; font-size: 14px; color: #94a3b8; text-transform: uppercase; }
-        .stat-card p { margin: 0; font-size: 24px; font-weight: bold; color: #38bdf8; }
-        
-        /* Bulk QR Section Styling */
-        .panel-card { background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 20px; margin-bottom: 30px; }
-        h2 { margin-top: 0; font-size: 18px; color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        .input-group { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .input-field { background: #0f172a; color: #fff; border: 1px solid #475569; padding: 10px; border-radius: 6px; font-size: 14px; flex: 1; min-width: 120px; }
-        
-        /* QR Output Display Grid */
-        .qr-display-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-top: 15px; background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; max-height: 400px; overflow-y: auto; }
-        .qr-card { background: white; padding: 12px; border-radius: 8px; text-align: center; width: 130px; margin: 0 auto; }
-        .qr-holder { display: flex; justify-content: center; margin-bottom: 5px; }
-        .sticker-id { font-weight: bold; font-size: 14px; color: #0f172a; font-family: monospace; }
-        .brand-name { font-size: 10px; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
-
-        /* Table Styling */
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
-        th, td { padding: 12px 16px; border-bottom: 1px solid #334155; }
-        th { color: #94a3b8; font-size: 13px; text-transform: uppercase; }
-        td { color: #f8fafc; font-size: 14px; }
-        
-        /* Badges & Buttons */
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
-        .badge-active { background: #16a34a; color: #fff; }
-        .badge-expired { background: #dc2626; color: #fff; }
-        .btn { padding: 8px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s; }
-        .btn-activate { background: #16a34a; color: #fff; }
-        .btn-activate:hover { background: #15803d; }
-        .btn-edit { background: #eab308; color: #fff; }
-        .btn-save { background: #06b6d4; color: #fff; }
-        .btn-cancel { background: #64748b; color: #fff; }
-        .btn-primary { background: #2563eb; color: #fff; }
-        .btn-primary:hover { background: #1d4ed8; }
-        .btn-success { background: #10b981; color: #fff; }
-        .edit-input { background: #0f172a; color: #fff; border: 1px solid #475569; padding: 4px 8px; border-radius: 4px; font-size: 14px; width: 120px; }
-        .loading { text-align: center; color: #94a3b8; padding: 20px; }
-
-        /* 🖨️ PRINT STYLE CONTROL */
-        @media print {
-            body { background: white; color: black; padding: 0; }
-            .container > *:not(#qr-print-section-wrapper) { display: none !important; }
-            .container { max-width: 100%; }
-            #qr-print-section-wrapper { border: none; background: transparent; padding: 0; }
-            #qr-print-section-wrapper h2, #qr-print-section-wrapper div:not(.qr-display-grid) { display: none !important; }
-            .qr-display-grid { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 20px !important; max-height: none !important; overflow: visible !important; background: transparent !important; border: none !important; padding: 0 !important; }
-            .qr-card { border: 1px dashed #000 !important; box-shadow: none !important; page-break-inside: avoid !important; }
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .loader-box { text-align: center; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); width: 50px; height: 50px; border-radius: 50%; border-left-color: #38bdf8; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        h2 { margin: 0 0 10px; font-size: 20px; }
+        p { color: #94a3b8; margin: 0; font-size: 14px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>AlertoQR Control Control Panel</h1>
-
-    <div class="stats-grid">
-        <div class="stat-card"><h3>Total Earnings</h3><p id="stat-earnings">₹0</p></div>
-        <div class="stat-card"><h3>Active Users</h3><p id="stat-active" style="color: #4ade80;">0</p></div>
-        <div class="stat-card"><h3>Expired Users</h3><p id="stat-expired" style="color: #f87171;">0</p></div>
-    </div>
-
-    <div class="panel-card" id="qr-print-section-wrapper">
-        <h2>🖨️ Smart Bulk QR Code Generator</h2>
-        
-        <div id="counter-reminder" style="background: #334155; padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; color: #38bdf8; display: inline-block; border-left: 4px solid #38bdf8;">
-            ℹ️ Type Unique Code below to fetch print history...
-        </div>
-
-        <div class="input-group">
-            <div style="flex: 1; min-width: 150px;">
-                <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px; font-weight: bold;">Series Code (Prefix)</label>
-                <input type="text" id="qr-prefix" class="input-field" style="width: 100%; box-sizing: border-box;" value="ALQR" placeholder="e.g. ALQR, DL, LKO" oninput="checkLastUsedNumber()">
-            </div>
-            
-            <div style="flex: 1; min-width: 120px;">
-                <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px; font-weight: bold;">Start No.</label>
-                <input type="number" id="qr-start" class="input-field" style="width: 100%; box-sizing: border-box;" value="1" placeholder="e.g. 1">
-            </div>
-            
-            <div style="flex: 1; min-width: 120px;">
-                <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px; font-weight: bold;">End No.</label>
-                <input type="number" id="qr-end" class="input-field" style="width: 100%; box-sizing: border-box;" value="10" placeholder="e.g. 100">
-            </div>
-        </div>
-        
-        <div style="display: flex; gap: 10px;">
-            <button class="btn btn-primary" onclick="generateAdminBulkQRs()">🚀 Generate QR Codes</button>
-            <button class="btn btn-success" id="btn-print-qr" onclick="window.print()" style="display: none;">🖨️ Print Generated QR Sheets</button>
-        </div>
-        
-        <div class="qr-display-grid" id="qr-print-section" style="display: none;"></div>
-    </div>
-
-    <div class="panel-card">
-        <h2>👥 Customer Registrations & Plan Controls</h2>
-        <div id="loading-text" class="loading">Loading database records...</div>
-        <div class="table-wrapper">
-            <table id="data-table" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Sticker ID</th>
-                        <th>Owner Name</th>
-                        <th>Vehicle Number</th>
-                        <th>Status</th>
-                        <th>Expiry Date</th>
-                        <th>Action Controls</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body"></tbody>
-            </table>
-        </div>
-    </div>
+<div class="loader-box">
+    <div class="spinner"></div>
+    <h2 id="status-title">Checking Sticker Status...</h2>
+    <p id="status-desc">Please wait while we route your request.</p>
 </div>
 
 <script>
@@ -134,240 +27,51 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    let allRecords = [];
-    let editingId = null;
+    // URL se ID nikalne ke liye (?id=ALQR001)
+    const urlParams = new URLSearchParams(window.location.search);
+    const stickerId = urlParams.get('id');
 
-    // 🔍 DATABASE SE LAST NUMBER TRACK KARNE KA SMART SYSTEM
-    async function checkLastUsedNumber() {
-        const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
-        const reminderBox = document.getElementById('counter-reminder');
-        
-        if (prefix.length < 2) {
-            reminderBox.innerHTML = "ℹ️ Type Unique Code below to fetch print history...";
+    async function routeUser() {
+        if (!stickerId) {
+            document.getElementById('status-title').innerText = "Invalid QR Code";
+            document.getElementById('status-desc').innerText = "No Sticker ID found in the URL.";
             return;
         }
 
-        reminderBox.innerHTML = `⏳ Checking database history for "${prefix}"...`;
+        try {
+            // Supabase Database mein check karo ki yeh ID pehle se registered hai ya nahi
+            let { data, error } = await _supabase
+                .from('registrations')
+                .select('*')
+                .eq('sticker_id', stickerId)
+                .maybeSingle();
 
-        let { data: records, error } = await _supabase
-            .from('registrations')
-            .select('sticker_id')
-            .like('sticker_id', `${prefix}%`);
+            if (error) throw error;
 
-        if (error || !records || records.length === 0) {
-            reminderBox.innerHTML = `✅ <b>${prefix}</b> is completely fresh! No previous records found. Start from <b>No. 1</b>.`;
-            document.getElementById('qr-start').value = 1;
-            return;
-        }
-
-        let maxNum = 0;
-        records.forEach(r => {
-            const numPart = r.sticker_id.replace(prefix, '');
-            const parsed = parseInt(numPart);
-            if (!isNaN(parsed) && parsed > maxNum) {
-                maxNum = parsed;
-            }
-        });
-
-        const nextSuggestedNum = maxNum + 1;
-        const formattedLastSticker = `${prefix}${String(maxNum).padStart(3, '0')}`;
-        
-        reminderBox.innerHTML = `📢 History Found! Last sticker was <b>${formattedLastSticker}</b>. Next print should start from <b>Start No. ${nextSuggestedNum}</b>.`;
-        
-        document.getElementById('qr-start').value = nextSuggestedNum;
-        document.getElementById('qr-end').value = nextSuggestedNum + 9;
-    }
-
-    // 🚀 BULK QR RENDERING AND ENCODING LOGIC
-    function generateAdminBulkQRs() {
-        const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
-        const startNum = parseInt(document.getElementById('qr-start').value);
-        const endNum = parseInt(document.getElementById('qr-end').value);
-        const displayGrid = document.getElementById('qr-print-section');
-        
-        if (!prefix || isNaN(startNum) || isNaN(endNum) || startNum > endNum) {
-            alert("Please input valid Series Configuration bounds.");
-            return;
-        }
-
-        displayGrid.innerHTML = '';
-        displayGrid.style.display = 'grid';
-
-        const currentDomain = window.location.origin + window.location.pathname.replace('admin.html', 'dashboard.html');
-        const baseDashboardUrl = `${currentDomain}?id=`;
-
-        for (let i = startNum; i <= endNum; i++) {
-            const formattedNum = String(i).padStart(3, '0');
-            const currentStickerId = `${prefix}${formattedNum}`;
-            const finalScanUrl = `${baseDashboardUrl}${currentStickerId}`;
-
-            const qrCard = document.createElement('div');
-            qrCard.className = 'qr-card';
-            qrCard.innerHTML = `
-                <div class="brand-name">AlertoQR</div>
-                <div class="qr-holder" id="admin-qr-${currentStickerId}"></div>
-                <div class="sticker-id">${currentStickerId}</div>
-            `;
-            displayGrid.appendChild(qrCard);
-
-            new QRCode(document.getElementById(`admin-qr-${currentStickerId}`), {
-                text: finalScanUrl,
-                width: 110,
-                height: 110,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-        }
-
-        document.getElementById('btn-print-qr').style.display = 'inline-block';
-    }
-
-    // 📋 LIVE DATABASE REAL-TIME RENDER
-    async function loadAdminPanelData() {
-        document.getElementById('loading-text').style.display = 'block';
-        document.getElementById('data-table').style.display = 'none';
-
-        let { data: records, error } = await _supabase.from('registrations').select('*').order('created_at', { ascending: false });
-
-        if (error || !records) {
-            document.getElementById('loading-text').innerText = "❌ Database loading failed!";
-            return;
-        }
-
-        allRecords = records;
-        calculateStats();
-        renderTableRows();
-        checkLastUsedNumber();
-
-        document.getElementById('loading-text').style.display = 'none';
-        document.getElementById('data-table').style.display = 'table';
-    }
-
-    function calculateStats() {
-        let totalEarnings = 0;
-        let activeCount = 0;
-        let expiredCount = 0;
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
-        allRecords.forEach(row => {
-            if (row.plan_price) totalEarnings += Number(row.plan_price);
-
-            const expDateStr = row.expiry_date;
-            if (expDateStr) {
-                const expDate = new Date(expDateStr);
-                expDate.setHours(0,0,0,0);
-                if (expDate >= today && row.status === 'Active') {
-                    activeCount++;
-                } else {
-                    expiredCount++;
-                }
+            if (data) {
+                // Case A: Agar data mil gaya, toh yeh purana user hai -> Isko Iski Profile/Dashboard par bhejo
+                document.getElementById('status-title').innerText = "User Found!";
+                document.getElementById('status-desc').innerText = "Opening Owner Profile...";
+                
+                // Yahan hum isi page par data show kar sakte hain ya register.html par view mode me bhej sakte hain.
+                // Abhi ke liye testing ke liye hum isko register.html par view mode me bhej rahe hain:
+                window.location.href = `register.html?id=${stickerId}&mode=view`;
             } else {
-                expiredCount++;
-            }
-        });
-
-        document.getElementById('stat-earnings').innerText = `₹${totalEarnings}`;
-        document.getElementById('stat-active').innerText = activeCount;
-        document.getElementById('stat-expired').innerText = expiredCount;
-    }
-
-    // 🛠️ INLINE TABLE EDIT (No 404 pages anymore)
-    function renderTableRows() {
-        const tbody = document.getElementById('table-body');
-        tbody.innerHTML = '';
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
-        allRecords.forEach(row => {
-            const tr = document.createElement('tr');
-            const isEditing = (editingId === row.sticker_id);
-
-            const expDateStr = row.expiry_date || '';
-            let displayStatus = "Expired";
-            let statusClass = "badge-expired";
-            let formattedDate = "N/A";
-
-            if (expDateStr) {
-                const expDate = new Date(expDateStr);
-                expDate.setHours(0,0,0,0);
-                if (expDate >= today && row.status === 'Active') {
-                    displayStatus = "Active";
-                    statusClass = "badge-active";
-                }
-                const d = String(expDate.getDate()).padStart(2, '0');
-                const m = String(expDate.getMonth() + 1).padStart(2, '0');
-                formattedDate = `${d}-${m}-${expDate.getFullYear()}`;
+                // Case B: Agar data nahi mila, toh yeh naya sticker hai -> Isko Registration Form par bhejo
+                document.getElementById('status-title').innerText = "Fresh Sticker Detected!";
+                document.getElementById('status-desc').innerText = "Redirecting to Registration Form...";
+                window.location.href = `register.html?id=${stickerId}`;
             }
 
-            tr.innerHTML = `
-                <td><b>${row.sticker_id || 'N/A'}</b></td>
-                <td>${isEditing ? `<input type="text" class="edit-input" id="inp-name-${row.sticker_id}" value="${row.full_name || ''}">` : (row.full_name || 'N/A')}</td>
-                <td>${isEditing ? `<input type="text" class="edit-input" id="inp-vehicle-${row.sticker_id}" value="${row.vehicle_number || ''}">` : (row.vehicle_number || 'N/A')}</td>
-                <td><span class="badge ${statusClass}">${displayStatus}</span></td>
-                <td>${formattedDate}</td>
-                <td>
-                    ${isEditing ? `
-                        <button class="btn btn-save" onclick="saveAdminEdit('${row.sticker_id}')">💾 Save</button>
-                        <button class="btn btn-cancel" onclick="cancelAdminEdit()">Cancel</button>
-                    ` : `
-                        <button class="btn btn-activate" onclick="activateSubscription('${row.sticker_id}')">⚡ Activate (1 Year)</button>
-                        <button class="btn btn-edit" onclick="startAdminEdit('${row.sticker_id}')">✏️ Edit</button>
-                    `}
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function startAdminEdit(stickerId) { 
-        editingId = stickerId; 
-        renderTableRows(); 
-    }
-
-    function cancelAdminEdit() { 
-        editingId = null; 
-        renderTableRows(); 
-    }
-
-    async function saveAdminEdit(stickerId) {
-        const nameVal = document.getElementById(`inp-name-${stickerId}`).value.trim();
-        const vehicleVal = document.getElementById(`inp-vehicle-${stickerId}`).value.trim();
-
-        if (!nameVal || !vehicleVal) { alert("Values cannot be empty!"); return; }
-        const updatePayload = { full_name: nameVal, vehicle_number: vehicleVal };
-
-        let { error } = await _supabase.from('registrations').update(updatePayload).eq('sticker_id', stickerId);
-        if(error) { 
-            alert("Update failed!"); 
-            return; 
+        } catch (err) {
+            console.error(err);
+            document.getElementById('status-title').innerText = "Connection Error";
+            document.getElementById('status-desc').innerText = "Could not connect to database. Please refresh.";
         }
-        
-        editingId = null;
-        alert("Details updated successfully! 🎉");
-        loadAdminPanelData();
     }
 
-    async function activateSubscription(stickerId) {
-        const newExpiry = new Date();
-        newExpiry.setFullYear(newExpiry.getFullYear() + 1);
-        
-        const yyyy = newExpiry.getFullYear();
-        const mm = String(newExpiry.getMonth() + 1).padStart(2, '0');
-        const dd = String(newExpiry.getDate()).padStart(2, '0');
-        const dbDateFormat = `${yyyy}-${mm}-${dd}`;
-
-        const updatePayload = { status: 'Active', expiry_date: dbDateFormat };
-        let { error } = await _supabase.from('registrations').update(updatePayload).eq('sticker_id', stickerId);
-
-        if(error) { alert("Error updating subscription table record!"); return; }
-
-        alert(`Status Updated Successfully! 🚀 Sticker ${stickerId} activated till ${dd}-${mm}-${yyyy}`);
-        loadAdminPanelData();
-    }
-
-    loadAdminPanelData();
+    // Run the routing logic on load
+    routeUser();
 </script>
 </body>
 </html>
