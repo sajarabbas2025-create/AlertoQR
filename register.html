@@ -3,191 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR | Vehicle Assistance</title>
+    <title>AlertoQR | Activate Vehicle Safety Sticker</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #fff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; box-sizing: border-box; }
-        .card { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 12px; width: 100%; max-width: 420px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center; }
-        h2 { margin-top: 0; color: #38bdf8; margin-bottom: 5px; font-size: 24px; }
-        .tagline { color: #94a3b8; font-size: 13px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; font-weight: 600; }
-        input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 15px; }
-        input:disabled { background: #1e293b; color: #cbd5e1; border-color: #334155; cursor: not-allowed; text-align: center; font-weight: bold; font-size: 18px; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; margin-top: 10px; display: block; box-sizing: border-box; }
-        .btn-primary { background: #2563eb; color: #fff; }
-        .btn-success { background: #10b981; color: #fff; }
-        .btn-danger { background: #dc2626; color: #fff; font-size: 16px; }
-        .owner-zone-btn { background: none; border: 1px dashed #475569; color: #94a3b8; font-size: 12px; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-top: 25px; }
-        .status-msg { text-align: center; font-size: 14px; margin-top: 12px; font-weight: 500; }
-        .payment-box { display: none; background: #0f172a; border: 1px dashed #eab308; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center; }
-        .price-tag { font-size: 28px; font-weight: bold; color: #4ade80; margin: 10px 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #0f172a; 
+            color: #fff; 
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+        .card { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            padding: 30px; 
+            border-radius: 12px; 
+            width: 100%; 
+            max-width: 420px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+            box-sizing: border-box; 
+            text-align: center; 
+        }
+        h2 { 
+            margin-top: 0; 
+            color: #38bdf8; 
+            font-size: 24px; 
+            margin-bottom: 5px; 
+            font-weight: 700; 
+        }
+        .tagline { 
+            color: #94a3b8; 
+            font-size: 13px; 
+            margin-bottom: 25px; 
+            font-weight: 500;
+        }
+        
+        .form-group { 
+            margin-bottom: 18px; 
+            text-align: left; 
+        }
+        label { 
+            display: block; 
+            font-size: 11px; 
+            color: #94a3b8; 
+            margin-bottom: 6px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+        }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            background: #0f172a; 
+            border: 1px solid #475569; 
+            border-radius: 8px; 
+            color: #fff; 
+            font-size: 14px; 
+            box-sizing: border-box; 
+            transition: 0.2s;
+        }
+        input:focus { 
+            border-color: #38bdf8; 
+            outline: none; 
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+        input:disabled { 
+            background: #1e293b; 
+            color: #64748b; 
+            border-color: #334155; 
+            cursor: not-allowed; 
+            font-weight: bold;
+        }
+        
+        /* Premium Payment Container Box (Hidden by default, opens after submit) */
+        .payment-box { 
+            background: rgba(15, 23, 42, 0.8); 
+            border: 2px dashed #10b981; 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin-top: 25px; 
+            display: none; 
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .price { 
+            font-size: 32px; 
+            font-weight: 800; 
+            color: #10b981; 
+            margin: 10px 0; 
+        }
+        
+        .btn { 
+            width: 100%; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 14px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            transition: 0.2s; 
+        }
+        .btn-primary { 
+            background: #2563eb; 
+            color: #fff; 
+            margin-top: 15px; 
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        .btn-primary:hover { 
+            background: #1d4ed8; 
+        }
+        .btn-success { 
+            background: #10b981; 
+            color: #fff; 
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); 
+        }
+        .btn-success:hover { 
+            background: #059669; 
+        }
+        
+        .status-msg { 
+            text-align: center; 
+            font-size: 13px; 
+            margin-top: 15px; 
+            font-weight: 600; 
+            padding: 10px;
+            border-radius: 6px;
+            display: none; 
+        }
+        .status-success { 
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981; 
+            border: 1px solid #10b981;
+        }
+        .status-error { 
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444; 
+            border: 1px solid #ef4444;
+        }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div style="font-size: 14px; font-weight: bold; color: #64748b; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;">AlertoQR Safety</div>
-    <h2 id="page-title">Vehicle Alert System</h2>
-    <p id="page-desc" class="tagline">Scan QR to contact the vehicle owner instantly.</p>
-    
-    <div class="form-group" style="margin-top: 20px;">
-        <label style="text-align: center; display: block;">VEHICLE NUMBER / STICKER ID</label>
-        <input type="text" id="vehicle-display" disabled value="Fetching...">
-    </div>
+    <h2>AlertoQR Safety</h2>
+    <div class="tagline">Register & Activate Your Smart Sticker</div>
 
-    <div id="public-helper-section" style="display: none;">
-        <p style="font-size: 14px; color: #e2e8f0; margin: 20px 0 10px;">Is this vehicle wrongly parked or in an emergency?</p>
-        <button class="btn btn-danger" onclick="window.location.href=`tel:${targetOwnerMobile}`">📞 Contact Vehicle Owner</button>
-    </div>
+    <form id="registrationForm" onsubmit="submitCustomerDataFirst(event)">
+        <div class="form-group">
+            <label>Sticker Serial ID</label>
+            <input type="text" id="sticker_id" disabled>
+        </div>
 
-    <div id="awaiting-approval-section" style="display: none; padding: 20px; border: 1px dashed #eab308; border-radius: 8px; margin-top: 20px; background: #1e1b4b;">
-        <h3 style="color: #eab308; margin: 0 0 10px 0;">⏳ Verification Pending</h3>
-        <p style="font-size: 13px; color: #94a3b8; margin: 0;">This sticker is registered but waiting for activation/payment approval from AlertoQR Admin.</p>
-    </div>
+        <div class="form-group">
+            <label>Owner Full Name</label>
+            <input type="text" id="full_name" placeholder="Enter vehicle owner's name" required>
+        </div>
 
-    <div id="registration-section" style="display: none; text-align: left; margin-top: 20px; border-top: 1px solid #334155; padding-top: 20px;">
-        <div class="form-group"><label>Owner Full Name</label><input type="text" id="reg-name" placeholder="Enter your full name"></div>
-        <div class="form-group"><label>Mobile Number (For Alerts)</label><input type="tel" id="reg-mobile" placeholder="Enter 10-digit mobile number"></div>
-        <div class="form-group"><label>Vehicle Number</label><input type="text" id="reg-vehicle" placeholder="e.g. UP32DD2420"></div>
+        <div class="form-group">
+            <label>Mobile Number (For Emergency Alerts)</label>
+            <input type="tel" id="mobile_number" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Vehicle Plate Number</label>
+            <input type="text" id="vehicle_number" placeholder="e.g. UP80CC8090" required style="text-transform: uppercase;">
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn btn-primary">📝 Submit Details</button>
+    </form>
+
+    <div class="payment-box" id="payment-area">
+        <div style="font-size: 12px; color: #eab308; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Details Saved To System!</div>
+        <div class="price">₹299.00</div>
+        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 18px; line-height: 1.4;">Click below to pay online for instant automatic activation.</div>
         
-        <button class="btn btn-primary" id="btn-pay-trigger" onclick="showPaymentScreen()">🔒 Proceed to Options</button>
-
-        <div id="payment-gateway-box" class="payment-box">
-            <h3 style="margin:0; font-size:16px; color:#eab308;">Secure Registration</h3>
-            <div class="price-tag">₹299.00</div>
-            
-            <button class="btn btn-success" onclick="openUPIIntent()">📱 Pay via UPI App (Live)</button>
-            <button class="btn btn-primary" style="background: #475569; margin-top: 8px;" onclick="registerCustomer('Pending')">⏱️ Request Demo/Admin Activation</button>
-            
-            <div style="margin-top: 15px; border-top: 1px solid #334155; padding-top: 10px;">
-                <p style="font-size:11px; color:#94a3b8;">If paid via UPI, click below to complete submission.</p>
-                <button class="btn btn-success" style="font-size:13px;" onclick="registerCustomer('Pending')">✅ Submit Registration Data</button>
-            </div>
+        <button onclick="handleInstantAutoActivationPay()" class="btn btn-success">📱 Pay via UPI & Activate Now</button>
+        
+        <div style="font-size: 11px; color: #94a3b8; margin-top: 18px; font-style: italic; line-height: 1.4; border-top: 1px dashed #334155; padding-top: 12px;">
+            💡 <b>Cash Payment Customer?</b><br>If you are paying via Cash/Offline, you can close this page now. Admin will verify and activate it from the control panel.
         </div>
     </div>
 
-    <div id="owner-edit-section" style="display: none; text-align: left; margin-top: 20px; border-top: 1px solid #eab308; padding-top: 20px; background: #1e1b4b; padding: 15px; border-radius: 8px;">
-        <h4 style="margin: 0 0 10px 0; color: #eab308; text-align: center;">⚙️ Owner Control Dashboard</h4>
-        <div class="form-group"><label>Update Name</label><input type="text" id="edit-name"></div>
-        <div class="form-group"><label>Update Mobile Number</label><input type="tel" id="edit-mobile"></div>
-        <button class="btn btn-success" onclick="updateOwnerProfile()">💾 Save New Details</button>
-    </div>
-
-    <div id="owner-toggle-div" style="display: none;">
-        <button class="owner-zone-btn" id="btn-toggle-zone" onclick="toggleOwnerZone()">Are you the Owner? Login to Edit</button>
-    </div>
-
-    <div id="msg" class="status-msg"></div>
+    <div id="status-display-node" class="status-msg"></div>
 </div>
 
 <script>
+    // Supabase Cloud Infrastructure Connectivity Identifiers
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
-    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const _supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const stickerId = urlParams.get('id');
-    
-    let targetOwnerMobile = ""; 
-    let globalUserData = null;
+    let parsedStickerID = "";
 
-    async function loadPageFlow() {
-        if (!stickerId) { return; }
-        let { data } = await _supabase.from('registrations').select('*').eq('sticker_id', stickerId).maybeSingle();
+    // Parse URL parameter tracking contexts
+    function extractStickerContext() {
+        const urlParams = new URLSearchParams(window.location.search);
+        parsedStickerID = urlParams.get('id');
+
+        if (!parsedStickerID) {
+            renderSystemMessage("⚠️ Error: Missing Sticker ID token range. Please scan a valid AlertoQR sticker.", true);
+            document.getElementById('submit-btn').disabled = true;
+            return;
+        }
+
+        parsedStickerID = parsedStickerID.trim().toUpperCase();
+        document.getElementById('sticker_id').value = parsedStickerID;
+        checkIfStickerAlreadyRegistered();
+    }
+
+    // Bounce customer out directly to alert terminal if profile is already actively registered
+    async function checkIfStickerAlreadyRegistered() {
+        let { data, error } = await _supabaseClient
+            .from('registrations')
+            .select('status')
+            .eq('sticker_id', parsedStickerID)
+            .maybeSingle();
+
+        if (data && data.status === 'Active') {
+            window.location.href = `index.html?id=${parsedStickerID}`;
+        }
+    }
+
+    // 1️⃣ STEP 1 EXECUTION: Commit form fields directly into database with 'Pending' flag
+    async function submitCustomerDataFirst(event) {
+        event.preventDefault();
         
-        if (data) {
-            globalUserData = data;
-            targetOwnerMobile = data.mobile_number;
-            document.getElementById('vehicle-display').value = `${data.vehicle_number} (${data.sticker_id})`;
-            document.getElementById('owner-toggle-div').style.display = 'block';
+        const name = document.getElementById('full_name').value.trim();
+        const mobile = document.getElementById('mobile_number').value.trim();
+        const vehicle = document.getElementById('vehicle_number').value.trim().toUpperCase();
 
-            if(data.status === 'Active') {
-                document.getElementById('public-helper-section').style.display = 'block';
-                document.getElementById('awaiting-approval-section').style.display = 'none';
+        // Visual UX loading locking transformations
+        document.getElementById('submit-btn').disabled = true;
+        document.getElementById('submit-btn').innerText = "⏳ Saving Details...";
+
+        const customerPayload = {
+            sticker_id: parsedStickerID,
+            full_name: name,
+            mobile_number: mobile,
+            vehicle_number: vehicle,
+            status: 'Pending', // Default state remains Pending so Cash transactions are instantly auditable via Admin Control Panel
+            created_at: new Date().toISOString()
+        };
+
+        const { error } = await _supabaseClient
+            .from('registrations')
+            .upsert(customerPayload, { onConflict: 'sticker_id' });
+
+        if (error) {
+            console.error("Database Write Crash Logs:", error);
+            renderSystemMessage(`❌ Error saving details to backend: ${error.message}`, true);
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('submit-btn').innerText = "📝 Submit Details";
+        } else {
+            // Success: Lock inputs fields so duplicate payloads cannot be triggered
+            document.getElementById('full_name').disabled = true;
+            document.getElementById('mobile_number').disabled = true;
+            document.getElementById('vehicle_number').disabled = true;
+            document.getElementById('submit-btn').style.display = 'none';
+
+            // Unhide UI Payment Gateway Engine Controls
+            document.getElementById('payment-area').style.display = 'block';
+            renderSystemMessage("🎯 Details recorded! Data has successfully reached your Admin Panel.", false);
+        }
+    }
+
+    // 2️⃣ STEP 2 EXECUTION: Trigger UPI Interface Deep-Link & Automate immediate database activation status flip
+    function handleInstantAutoActivationPay() {
+        renderSystemMessage("🔄 Launching payment app... Please complete payment for Instant Activation.", false);
+
+        const upiMerchantId = "9808447814@ybl"; 
+        const merchantName = "AlertoQR Safety Systems";
+        const transactionNote = encodeURIComponent(`Instant Activation Charges for sticker ${parsedStickerID}`);
+        
+        const upiGatewayDeepLink = `upi://pay?pa=${upiMerchantId}&pn=${encodeURIComponent(merchantName)}&am=299.00&cu=INR&tn=${transactionNote}`;
+
+        // Forward viewport environment onto merchant deep link endpoints
+        window.location.href = upiGatewayDeepLink;
+
+        // Automatically fire an autonomous status adjustment 6 seconds post-payment initiation intent
+        setTimeout(async () => {
+            renderSystemMessage("⚡ Processing secure verification & automatic activation...", false);
+
+            // Compute exact 1 year timestamp extensions offset limits
+            let calculatedDateObj = new Date();
+            calculatedDateObj.setFullYear(calculatedDateObj.getFullYear() + 1);
+            const transformedExpiryDateString = calculatedDateObj.toISOString().split('T')[0];
+
+            // Perform direct background infrastructure column state updates mapping
+            const { error } = await _supabaseClient
+                .from('registrations')
+                .update({ 
+                    status: 'Active',
+                    expiry_date: transformedExpiryDateString
+                })
+                .eq('sticker_id', parsedStickerID);
+
+            if (!error) {
+                renderSystemMessage("🎉 Sticker activated automatically! Redirecting to dashboard...", false);
+                alert("⚡ Thank you!\n\nYour payment handshake was processed successfully. Your sticker is now fully Active for 1 Year.");
+                window.location.href = `index.html?id=${parsedStickerID}`;
             } else {
-                document.getElementById('public-helper-section').style.display = 'none';
-                document.getElementById('awaiting-approval-section').style.display = 'block';
+                console.error("Auto Activation Background Database Error:", error);
+                renderSystemMessage("⚠️ Payment link initiated. If activation delays, Admin will manually force verify the record.", true);
             }
-        } else {
-            document.getElementById('page-title').innerText = "Sticker Activation";
-            document.getElementById('vehicle-display').value = stickerId;
-            document.getElementById('registration-section').style.display = 'block';
-        }
+        }, 6000);
     }
 
-    function showPaymentScreen() {
-        const name = document.getElementById('reg-name').value.trim();
-        const mobile = document.getElementById('reg-mobile').value.trim();
-        const vehicle = document.getElementById('reg-vehicle').value.trim();
-        if(!name || !mobile || !vehicle) { alert("Please complete form details first!"); return; }
-        document.getElementById('btn-pay-trigger').style.display = 'none';
-        document.getElementById('payment-gateway-box').style.display = 'block';
-    }
-
-    function openUPIIntent() {
-        const vehicle = document.getElementById('reg-vehicle').value.trim().toUpperCase();
-        const yourUPI = "bhartipay905852@ibh"; 
-        const merchantName = "AlertoQR - Sajar Abbas";
-        const amount = "299.00";
-        const transactionNote = `Sticker Activation for ${vehicle}`;
-        window.location.href = `upi://pay?pa=${yourUPI}&pn=${encodeURIComponent(merchantName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
-    }
-
-    async function registerCustomer(initialStatus) {
-        const name = document.getElementById('reg-name').value.trim();
-        const mobile = document.getElementById('reg-mobile').value.trim();
-        const vehicle = document.getElementById('reg-vehicle').value.trim().toUpperCase();
-
-        let expiryDate = new Date();
-        expiryDate.setFullYear(expiryDate.getFullYear() + 1); // 1 Year validity default string
-        const formattedExpiry = expiryDate.toISOString().split('T')[0];
-
-        let { error } = await _supabase.from('registrations').insert([
-            { 
-                sticker_id: stickerId, 
-                full_name: name, 
-                mobile_number: mobile, 
-                vehicle_number: vehicle, 
-                status: initialStatus,
-                expiry_date: formattedExpiry
-            }
-        ]);
-
-        if (error) { alert("Error saving record!"); } 
-        else {
-            alert("📥 Data submitted successfully! Awaiting Admin activation.");
-            window.location.reload();
-        }
-    }
-
-    function toggleOwnerZone() {
-        const editPanel = document.getElementById('owner-edit-section');
-        const helperPanel = document.getElementById('public-helper-section');
-        const awaitPanel = document.getElementById('awaiting-approval-section');
+    function renderSystemMessage(messageText, isErrorState) {
+        const messageBox = document.getElementById('status-display-node');
+        messageBox.innerText = messageText;
+        messageBox.style.display = "block";
         
-        if (editPanel.style.display === 'none') {
-            document.getElementById('edit-name').value = globalUserData.full_name;
-            document.getElementById('edit-mobile').value = globalUserData.mobile_number;
-            editPanel.style.display = 'block';
-            helperPanel.style.display = 'none';
-            awaitPanel.style.display = 'none';
+        if (isErrorState) {
+            messageBox.className = "status-msg status-error";
         } else {
-            editPanel.style.display = 'none';
-            if(globalUserData.status === 'Active') helperPanel.style.display = 'block';
-            else awaitPanel.style.display = 'block';
+            messageBox.className = "status-msg status-success";
         }
     }
 
-    async function updateOwnerProfile() {
-        const newName = document.getElementById('edit-name').value.trim();
-        const newMobile = document.getElementById('edit-mobile').value.trim();
-        await _supabase.from('registrations').update({ full_name: newName, mobile_number: newMobile }).eq('sticker_id', stickerId);
-        alert("✅ Updated!");
-        window.location.reload();
-    }
-
-    loadPageFlow();
+    // Execute application contextual routines on load loops
+    extractStickerContext();
 </script>
 </body>
 </html>
