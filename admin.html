@@ -68,7 +68,7 @@
 <body>
 
 <div class="container">
-    <h1>AlertoQR Super Control Center</h1>
+    <h1>AlertoQR Control Control Panel</h1>
 
     <div class="stats-grid">
         <div class="stat-card"><h3>Total Earnings</h3><p id="stat-earnings">₹0</p></div>
@@ -137,7 +137,7 @@
     let allRecords = [];
     let editingId = null;
 
-    // 🔍 AUTOMATIC HISTORY DETECTOR FROM DATABASE
+    // 🔍 DATABASE SE LAST NUMBER TRACK KARNE KA SMART SYSTEM
     async function checkLastUsedNumber() {
         const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
         const reminderBox = document.getElementById('counter-reminder');
@@ -170,10 +170,12 @@
         });
 
         const nextSuggestedNum = maxNum + 1;
-        reminderBox.innerHTML = `📢 History Found! Last sticker was <b>${prefix}${String(maxNum).padStart(3, '0')}</b>. Next print should start from <b>Start No. ${nextSuggestedNum}</b>.`;
+        const formattedLastSticker = `${prefix}${String(maxNum).padStart(3, '0')}`;
+        
+        reminderBox.innerHTML = `📢 History Found! Last sticker was <b>${formattedLastSticker}</b>. Next print should start from <b>Start No. ${nextSuggestedNum}</b>.`;
         
         document.getElementById('qr-start').value = nextSuggestedNum;
-        document.getElementById('qr-end').value = nextSuggestedNum + 9; // Sets 10 items batch length automatically
+        document.getElementById('qr-end').value = nextSuggestedNum + 9;
     }
 
     // 🚀 BULK QR RENDERING AND ENCODING LOGIC
@@ -191,7 +193,6 @@
         displayGrid.innerHTML = '';
         displayGrid.style.display = 'grid';
 
-        // Captures base domain and points automatically to dashboard file route
         const currentDomain = window.location.origin + window.location.pathname.replace('admin.html', 'dashboard.html');
         const baseDashboardUrl = `${currentDomain}?id=`;
 
@@ -199,163 +200,3 @@
             const formattedNum = String(i).padStart(3, '0');
             const currentStickerId = `${prefix}${formattedNum}`;
             const finalScanUrl = `${baseDashboardUrl}${currentStickerId}`;
-
-            const qrCard = document.createElement('div');
-            qrCard.className = 'qr-card';
-            qrCard.innerHTML = `
-                <div class="brand-name">AlertoQR</div>
-                <div class="qr-holder" id="admin-qr-${currentStickerId}"></div>
-                <div class="sticker-id">${currentStickerId}</div>
-            `;
-            displayGrid.appendChild(qrCard);
-
-            new QRCode(document.getElementById(`admin-qr-${currentStickerId}`), {
-                text: finalScanUrl,
-                width: 110,
-                height: 110,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-        }
-
-        document.getElementById('btn-print-qr').style.display = 'inline-block';
-    }
-
-    // 📋 LIVE DATABASE REAL-TIME RENDER TRUCKS
-    async function loadAdminPanelData() {
-        document.getElementById('loading-text').style.display = 'block';
-        document.getElementById('data-table').style.display = 'none';
-
-        let { data: records, error } = await _supabase.from('registrations').select('*').order('created_at', { ascending: false });
-
-        if (error || !records) {
-            document.getElementById('loading-text').innerText = "❌ Database loading failed!";
-            return;
-        }
-
-        allRecords = records;
-        calculateStats();
-        renderTableRows();
-        
-        // Triggers historical check for default 'ALQR' code when page loads
-        checkLastUsedNumber();
-
-        document.getElementById('loading-text').style.display = 'none';
-        document.getElementById('data-table').style.display = 'table';
-    }
-
-    function calculateStats() {
-        let totalEarnings = 0;
-        let activeCount = 0;
-        let expiredCount = 0;
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
-        allRecords.forEach(row => {
-            if (row.plan_price) totalEarnings += Number(row.plan_price);
-
-            const expDateStr = row.expiry_date;
-            if (expDateStr) {
-                const expDate = new Date(expDateStr);
-                expDate.setHours(0,0,0,0);
-                if (expDate >= today && row.status === 'Active') {
-                    activeCount++;
-                } else {
-                    expiredCount++;
-                }
-            } else {
-                expiredCount++;
-            }
-        });
-
-        document.getElementById('stat-earnings').innerText = `₹${totalEarnings}`;
-        document.getElementById('stat-active').innerText = activeCount;
-        document.getElementById('stat-expired').innerText = expiredCount;
-    }
-
-    function renderTableRows() {
-        const tbody = document.getElementById('table-body');
-        tbody.innerHTML = '';
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
-        allRecords.forEach(row => {
-            const tr = document.createElement('tr');
-            const isEditing = (editingId === row.sticker_id);
-
-            const expDateStr = row.expiry_date || '';
-            let displayStatus = "Expired";
-            let statusClass = "badge-expired";
-            let formattedDate = "N/A";
-
-            if (expDateStr) {
-                const expDate = new Date(expDateStr);
-                expDate.setHours(0,0,0,0);
-                if (expDate >= today && row.status === 'Active') {
-                    displayStatus = "Active";
-                    statusClass = "badge-active";
-                }
-                const d = String(expDate.getDate()).padStart(2, '0');
-                const m = String(expDate.getMonth() + 1).padStart(2, '0');
-                formattedDate = `${d}-${m}-${expDate.getFullYear()}`;
-            }
-
-            tr.innerHTML = `
-                <td><b>${row.sticker_id || 'N/A'}</b></td>
-                <td>${isEditing ? `<input type="text" class="edit-input" id="inp-name-${row.sticker_id}" value="${row.full_name || ''}">` : (row.full_name || 'N/A')}</td>
-                <td>${isEditing ? `<input type="text" class="edit-input" id="inp-vehicle-${row.sticker_id}" value="${row.vehicle_number || ''}">` : (row.vehicle_number || 'N/A')}</td>
-                <td><span class="badge ${statusClass}">${displayStatus}</span></td>
-                <td>${formattedDate}</td>
-                <td>
-                    ${isEditing ? `
-                        <button class="btn btn-save" onclick="saveAdminEdit('${row.sticker_id}')">💾 Save</button>
-                        <button class="btn btn-cancel" onclick="cancelAdminEdit()">Cancel</button>
-                    ` : `
-                        <button class="btn btn-activate" onclick="activateSubscription('${row.sticker_id}')">⚡ Activate (1 Year)</button>
-                        <button class="btn btn-edit" onclick="startAdminEdit('${row.sticker_id}')">✏️ Edit</button>
-                    `}
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    async function activateSubscription(stickerId) {
-        const newExpiry = new Date();
-        newExpiry.setFullYear(newExpiry.getFullYear() + 1);
-        
-        const yyyy = newExpiry.getFullYear();
-        const mm = String(newExpiry.getMonth() + 1).padStart(2, '0');
-        const dd = String(newExpiry.getDate()).padStart(2, '0');
-        const dbDateFormat = `${yyyy}-${mm}-${dd}`;
-
-        const updatePayload = { status: 'Active', expiry_date: dbDateFormat };
-        let { error } = await _supabase.from('registrations').update(updatePayload).eq('sticker_id', stickerId);
-
-        if(error) { alert("Error updating subscription table record!"); return; }
-
-        alert(`Status Updated Successfully! 🚀 Sticker ${stickerId} activated till ${dd}-${mm}-${yyyy}`);
-        loadAdminPanelData();
-    }
-
-    function startAdminEdit(stickerId) { editingId = stickerId; renderTableRows(); }
-    function cancelAdminEdit() { editingId = null; renderTableRows(); }
-
-    async function saveAdminEdit(stickerId) {
-        const nameVal = document.getElementById(`inp-name-${stickerId}`).value.trim();
-        const vehicleVal = document.getElementById(`inp-vehicle-${stickerId}`).value.trim();
-
-        if (!nameVal || !vehicleVal) { alert("Values cannot be empty!"); return; }
-        const updatePayload = { full_name: nameVal, vehicle_number: vehicleVal };
-
-        await _supabase.from('registrations').update(updatePayload).eq('sticker_id', stickerId);
-        editingId = null;
-        alert("Details updated successfully!");
-        loadAdminPanelData();
-    }
-
-    loadAdminPanelData();
-</script>
-</body>
-</html>
