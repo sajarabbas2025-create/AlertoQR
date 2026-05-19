@@ -84,6 +84,11 @@
 
     <div class="section-box">
         <div class="section-title">🖨️ Smart Bulk QR Code Generator</div>
+        
+        <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; padding: 10px 15px; border-radius: 6px; font-size: 13px; color: #10b981; margin-bottom: 20px; font-weight: 500;">
+            🚀 Global Domain Active: QR Generation links are bound to <strong>https://alertoqr.in/register.html</strong>
+        </div>
+
         <div class="form-grid">
             <div class="form-group">
                 <label>Series Code (Prefix)</label>
@@ -256,7 +261,7 @@
         }
     }
 
-    // Generator logic functions mapping blocks
+    // Generator logic functions mapping blocks connected directly to custom domain
     function generateBulkQRIntents() {
         const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
         const start = parseInt(document.getElementById('qr-start').value);
@@ -273,8 +278,8 @@
         printGridBox.innerHTML = ""; 
         previewGridBox.innerHTML = "";
 
-        // Core runtime path routing setups 
-        const routeTargetUrl = window.location.origin + window.location.pathname.replace('admin.html', 'register.html');
+        // HARDCODED CUSTOM BRANDING TRACKING ROUTE
+        const routeTargetUrl = "https://alertoqr.in/register.html";
 
         for (let idx = start; idx <= end; idx++) {
             const indexPaddedStr = String(idx).padStart(3, '0');
@@ -304,7 +309,7 @@
         }
 
         document.getElementById('btn-print-sheet').style.display = 'inline-flex';
-        alert(`🎯 ${((end - start) + 1)} High-fidelity QR structures rendered on live template workspace canvas layers!`);
+        alert(`🎯 ${((end - start) + 1)} High-fidelity QR structures rendered on live template workspace canvas layers! Bound to custom domain.`);
     }
 
     // Run data fetching loop dynamically inside page engine
