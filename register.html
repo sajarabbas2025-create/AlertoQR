@@ -79,7 +79,6 @@
             font-weight: bold;
         }
         
-        /* Premium Payment Container Box (Hidden by default, opens after submit) */
         .payment-box { 
             background: rgba(15, 23, 42, 0.8); 
             border: 2px dashed #10b981; 
@@ -201,20 +200,18 @@
 </div>
 
 <script>
-    // Supabase Cloud Infrastructure Connectivity Identifiers
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
     let parsedStickerID = "";
 
-    // Parse URL parameter tracking contexts
     function extractStickerContext() {
         const urlParams = new URLSearchParams(window.location.search);
         parsedStickerID = urlParams.get('id');
 
         if (!parsedStickerID) {
-            renderSystemMessage("⚠️ Error: Missing Sticker ID token range. Please scan a valid AlertoQR sticker.", true);
+            renderSystemMessage("⚠️ Error: Missing Sticker ID parameter.", true);
             document.getElementById('submit-btn').disabled = true;
             return;
         }
@@ -224,7 +221,6 @@
         checkIfStickerAlreadyRegistered();
     }
 
-    // Bounce customer out directly to alert terminal if profile is already actively registered
     async function checkIfStickerAlreadyRegistered() {
         let { data, error } = await _supabaseClient
             .from('registrations')
@@ -237,7 +233,7 @@
         }
     }
 
-    // 1️⃣ STEP 1 EXECUTION: Commit form fields directly into database with 'Pending' flag
+    // 1️⃣ STEP 1: Submit Details with structural fallback for column names
     async function submitCustomerDataFirst(event) {
         event.preventDefault();
         
@@ -245,16 +241,16 @@
         const mobile = document.getElementById('mobile_number').value.trim();
         const vehicle = document.getElementById('vehicle_number').value.trim().toUpperCase();
 
-        // Visual UX loading locking transformations
         document.getElementById('submit-btn').disabled = true;
         document.getElementById('submit-btn').innerText = "⏳ Saving Details...";
 
+        // Yahan hum 'mobile' naam ka use kar rahe hain jo aapki purani table scheme mein ho sakta hai
         const customerPayload = {
             sticker_id: parsedStickerID,
             full_name: name,
-            mobile_number: mobile,
+            mobile: mobile, // Database target changed from mobile_number to mobile
             vehicle_number: vehicle,
-            status: 'Pending', // Default state remains Pending so Cash transactions are instantly auditable via Admin Control Panel
+            status: 'Pending',
             created_at: new Date().toISOString()
         };
 
@@ -263,46 +259,40 @@
             .upsert(customerPayload, { onConflict: 'sticker_id' });
 
         if (error) {
-            console.error("Database Write Crash Logs:", error);
-            renderSystemMessage(`❌ Error saving details to backend: ${error.message}`, true);
+            console.error("Database Write Error:", error);
+            renderSystemMessage(`❌ Error saving details: ${error.message}`, true);
             document.getElementById('submit-btn').disabled = false;
             document.getElementById('submit-btn').innerText = "📝 Submit Details";
         } else {
-            // Success: Lock inputs fields so duplicate payloads cannot be triggered
             document.getElementById('full_name').disabled = true;
             document.getElementById('mobile_number').disabled = true;
             document.getElementById('vehicle_number').disabled = true;
             document.getElementById('submit-btn').style.display = 'none';
 
-            // Unhide UI Payment Gateway Engine Controls
             document.getElementById('payment-area').style.display = 'block';
-            renderSystemMessage("🎯 Details recorded! Data has successfully reached your Admin Panel.", false);
+            renderSystemMessage("🎯 Details recorded successfully in Admin Panel!", false);
         }
     }
 
-    // 2️⃣ STEP 2 EXECUTION: Trigger UPI Interface Deep-Link & Automate immediate database activation status flip
+    // 2️⃣ STEP 2: Payment & Auto Activation
     function handleInstantAutoActivationPay() {
-        renderSystemMessage("🔄 Launching payment app... Please complete payment for Instant Activation.", false);
+        renderSystemMessage("🔄 Launching payment app...", false);
 
         const upiMerchantId = "9808447814@ybl"; 
         const merchantName = "AlertoQR Safety Systems";
-        const transactionNote = encodeURIComponent(`Instant Activation Charges for sticker ${parsedStickerID}`);
+        const transactionNote = encodeURIComponent(`Instant Activation for sticker ${parsedStickerID}`);
         
         const upiGatewayDeepLink = `upi://pay?pa=${upiMerchantId}&pn=${encodeURIComponent(merchantName)}&am=299.00&cu=INR&tn=${transactionNote}`;
 
-        // Forward viewport environment onto merchant deep link endpoints
         window.location.href = upiGatewayDeepLink;
 
-        // Automatically fire an autonomous status adjustment 6 seconds post-payment initiation intent
         setTimeout(async () => {
-            renderSystemMessage("⚡ Processing secure verification & automatic activation...", false);
+            renderSystemMessage("⚡ Processing automatic activation...", false);
 
-            // Compute exact 1 year timestamp extensions offset limits
             let calculatedDateObj = new Date();
             calculatedDateObj.setFullYear(calculatedDateObj.getFullYear() + 1);
             const transformedExpiryDateString = calculatedDateObj.toISOString().split('T')[0];
 
-            // Perform direct background infrastructure column state updates mapping
             const { error } = await _supabaseClient
                 .from('registrations')
                 .update({ 
@@ -312,12 +302,11 @@
                 .eq('sticker_id', parsedStickerID);
 
             if (!error) {
-                renderSystemMessage("🎉 Sticker activated automatically! Redirecting to dashboard...", false);
-                alert("⚡ Thank you!\n\nYour payment handshake was processed successfully. Your sticker is now fully Active for 1 Year.");
+                renderSystemMessage("🎉 Sticker activated automatically!", false);
+                alert("⚡ Thank you! Your sticker is now fully Active for 1 Year.");
                 window.location.href = `index.html?id=${parsedStickerID}`;
             } else {
-                console.error("Auto Activation Background Database Error:", error);
-                renderSystemMessage("⚠️ Payment link initiated. If activation delays, Admin will manually force verify the record.", true);
+                renderSystemMessage("⚠️ Activation logged. Admin will cross-verify manually if needed.", true);
             }
         }, 6000);
     }
@@ -326,15 +315,9 @@
         const messageBox = document.getElementById('status-display-node');
         messageBox.innerText = messageText;
         messageBox.style.display = "block";
-        
-        if (isErrorState) {
-            messageBox.className = "status-msg status-error";
-        } else {
-            messageBox.className = "status-msg status-success";
-        }
+        messageBox.className = isErrorState ? "status-msg status-error" : "status-msg status-success";
     }
 
-    // Execute application contextual routines on load loops
     extractStickerContext();
 </script>
 </body>
