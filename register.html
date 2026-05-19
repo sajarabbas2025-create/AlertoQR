@@ -181,6 +181,11 @@
             <input type="text" id="vehicle_number" placeholder="e.g. UP80CC8090" required style="text-transform: uppercase;">
         </div>
 
+        <div class="form-group">
+            <label>Create 4-Digit Secret PIN (To Edit Details Later)</label>
+            <input type="password" id="secret_pin" placeholder="Enter any 4 digit PIN (e.g. 1234)" pattern="[0-9]{4}" maxlength="4" required inputmode="numeric">
+        </div>
+
         <button type="submit" id="submit-btn" class="btn btn-primary">📝 Submit Details</button>
     </form>
 
@@ -221,7 +226,7 @@
         checkIfStickerAlreadyRegistered();
     }
 
-    // Full Domain URL redirection to avoid any local path errors
+    // Full Domain URL redirection
     async function checkIfStickerAlreadyRegistered() {
         let { data, error } = await _supabaseClient
             .from('registrations')
@@ -240,6 +245,7 @@
         const name = document.getElementById('full_name').value.trim();
         const mobile = document.getElementById('mobile_number').value.trim();
         const vehicle = document.getElementById('vehicle_number').value.trim().toUpperCase();
+        const pin = document.getElementById('secret_pin').value.trim();
 
         document.getElementById('submit-btn').disabled = true;
         document.getElementById('submit-btn').innerText = "⏳ Saving Details...";
@@ -249,6 +255,7 @@
             full_name: name,
             mobile: mobile,
             vehicle_number: vehicle,
+            secret_pin: pin,
             status: 'Pending',
             created_at: new Date().toISOString()
         };
@@ -266,6 +273,7 @@
             document.getElementById('full_name').disabled = true;
             document.getElementById('mobile_number').disabled = true;
             document.getElementById('vehicle_number').disabled = true;
+            document.getElementById('secret_pin').disabled = true;
             document.getElementById('submit-btn').style.display = 'none';
 
             document.getElementById('payment-area').style.display = 'block';
