@@ -3,300 +3,391 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR | Helper Dashboard</title>
+    <title>AlertoQR Helper | Vehicle Contact Panel</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f7f7f9;
-            margin: 0;
-            padding: 15px;
-            color: #1c1c1e;
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #f8fafc; 
+            color: #1e293b; 
+            margin: 0; 
+            padding: 15px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            box-sizing: border-box; 
         }
-        .helper-container {
-            max-width: 450px;
-            margin: 10px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-            border: 1px solid #e5e5ea;
-            box-sizing: border-box;
+        .container { 
+            width: 100%; 
+            max-width: 430px; 
+            background: #fff; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            padding: 20px; 
+            box-sizing: border-box; 
+            text-align: center; 
+            margin-top: 10px; 
         }
-        .brand-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e5e5ea;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+        .header-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #f1f5f9; 
+            padding-bottom: 15px; 
+            margin-bottom: 20px; 
         }
-        .brand-title { font-size: 20px; font-weight: 800; margin: 0; color: #000; }
-        .sticker-badge { font-weight: 700; color: #007aff; background: #e1f0ff; padding: 4px 8px; border-radius: 4px; font-size: 13px; }
-
-        .owner-card {
-            background: #f2f2f7;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            text-align: center;
-            border: 1px solid #e5e5ea;
+        .brand { 
+            font-size: 22px; 
+            font-weight: 800; 
+            color: #0f172a; 
         }
-        .card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; font-weight: 700; margin-bottom: 5px; }
-        .owner-name { font-size: 22px; font-weight: 700; margin: 5px 0 10px 0; color: #000; }
-        .vehicle-number {
-            background: #000;
-            color: #fff;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 16px;
-            font-weight: 700;
-            display: inline-block;
-            letter-spacing: 0.5px;
+        .chip { 
+            background: #e0f2fe; 
+            color: #0284c7; 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            font-weight: 700; 
         }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 25px;
+        .owner-card { 
+            background: #f1f5f9; 
+            border-radius: 12px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
         }
-        .btn {
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-decoration: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        .label { 
+            font-size: 11px; 
+            color: #64748b; 
+            text-transform: uppercase; 
+            font-weight: 600; 
+            letter-spacing: 0.5px; 
         }
-        .btn-primary { background: #000; color: #fff; }
-        .btn-secondary { background: #fff; color: #000; border: 1px solid #d1d1d6; }
-
-        .alerts-section-title { font-size: 13px; text-transform: uppercase; color: #666; font-weight: 700; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .owner-name { 
+            font-size: 24px; 
+            font-weight: 700; 
+            color: #0f172a; 
+            margin: 4px 0 10px 0; 
+        }
+        .plate-number { 
+            background: #000; 
+            color: #fff; 
+            display: inline-block; 
+            padding: 6px 16px; 
+            border-radius: 6px; 
+            font-size: 16px; 
+            font-weight: 700; 
+            letter-spacing: 1px; 
+        }
+        .call-buttons { 
+            display: flex; 
+            gap: 12px; 
+            margin-bottom: 25px; 
+        }
+        .btn-call { 
+            flex: 1; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 15px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            text-decoration: none; 
+        }
+        .btn-main { 
+            background: #000; 
+            color: #fff; 
+        }
+        .btn-alt { 
+            background: #fff; 
+            color: #1e293b; 
+            border: 1px solid #cbd5e1; 
+        }
+        .alerts-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            margin-bottom: 20px; 
+        }
+        .alert-box { 
+            background: #fff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 12px; 
+            padding: 15px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 13px; 
+            text-align: center; 
+            transition: 0.2s; 
+        }
+        .alert-box:hover { 
+            background: #f8fafc; 
+            border-color: #94a3b8; 
+        }
+        .alert-box span { 
+            display: block; 
+            font-size: 24px; 
+            margin-bottom: 6px; 
+        }
+        .edit-trigger { 
+            color: #64748b; 
+            font-size: 13px; 
+            text-decoration: underline; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            display: inline-block; 
+        }
         
-        .alerts-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+        /* Modal Popup Styling */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 100; 
+            padding: 15px; 
+            box-sizing: border-box; 
         }
-        .alert-card {
-            background: #fff;
-            border: 1px solid #e5e5ea;
-            border-radius: 12px;
-            padding: 16px 12px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100px;
+        .modal-content { 
+            background: #fff; 
+            padding: 25px; 
+            border-radius: 14px; 
+            width: 100%; 
+            max-width: 380px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            position: relative; 
+            text-align: left; 
         }
-        .alert-card:active { transform: scale(0.96); background: #f2f2f7; }
-        .alert-icon { font-size: 26px; margin-bottom: 6px; display: block; }
-        .alert-label { font-size: 13px; font-weight: 700; color: #1c1c1e; }
-
-        .alert-card.emergency {
-            border-color: #ff3b30;
-            background: #fff5f5;
+        .modal-title { 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: #0f172a; 
+            margin-bottom: 15px; 
         }
-        .alert-card.emergency:active { background: #ffe5e5; }
-        .alert-card.emergency .alert-label { color: #df2c25; }
-
-        /* Hidden Native Systems */
-        #camera-input { display: none; }
-
-        .status-msg { text-align: center; color: #8e8e93; font-style: italic; padding: 30px 0; font-size: 15px; }
+        .form-group { 
+            margin-bottom: 12px; 
+        }
+        .form-group label { 
+            display: block; 
+            font-size: 11px; 
+            font-weight: 600; 
+            margin-bottom: 4px; 
+            color: #64748b; 
+        }
+        .form-group input { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 6px; 
+            font-size: 14px; 
+            box-sizing: border-box; 
+        }
+        .modal-actions { 
+            display: flex; 
+            gap: 10px; 
+            margin-top: 18px; 
+        }
+        .btn-action { 
+            flex: 1; 
+            padding: 10px; 
+            border: none; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 13px; 
+            text-align: center; 
+        }
+        .btn-save { 
+            background: #2563eb; 
+            color: #fff; 
+        }
+        .btn-cancel { 
+            background: #e2e8f0; 
+            color: #475569; 
+        }
+        .error-text { 
+            color: #ef4444; 
+            font-size: 12px; 
+            font-weight: 600; 
+            margin-top: 5px; 
+            display: none; 
+        }
     </style>
 </head>
 <body>
 
-<div class="helper-container">
-    <div class="brand-header">
-        <h1 class="brand-title">AlertoQR Helper</h1>
-        <span id="display-id" class="sticker-badge">ID: --</span>
+<div class="container">
+    <div class="header-row">
+        <div class="brand">AlertoQR Helper</div>
+        <div class="chip" id="sticker-id-chip">ID: LOADING</div>
     </div>
 
-    <div id="main-content">
-        <div class="status-msg">Fetching vehicle details...</div>
+    <div class="owner-card">
+        <div class="label">Vehicle Owner</div>
+        <div class="owner-name" id="display-name">Loading...</div>
+        <div class="plate-number" id="display-vehicle">------</div>
+    </div>
+
+    <div class="call-buttons">
+        <a href="#" id="call-owner-btn" class="btn-call btn-main">📞 Call Owner</a>
+        <a href="#" id="call-alt-btn" class="btn-call btn-alt">📞 Call Alternate</a>
+    </div>
+
+    <div style="text-align: left; font-size: 11px; font-weight: bold; color: #64748b; text-transform: uppercase; margin-bottom: 10px;">Quick Alerts</div>
+    <div class="alerts-grid">
+        <div class="alert-box" onclick="sendQuickAlert('Wrong Parking')"><span>⚠️</span>Wrong Parking</div>
+        <div class="alert-box" onclick="sendQuickAlert('Tow Alert')"><span>🚛</span>Tow Alert</div>
+        <div class="alert-box" onclick="sendQuickAlert('Lights/Door Open')"><span>🚗</span>Lights/Door Open</div>
+        <div class="alert-box" onclick="sendQuickAlert('Emergency')"><span>🚑</span>Emergency Help</div>
+    </div>
+
+    <span class="edit-trigger" onclick="openLoginModal()">Are you the Owner? Login to Edit</span>
+</div>
+
+<div class="modal" id="loginModal">
+    <div class="modal-content">
+        <div class="modal-title">🔐 Owner Verification</div>
+        <div class="form-group">
+            <label>Registered Mobile Number</label>
+            <input type="tel" id="verify_mobile" placeholder="Enter 10-digit number">
+        </div>
+        <div class="form-group">
+            <label>Secret PIN</label>
+            <input type="password" id="verify_pin" placeholder="Enter 4-digit PIN" maxlength="4">
+        </div>
+        <div class="error-text" id="login-error">❌ Invalid Mobile Number or PIN!</div>
+        <div class="modal-actions">
+            <button class="btn-action btn-cancel" onclick="closeModal('loginModal')">Cancel</button>
+            <button class="btn-action btn-save" onclick="verifyOwnerLogin()">Verify & Login</button>
+        </div>
     </div>
 </div>
 
-<input type="file" id="camera-input" accept="image/*" capture="environment">
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <div class="modal-title">✏️ Edit Vehicle Details</div>
+        <div class="form-group">
+            <label>Owner Full Name</label>
+            <input type="text" id="edit_name">
+        </div>
+        <div class="form-group">
+            <label>Alert Mobile Number</label>
+            <input type="tel" id="edit_mobile">
+        </div>
+        <div class="form-group">
+            <label>Vehicle Plate Number</label>
+            <input type="text" id="edit_vehicle" style="text-transform: uppercase;">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-action btn-cancel" onclick="closeModal('editModal')">Cancel</button>
+            <button class="btn-action btn-save" onclick="saveUpdatedDetails()">💾 Save Changes</button>
+        </div>
+    </div>
+</div>
 
 <script>
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
-    
-    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const _supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const stickerId = urlParams.get('id');
-    
-    let globalOwnerPhone = "";
-    let globalVehicleNumber = "";
+    let currentStickerID = "";
+    let dbRecordData = null;
 
-    async function loadHelperDashboard() {
-        if (!stickerId) {
-            document.getElementById('main-content').innerHTML = '<div class="status-msg" style="color:#ff3b30; font-weight:bold;">❌ Error: No Sticker ID found in link.</div>';
-            return;
+    function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        currentStickerID = urlParams.get('id');
+        if(!currentStickerID) {
+            alert("Sticker ID is missing!"); return;
         }
-
-        document.getElementById('display-id').innerText = `ID: ${stickerId}`;
-
-        try {
-            let { data, error } = await _supabase.from('ragistrations').select('*').eq('sticker_id', stickerId).maybeSingle();
-            
-            if (error || !data) {
-                let fallback = await _supabase.from('registrations').select('*').eq('sticker_id', stickerId).maybeSingle();
-                if(!fallback.error && fallback.data) {
-                    data = fallback.data;
-                    error = null;
-                }
-            }
-
-            if (error) {
-                document.getElementById('main-content').innerHTML = `<div class="status-msg" style="color:#ff3b30;">Database connection error.</div>`;
-                return;
-            }
-
-            if (!data) {
-                document.getElementById('main-content').innerHTML = `
-                    <div style="text-align:center; padding:20px 0;">
-                        <p style="font-weight:700; font-size:16px; margin-bottom:15px; color:#333;">QR Sticker [${stickerId}] is not registered yet.</p>
-                        <a href="register.html?id=${stickerId}" class="btn btn-primary" style="display:inline-flex; margin:0 auto;">Register Vehicle Now</a>
-                    </div>`;
-                return;
-            }
-
-            globalOwnerPhone = data.phone_number || "";
-            globalVehicleNumber = data.vehicle_number || "Vehicle";
-            
-            renderDashboardHTML(data);
-            setupCameraListener();
-
-        } catch (err) {
-            document.getElementById('main-content').innerHTML = '<div class="status-msg" style="color:#ff3b30;">Dashboard load error.</div>';
-        }
+        currentStickerID = currentStickerID.trim().toUpperCase();
+        document.getElementById('sticker-id-chip').innerText = "ID: " + currentStickerID;
+        fetchStickerDetails();
     }
 
-    function renderDashboardHTML(owner) {
-        const contentDiv = document.getElementById('main-content');
-        contentDiv.innerHTML = `
-            <div class="owner-card">
-                <div class="card-label">Vehicle Owner</div>
-                <div class="owner-name">${owner.full_name || 'Registered Driver'}</div>
-                <div class="vehicle-number">${globalVehicleNumber}</div>
-            </div>
-
-            <div class="action-buttons">
-                <a href="tel:${globalOwnerPhone}" class="btn btn-primary">📞 Call Owner</a>
-                <a href="tel:${globalOwnerPhone}" class="btn btn-secondary">📞 Call Alternate</a>
-            </div>
-
-            <div class="alerts-section-title">Quick Alerts</div>
-            
-            <div class="alerts-grid">
-                <div class="alert-card" onclick="sendWhatsAppAlert('Wrong Parking')">
-                    <span class="alert-icon">⚠️</span>
-                    <span class="alert-label">Wrong Parking</span>
-                </div>
-                <div class="alert-card" onclick="sendWhatsAppAlert('Tow Alert')">
-                    <span class="alert-icon">🚛</span>
-                    <span class="alert-label">Tow Alert</span>
-                </div>
-                <div class="alert-card" onclick="sendWhatsAppAlert('Attention')">
-                    <span class="alert-icon">🚗💨</span>
-                    <span class="alert-label">ATTENTION: Door/Lights</span>
-                </div>
-                <div class="alert-card" onclick="shareLiveLocation()">
-                    <span class="alert-icon">📍</span>
-                    <span class="alert-label">Share Location</span>
-                </div>
-                <div class="alert-card" onclick="triggerCameraInput()">
-                    <span class="alert-icon">📸</span>
-                    <span class="alert-label">Share Photo</span>
-                </div>
-                <div class="alert-card emergency" onclick="sendWhatsAppAlert('Ambulance Required')">
-                    <span class="alert-icon">🚑</span>
-                    <span class="alert-label">Ambulance</span>
-                </div>
-            </div>
-        `;
-    }
-
-    function sendWhatsAppAlert(alertType) {
-        if (!globalOwnerPhone) return alert("Owner phone number missing.");
-        
-        let cleanedPhone = globalOwnerPhone.replace(/\D/g, '');
-        if(cleanedPhone.length === 10) cleanedPhone = "91" + cleanedPhone;
-
-        let messageText = "";
-        if (alertType === 'Wrong Parking') {
-            messageText = `🚨 *ALERTO QR ALERT* 🚨\n\nDear Owner, your vehicle *${globalVehicleNumber}* is wrongly parked or blocking the way. Please move it immediately.`;
-        } else if (alertType === 'Tow Alert') {
-            messageText = `🚛 *ALERTO QR ALERT* 🚛\n\nUrgent! Your vehicle *${globalVehicleNumber}* is in a towing zone or a tow truck is nearby.`;
-        } else if (alertType === 'Attention') {
-            messageText = `🚗💡 *ALERTO QR ATTENTION ALERT* 💡🚗\n\nHello, someone noticed that a *Door/Window* is open or *Headlights* are ON for your vehicle *${globalVehicleNumber}*. Please check it immediately.`;
-        } else if (alertType === 'Ambulance Required') {
-            messageText = `🚑 *EMERGENCY ALERTO QR ALERT* 🚑\n\nCRITICAL! There is an emergency near your vehicle *${globalVehicleNumber}*. Please check instantly!`;
-        }
-
-        window.open(`https://wa.me/${cleanedPhone}?text=${encodeURIComponent(messageText)}`, '_blank');
-    }
-
-    function shareLiveLocation() {
-        if (!globalOwnerPhone) return alert("Phone number missing.");
-
-        let cleanedPhone = globalOwnerPhone.replace(/\D/g, '');
-        if(cleanedPhone.length === 10) cleanedPhone = "91" + cleanedPhone;
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                // Perfectly Formatted and Safe URL Syntax
-                const mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
-                
-                const locationMessage = `📍 *ALERTO QR LOCATION* 📍\n\nHelper has shared their current location near your vehicle *${globalVehicleNumber}*:\n${mapLink}`;
-                window.open(`https://wa.me/${cleanedPhone}?text=${encodeURIComponent(locationMessage)}`, '_blank');
-            }, function(error) {
-                window.open(`https://wa.me/${cleanedPhone}?text=Helper%20is%20trying%20to%20alert%20location%20near%20your%20vehicle%20${globalVehicleNumber}`, '_blank');
-            });
+    async function fetchStickerDetails() {
+        let { data, error } = await _supabaseClient.from('registrations').select('*').eq('sticker_id', currentStickerID).maybeSingle();
+        if(data) {
+            dbRecordData = data;
+            document.getElementById('display-name').innerText = data.full_name;
+            document.getElementById('display-vehicle').innerText = data.vehicle_number;
+            document.getElementById('call-owner-btn').href = "tel:" + data.mobile;
+            document.getElementById('call-alt-btn').href = "tel:" + data.mobile;
         } else {
-            alert("Location features are not supported by this browser.");
+            document.getElementById('display-name').innerText = "Not Registered";
         }
     }
 
-    function triggerCameraInput() {
-        document.getElementById('camera-input').click();
+    function openLoginModal() { 
+        document.getElementById('verify_mobile').value = "";
+        document.getElementById('verify_pin').value = "";
+        document.getElementById('login-error').style.display = 'none';
+        document.getElementById('loginModal').style.display = 'flex'; 
+    }
+    
+    function closeModal(id) { 
+        document.getElementById(id).style.display = 'none'; 
     }
 
-    function setupCameraListener() {
-        document.getElementById('camera-input').addEventListener('change', function() {
-            if(this.files && this.files[0]) {
-                let cleanedPhone = globalOwnerPhone.replace(/\D/g, '');
-                if(cleanedPhone.length === 10) cleanedPhone = "91" + cleanedPhone;
+    function verifyOwnerLogin() {
+        const inputMobile = document.getElementById('verify_mobile').value.trim();
+        const inputPin = document.getElementById('verify_pin').value.trim();
+        const errNode = document.getElementById('login-error');
 
-                alert("📸 Photo captured! WhatsApp open hote hi clip 📎 icon par click karke is photo ko attach karke send kar dein.");
-                
-                const photoFallbackMsg = `📸 *ALERTO QR PHOTO ALERT* 📸\n\nHelper has taken a photo regarding your vehicle *${globalVehicleNumber}*. (Helper will attach the photo in chat now)`;
-                window.open(`https://wa.me/${cleanedPhone}?text=${encodeURIComponent(photoFallbackMsg)}`, '_blank');
-            }
-        });
+        if(dbRecordData && dbRecordData.mobile === inputMobile && String(dbRecordData.secret_pin) === inputPin) {
+            errNode.style.display = 'none';
+            document.getElementById('loginModal').style.display = 'none';
+            
+            document.getElementById('edit_name').value = dbRecordData.full_name;
+            document.getElementById('edit_mobile').value = dbRecordData.mobile;
+            document.getElementById('edit_vehicle').value = dbRecordData.vehicle_number;
+            
+            document.getElementById('editModal').style.display = 'flex';
+        } else {
+            errNode.style.display = 'block';
+        }
     }
 
-    loadHelperDashboard();
+    async function saveUpdatedDetails() {
+        const updatedName = document.getElementById('edit_name').value.trim();
+        const updatedMobile = document.getElementById('edit_mobile').value.trim();
+        const updatedVehicle = document.getElementById('edit_vehicle').value.trim().toUpperCase();
+
+        if(!updatedName || !updatedMobile || !updatedVehicle) {
+            alert("All fields are required!"); return;
+        }
+
+        const { error } = await _supabaseClient
+            .from('registrations')
+            .update({
+                full_name: updatedName,
+                mobile: updatedMobile,
+                vehicle_number: updatedVehicle
+            })
+            .eq('sticker_id', currentStickerID);
+
+        if(!error) {
+            alert("🎉 Profile updated successfully!");
+            document.getElementById('editModal').style.display = 'none';
+            fetchStickerDetails();
+        } else {
+            alert("❌ Update failed: " + error.message);
+        }
+    }
+
+    function sendQuickAlert(type) {
+        alert("📲 Notification Sent to Owner: " + type + " for vehicle " + document.getElementById('display-vehicle').innerText);
+    }
+
+    init();
 </script>
-
 </body>
 </html>
