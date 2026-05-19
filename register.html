@@ -199,7 +199,7 @@
     <div id="status-display-node" class="status-msg"></div>
 </div>
 
-<script>
+<script {id="setup-script"}>
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
@@ -221,6 +221,7 @@
         checkIfStickerAlreadyRegistered();
     }
 
+    // [FIX 1] Manual activate hone ke baad agar koi fir se scan karega, toh wo helper.html par jayega
     async function checkIfStickerAlreadyRegistered() {
         let { data, error } = await _supabaseClient
             .from('registrations')
@@ -229,11 +230,11 @@
             .maybeSingle();
 
         if (data && data.status === 'Active') {
-            window.location.href = `index.html?id=${parsedStickerID}`;
+            window.location.href = `helper.html?id=${parsedStickerID}`;
         }
     }
 
-    // 1️⃣ STEP 1: Submit Details with structural fallback for column names
+    // 1️⃣ STEP 1: Submit Details to Admin Panel (With generic 'mobile' target column)
     async function submitCustomerDataFirst(event) {
         event.preventDefault();
         
@@ -244,11 +245,10 @@
         document.getElementById('submit-btn').disabled = true;
         document.getElementById('submit-btn').innerText = "⏳ Saving Details...";
 
-        // Yahan hum 'mobile' naam ka use kar rahe hain jo aapki purani table scheme mein ho sakta hai
         const customerPayload = {
             sticker_id: parsedStickerID,
             full_name: name,
-            mobile: mobile, // Database target changed from mobile_number to mobile
+            mobile: mobile,
             vehicle_number: vehicle,
             status: 'Pending',
             created_at: new Date().toISOString()
@@ -274,7 +274,7 @@
         }
     }
 
-    // 2️⃣ STEP 2: Payment & Auto Activation
+    // 2️⃣ STEP 2: Payment & Instant Auto Activation
     function handleInstantAutoActivationPay() {
         renderSystemMessage("🔄 Launching payment app...", false);
 
@@ -304,7 +304,8 @@
             if (!error) {
                 renderSystemMessage("🎉 Sticker activated automatically!", false);
                 alert("⚡ Thank you! Your sticker is now fully Active for 1 Year.");
-                window.location.href = `index.html?id=${parsedStickerID}`;
+                // [FIX 2] Online automatic payment activation ke baad bhi helper.html khulega
+                window.location.href = `helper.html?id=${parsedStickerID}`;
             } else {
                 renderSystemMessage("⚠️ Activation logged. Admin will cross-verify manually if needed.", true);
             }
