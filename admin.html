@@ -10,7 +10,7 @@
         .container { max-width: 1100px; margin: 0 auto; }
         h1 { color: #38bdf8; text-align: center; margin-bottom: 30px; font-size: 28px; font-weight: 700; letter-spacing: 0.5px; }
         
-        /* 📊 Stats Counter Grid Box */
+        /* 📊 Stats Grid Layout */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .stat-card { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .stat-card h3 { margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; }
@@ -19,37 +19,38 @@
         .stat-active { color: #10b981; }
         .stat-expired { color: #ef4444; }
 
-        /* 🖨️ Bulk QR Box */
+        /* 🖨️ Generator Box Styling */
         .section-box { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .section-title { font-size: 18px; color: #f8fafc; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 600; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .form-group { text-align: left; }
         label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
-        input, select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 14px; }
+        input { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 14px; }
         
-        /* 🕹️ Buttons UI */
-        .btn { padding: 12px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        /* Buttons Setup */
+        .btn { padding: 10px 18px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
         .btn-primary { background: #2563eb; color: #fff; }
         .btn-primary:hover { background: #1d4ed8; }
-        .btn-success { background: #10b981; color: #fff; padding: 6px 12px; font-size: 12px; }
+        .btn-success { background: #10b981; color: #fff; }
         .btn-success:hover { background: #059669; }
-        .btn-danger { background: #dc2626; color: #fff; padding: 6px 12px; font-size: 12px; }
+        .btn-danger { background: #dc2626; color: #fff; }
         .btn-danger:hover { background: #b91c1c; }
-        .btn-edit { background: #eab308; color: #0f172a; padding: 6px 12px; font-size: 12px; }
+        .btn-edit { background: #eab308; color: #0f172a; }
+        .btn-edit:hover { background: #ca8a04; }
 
-        /* 📋 Table Styles */
+        /* Table Architecture */
         .table-wrapper { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; font-size: 14px; }
-        th { background: #0f172a; color: #94a3b8; padding: 12px; border-bottom: 2px solid #334155; font-weight: 600; text-transform: uppercase; font-size: 11px; }
+        th { background: #0f172a; color: #94a3b8; padding: 12px; border-bottom: 2px solid #334155; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
         td { padding: 12px; border-bottom: 1px solid #334155; color: #cbd5e1; vertical-align: middle; }
         tr:hover { background: #1e293b60; }
         
-        /* 🏷️ Status Badges */
+        /* Badges layout */
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; }
         .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
         .badge-pending { background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308; }
 
-        /* QR Print Container (Hidden on main screen) */
+        /* Printing sheet core engine mapping */
         #print-area { display: none; background: white; padding: 20px; }
         .qr-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center; }
         .qr-card { border: 2px dashed #000; padding: 10px; color: black; font-family: sans-serif; background: #fff; border-radius: 8px; }
@@ -64,7 +65,7 @@
 <body>
 
 <div class="container">
-    <h1>AlertoQR Control Control Panel</h1>
+    <h1>AlertoQR Control Panel</h1>
 
     <div class="stats-grid">
         <div class="stat-card">
@@ -98,7 +99,9 @@
             </div>
         </div>
         <button class="btn btn-primary" onclick="generateBulkQRIntents()">🚀 Generate QR Codes</button>
-        <button class="btn btn-primary" style="background: #10b981; margin-left: 10px; display: none;" id="btn-print-sheet" onclick="window.print()">🖨️ Print Generated QR Sheets</button>
+        <button class="btn btn-success" style="margin-left: 10px; display: none;" id="btn-print-sheet" onclick="window.print()">🖨️ Print Sheets</button>
+        
+        <div id="preview-container" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px;"></div>
     </div>
 
     <div class="section-box">
@@ -118,7 +121,7 @@
                 </thead>
                 <tbody id="registrations-table-body">
                     <tr>
-                        <td colspan="7" style="text-align: center; color: #94a3b8;">Loading database records...</td>
+                        <td colspan="7" style="text-align: center; color: #94a3b8;">Connecting to Supabase Records...</td>
                     </tr>
                 </tbody>
             </table>
@@ -131,12 +134,12 @@
 </div>
 
 <script>
-    // Supabase Connection Framework
+    // System database core access tokens mapping layout architecture
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // 🔄 Fetch and Render Registrations Grid Table Data
+    // Load & parse cloud pipeline items live matrix elements loops
     async function loadAdminDashboardData() {
         let { data, error } = await _supabase
             .from('registrations')
@@ -144,12 +147,12 @@
             .order('created_at', { ascending: false });
 
         if (error) {
-            console.error("Error loading table content:", error);
+            console.error("Fetch Exception Handled Logs:", error);
             return;
         }
 
         const tbody = document.getElementById('registrations-table-body');
-        tbody.innerHTML = ""; // Clear existing text rows
+        tbody.innerHTML = "";
 
         if (!data || data.length === 0) {
             tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color:#94a3b8;">No registered records found in Database.</td></tr>`;
@@ -162,7 +165,7 @@
         let pendingCount = 0;
 
         data.forEach(row => {
-            // Stats Calculation logic setup
+            // Live counters evaluation pipelines logic tracking checks
             if (row.status === 'Active') {
                 totalEarnings += 299;
                 activeCount++;
@@ -170,22 +173,25 @@
                 pendingCount++;
             }
 
-            const statusClass = row.status === 'Active' ? 'badge-active' : 'badge-pending';
-            const actionButtonHTML = row.status === 'Active' 
-                ? `<button class="btn btn-danger" onclick="toggleActivation('${row.sticker_id}', 'Active')">🛑 Deactivate</button>` 
-                : `<button class="btn btn-success" onclick="toggleActivation('${row.sticker_id}', 'Pending')">⚡ Activate (1 Year)</button>`;
+            const isCurrentActive = row.status === 'Active';
+            const statusBadgeClass = isCurrentActive ? 'badge-active' : 'badge-pending';
+            
+            // Refined operational state tracking switches logic action triggers
+            const controlButtonMarkup = isCurrentActive 
+                ? `<button class="btn btn-danger" onclick="toggleActivationState('${row.sticker_id}', 'Active')">🛑 Deactivate</button>` 
+                : `<button class="btn btn-success" onclick="toggleActivationState('${row.sticker_id}', 'Pending')">⚡ Activate (1 Year)</button>`;
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td style="font-weight: bold; color: #f8fafc;">${row.sticker_id}</td>
+                <td style="font-weight: bold; color: #38bdf8;">${row.sticker_id}</td>
                 <td>${row.full_name || 'N/A'}</td>
-                <td style="letter-spacing: 0.5px;">${row.vehicle_number || 'N/A'}</td>
+                <td style="letter-spacing: 0.5px; font-weight:600;">${row.vehicle_number || 'N/A'}</td>
                 <td>${row.mobile_number || 'N/A'}</td>
-                <td><span class="badge ${statusClass}">${row.status || 'Pending'}</span></td>
-                <td>${row.expiry_date || 'N/A'}</td>
+                <td><span class="badge ${statusBadgeClass}">${row.status || 'Pending'}</span></td>
+                <td style="font-family: monospace;">${row.expiry_date || 'N/A'}</td>
                 <td>
-                    ${actionButtonHTML}
-                    <button class="btn btn-edit" style="margin-left:5px;" onclick="promptEditData('${row.sticker_id}', '${row.full_name}', '${row.vehicle_number}', '${row.mobile_number}')">✏️ Edit</button>
+                    ${controlButtonMarkup}
+                    <button class="btn btn-edit" style="margin-left:4px;" onclick="triggerInlineEdit('${row.sticker_id}', '${row.full_name}', '${row.vehicle_number}', '${row.mobile_number}')">✏️ Edit</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -194,102 +200,114 @@
         updateStatsUI(totalEarnings, activeCount, pendingCount);
     }
 
-    // 📊 Update Counter Top Metrics Boxes
     function updateStatsUI(earnings, active, pending) {
         document.getElementById('stat-earnings').innerText = `₹${earnings}`;
         document.getElementById('stat-active').innerText = active;
         document.getElementById('stat-expired').innerText = pending;
     }
 
-    // 🔄 CORE TOGGLE FUNCTION: Manual Overriding Control Panels
-    async function toggleActivation(stickerId, currentStatus) {
-        const targetNewStatus = (currentStatus === 'Active') ? 'Pending' : 'Active';
+    // Toggle logic controllers between active and pending core values tracking pipeline overrides
+    async function toggleActivationState(stickerId, currentStatus) {
+        const nextTargetStatusValue = (currentStatus === 'Active') ? 'Pending' : 'Active';
         
-        // Calculate 1-Year Expiry String dynamically from current timestamp
-        let expiryDate = new Date();
-        expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-        const formattedExpiryString = expiryDate.toISOString().split('T')[0];
+        let calculatedDateObj = new Date();
+        calculatedDateObj.setFullYear(calculatedDateObj.getFullYear() + 1);
+        const transformedExpiryDateString = calculatedDateObj.toISOString().split('T')[0];
 
         const { error } = await _supabase
             .from('registrations')
             .update({ 
-                status: targetNewStatus,
-                expiry_date: targetNewStatus === 'Active' ? formattedExpiryString : null
+                status: nextTargetStatusValue,
+                expiry_date: nextTargetStatusValue === 'Active' ? transformedExpiryDateString : null
             })
             .eq('sticker_id', stickerId);
 
         if (error) {
-            alert("Database write error: " + error.message);
+            alert("Database Error: " + error.message);
         } else {
-            alert(`Sticker ${stickerId} is now updated to: ${targetNewStatus.toUpperCase()}`);
-            loadAdminDashboardData(); // Refresh UI instant
+            alert(`Sticker status of ${stickerId} successfully changed to ${nextTargetStatusValue.toUpperCase()}`);
+            loadAdminDashboardData();
         }
     }
 
-    // ✏️ MANUAL DATA EDIT OVERRIDE PANEL PROMPT BOX
-    async function promptEditData(stickerId, oldName, oldVehicle, oldMobile) {
-        const newName = prompt("Update Owner Full Name:", oldName);
-        if (newName === null) return;
-        const newVehicle = prompt("Update Vehicle Number:", oldVehicle);
-        if (newVehicle === null) return;
-        const newMobile = prompt("Update Mobile Contact Number:", oldMobile);
-        if (newMobile === null) return;
+    // Live parameters edits prompt modals pipeline overrides
+    async function triggerInlineEdit(stickerId, existingName, existingVehicle, existingMobile) {
+        const promptName = prompt("Modify Registration Owner Full Name:", existingName);
+        if (promptName === null) return;
+        const promptVehicle = prompt("Modify Target Vehicle Tracker Registration Plate No:", existingVehicle);
+        if (promptVehicle === null) return;
+        const promptMobile = prompt("Modify Primary Emergency Contact Mapping Mobile No:", existingMobile);
+        if (promptMobile === null) return;
 
         const { error } = await _supabase
             .from('registrations')
             .update({
-                full_name: newName.trim(),
-                vehicle_number: newVehicle.trim().toUpperCase(),
-                mobile_number: newMobile.trim()
+                full_name: promptName.trim(),
+                vehicle_number: promptVehicle.trim().toUpperCase(),
+                mobile_number: promptMobile.trim()
             })
             .eq('sticker_id', stickerId);
 
-        if (error) { alert("Update failed."); } 
-        else { alert("Details Updated."); loadAdminDashboardData(); }
+        if (error) { 
+            alert("Transaction Write Exception occurred."); 
+        } else { 
+            alert("Record parameters cleanly successfully committed."); 
+            loadAdminDashboardData(); 
+        }
     }
 
-    // 🖨️ BULK QR BUILDER INTENTS LOOPER GENERATOR
+    // Generator logic functions mapping blocks
     function generateBulkQRIntents() {
         const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
         const start = parseInt(document.getElementById('qr-start').value);
         const end = parseInt(document.getElementById('qr-end').value);
 
         if (!prefix || isNaN(start) || isNaN(end) || start > end) {
-            alert("Invalid configuration values input ranges!");
+            alert("Config range parsing fault detected!");
             return;
         }
 
         const printGridBox = document.getElementById('print-grid-box');
-        printGridBox.innerHTML = ""; // Reset print template container canvas
+        const previewGridBox = document.getElementById('preview-container');
+        
+        printGridBox.innerHTML = ""; 
+        previewGridBox.innerHTML = "";
 
-        // Base domain configuration logic dynamically fetched
-        const hostUrl = window.location.origin + window.location.pathname.replace('admin.html', 'register.html');
+        // Core runtime path routing setups 
+        const routeTargetUrl = window.location.origin + window.location.pathname.replace('admin.html', 'register.html');
 
-        for (let i = start; i <= end; i++) {
-            // Formatted string generation padding (e.g., AGRA001, ALQR005)
-            const idNumberString = String(i).padStart(3, '0');
-            const targetStickerID = `${prefix}${idNumberString}`;
-            const targetScanRedirectURL = `${hostUrl}?id=${targetStickerID}`;
+        for (let idx = start; idx <= end; idx++) {
+            const indexPaddedStr = String(idx).padStart(3, '0');
+            const loopStickerID = `${prefix}${indexPaddedStr}`;
+            const completeDeepLinkUrl = `${routeTargetUrl}?id=${loopStickerID}`;
 
-            // Create Google Chart API QR Generator image element mapping links
-            const qrImageSource = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(targetScanRedirectURL)}`;
+            const googleChartApiUrlLinkStr = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(completeDeepLinkUrl)}`;
 
-            const card = document.createElement('div');
-            card.className = 'qr-card';
-            card.innerHTML = `
+            // Build dynamic print template DOM node
+            const printCardDiv = document.createElement('div');
+            printCardDiv.className = 'qr-card';
+            printCardDiv.innerHTML = `
                 <div style="font-size:11px; font-weight:bold; margin-bottom:5px; letter-spacing:1px; color:#000;">ALERTOQR</div>
-                <img src="${qrImageSource}" alt="QR" style="width:130px; height:130px; display:block; margin:0 auto;">
-                <div style="font-size:12px; font-weight:bold; margin-top:5px; font-family:monospace; color:#000;">${targetStickerID}</div>
+                <img src="${googleChartApiUrlLinkStr}" alt="QR" style="width:130px; height:130px; display:block; margin:0 auto;">
+                <div style="font-size:12px; font-weight:bold; margin-top:5px; font-family:monospace; color:#000;">${loopStickerID}</div>
             `;
-            printGridBox.appendChild(card);
+            printGridBox.appendChild(printCardDiv);
+
+            // Create on-screen quick preview thumbnail layouts card node logic items
+            const visualPreviewDiv = document.createElement('div');
+            visualPreviewDiv.style.cssText = "background:#0f172a; padding:10px; border-radius:8px; border:1px solid #334155; text-align:center;";
+            visualPreviewDiv.innerHTML = `
+                <img src="${googleChartApiUrlLinkStr}" style="width:100%; border-radius:4px; margin-bottom:5px;">
+                <div style="font-size:11px; font-family:monospace; color:#38bdf8; font-weight:bold;">${loopStickerID}</div>
+            `;
+            previewGridBox.appendChild(visualPreviewDiv);
         }
 
-        // Unhide print button triggers
         document.getElementById('btn-print-sheet').style.display = 'inline-flex';
-        alert(`🎉 Sheet containing ${((end - start) + 1)} high-res QR instances mapped ready! Click green print button.`);
+        alert(`🎯 ${((end - start) + 1)} High-fidelity QR structures rendered on live template workspace canvas layers!`);
     }
 
-    // Run core routines inside main loop initialization context
+    // Run data fetching loop dynamically inside page engine
     loadAdminDashboardData();
 </script>
 </body>
