@@ -6,27 +6,27 @@
     <title>AlertoQR | Admin Panel</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        /* Exact layout and colors from your original working version */
+        /* Exact original working style rules from your dashboard snapshot */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #cbd5e1;
             margin: 0;
-            padding: 40px 20px;
+            padding: 80px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         .admin-card {
             background: #ffffff;
-            padding: 32px;
+            padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 640px;
+            max-width: 540px;
             box-sizing: border-box;
         }
         h2 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             color: #1e293b;
             margin-top: 0;
@@ -37,55 +37,46 @@
             font-size: 14px;
             font-weight: 600;
             color: #334155;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         input[type="text"] {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px;
             border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 15px;
+            border-radius: 4px;
+            font-size: 16px;
             color: #334155;
             box-sizing: border-box;
             background-color: #f8fafc;
             margin-bottom: 20px;
         }
-        input[type="text"]:focus {
-            border-color: #3b82f6;
-            outline: none;
-            background-color: #ffffff;
-        }
         .btn-submit {
-            background-color: #1d4ed8;
+            background-color: #0047ab;
             color: #ffffff;
             width: 100%;
             padding: 12px;
             border: none;
-            border-radius: 6px;
-            font-size: 15px;
+            border-radius: 4px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.2s;
         }
         .btn-submit:hover {
-            background-color: #1e40af;
+            background-color: #003380;
         }
 
-        /* System processing assets block */
+        /* Technical process space for engine background processing */
         #qr-raw-holder { display: none; }
 
-        /* Output template render layout box */
+        /* Output presentation frame strictly separated below */
         .sticker-output-block {
             margin-top: 30px;
             text-align: center;
-            border-top: 1px dashed #cbd5e1;
-            padding-top: 25px;
             display: none;
         }
         canvas {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
             max-width: 100%;
             height: auto;
         }
@@ -94,14 +85,13 @@
             color: white;
             padding: 12px;
             border: none;
-            border-radius: 6px;
-            font-size: 15px;
+            border-radius: 4px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 18px;
+            margin-top: 15px;
             width: 100%;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         .btn-download-sticker:hover {
             background-color: #059669;
@@ -141,7 +131,7 @@
         targetDownloadFilename = `AlertoQR_${idValue}.png`;
         document.getElementById('qr-raw-holder').innerHTML = "";
         
-        // Exact scanning domain redirect link structure mapping 
+        // Target dynamic redirection deployment mapping 
         const routingTargetUrl = `https://alertoqr.in/register.html?id=${idValue}`;
 
         new QRCode(document.getElementById("qr-raw-holder"), {
@@ -163,17 +153,17 @@
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // 1. Background Fill Matrix
+        // 1. Core Background Structure
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // 2. Alert Bar Frame Element (Yellow top panel zone)
+        // 2. Sticker Layout Warning Strip (Yellow top frame)
         ctx.fillStyle = "#eab308";
         ctx.fillRect(0, 0, canvas.width, 65);
         ctx.fillStyle = "#d97706";
         ctx.fillRect(0, 61, canvas.width, 4);
 
-        // 3. Render Copy Texts
+        // 3. Instruction Content Strings
         ctx.fillStyle = "#000000";
         ctx.font = "bold 16px Arial, sans-serif";
         ctx.textAlign = "center";
@@ -181,7 +171,7 @@
         ctx.font = "bold 11px Arial, sans-serif";
         ctx.fillText("(गलत पार्किंग या समस्या होने पर स्कैन करें)", canvas.width / 2, 48);
 
-        // 4. Extract generated code element onto active graphics plane
+        // 4. Inject Raw Engine Image onto Active Template Canvas
         const sourceImg = document.querySelector('#qr-raw-holder img');
         if (sourceImg) {
             ctx.shadowColor = "rgba(0, 0, 0, 0.15)";
@@ -192,14 +182,14 @@
             ctx.shadowBlur = 0;
         }
 
-        // 5. Unique Id Plate Placement Overlay
+        // 5. Unique Static ID Badge Overlay 
         ctx.fillStyle = "#1e293b";
         ctx.fillRect(140, 285, 120, 22);
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 11px monospace";
         ctx.fillText(`ID: ${stickerId}`, canvas.width / 2, 300);
 
-        // 6. Lower Base Banner Bar (Black design substrate anchor)
+        // 6. Base Call-To-Action Board Banner (Black lower panel anchor)
         ctx.fillStyle = "#000000";
         ctx.fillRect(0, 325, canvas.width, 75);
         ctx.fillStyle = "#ffffff";
@@ -209,7 +199,7 @@
         ctx.font = "600 11px Arial, sans-serif";
         ctx.fillText("🔒 Privacy Protected | आपका नंबर सुरक्षित है", canvas.width / 2, 378);
 
-        // Execute block visibility display mutations
+        // Turn output container visibility state alive
         document.getElementById('output-block').style.display = 'block';
     }
 
