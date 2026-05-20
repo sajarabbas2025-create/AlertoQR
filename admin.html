@@ -3,139 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR | Admin Panel</title>
+    <title>AlertoQR | Admin Sticker Studio</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        /* Exact original working style rules from your dashboard snapshot */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #cbd5e1;
-            margin: 0;
-            padding: 80px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* Exact Original Dark Premium Theme Blueprint from your snapshot */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+            color: #fff; 
+            padding: 40px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
         }
-        .admin-card {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 540px;
-            box-sizing: border-box;
+        .panel-box { 
+            background: rgba(30, 41, 59, 0.7); 
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 40px; 
+            border-radius: 16px; 
+            width: 100%; 
+            max-width: 500px; 
+            text-align: center; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+            box-sizing: border-box; 
         }
-        h2 {
-            font-size: 22px;
+        h2 { 
+            color: #38bdf8; 
+            margin-top: 0; 
+            font-size: 26px; 
             font-weight: 700;
-            color: #1e293b;
-            margin-top: 0;
-            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
         }
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #334155;
-            margin-bottom: 10px;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 16px;
-            color: #334155;
-            box-sizing: border-box;
-            background-color: #f8fafc;
-            margin-bottom: 20px;
-        }
-        .btn-submit {
-            background-color: #0047ab;
-            color: #ffffff;
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
+        .subtitle {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 30px;
             font-weight: 500;
-            cursor: pointer;
         }
-        .btn-submit:hover {
-            background-color: #003380;
+        .form-group { text-align: left; margin-bottom: 24px; }
+        label { 
+            display: block; 
+            font-size: 11px; 
+            color: #38bdf8; 
+            margin-bottom: 8px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
         }
-
-        /* Technical process space for engine background processing */
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            background: rgba(15, 23, 42, 0.6); 
+            border: 1px solid #475569; 
+            border-radius: 8px; 
+            color: #fff; 
+            box-sizing: border-box; 
+            font-size: 15px; 
+            transition: all 0.3s ease;
+        }
+        input:focus { 
+            border-color: #38bdf8; 
+            outline: none; 
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+        .btn { 
+            width: 100%; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            margin-bottom: 14px; 
+            font-size: 13px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 8px; 
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+        .btn-gen { background: #2563eb; color: #fff; }
+        .btn-gen:hover { background: #1d4ed8; }
+        .btn-down { background: #10b981; color: #fff; display: none; }
+        .btn-down:hover { background: #059669; }
+        
         #qr-raw-holder { display: none; }
-
-        /* Output presentation frame strictly separated below */
-        .sticker-output-block {
-            margin-top: 30px;
-            text-align: center;
-            display: none;
+        
+        .preview-area { 
+            margin-top: 30px; 
+            border-top: 1px dashed rgba(255,255,255,0.1); 
+            padding-top: 25px; 
+            display: none; 
         }
-        canvas {
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            max-width: 100%;
-            height: auto;
+        .preview-title { 
+            font-size: 11px; 
+            color: #eab308; 
+            font-weight: 700; 
+            margin-bottom: 20px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
-        .btn-download-sticker {
-            background-color: #10b981;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            width: 100%;
-            text-transform: uppercase;
-        }
-        .btn-download-sticker:hover {
-            background-color: #059669;
+        canvas { 
+            border-radius: 12px; 
+            max-width: 100%; 
+            height: auto; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
         }
     </style>
 </head>
 <body>
 
-<div class="admin-card">
-    <h2>AlertoQR Admin Dashboard</h2>
-    
+<div class="panel-box">
+    <h2>AlertoQR Admin Panel</h2>
+    <div class="subtitle">Sticker Batch & Graphic Generator Studio</div>
+
     <div class="form-group">
-        <label class="form-label">Enter Sticker Serial ID:</label>
-        <input type="text" id="sticker_id_input" placeholder="E.G. ALQR003" style="text-transform: uppercase;">
+        <label>Enter New Sticker Serial ID</label>
+        <input type="text" id="sticker_id_input" placeholder="E.G. AQ8001" style="text-transform: uppercase;">
     </div>
-    
-    <button onclick="executeOriginalSystemGeneration()" class="btn-submit">Generate QR Code</button>
+
+    <button onclick="generateSmartStickerInsideDashboard()" class="btn btn-gen">⚙️ Generate Complete Sticker</button>
+    <button id="download-btn" onclick="downloadStickerImage()" class="btn btn-down">💾 Download Print-Ready PNG</button>
 
     <div id="qr-raw-holder"></div>
 
-    <div class="sticker-output-block" id="output-block">
+    <div class="preview-area" id="preview-box">
+        <div class="preview-title">👁️ Live Print Preview</div>
         <canvas id="stickerCanvas" width="400" height="400"></canvas>
-        <button onclick="triggerDirectDownload()" class="btn-download-sticker">💾 Download Print-Ready Sticker</button>
     </div>
 </div>
 
 <script>
-    let targetDownloadFilename = "sticker.png";
+    let filenameTracker = "sticker.png";
 
-    function executeOriginalSystemGeneration() {
-        const idValue = document.getElementById('sticker_id_input').value.trim().toUpperCase();
-        if (!idValue) {
-            alert("Please enter a valid Sticker ID!");
+    function generateSmartStickerInsideDashboard() {
+        const idInput = document.getElementById('sticker_id_input').value.trim().toUpperCase();
+        if (!idInput) {
+            alert("Bhai, pehle Sticker ID toh daalo!");
             return;
         }
 
-        targetDownloadFilename = `AlertoQR_${idValue}.png`;
+        filenameTracker = `AlertoQR_${idInput}.png`;
         document.getElementById('qr-raw-holder').innerHTML = "";
         
-        // Target dynamic redirection deployment mapping 
-        const routingTargetUrl = `https://alertoqr.in/register.html?id=${idValue}`;
+        // Configuration redirect mapping link pointing to original dynamic helper node
+        const targetActivationUrl = `https://alertoqr.in/register.html?id=${idInput}`;
 
         new QRCode(document.getElementById("qr-raw-holder"), {
-            text: routingTargetUrl,
+            text: targetActivationUrl,
             width: 160,
             height: 160,
             colorDark : "#000000",
@@ -144,26 +168,26 @@
         });
 
         setTimeout(() => {
-            compileStickerLayoutMatrix(idValue);
+            renderStickerOnCanvas(idInput);
         }, 300);
     }
 
-    function compileStickerLayoutMatrix(stickerId) {
+    function renderStickerOnCanvas(stickerId) {
         const canvas = document.getElementById('stickerCanvas');
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // 1. Core Background Structure
+        // 1. Base Plate Background Fill Matrix
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // 2. Sticker Layout Warning Strip (Yellow top frame)
+        // 2. Alert Bar Frame Element (Yellow top panel zone)
         ctx.fillStyle = "#eab308";
         ctx.fillRect(0, 0, canvas.width, 65);
         ctx.fillStyle = "#d97706";
         ctx.fillRect(0, 61, canvas.width, 4);
 
-        // 3. Instruction Content Strings
+        // 3. Instruction Content Headings
         ctx.fillStyle = "#000000";
         ctx.font = "bold 16px Arial, sans-serif";
         ctx.textAlign = "center";
@@ -171,14 +195,14 @@
         ctx.font = "bold 11px Arial, sans-serif";
         ctx.fillText("(गलत पार्किंग या समस्या होने पर स्कैन करें)", canvas.width / 2, 48);
 
-        // 4. Inject Raw Engine Image onto Active Template Canvas
-        const sourceImg = document.querySelector('#qr-raw-holder img');
-        if (sourceImg) {
+        // 4. Inject Raw Engine Code onto Canvas Element Matrix Space
+        const rawQrImg = document.querySelector('#qr-raw-holder img');
+        if (rawQrImg) {
             ctx.shadowColor = "rgba(0, 0, 0, 0.15)";
             ctx.shadowBlur = 10;
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(110, 95, 180, 180);
-            ctx.drawImage(sourceImg, 120, 105, 160, 160);
+            ctx.drawImage(rawQrImg, 120, 105, 160, 160);
             ctx.shadowBlur = 0;
         }
 
@@ -199,19 +223,20 @@
         ctx.font = "600 11px Arial, sans-serif";
         ctx.fillText("🔒 Privacy Protected | आपका नंबर सुरक्षित है", canvas.width / 2, 378);
 
-        // Turn output container visibility state alive
-        document.getElementById('output-block').style.display = 'block';
+        // Reveal the visual rendering modules seamlessly
+        document.getElementById('preview-box').style.display = 'block';
+        document.getElementById('download-btn').style.display = 'flex';
     }
 
-    function triggerDirectDownload() {
+    function downloadStickerImage() {
         const canvas = document.getElementById('stickerCanvas');
-        const imgStream = canvas.toDataURL("image/png");
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.download = targetDownloadFilename;
-        downloadAnchor.href = imgStream;
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        document.body.removeChild(downloadAnchor);
+        const dataUrl = canvas.toDataURL("image/png");
+        const createAnchor = document.createElement('a');
+        createAnchor.download = filenameTracker;
+        createAnchor.href = dataUrl;
+        document.body.appendChild(createAnchor);
+        createAnchor.click();
+        document.body.removeChild(createAnchor);
     }
 </script>
 </body>
