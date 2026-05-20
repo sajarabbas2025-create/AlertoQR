@@ -50,80 +50,91 @@
         .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
         .badge-pending { background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308; }
 
-        /* 🖨️ Premium Compact Sticker Layout Rules for Printing Sheet */
+        /* 🖨️ Premium High-Fidelity Print Sheet Core Rules */
         #print-area { display: none; background: white; padding: 10px; }
-        .qr-print-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center; }
+        .qr-print-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; justify-items: center; }
         
-        /* Custom Sticker Box (Slightly Smaller & Colorful Sides) */
+        /* Premium Sticker Frame Grid - Centered & Colorful */
         .sticker-box-layout {
-            width: 100%;
-            max-width: 260px; /* Compact Size As Requested */
-            background: #f0f4f8; /* Light blue premium tint on sides instead of plain white */
-            border: 2px solid #000000;
-            border-radius: 14px;
+            width: 250px; /* Sharp Compact Grid */
+            background: #e0f2fe; /* Light premium sky blue background for sides */
+            border: 3px solid #000000;
+            border-radius: 16px;
             overflow: hidden;
             box-sizing: border-box;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            align-items: center; /* Forces everything inside to center perfectly */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         
-        /* 1. UP: Colorful Scan To Call Owner Top Bar */
+        /* 1. TOP HEADER: Radiant Call To Owner Bar */
         .st-top-cta {
-            background: linear-gradient(135deg, #ffcc00 0%, #f39c12 100%); /* Colorful Gradient */
-            padding: 10px 4px;
+            width: 100%;
+            background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%); /* Bright Vibrant Gradient */
+            padding: 12px 0;
             color: #000000;
             border-bottom: 3px solid #000000;
+            text-align: center;
+            box-sizing: border-box;
         }
-        .st-top-title { font-size: 13px; font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; letter-spacing: 0.5px; }
+        .st-top-title { font-size: 14px; font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; letter-spacing: 0.5px; }
         
-        /* 2. CENTER: QR Code Area */
+        /* 2. CENTER PIECE: Perfect QR Enclosure */
         .st-qr-frame {
-            padding: 12px;
-            background: #f0f4f8; /* Matching sides background */
+            width: 100%;
+            padding: 16px 0;
+            background: #e0f2fe; /* Colorful side background */
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
+            align-items: center; /* Strict Horizontal Centering */
+            box-sizing: border-box;
         }
         .st-qr-frame img {
-            width: 135px; /* Proportional to layout */
-            height: 135px;
+            width: 140px; 
+            height: 140px;
             background: #ffffff;
-            padding: 6px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
+            padding: 8px;
+            border: 2px solid #000000;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto; /* Hard Coded Engine Alignment */
         }
         .st-id-badge {
             background: #0f172a;
             color: #ffffff;
-            padding: 2px 10px;
-            font-size: 10px;
+            padding: 3px 14px;
+            font-size: 11px;
             font-family: monospace;
             font-weight: bold;
-            border-radius: 4px;
-            margin-top: 8px;
+            border-radius: 6px;
+            margin-top: 10px;
             display: inline-block;
             letter-spacing: 0.5px;
+            border: 1px solid #334155;
         }
 
-        /* 3. DOWN: Emergency AlertoQR Contact Lower Bar */
+        /* 3. LOWER ANCHOR: Emergency Contacts Slate */
         .st-bottom-emergency {
-            background: #1e293b; /* Premium Dark Contrast Slate */
+            width: 100%;
+            background: #0f172a; /* Sharp Contrasting Onyx Navy Dark */
             color: #ffffff;
-            padding: 8px 4px;
-            border-top: 2px solid #000000;
+            padding: 10px 0;
+            border-top: 3px solid #000000;
+            text-align: center;
             margin-top: auto;
+            box-sizing: border-box;
         }
-        .st-bottom-title { font-size: 11px; font-weight: bold; margin: 0; font-family: sans-serif; color: #fbbf24; letter-spacing: 0.2px; }
-        .st-bottom-sub { font-size: 9px; font-weight: 600; color: #10b981; margin: 2px 0 0 0; font-family: sans-serif; }
+        .st-bottom-title { font-size: 11px; font-weight: 900; margin: 0; font-family: 'Segoe UI', Arial, sans-serif; color: #fbbf24; letter-spacing: 0.3px; }
+        .st-bottom-sub { font-size: 9px; font-weight: 700; color: #10b981; margin: 4px 0 0 0; font-family: 'Segoe UI', Arial, sans-serif; }
 
         @media print {
             body * { display: none; }
             #print-area, #print-area * { display: block; }
-            #print-area { position: absolute; left: 0; top: 0; width: 100%; }
-            .qr-print-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 15px !important; }
+            #print-area { position: absolute; left: 0; top: 0; width: 100%; background: #fff; }
+            .qr-print-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 20px !important; justify-items: center !important; }
         }
     </style>
 </head>
@@ -204,7 +215,6 @@
 </div>
 
 <script>
-    // System database core access tokens mapping layout architecture
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
@@ -321,7 +331,7 @@
         }
     }
 
-    // 🖨️ New Optimized Matrix Generator Block (Scan to Call Upper, Emergency Below)
+    // 🖨️ Absolute Centering Engine Blueprint Logic
     function generateBulkQRIntents() {
         const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
         const start = parseInt(document.getElementById('qr-start').value);
@@ -347,7 +357,7 @@
 
             const googleChartApiUrlLinkStr = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(completeDeepLinkUrl)}`;
 
-            // 🛠️ Reordered Layout Sheet Component Injection (Scan to Call Upar, Emergency Neeche)
+            // 🛠️ Flawless Grid Template Injector Module
             const printCardDiv = document.createElement('div');
             printCardDiv.className = 'sticker-box-layout';
             printCardDiv.innerHTML = `
@@ -365,19 +375,19 @@
             `;
             printGridBox.appendChild(printCardDiv);
 
-            // Dashboard Quick Thumbs Preview Node
+            // Dashboard Fast Thumbs Preview
             const visualPreviewDiv = document.createElement('div');
             visualPreviewDiv.style.cssText = "background:#1e293b; padding:8px; border-radius:8px; border:1px solid #334155; text-align:center;";
             visualPreviewDiv.innerHTML = `
                 <div style="font-size:8px; color:#fbbf24; font-weight:bold; margin-bottom:4px;">📞 CALL OWNER</div>
-                <img src="${googleChartApiUrlLinkStr}" style="width:80px; height:80px; border-radius:4px; background:white; padding:4px;">
-                <div style="font-size:10px; font-family:monospace; color:#38bdf8; font-weight:bold; margin-top:2px;">${loopStickerID}</div>
+                <img src="${googleChartApiUrlLinkStr}" style="width:85px; height:85px; border-radius:4px; background:white; padding:4px; display:block; margin:0 auto;">
+                <div style="font-size:10px; font-family:monospace; color:#38bdf8; font-weight:bold; margin-top:4px;">${loopStickerID}</div>
             `;
             previewGridBox.appendChild(visualPreviewDiv);
         }
 
         document.getElementById('btn-print-sheet').style.display = 'inline-flex';
-        alert(`🎯 ${((end - start) + 1)} Compact AlertoQR Stickers successfully updated on layout grids!`);
+        alert(`🎯 ${((end - start) + 1)} Premium Centered Stickers Rendered. Ready to Print!`);
     }
 
     loadAdminDashboardData();
