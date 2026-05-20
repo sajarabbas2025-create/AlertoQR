@@ -3,317 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR | Super Admin Panel</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>AlertoQR | Admin Sticker Studio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #fff; margin: 0; padding: 20px; }
-        .container { max-width: 1100px; margin: 0 auto; }
-        h1 { color: #38bdf8; text-align: center; margin-bottom: 30px; font-size: 28px; font-weight: 700; letter-spacing: 0.5px; }
-        
-        /* 📊 Stats Grid Layout */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .stat-card h3 { margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; }
-        .stat-card p { margin: 0; font-size: 32px; font-weight: bold; }
-        .stat-earning { color: #38bdf8; }
-        .stat-active { color: #10b981; }
-        .stat-expired { color: #ef4444; }
-
-        /* 🖨️ Generator Box Styling */
-        .section-box { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .section-title { font-size: 18px; color: #f8fafc; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 600; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .form-group { text-align: left; }
-        label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
-        input { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 14px; }
-        
-        /* Buttons Setup */
-        .btn { padding: 10px 18px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
-        .btn-primary { background: #2563eb; color: #fff; }
-        .btn-primary:hover { background: #1d4ed8; }
-        .btn-success { background: #10b981; color: #fff; }
-        .btn-success:hover { background: #059669; }
-        .btn-danger { background: #dc2626; color: #fff; }
-        .btn-danger:hover { background: #b91c1c; }
-        .btn-edit { background: #eab308; color: #0f172a; }
-        .btn-edit:hover { background: #ca8a04; }
-
-        /* Table Architecture */
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; font-size: 14px; }
-        th { background: #0f172a; color: #94a3b8; padding: 12px; border-bottom: 2px solid #334155; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
-        td { padding: 12px; border-bottom: 1px solid #334155; color: #cbd5e1; vertical-align: middle; }
-        tr:hover { background: #1e293b60; }
-        
-        /* Badges layout */
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; }
-        .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
-        .badge-pending { background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308; }
-
-        /* Printing sheet core engine mapping */
-        #print-area { display: none; background: white; padding: 20px; }
-        .qr-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center; }
-        .qr-card { border: 2px dashed #000; padding: 10px; color: black; font-family: sans-serif; background: #fff; border-radius: 8px; }
-        
-        @media print {
-            body * { display: none; }
-            #print-area, #print-area * { display: block; }
-            #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #fff;
+            margin: 0;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
+        .admin-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h2 { color: #38bdf8; margin-top: 0; font-size: 24px; }
+        .subtitle { color: #94a3b8; font-size: 13px; margin-bottom: 25px; }
+        
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
+        input {
+            width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569;
+            border-radius: 8px; color: #fff; font-size: 14px; box-sizing: border-box;
+        }
+        input:focus { border-color: #38bdf8; outline: none; }
+        
+        .btn {
+            width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold;
+            cursor: pointer; font-size: 14px; text-transform: uppercase; margin-bottom: 12px;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-generate { background: #2563eb; color: #fff; }
+        .btn-generate:hover { background: #1d4ed8; }
+        .btn-download { background: #10b981; color: #fff; display: none; }
+        .btn-download:hover { background: #059669; }
+
+        /* Hidden standard container used to process QR data behind the scenes */
+        #qr-raw-holder { display: none; }
+        
+        /* Studio Preview Box */
+        .preview-area { margin-top: 25px; border-top: 1px dashed #334155; padding-top: 20px; display: none; }
+        .preview-title { font-size: 12px; color: #eab308; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
+        canvas { border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); max-width: 100%; height: auto; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>AlertoQR Control Panel</h1>
+<div class="admin-box">
+    <h2>AlertoQR Admin Panel</h2>
+    <div class="subtitle">Sticker Batch & Graphic Generator Studio</div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h3>Total Earnings</h3>
-            <p class="stat-earning" id="stat-earnings">₹0</p>
-        </div>
-        <div class="stat-card">
-            <h3>Active Users</h3>
-            <p class="stat-active" id="stat-active">0</p>
-        </div>
-        <div class="stat-card">
-            <h3>Expired / Pending Users</h3>
-            <p class="stat-expired" id="stat-expired">0</p>
-        </div>
+    <div class="form-group">
+        <label>Enter New Sticker Serial ID</label>
+        <input type="text" id="sticker_id_input" placeholder="e.g. AQ8001" style="text-transform: uppercase;">
     </div>
 
-    <div class="section-box">
-        <div class="section-title">🖨️ Smart Bulk QR Code Generator</div>
-        
-        <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; padding: 10px 15px; border-radius: 6px; font-size: 13px; color: #10b981; margin-bottom: 20px; font-weight: 500;">
-            🚀 Global Domain Active: QR Generation links are bound to <strong>https://alertoqr.in/register.html</strong>
-        </div>
+    <button onclick="generateCompleteSmartSticker()" class="btn btn-generate">⚙️ Generate Complete Sticker</button>
+    <button id="download-btn" onclick="downloadStickerImage()" class="btn btn-download">💾 Download Print-Ready PNG</button>
 
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Series Code (Prefix)</label>
-                <input type="text" id="qr-prefix" value="ALQR">
-            </div>
-            <div class="form-group">
-                <label>Start No.</label>
-                <input type="number" id="qr-start" value="1">
-            </div>
-            <div class="form-group">
-                <label>End No.</label>
-                <input type="number" id="qr-end" value="10">
-            </div>
-        </div>
-        <button class="btn btn-primary" onclick="generateBulkQRIntents()">🚀 Generate QR Codes</button>
-        <button class="btn btn-success" style="margin-left: 10px; display: none;" id="btn-print-sheet" onclick="window.print()">🖨️ Print Sheets</button>
-        
-        <div id="preview-container" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px;"></div>
+    <div id="qr-raw-holder"></div>
+
+    <div class="preview-area" id="preview-box">
+        <div class="preview-title">👁️ Live Print Preview</div>
+        <canvas id="stickerCanvas" width="400" height="400"></canvas>
     </div>
-
-    <div class="section-box">
-        <div class="section-title">👥 Customer Registrations & Plan Controls</div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Sticker ID</th>
-                        <th>Owner Name</th>
-                        <th>Vehicle Number</th>
-                        <th>Mobile</th>
-                        <th>Status</th>
-                        <th>Expiry Date</th>
-                        <th>Action Controls</th>
-                    </tr>
-                </thead>
-                <tbody id="registrations-table-body">
-                    <tr>
-                        <td colspan="7" style="text-align: center; color: #94a3b8;">Connecting to Supabase Records...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div id="print-area">
-    <div class="qr-print-grid" id="print-grid-box"></div>
 </div>
 
 <script>
-    // System database core access tokens mapping layout architecture
-    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
-    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    let generatedStickerFileName = "alertoqr-sticker.png";
 
-    // Load & parse cloud pipeline items live matrix elements loops
-    async function loadAdminDashboardData() {
-        let { data, error } = await _supabase
-            .from('registrations')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error("Fetch Exception Handled Logs:", error);
+    function generateCompleteSmartSticker() {
+        const idInput = document.getElementById('sticker_id_input').value.trim().toUpperCase();
+        if (!idInput) {
+            alert("Bhai, pehle Sticker ID toh daalo!");
             return;
         }
 
-        const tbody = document.getElementById('registrations-table-body');
-        tbody.innerHTML = "";
+        generatedStickerFileName = `AlertoQR_${idInput}.png`;
 
-        if (!data || data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color:#94a3b8;">No registered records found in Database.</td></tr>`;
-            updateStatsUI(0, 0, 0);
-            return;
-        }
+        // 1. Clear old temporary data
+        document.getElementById('qr-raw-holder').innerHTML = "";
+        
+        // Target dynamic landing destination path route
+        const activationTargetUrl = `https://alertoqr.in/register.html?id=${idInput}`;
 
-        let totalEarnings = 0;
-        let activeCount = 0;
-        let pendingCount = 0;
-
-        data.forEach(row => {
-            // Live counters evaluation pipelines logic tracking checks
-            if (row.status === 'Active') {
-                totalEarnings += 299;
-                activeCount++;
-            } else {
-                pendingCount++;
-            }
-
-            const isCurrentActive = row.status === 'Active';
-            const statusBadgeClass = isCurrentActive ? 'badge-active' : 'badge-pending';
-            
-            // Refined operational state tracking switches logic action triggers
-            const controlButtonMarkup = isCurrentActive 
-                ? `<button class="btn btn-danger" onclick="toggleActivationState('${row.sticker_id}', 'Active')">🛑 Deactivate</button>` 
-                : `<button class="btn btn-success" onclick="toggleActivationState('${row.sticker_id}', 'Pending')">⚡ Activate (1 Year)</button>`;
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="font-weight: bold; color: #38bdf8;">${row.sticker_id}</td>
-                <td>${row.full_name || 'N/A'}</td>
-                <td style="letter-spacing: 0.5px; font-weight:600;">${row.vehicle_number || 'N/A'}</td>
-                <td>${row.mobile_number || 'N/A'}</td>
-                <td><span class="badge ${statusBadgeClass}">${row.status || 'Pending'}</span></td>
-                <td style="font-family: monospace;">${row.expiry_date || 'N/A'}</td>
-                <td>
-                    ${controlButtonMarkup}
-                    <button class="btn btn-edit" style="margin-left:4px;" onclick="triggerInlineEdit('${row.sticker_id}', '${row.full_name}', '${row.vehicle_number}', '${row.mobile_number}')">✏️ Edit</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
+        // 2. Generate raw QR code inside the hidden block
+        new QRCode(document.getElementById("qr-raw-holder"), {
+            text: activationTargetUrl,
+            width: 160,
+            height: 160,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
         });
 
-        updateStatsUI(totalEarnings, activeCount, pendingCount);
+        // Wait a slight fraction for the library to draw the raw image, then draw the full sticker template layout
+        setTimeout(() => {
+            renderStickerGraphicTemplate(idInput);
+        }, 300);
     }
 
-    function updateStatsUI(earnings, active, pending) {
-        document.getElementById('stat-earnings').innerText = `₹${earnings}`;
-        document.getElementById('stat-active').innerText = active;
-        document.getElementById('stat-expired').innerText = pending;
-    }
-
-    // Toggle logic controllers between active and pending core values tracking pipeline overrides
-    async function toggleActivationState(stickerId, currentStatus) {
-        const nextTargetStatusValue = (currentStatus === 'Active') ? 'Pending' : 'Active';
+    function renderStickerGraphicTemplate(stickerId) {
+        const canvas = document.getElementById('stickerCanvas');
+        const ctx = canvas.getContext('2d');
         
-        let calculatedDateObj = new Date();
-        calculatedDateObj.setFullYear(calculatedDateObj.getFullYear() + 1);
-        const transformedExpiryDateString = calculatedDateObj.toISOString().split('T')[0];
+        // Clear frame grid canvas area before redraw operation
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const { error } = await _supabase
-            .from('registrations')
-            .update({ 
-                status: nextTargetStatusValue,
-                expiry_date: nextTargetStatusValue === 'Active' ? transformedExpiryDateString : null
-            })
-            .eq('sticker_id', stickerId);
+        // --- STEP A: CARD BACKGROUND AND MASTER FRAMING WRAPPER ---
+        ctx.fillStyle = "#ffffff"; // Solid core base fill background
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        if (error) {
-            alert("Database Error: " + error.message);
-        } else {
-            alert(`Sticker status of ${stickerId} successfully changed to ${nextTargetStatusValue.toUpperCase()}`);
-            loadAdminDashboardData();
-        }
-    }
+        // --- STEP B: HEADER CONTAINER COMPONENT (YELLOW STRIP) ---
+        ctx.fillStyle = "#eab308"; // Solid high warning hazard notification amber yellow accent
+        ctx.fillRect(0, 0, canvas.width, 65);
 
-    // Live parameters edits prompt modals pipeline overrides
-    async function triggerInlineEdit(stickerId, existingName, existingVehicle, existingMobile) {
-        const promptName = prompt("Modify Registration Owner Full Name:", existingName);
-        if (promptName === null) return;
-        const promptVehicle = prompt("Modify Target Vehicle Tracker Registration Plate No:", existingVehicle);
-        if (promptVehicle === null) return;
-        const promptMobile = prompt("Modify Primary Emergency Contact Mapping Mobile No:", existingMobile);
-        if (promptMobile === null) return;
+        // Header Border Accent Ring Base Layer
+        ctx.fillStyle = "#d97706";
+        ctx.fillRect(0, 61, canvas.width, 4);
 
-        const { error } = await _supabase
-            .from('registrations')
-            .update({
-                full_name: promptName.trim(),
-                vehicle_number: promptVehicle.trim().toUpperCase(),
-                mobile_number: promptMobile.trim()
-            })
-            .eq('sticker_id', stickerId);
-
-        if (error) { 
-            alert("Transaction Write Exception occurred."); 
-        } else { 
-            alert("Record parameters cleanly successfully committed."); 
-            loadAdminDashboardData(); 
-        }
-    }
-
-    // Generator logic functions mapping blocks connected directly to custom domain
-    function generateBulkQRIntents() {
-        const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
-        const start = parseInt(document.getElementById('qr-start').value);
-        const end = parseInt(document.getElementById('qr-end').value);
-
-        if (!prefix || isNaN(start) || isNaN(end) || start > end) {
-            alert("Config range parsing fault detected!");
-            return;
-        }
-
-        const printGridBox = document.getElementById('print-grid-box');
-        const previewGridBox = document.getElementById('preview-container');
+        // Header Text elements rendering context operations
+        ctx.fillStyle = "#000000";
+        ctx.font = "bold 16px 'Segoe UI', Arial, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("⚠️ EMERGENCY ALERTOQR CONTACT", canvas.width / 2, 28);
         
-        printGridBox.innerHTML = ""; 
-        previewGridBox.innerHTML = "";
+        ctx.font = "bold 11px 'Segoe UI', Arial, sans-serif";
+        ctx.fillText("(गलत पार्किंग या समस्या होने पर स्कैन करें)", canvas.width / 2, 48);
 
-        // HARDCODED CUSTOM BRANDING TRACKING ROUTE
-        const routeTargetUrl = "https://alertoqr.in/register.html";
-
-        for (let idx = start; idx <= end; idx++) {
-            const indexPaddedStr = String(idx).padStart(3, '0');
-            const loopStickerID = `${prefix}${indexPaddedStr}`;
-            const completeDeepLinkUrl = `${routeTargetUrl}?id=${loopStickerID}`;
-
-            const googleChartApiUrlLinkStr = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(completeDeepLinkUrl)}`;
-
-            // Build dynamic print template DOM node
-            const printCardDiv = document.createElement('div');
-            printCardDiv.className = 'qr-card';
-            printCardDiv.innerHTML = `
-                <div style="font-size:11px; font-weight:bold; margin-bottom:5px; letter-spacing:1px; color:#000;">ALERTOQR</div>
-                <img src="${googleChartApiUrlLinkStr}" alt="QR" style="width:130px; height:130px; display:block; margin:0 auto;">
-                <div style="font-size:12px; font-weight:bold; margin-top:5px; font-family:monospace; color:#000;">${loopStickerID}</div>
-            `;
-            printGridBox.appendChild(printCardDiv);
-
-            // Create on-screen quick preview thumbnail layouts card node logic items
-            const visualPreviewDiv = document.createElement('div');
-            visualPreviewDiv.style.cssText = "background:#0f172a; padding:10px; border-radius:8px; border:1px solid #334155; text-align:center;";
-            visualPreviewDiv.innerHTML = `
-                <img src="${googleChartApiUrlLinkStr}" style="width:100%; border-radius:4px; margin-bottom:5px;">
-                <div style="font-size:11px; font-family:monospace; color:#38bdf8; font-weight:bold;">${loopStickerID}</div>
-            `;
-            previewGridBox.appendChild(visualPreviewDiv);
+        // --- STEP C: EMBED RAW QR CODE FRAME IMAGE FROM HIDDEN ELEMENT NODE ---
+        const rawQrImg = document.querySelector('#qr-raw-holder img');
+        if (rawQrImg) {
+            // Drop shadow configuration for the QR square presentation look element frame area
+            ctx.shadowColor = "rgba(0, 0, 0, 0.15)";
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 4;
+            
+            // Draw standard central positioning boundary frame card space rectangle line borders
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(110, 95, 180, 180);
+            ctx.drawImage(rawQrImg, 120, 105, 160, 160);
+            
+            // Revert configuration styling properties back to standard layout operational states immediately
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetY = 0;
         }
 
-        document.getElementById('btn-print-sheet').style.display = 'inline-flex';
-        alert(`🎯 ${((end - start) + 1)} High-fidelity QR structures rendered on live template workspace canvas layers! Bound to custom domain.`);
+        // --- STEP D: STICKER SERIAL UNIQUE ID OVERLAY TAG EMBEDDED UNDER THE QR FRAME ---
+        ctx.fillStyle = "#1e293b";
+        ctx.fillRect(140, 285, 120, 22);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 11px monospace";
+        ctx.fillText(`ID: ${stickerId}`, canvas.width / 2, 300);
+
+        // --- STEP E: BOTTOM CONTAINER CALL TO ACTION BAR SYSTEM SUBSTRATE ---
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 325, canvas.width, 75);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 15px 'Segoe UI', Arial, sans-serif";
+        ctx.fillText("📞 SCAN TO CALL OWNER", canvas.width / 2, 352);
+
+        ctx.fillStyle = "#10b981"; // Secure Privacy Protected system verification indicator branding accent line
+        ctx.font = "600 11px 'Segoe UI', Arial, sans-serif";
+        ctx.fillText("🔒 Privacy Protected | आपका नंबर सुरक्षित है", canvas.width / 2, 378);
+
+        // Reveal final layout graphic control block tools
+        document.getElementById('preview-box').style.display = 'block';
+        document.getElementById('download-btn').style.display = 'flex';
     }
 
-    // Run data fetching loop dynamically inside page engine
-    loadAdminDashboardData();
+    function downloadStickerImage() {
+        const canvas = document.getElementById('stickerCanvas');
+        const imagePayloadData = canvas.toDataURL("image/png");
+        
+        const triggerVirtualAnchorLinkNode = document.createElement('a');
+        triggerVirtualAnchorLinkNode.download = generatedStickerFileName;
+        triggerVirtualAnchorLinkNode.href = imagePayloadData;
+        
+        document.body.appendChild(triggerVirtualAnchorLinkNode);
+        triggerVirtualAnchorLinkNode.click();
+        document.body.removeChild(triggerVirtualAnchorLinkNode);
+    }
 </script>
 </body>
 </html>
