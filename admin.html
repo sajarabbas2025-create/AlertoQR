@@ -48,10 +48,8 @@
         .btn-download { background: #10b981; color: #fff; display: none; }
         .btn-download:hover { background: #059669; }
 
-        /* Hidden standard container used to process QR data behind the scenes */
         #qr-raw-holder { display: none; }
         
-        /* Studio Preview Box */
         .preview-area { margin-top: 25px; border-top: 1px dashed #334155; padding-top: 20px; display: none; }
         .preview-title { font-size: 12px; color: #eab308; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
         canvas { border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); max-width: 100%; height: auto; }
@@ -90,14 +88,9 @@
         }
 
         generatedStickerFileName = `AlertoQR_${idInput}.png`;
-
-        // 1. Clear old temporary data
         document.getElementById('qr-raw-holder').innerHTML = "";
-        
-        // Target dynamic landing destination path route
         const activationTargetUrl = `https://alertoqr.in/register.html?id=${idInput}`;
 
-        // 2. Generate raw QR code inside the hidden block
         new QRCode(document.getElementById("qr-raw-holder"), {
             text: activationTargetUrl,
             width: 160,
@@ -107,7 +100,6 @@
             correctLevel : QRCode.CorrectLevel.H
         });
 
-        // Wait a slight fraction for the library to draw the raw image, then draw the full sticker template layout
         setTimeout(() => {
             renderStickerGraphicTemplate(idInput);
         }, 300);
@@ -117,22 +109,17 @@
         const canvas = document.getElementById('stickerCanvas');
         const ctx = canvas.getContext('2d');
         
-        // Clear frame grid canvas area before redraw operation
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // --- STEP A: CARD BACKGROUND AND MASTER FRAMING WRAPPER ---
-        ctx.fillStyle = "#ffffff"; // Solid core base fill background
+        ctx.fillStyle = "#ffffff"; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // --- STEP B: HEADER CONTAINER COMPONENT (YELLOW STRIP) ---
-        ctx.fillStyle = "#eab308"; // Solid high warning hazard notification amber yellow accent
+        ctx.fillStyle = "#eab308"; 
         ctx.fillRect(0, 0, canvas.width, 65);
 
-        // Header Border Accent Ring Base Layer
         ctx.fillStyle = "#d97706";
         ctx.fillRect(0, 61, canvas.width, 4);
 
-        // Header Text elements rendering context operations
         ctx.fillStyle = "#000000";
         ctx.font = "bold 16px 'Segoe UI', Arial, sans-serif";
         ctx.textAlign = "center";
@@ -141,33 +128,27 @@
         ctx.font = "bold 11px 'Segoe UI', Arial, sans-serif";
         ctx.fillText("(गलत पार्किंग या समस्या होने पर स्कैन करें)", canvas.width / 2, 48);
 
-        // --- STEP C: EMBED RAW QR CODE FRAME IMAGE FROM HIDDEN ELEMENT NODE ---
         const rawQrImg = document.querySelector('#qr-raw-holder img');
         if (rawQrImg) {
-            // Drop shadow configuration for the QR square presentation look element frame area
             ctx.shadowColor = "rgba(0, 0, 0, 0.15)";
             ctx.shadowBlur = 10;
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 4;
             
-            // Draw standard central positioning boundary frame card space rectangle line borders
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(110, 95, 180, 180);
             ctx.drawImage(rawQrImg, 120, 105, 160, 160);
             
-            // Revert configuration styling properties back to standard layout operational states immediately
             ctx.shadowBlur = 0;
             ctx.shadowOffsetY = 0;
         }
 
-        // --- STEP D: STICKER SERIAL UNIQUE ID OVERLAY TAG EMBEDDED UNDER THE QR FRAME ---
         ctx.fillStyle = "#1e293b";
         ctx.fillRect(140, 285, 120, 22);
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 11px monospace";
         ctx.fillText(`ID: ${stickerId}`, canvas.width / 2, 300);
 
-        // --- STEP E: BOTTOM CONTAINER CALL TO ACTION BAR SYSTEM SUBSTRATE ---
         ctx.fillStyle = "#000000";
         ctx.fillRect(0, 325, canvas.width, 75);
 
@@ -175,11 +156,10 @@
         ctx.font = "bold 15px 'Segoe UI', Arial, sans-serif";
         ctx.fillText("📞 SCAN TO CALL OWNER", canvas.width / 2, 352);
 
-        ctx.fillStyle = "#10b981"; // Secure Privacy Protected system verification indicator branding accent line
+        ctx.fillStyle = "#10b981"; 
         ctx.font = "600 11px 'Segoe UI', Arial, sans-serif";
         ctx.fillText("🔒 Privacy Protected | आपका नंबर सुरक्षित है", canvas.width / 2, 378);
 
-        // Reveal final layout graphic control block tools
         document.getElementById('preview-box').style.display = 'block';
         document.getElementById('download-btn').style.display = 'flex';
     }
