@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlertoQR Safety | Register Smart Sticker</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -137,6 +138,13 @@
             box-sizing: border-box;
             margin-top: 12px;
         }
+        .qr-wrapper {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 15px auto;
+        }
     </style>
 </head>
 <body>
@@ -179,12 +187,17 @@
     <div class="payment-box" id="payment-container">
         <div style="font-size: 14px; color: #cbd5e1; font-weight: 600;">🔒 STEP 2: COMPLETE ACTIVATION PAYMENT</div>
         <div class="payment-price">₹299 <span style="font-size:14px; color:#94a3b8; font-weight:normal;">/ Yearly</span></div>
-        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 15px;">Click below to pay safely via PhonePe, Google Pay, or Paytm.</div>
         
+        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 8px;">If you are on Mobile, click below:</div>
         <a href="#" class="btn-pay" id="upi-pay-link">⚡ PAY WITH UPI APP</a>
         
-        <div style="font-size: 11px; color: #10b981; margin-top: 15px; font-weight: 500;">
-            ⚠️ Payment complete hote hi aapka sticker panel me activation ke liye lock ho jayega!
+        <div id="desktop-qr-instruction" style="font-size: 11px; color: #94a3b8; margin-top: 15px;">Or scan this QR Code via GPay/PhonePe/Paytm to pay:</div>
+        <div class="qr-wrapper">
+            <div id="qrcode"></div>
+        </div>
+        
+        <div style="font-size: 11px; color: #10b981; margin-top: 10px; font-weight: 500;">
+            ⚠️ Payment complete hote hi aapka sticker activation ke liye lock ho jayega!
         </div>
     </div>
 </div>
@@ -195,9 +208,9 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Your Live BharatPe UPI Config
-    const BUSINESS_UPI_ID = "BHARATPE2V0N0K2G1X51584@unitype"; 
-    const BUSINESS_NAME = "AlertoQR Safety";
+    // Your Personal Verified UPI Configuration (100% Success Rate)
+    const BUSINESS_UPI_ID = "6388522427@ptsbi"; 
+    const BUSINESS_NAME = "SAJAR ABBAS";
 
     window.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -251,8 +264,19 @@
             const transactionNote = encodeURIComponent(`Activation for Sticker ${stickerIdValue}`);
             const upiUrl = `upi://pay?pa=${BUSINESS_UPI_ID}&pn=${encodeURIComponent(BUSINESS_NAME)}&am=${amount}&cu=INR&tn=${transactionNote}`;
 
-            // Attach link to the payment button
+            // 1. Mobile button setup
             upiPayLink.href = upiUrl;
+
+            // 2. Generate QR Code inside container
+            document.getElementById('qrcode').innerHTML = ""; // Clear old QR if any
+            new QRCode(document.getElementById("qrcode"), {
+                text: upiUrl,
+                width: 160,
+                height: 160,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
 
             // Hide Form & Show Payment Box
             document.getElementById('registration-form').style.display = 'none';
