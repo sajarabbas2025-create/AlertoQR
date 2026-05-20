@@ -3,65 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR | Core Admin Control</title>
+    <title>AlertoQR | Admin Panel</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #fff; padding: 30px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
-        .panel-box { background: #1e293b; border: 1px solid #334155; padding: 30px; border-radius: 12px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); box-sizing: border-box; }
-        h2 { color: #38bdf8; margin-top: 0; font-size: 24px; }
-        .form-group { text-align: left; margin-bottom: 20px; }
-        label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: #fff; box-sizing: border-box; font-size: 14px; }
-        input:focus { border-color: #38bdf8; outline: none; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 12px; font-size: 14px; display: flex; justify-content: center; align-items: center; gap: 8px; }
-        .btn-gen { background: #2563eb; color: #fff; }
-        .btn-gen:hover { background: #1d4ed8; }
-        .btn-down { background: #10b981; color: #fff; display: none; }
-        .btn-down:hover { background: #059669; }
+        /* Aapka bilkul purana normal white styling layout */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            background: #fff;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #222;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .btn-submit {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+        
+        /* Hidden layout area for library background work */
         #qr-raw-holder { display: none; }
-        .preview-area { margin-top: 25px; border-top: 1px dashed #334155; padding-top: 20px; display: none; }
-        .preview-title { font-size: 12px; color: #eab308; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
-        canvas { border-radius: 8px; max-width: 100%; height: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+
+        /* QR & Sticker Output Section */
+        .output-section {
+            margin-top: 25px;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 15px;
+            max-width: 100%;
+            height: auto;
+        }
+        .btn-download {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+            display: none;
+            width: 100%;
+            text-transform: uppercase;
+        }
+        .btn-download:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
 
-<div class="panel-box">
-    <h2>AlertoQR Dashboard</h2>
-    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 25px;">Generate Smart Vehicle Emergency Sticker</p>
-
-    <div class="form-group">
-        <label>Sticker Serial ID</label>
+<div class="container">
+    <h1>AlertoQR Admin Dashboard</h1>
+    
+    <div class="input-group">
+        <label for="sticker_id_input">Enter Sticker Serial ID:</label>
         <input type="text" id="sticker_id_input" placeholder="e.g. ALQR003" style="text-transform: uppercase;">
     </div>
-
-    <button onclick="generateSmartStickerInsideDashboard()" class="btn btn-gen">⚙️ Generate Complete Sticker</button>
-    <button id="download-btn" onclick="downloadStickerImage()" class="btn btn-down">💾 Download Print-Ready PNG</button>
+    
+    <button onclick="processOldPanelQR()" class="btn-submit">Generate QR Code</button>
 
     <div id="qr-raw-holder"></div>
 
-    <div class="preview-area" id="preview-box">
-        <div class="preview-title">👁️ Live Print Preview</div>
-        <canvas id="stickerCanvas" width="400" height="400"></canvas>
+    <div class="output-section">
+        <canvas id="stickerCanvas" width="400" height="400" style="display:none;"></canvas>
+        <button id="download-btn" onclick="downloadStickerImage()" class="btn-download">💾 Download Print-Ready Sticker</button>
     </div>
 </div>
 
 <script>
     let filenameTracker = "sticker.png";
 
-    function generateSmartStickerInsideDashboard() {
+    function processOldPanelQR() {
         const idInput = document.getElementById('sticker_id_input').value.trim().toUpperCase();
         if (!idInput) {
-            alert("Bhai, pehle Sticker ID toh daalo!");
+            alert("Please enter a valid Sticker ID!");
             return;
         }
 
         filenameTracker = `AlertoQR_${idInput}.png`;
         document.getElementById('qr-raw-holder').innerHTML = "";
         
-        // Exact active scanning landing url configuration
+        // Dynamic registration routing path
         const targetActivationUrl = `https://alertoqr.in/register.html?id=${idInput}`;
 
+        // Generating standard QR behind the scenes
         new QRCode(document.getElementById("qr-raw-holder"), {
             text: targetActivationUrl,
             width: 160,
@@ -71,6 +136,7 @@
             correctLevel : QRCode.CorrectLevel.H
         });
 
+        // Instant delay rendering to embed inside your sticker template on canvas
         setTimeout(() => {
             renderStickerOnCanvas(idInput);
         }, 300);
@@ -79,60 +145,59 @@
     function renderStickerOnCanvas(stickerId) {
         const canvas = document.getElementById('stickerCanvas');
         const ctx = canvas.getContext('2d');
+        
+        // Clear frame before redraw
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // White base template substrate background
+        // 1. Base White Background
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Top Warning Header Frame (Yellow)
+        // 2. Yellow Alert Header Bar
         ctx.fillStyle = "#eab308";
         ctx.fillRect(0, 0, canvas.width, 65);
         ctx.fillStyle = "#d97706";
         ctx.fillRect(0, 61, canvas.width, 4);
 
-        // Top English & Hindi Instruction Copy
+        // 3. Header Texts
         ctx.fillStyle = "#000000";
-        ctx.font = "bold 16px 'Segoe UI', Arial, sans-serif";
+        ctx.font = "bold 16px Arial, sans-serif";
         ctx.textAlign = "center";
         ctx.fillText("⚠️ EMERGENCY ALERTOQR CONTACT", canvas.width / 2, 28);
-        ctx.font = "bold 11px 'Segoe UI', Arial, sans-serif";
+        ctx.font = "bold 11px Arial, sans-serif";
         ctx.fillText("(गलत पार्किंग या समस्या होने पर स्कैन करें)", canvas.width / 2, 48);
 
-        // QR Processing & Composite Overlays
+        // 4. Inject Raw QR Code inside design context
         const rawQrImg = document.querySelector('#qr-raw-holder img');
         if (rawQrImg) {
             ctx.shadowColor = "rgba(0, 0, 0, 0.15)";
             ctx.shadowBlur = 10;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 4;
-            
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(110, 95, 180, 180);
             ctx.drawImage(rawQrImg, 120, 105, 160, 160);
             ctx.shadowBlur = 0;
-            ctx.shadowOffsetY = 0;
         }
 
-        // Mid Badge Unique Identifier Element
+        // 5. Unique Identification Code Label
         ctx.fillStyle = "#1e293b";
         ctx.fillRect(140, 285, 120, 22);
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 11px monospace";
         ctx.fillText(`ID: ${stickerId}`, canvas.width / 2, 300);
 
-        // Bottom Warning CTA Bar (Black)
+        // 6. Bottom CTA Footer Strip (Black)
         ctx.fillStyle = "#000000";
         ctx.fillRect(0, 325, canvas.width, 75);
         ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 15px 'Segoe UI', Arial, sans-serif";
+        ctx.font = "bold 15px Arial, sans-serif";
         ctx.fillText("📞 SCAN TO CALL OWNER", canvas.width / 2, 352);
         ctx.fillStyle = "#10b981";
-        ctx.font = "600 11px 'Segoe UI', Arial, sans-serif";
+        ctx.font = "600 11px Arial, sans-serif";
         ctx.fillText("🔒 Privacy Protected | आपका नंबर सुरक्षित है", canvas.width / 2, 378);
 
-        document.getElementById('preview-box').style.display = 'block';
-        document.getElementById('download-btn').style.display = 'flex';
+        // Display results without altering any core elements
+        canvas.style.display = 'inline-block';
+        document.getElementById('download-btn').style.display = 'block';
     }
 
     function downloadStickerImage() {
