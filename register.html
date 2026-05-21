@@ -68,9 +68,6 @@
             border-color: #38bdf8;
             box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
         }
-        input::placeholder {
-            color: #475569;
-        }
         input[readonly] {
             background-color: #1e293b;
             border-color: #334155;
@@ -105,8 +102,6 @@
             text-align: center;
             line-height: 1.4;
         }
-        
-        /* 💳 Payment Section Styling */
         .payment-box {
             background-color: rgba(56, 189, 248, 0.1);
             border: 2px dashed #38bdf8;
@@ -131,7 +126,6 @@
             border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
-            cursor: pointer;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
             text-decoration: none;
             display: inline-block;
@@ -155,28 +149,28 @@
 
     <form id="registration-form" onsubmit="handleRegistration(event)">
         <div class="form-group">
-            <label for="sticker_id">Sticker Serial ID</label>
+            <label>Sticker Serial ID</label>
             <input type="text" id="sticker_id" placeholder="e.g. ALQR001" required readonly>
         </div>
 
         <div class="form-group">
-            <label for="full_name">Owner Full Name</label>
+            <label>Owner Full Name</label>
             <input type="text" id="full_name" placeholder="Enter full name" required>
         </div>
 
         <div class="form-group">
-            <label for="mobile_number">Mobile Number (For Emergency Alerts)</label>
-            <input type="tel" id="mobile_number" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" title="Please enter a valid 10-digit mobile number" required>
+            <label>Mobile Number</label>
+            <input type="tel" id="mobile_number" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" required>
         </div>
 
         <div class="form-group">
-            <label for="vehicle_number">Vehicle Plate Number</label>
+            <label>Vehicle Plate Number</label>
             <input type="text" id="vehicle_number" placeholder="e.g. UP32PD2478" style="text-transform: uppercase;" required>
         </div>
 
         <div class="form-group">
-            <label for="secret_pin">Create 4-Digit Secret PIN (To Edit Details Later)</label>
-            <input type="password" id="secret_pin" placeholder="••••" maxlength="4" pattern="[0-9]{4}" title="Please enter a 4-digit number PIN" required>
+            <label>Create 4-Digit Secret PIN</label>
+            <input type="password" id="secret_pin" placeholder="••••" maxlength="4" pattern="[0-9]{4}" required>
         </div>
 
         <button type="submit" class="btn-submit" id="submit-btn">📝 SUBMIT & PROCEED TO PAY</button>
@@ -187,110 +181,83 @@
     <div class="payment-box" id="payment-container">
         <div style="font-size: 14px; color: #cbd5e1; font-weight: 600;">🔒 STEP 2: COMPLETE ACTIVATION PAYMENT</div>
         <div class="payment-price">₹299 <span style="font-size:14px; color:#94a3b8; font-weight:normal;">/ Yearly</span></div>
-        
-        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 8px;">If you are on Mobile, click below:</div>
         <a href="#" class="btn-pay" id="upi-pay-link">⚡ PAY WITH UPI APP</a>
-        
-        <div id="desktop-qr-instruction" style="font-size: 11px; color: #94a3b8; margin-top: 15px;">Or scan this QR Code via GPay/PhonePe/Paytm to pay:</div>
-        <div class="qr-wrapper">
-            <div id="qrcode"></div>
-        </div>
-        
-        <div style="font-size: 11px; color: #10b981; margin-top: 10px; font-weight: 500;">
-            ⚠️ Payment complete hote hi aapka sticker activation ke liye lock ho jayega!
-        </div>
+        <div class="qr-wrapper"><div id="qrcode"></div></div>
     </div>
 </div>
 
 <script>
-    // Supabase Credentials
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Your Personal Verified UPI Configuration (100% Success Rate)
     const BUSINESS_UPI_ID = "6388522427@ptsbi"; 
     const BUSINESS_NAME = "SAJAR ABBAS";
 
     window.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const urlStickerId = urlParams.get('id');
-        
-        if (urlStickerId) {
-            document.getElementById('sticker_id').value = urlStickerId.trim().toUpperCase();
-        } else {
-            document.getElementById('sticker_id').removeAttribute('readonly');
-            document.getElementById('sticker_id').placeholder = "Enter Serial ID (e.g. ALQR001)";
-        }
+        if (urlStickerId) document.getElementById('sticker_id').value = urlStickerId.trim().toUpperCase();
     });
 
     async function handleRegistration(event) {
         event.preventDefault();
-
         const submitBtn = document.getElementById('submit-btn');
         const errorBox = document.getElementById('error-box');
-        const paymentContainer = document.getElementById('payment-container');
-        const upiPayLink = document.getElementById('upi-pay-link');
-
+        
         errorBox.style.display = 'none';
-        submitBtn.innerText = "Processing Registration...";
+        submitBtn.innerText = "Checking Details...";
         submitBtn.disabled = true;
 
-        const stickerIdValue = document.getElementById('sticker_id').value.trim().toUpperCase();
-        const fullNameValue = document.getElementById('full_name').value.trim();
-        const mobileNumberValue = document.getElementById('mobile_number').value.trim();
-        const vehicleNumberValue = document.getElementById('vehicle_number').value.trim().toUpperCase();
-        const secretPinValue = document.getElementById('secret_pin').value.trim();
+        const stickerId = document.getElementById('sticker_id').value.trim().toUpperCase();
+        const vehicleNumber = document.getElementById('vehicle_number').value.trim().toUpperCase();
 
         try {
-            // Save details to database with 'Pending' status
-            const { data, error } = await _supabase
+            // 🛑 CHECK FOR DUPLICATES
+            const { data: existingRecords, error: checkError } = await _supabase
                 .from('registrations')
-                .insert([
-                    { 
-                        sticker_id: stickerIdValue, 
-                        full_name: fullNameValue, 
-                        mobile_number: mobileNumberValue, 
-                        vehicle_number: vehicleNumberValue, 
-                        secret_pin: secretPinValue,
-                        status: 'Pending' 
-                    }
-                ]);
+                .select('sticker_id, vehicle_number')
+                .or(`sticker_id.eq.${stickerId},vehicle_number.eq.${vehicleNumber}`);
 
-            if (error) throw error;
+            if (checkError) throw checkError;
 
-            // Generate dynamic UPI string for ₹299
-            const amount = "299.00";
-            const transactionNote = encodeURIComponent(`Activation for Sticker ${stickerIdValue}`);
-            const upiUrl = `upi://pay?pa=${BUSINESS_UPI_ID}&pn=${encodeURIComponent(BUSINESS_NAME)}&am=${amount}&cu=INR&tn=${transactionNote}`;
+            if (existingRecords && existingRecords.length > 0) {
+                let matched = existingRecords[0];
+                if(matched.sticker_id === stickerId) {
+                    throw new Error(`🛑 Sticker ID ${stickerId} pehle se registered hai! Ek sticker do baar register nahi ho sakta.`);
+                } else {
+                    throw new Error(`🛑 Vehicle Number ${vehicleNumber} pehle se registered hai!`);
+                }
+            }
 
-            // 1. Mobile button setup
-            upiPayLink.href = upiUrl;
+            // Insert data if unique
+            const { error: insertError } = await _supabase.from('registrations').insert([{ 
+                sticker_id: stickerId, 
+                full_name: document.getElementById('full_name').value.trim(), 
+                mobile_number: document.getElementById('mobile_number').value.trim(), 
+                vehicle_number: vehicleNumber, 
+                secret_pin: document.getElementById('secret_pin').value.trim(),
+                status: 'Pending' 
+            }]);
 
-            // 2. Generate QR Code inside container
-            document.getElementById('qrcode').innerHTML = ""; // Clear old QR if any
-            new QRCode(document.getElementById("qrcode"), {
-                text: upiUrl,
-                width: 160,
-                height: 160,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
+            if (insertError) throw insertError;
 
-            // Hide Form & Show Payment Box
+            const upiUrl = `upi://pay?pa=${BUSINESS_UPI_ID}&pn=${encodeURIComponent(BUSINESS_NAME)}&am=299.00&cu=INR&tn=${encodeURIComponent('Activation ' + stickerId)}`;
+            document.getElementById('upi-pay-link').href = upiUrl;
+            
+            document.getElementById('qrcode').innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), { text: upiUrl, width: 160, height: 160 });
+
             document.getElementById('registration-form').style.display = 'none';
-            paymentContainer.style.display = 'block';
+            document.getElementById('payment-container').style.display = 'block';
 
         } catch (err) {
-            console.error(err);
-            errorBox.innerText = `Error: ${err.message || 'Database connection failure.'}`;
+            errorBox.innerText = err.message;
             errorBox.style.display = 'block';
             submitBtn.innerText = "📝 SUBMIT & PROCEED TO PAY";
             submitBtn.disabled = false;
         }
     }
 </script>
-
 </body>
 </html>
