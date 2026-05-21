@@ -87,7 +87,7 @@
             margin-bottom: 24px;
         }
 
-        /* Original 6-Button Grid Layout Framework */
+        /* 6-Button Grid Layout */
         .features-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -116,7 +116,7 @@
             font-size: 24px;
         }
 
-        /* Brand Colors for Specific Actions */
+        /* Color Coding for Features */
         .btn-call { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
         .btn-call i { color: #ef4444; }
 
@@ -137,10 +137,8 @@
 
         .grid-btn:active {
             transform: scale(0.95);
-            background-color: rgba(255, 255, 255, 0.1);
         }
 
-        /* Infrastructure View States */
         #loading-view {
             padding: 50px 0;
             color: var(--accent-blue);
@@ -172,13 +170,12 @@
         <div>Fetching Smart Dashboard Control...</div>
     </div>
     
-    <div id="profile-view" style="display: none;">
+    <div id="profile-view" style="display: none !important;">
         <div class="vehicle-badge" id="lbl-vehicle">LOADING...</div>
         <div class="alert-heading">Smart Vehicle Assistant</div>
         <p class="alert-description">Choose an action below to quickly alert or communicate with the vehicle owner regarding any emergency or vehicle status.</p>
 
         <div class="features-grid">
-            
             <a href="#" id="lnk-call" class="grid-btn btn-call">
                 <i class="fa-solid fa-phone-flip"></i>
                 <span>Call Owner</span>
@@ -208,7 +205,6 @@
                 <i class="fa-solid fa-truck-medical"></i>
                 <span>Ambulance</span>
             </a>
-
         </div>
     </div>
 
@@ -226,9 +222,15 @@
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     window.addEventListener('DOMContentLoaded', async () => {
+        // Cache-Busting: Auto refresh if page is loaded from an old browser cache
         const urlParams = new URLSearchParams(window.location.search);
-        const stickerId = urlParams.get('id');
+        if (!urlParams.has('v')) {
+            urlParams.set('v', Date.now());
+            window.location.search = urlParams.toString();
+            return;
+        }
 
+        const stickerId = urlParams.get('id');
         if (!stickerId || stickerId.trim() === "") {
             showErrorState("Scan Error: Serial ID parameter target missing.");
             return;
@@ -256,27 +258,23 @@
             if (data.status === 'Active') {
                 document.getElementById('lbl-vehicle').innerText = data.vehicle_number;
                 
-                // 1. Primary Call Wireup
+                // Binding data triggers
                 document.getElementById('lnk-call').href = `tel:${data.mobile_number}`;
-                
-                // 2. Alternate Call (Using Same Mobile as Backup or fallback wireup)
                 document.getElementById('lnk-alt-call').href = `tel:${data.mobile_number}`;
                 
-                // 3. Pre-compiled Wrong Parking Message Link
                 const txtParking = encodeURIComponent(`Urgent: Your vehicle (${data.vehicle_number}) is wrongly parked or blocking traffic. Please move it immediately.`);
                 document.getElementById('lnk-parking').href = `https://wa.me/91${data.mobile_number}?text=${txtParking}`;
                 
-                // 4. Pre-compiled Share Location Message Link
-                const txtLocation = encodeURIComponent(`Hello, I am near your vehicle (${data.vehicle_number}). Please tap here to open map tools or connect with me.`);
+                const txtLocation = encodeURIComponent(`Hello, I am near your vehicle (${data.vehicle_number}). Please tap here to share your location or connect with me.`);
                 document.getElementById('lnk-location').href = `https://wa.me/91${data.mobile_number}?text=${txtLocation}`;
                 
-                // 5. Pre-compiled Share Photo Instruction Link
-                const txtPhoto = encodeURIComponent(`Hello, I want to send you a live photo status of your vehicle (${data.vehicle_number}). Please respond so I can attach the image.`);
+                const txtPhoto = encodeURIComponent(`Hello, I want to send you a live photo status of your vehicle (${data.vehicle_number}). Please respond so I can send the image.`);
                 document.getElementById('lnk-photo').href = `https://wa.me/91${data.mobile_number}?text=${txtPhoto}`;
 
-                // Toggle interface blocks visibility
-                document.getElementById('loading-view').style.display = 'none';
-                document.getElementById('profile-view').style.display = 'block';
+                // Force display grid setup
+                document.getElementById('loading-view').style.setProperty('display', 'none', 'important');
+                const profileView = document.getElementById('profile-view');
+                profileView.style.setProperty('display', 'block', 'important');
             } else {
                 window.location.href = `register.html?id=${cleanStickerId}`;
             }
@@ -286,9 +284,9 @@
     });
 
     function showErrorState(msg) {
-        document.getElementById('loading-view').style.display = 'none';
+        document.getElementById('loading-view').style.setProperty('display', 'none', 'important');
         document.getElementById('error-message-text').innerText = msg;
-        document.getElementById('error-screen').style.display = 'block';
+        document.getElementById('error-screen').style.setProperty('display', 'block', 'important');
     }
 </script>
 </body>
