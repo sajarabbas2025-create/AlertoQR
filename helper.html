@@ -3,178 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR | Contact Vehicle Owner System</title>
+    <title>AlertoQR | Smart Vehicle Safety Helper</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-green: #10b981;
+            --accent-amber: #fbbf24;
+            --accent-red: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
+
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 16px;
+            overflow-x: hidden;
         }
+
         .helper-card {
-            background-color: #1e293b;
-            padding: 35px 30px;
-            border-radius: 20px;
+            background-color: var(--bg-card);
+            padding: 32px 24px;
+            border-radius: 24px;
             width: 100%;
-            max-width: 420px;
+            max-width: 430px;
             text-align: center;
-            border: 1px solid #334155;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .app-logo-title {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
-            color: #38bdf8;
-            margin-bottom: 25px;
+            color: var(--accent-blue);
+            margin-bottom: 20px;
             letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
+
         .vehicle-badge {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            background: linear-gradient(135deg, var(--accent-amber) 0%, #f59e0b 100%);
             color: #0f172a;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 900;
-            padding: 10px 22px;
-            border-radius: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
             display: inline-block;
-            margin-bottom: 25px;
+            margin-bottom: 24px;
             letter-spacing: 1.5px;
-            box-shadow: 0 10px 15px -3px rgba(251, 191, 36, 0.3);
+            box-shadow: 0 10px 20px -3px rgba(251, 191, 36, 0.3);
             text-transform: uppercase;
         }
+
         .alert-heading {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
             color: #ffffff;
             margin-bottom: 12px;
         }
+
         .alert-description {
-            color: #94a3b8;
+            color: var(--text-muted);
             font-size: 14px;
             line-height: 1.6;
-            margin-bottom: 30px;
+            margin-bottom: 28px;
         }
-        .btn-call {
+
+        /* Direct Quick Communication Action Buttons Layout Grid */
+        .action-channels-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .btn-action {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: #ffffff;
             border: none;
-            border-radius: 10px;
+            border-radius: 14px;
             font-size: 16px;
             font-weight: 700;
             text-decoration: none;
-            display: inline-block;
-            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
-            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             letter-spacing: 0.5px;
+            cursor: pointer;
         }
-        .btn-call:hover {
+
+        .btn-call-owner {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff;
+            box-shadow: 0 10px 20px -3px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-call-owner:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 20px -3px rgba(239, 68, 68, 0.5);
+            box-shadow: 0 12px 24px -3px rgba(239, 68, 68, 0.5);
         }
-        .btn-call:active {
-            transform: translateY(0);
+
+        .btn-whatsapp-alert {
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: #ffffff;
+            box-shadow: 0 10px 20px -3px rgba(37, 211, 102, 0.3);
         }
+
+        .btn-whatsapp-alert:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -3px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Emergency Support Quick Tiles Configuration Links */
+        .emergency-grid-separator {
+            border-top: 1px dashed var(--border-color);
+            margin: 24px 0;
+            position: relative;
+        }
+
+        .emergency-grid-separator span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--bg-card);
+            padding: 0 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .emergency-services-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-sos {
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-sos i {
+            font-size: 14px;
+        }
+
+        .btn-sos.police i { color: #3b82f6; }
+        .btn-sos.ambulance i { color: #ef4444; }
+
+        .btn-sos:hover {
+            background-color: rgba(255, 255, 255, 0.07);
+            border-color: var(--text-muted);
+        }
+
+        /* System Interface View Management Blocks Styles */
         #loading-view {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px 0;
+            padding: 60px 0;
         }
+
         .spinner {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border: 4px solid rgba(56, 189, 248, 0.1);
-            border-top-color: #38bdf8;
+            border-top-color: var(--accent-blue);
             border-radius: 50%;
             animation: spin 1s infinite linear;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
         .loading-text {
-            color: #38bdf8;
+            color: var(--accent-blue);
             font-weight: 600;
             font-size: 15px;
+            letter-spacing: 0.3px;
         }
+
         #error-screen {
             display: none;
-            padding: 20px 0;
+            padding: 30px 0 10px 0;
         }
+
         .error-icon {
-            font-size: 40px;
-            color: #f87171;
-            margin-bottom: 15px;
+            font-size: 48px;
+            color: var(--accent-red);
+            margin-bottom: 18px;
         }
+
         .error-text {
-            color: #f87171;
+            color: var(--accent-red);
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.5;
+        }
+
+        /* Branding Footnote Footer Text element */
+        .footer-branding {
+            margin-top: 32px;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .footer-branding span {
+            color: var(--accent-blue);
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
 <div class="helper-card">
-    <div class="app-logo-title">AlertoQR Safety</div>
+    <div class="app-logo-title">
+        <i class="fa-solid i-logo fa-shield-halved"></i> AlertoQR Safety
+    </div>
 
     <div id="loading-view">
         <div class="spinner"></div>
-        <div class="loading-text">Verifying Smart Sticker Link...</div>
+        <div class="loading-text">Verifying Smart Protection Tag...</div>
     </div>
     
     <div id="profile-view" style="display: none;">
-        <div class="vehicle-badge" id="lbl-vehicle">DL 3C AM 1234</div>
+        <div class="vehicle-badge" id="lbl-vehicle">UP32PD2478</div>
+        
         <div class="alert-heading">Vehicle Emergency Alert</div>
         <p class="alert-description">
-            The owner of this vehicle has deployed this smart safety tag. If the vehicle is wrongly parked, facing an issue, or blocking your way, please tap below to call them instantly.
+            The owner of this vehicle has secured it with an AlertoQR safety tag. If this vehicle is wrongly parked, blocking traffic, or requires immediate attention, please contact them securely below.
         </p>
-        <a href="#" id="phone-trigger-link" class="btn-call">📞 CONNECT TO VEHICLE OWNER</a>
+
+        <div class="action-channels-stack">
+            <a href="#" id="phone-trigger-link" class="btn-action btn-call-owner">
+                <i class="fa-solid fa-phone-flip"></i> CONNECT TO VEHICLE OWNER
+            </a>
+            
+            <a href="#" id="whatsapp-trigger-link" target="_blank" class="btn-action btn-whatsapp-alert">
+                <i class="fa-brands fa-whatsapp"></i> SEND WHATSAPP ALERT
+            </a>
+        </div>
+
+        <div class="emergency-grid-separator">
+            <span>Emergency Links</span>
+        </div>
+
+        <div class="emergency-services-container">
+            <a href="tel:112" class="btn-sos police">
+                <i class="fa-solid fa-building-shield"></i> Call Police (112)
+            </a>
+            <a href="tel:102" class="btn-sos ambulance">
+                <i class="fa-solid fa-truck-medical"></i> Ambulance (102)
+            </a>
+        </div>
     </div>
 
     <div id="error-screen">
-        <div class="error-icon">⚠️</div>
-        <div class="error-text" id="error-message-text">Invalid Sticker Code detected or scan session expired.</div>
+        <div class="error-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div class="error-text" id="error-message-text">Invalid Safety QR code scan structure detected.</div>
+    </div>
+
+    <div class="footer-branding">
+        Secured by <span>AlertoQR Safety Network</span>
     </div>
 </div>
 
 <script>
-    // Supabase Global Database Parameters Initializer
+    // Supabase Core Connection Cluster Configurations Parameters Setup Token
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     window.addEventListener('DOMContentLoaded', async () => {
-        // Step A: Parse and isolate URL Parameter ID from scanned link
+        // Step A: Parse active URL structural token logs parameter fields
         const urlParams = new URLSearchParams(window.location.search);
         const stickerId = urlParams.get('id');
 
-        // If ID is missing entirely in url parameter query
+        // Check if query string parameters field contains no ID value properties
         if (!stickerId || stickerId.trim() === "") {
-            showErrorState("Invalid QR Code: Sticker ID Parameter is missing inside scanned query string.");
+            showErrorState("Scan Link Error: The scanned AlertoQR link does not contain a valid Sticker Serial ID.");
             return;
         }
 
         const cleanStickerId = stickerId.trim().toUpperCase();
 
         try {
-            // Step B: Query Database record state maps
+            // Step B: Connect to Database mapping index record parameters matching criteria
             const { data, error } = await _supabase
                 .from('registrations')
                 .select('mobile_number, vehicle_number, status')
@@ -182,46 +341,52 @@
                 .maybeSingle();
 
             if (error) {
-                console.error("Database execution runtime failure:", error);
-                showErrorState("System Communication Error. Please reload page.");
+                console.error("Database schema runtime failure logs:", error);
+                showErrorState("Server connection issue. Please check network connection and try scanning again.");
                 return;
             }
 
-            // Step C: Route Redirection Logic Matrices based on record validation checks
+            // Step C: Route redirection validation checks logic flow structure
             if (!data) {
-                // CASE 1: STICKER NOT REGISTERED AT ALL (FRESH STOCK GENERATED QR)
-                console.log("Sticker is completely unmapped in DB. Routing to registration...");
+                // CASE 1: Completely unmapped sticker records (Fresh batch scan)
+                console.log("Sticker unmapped in system database. Redirecting to initialization view portal...");
                 window.location.href = `register.html?id=${cleanStickerId}`;
                 return;
             }
 
             if (data.status === 'Active') {
-                // CASE 2: STICKER STATUS IS VALIDATED & PAID ACTIVE
+                // CASE 2: Fully authenticated and validated subscription package parameters
                 document.getElementById('lbl-vehicle').innerText = data.vehicle_number;
+                
+                // Map communication interaction touchpoints URLs
                 document.getElementById('phone-trigger-link').href = `tel:${data.mobile_number}`;
                 
-                // Toggle HTML View Layers
+                // Create custom pre-compiled emergency WhatsApp notification messages text template
+                const encodedMsg = encodeURIComponent(`Hello, I am near your vehicle (${data.vehicle_number}). There is an urgent matter regarding your vehicle parking. Please check immediately. Sent via AlertoQR Safety.`);
+                document.getElementById('whatsapp-trigger-link').href = `https://wa.me/91${data.mobile_number}?text=${encodedMsg}`;
+                
+                // Toggle User Interface panel view visibility flags nodes updates
                 document.getElementById('loading-view').style.display = 'none';
                 document.getElementById('profile-view').style.display = 'block';
             } 
             else {
-                // CASE 3: STICKER EXISTS BUT RECORD STATUS IS PENDING APPROVAL
-                console.log("Sticker layout mapped but activation state is pending. Rerouting...");
+                // CASE 3: Record found but state matches Pending approvals parameters structure
+                console.log("Sticker mapped in pending verification database state. Opening registration handler...");
                 window.location.href = `register.html?id=${cleanStickerId}`;
             }
 
         } catch (err) {
-            console.error("Critical verification error sequence caught:", err);
-            showErrorState("An unexpected script error occurred. Please try scanning again.");
+            console.error("Critical processing catch exception logic:", err);
+            showErrorState("An unexpected script configuration failure occurred. Please scan again.");
         }
     });
 
-    // Handle Interface failures dynamically
+    // Handle structural UI rendering visibility errors states
     function showErrorState(customMessage) {
         document.getElementById('loading-view').style.display = 'none';
         document.getElementById('profile-view').style.display = 'none';
         
-        if(customMessage) {
+        if (customMessage) {
             document.getElementById('error-message-text').innerText = customMessage;
         }
         document.getElementById('error-screen').style.display = 'block';
