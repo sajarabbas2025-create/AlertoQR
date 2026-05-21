@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlertoQR Safety | Register Smart Sticker</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -102,84 +100,62 @@
             display: none; 
             text-align: center; 
         }
-        .payment-box { 
-            background-color: rgba(56, 189, 248, 0.1); 
-            border: 2px dashed #38bdf8; 
-            padding: 20px; 
-            border-radius: 12px; 
-            text-align: center; 
-            margin-top: 20px; 
-            display: none; 
+        .success-box {
+            background-color: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            color: #34d399;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+            margin-top: 10px;
         }
-        .payment-price { 
-            font-size: 32px; 
-            font-weight: 800; 
-            color: #fbbf24; 
-            margin: 10px 0; 
-        }
-        .btn-pay { 
-            width: 100%; 
-            padding: 14px; 
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 16px; 
-            font-weight: bold; 
-            text-decoration: none; 
-            display: inline-block; 
-            box-sizing: border-box; 
-            margin-top: 12px; 
-        }
-        .qr-wrapper { 
-            background: white; 
-            padding: 12px; 
-            border-radius: 8px; 
-            display: inline-block; 
-            margin: 15px auto; 
+        #loading-screen {
+            text-align: center;
+            font-size: 16px;
+            color: #38bdf8;
         }
     </style>
 </head>
 <body>
 
 <div class="form-container">
-    <h2>AlertoQR Safety</h2>
-    <div class="subtitle">Register & Activate Your Smart Sticker</div>
+    <div id="loading-screen">Checking Sticker Status...</div>
 
-    <form id="registration-form" onsubmit="handleRegistration(event)">
-        <div class="form-group">
-            <label>Sticker Serial ID</label>
-            <input type="text" id="sticker_id" required readonly placeholder="Scanning Serial ID...">
-        </div>
-        <div class="form-group">
-            <label>Owner Full Name</label>
-            <input type="text" id="full_name" placeholder="Enter owner's full name" required>
-        </div>
-        <div class="form-group">
-            <label>Mobile Number</label>
-            <input type="tel" id="mobile_number" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" required>
-        </div>
-        <div class="form-group">
-            <label>Vehicle Plate Number</label>
-            <input type="text" id="vehicle_number" placeholder="e.g. UP32PD2478" style="text-transform: uppercase;" required>
-        </div>
-        <div class="form-group">
-            <label>Create 4-Digit Secret PIN</label>
-            <input type="password" id="secret_pin" placeholder="••••" maxlength="4" pattern="[0-9]{4}" required>
-        </div>
-        <button type="submit" class="btn-submit" id="submit-btn">📝 SUBMIT & PROCEED TO PAY</button>
-    </form>
+    <div id="main-form-wrapper" style="display: none;">
+        <h2>AlertoQR Safety</h2>
+        <div class="subtitle">Register & Activate Your Smart Sticker</div>
 
-    <div class="error-msg" id="error-box"></div>
+        <form id="registration-form" onsubmit="handleRegistration(event)">
+            <div class="form-group">
+                <label>Sticker Serial ID</label>
+                <input type="text" id="sticker_id" required readonly placeholder="Scanning Serial ID...">
+            </div>
+            <div class="form-group">
+                <label>Owner Full Name</label>
+                <input type="text" id="full_name" placeholder="Enter owner's full name" required>
+            </div>
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="tel" id="mobile_number" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" required>
+            </div>
+            <div class="form-group">
+                <label>Vehicle Plate Number</label>
+                <input type="text" id="vehicle_number" placeholder="e.g. UP32PD2478" style="text-transform: uppercase;" required>
+            </div>
+            <div class="form-group">
+                <label>Create 4-Digit Secret PIN</label>
+                <input type="password" id="secret_pin" placeholder="••••" maxlength="4" pattern="[0-9]{4}" required>
+            </div>
+            <button type="submit" class="btn-submit" id="submit-btn">📝 SUBMIT FOR ACTIVATION</button>
+        </form>
 
-    <div class="payment-box" id="payment-container">
-        <div style="font-size: 14px; color: #cbd5e1; font-weight: 600;">🔒 STEP 2: COMPLETE ACTIVATION PAYMENT</div>
-        <div class="payment-price">₹299 <span style="font-size:14px; color:#94a3b8; font-weight:normal;">/ Yearly</span></div>
-        <a href="#" class="btn-pay" id="upi-pay-link">⚡ PAY WITH UPI APP</a>
-        <div class="qr-wrapper">
-            <div id="qrcode"></div>
-        </div>
-        <div style="font-size: 11px; color: #94a3b8; margin-top: 8px;">Scan QR using PhonePe, GooglePay, Paytm or Any UPI App to pay.</div>
+        <div class="error-msg" id="error-box"></div>
+    </div>
+
+    <div class="success-box" id="success-container">
+        <h3 style="margin-top: 0; color: #10b981;">✨ Registration Submitted!</h3>
+        <p style="font-size: 14px; color: #cbd5e1;">Your details are saved successfully. Please contact the administrator to activate your card subscription plan.</p>
     </div>
 </div>
 
@@ -188,18 +164,34 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    const BUSINESS_UPI_ID = "6388522427@ptsbi"; 
-    const BUSINESS_NAME = "SAJAR ABBAS";
-
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const urlStickerId = urlParams.get('id');
+        
         if (urlStickerId) {
-            document.getElementById('sticker_id').value = urlStickerId.trim().toUpperCase();
+            const cleanId = urlStickerId.trim().toUpperCase();
+            document.getElementById('sticker_id').value = cleanId;
+
+            try {
+                // Check if already registered and active in system database
+                const { data, error } = await _supabase.from('registrations').select('status').eq('sticker_id', cleanId).maybeSingle();
+                
+                if(data && data.status === 'Active') {
+                    // SEED DIRECT REDIRECTION TO THE HELPER PAGE IF STATUS IS ACTIVE
+                    window.location.href = `helper.html?id=${cleanId}`;
+                    return;
+                }
+            } catch (err) {
+                console.error("Routing validation error:", err);
+            }
         } else {
             document.getElementById('sticker_id').removeAttribute('readonly');
             document.getElementById('sticker_id').placeholder = "Enter Sticker ID Manually";
         }
+
+        // Display Form elements if record status is not active/not found
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('main-form-wrapper').style.display = 'block';
     });
 
     async function handleRegistration(event) {
@@ -208,7 +200,7 @@
         const errorBox = document.getElementById('error-box');
         
         errorBox.style.display = 'none';
-        submitBtn.innerText = "Processing...";
+        submitBtn.innerText = "Saving Details...";
         submitBtn.disabled = true;
 
         const stickerId = document.getElementById('sticker_id').value.trim().toUpperCase();
@@ -218,7 +210,6 @@
         const secretPin = document.getElementById('secret_pin').value.trim();
 
         try {
-            // FIXED SCHEMA COLUMN NAME HERE -> mobile_number
             const { error: insertError } = await _supabase.from('registrations').insert([{ 
                 sticker_id: stickerId, 
                 full_name: fullName, 
@@ -230,23 +221,13 @@
 
             if (insertError) throw insertError;
 
-            const upiUrl = `upi://pay?pa=${BUSINESS_UPI_ID}&pn=${encodeURIComponent(BUSINESS_NAME)}&am=299.00&cu=INR&tn=${encodeURIComponent('Activation ' + stickerId)}`;
-            document.getElementById('upi-pay-link').href = upiUrl;
-            
-            document.getElementById('qrcode').innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), { 
-                text: upiUrl, width: 160, height: 160,
-                colorDark : "#000000", colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.M
-            });
-
-            document.getElementById('registration-form').style.display = 'none';
-            document.getElementById('payment-container').style.display = 'block';
+            document.getElementById('main-form-wrapper').style.display = 'none';
+            document.getElementById('success-container').style.display = 'block';
 
         } catch (err) {
-            errorBox.innerText = "Registration Failed: " + err.message;
+            errorBox.innerText = "Error: " + err.message;
             errorBox.style.display = 'block';
-            submitBtn.innerText = "📝 SUBMIT & PROCEED TO PAY";
+            submitBtn.innerText = "📝 SUBMIT FOR ACTIVATION";
             submitBtn.disabled = false;
         }
     }
