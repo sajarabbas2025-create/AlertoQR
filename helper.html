@@ -21,8 +21,8 @@
         }
 
         body {
-            background-color: #ffffff !important;
-            color: #000000 !important;
+            background-color: #ffffff;
+            color: #000000;
             padding: 20px 16px;
             display: flex;
             justify-content: center;
@@ -31,12 +31,12 @@
         .container {
             width: 100%;
             max-width: 450px;
-            background-color: #ffffff !important;
+            background-color: #ffffff;
             display: flex;
             flex-direction: column;
         }
 
-        /* Top Header Navigation Strip matching original image */
+        /* Top Header Navigation Strip */
         .header-strip {
             display: flex;
             justify-content: space-between;
@@ -59,13 +59,13 @@
             letter-spacing: 0.5px;
         }
 
-        /* Profile Data Box View Card matching original upload template */
+        /* Profile Data Box View Card */
         .owner-info-card {
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             padding: 24px 20px;
             margin-bottom: 20px;
-            background-color: #ffffff !important;
+            background-color: #ffffff;
         }
 
         .label-v-owner {
@@ -101,12 +101,12 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .btn-call-main {
-            background-color: #000000 !important;
-            color: #ffffff !important;
+            background-color: #000000;
+            color: #ffffff;
             border: 1px solid #000000;
             border-radius: 8px;
             padding: 14px 10px;
@@ -120,8 +120,8 @@
         }
 
         .btn-call-alt {
-            background-color: #ffffff !important;
-            color: #000000 !important;
+            background-color: #ffffff;
+            color: #000000;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
             padding: 14px 10px;
@@ -134,14 +134,14 @@
             gap: 8px;
         }
 
-        /* Quick Alerts Subsection Grid Layout Framework components */
+        /* Quick Alerts Subsection Grid Layout */
         .section-divider-title {
             font-size: 12px;
             text-transform: uppercase;
             color: #94a3b8;
             font-weight: 700;
             letter-spacing: 0.5px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             padding-left: 2px;
         }
 
@@ -149,28 +149,62 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 14px;
+            margin-bottom: 25px;
         }
 
         .grid-alert-card {
-            background-color: #ffffff !important;
+            background-color: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
-            padding: 22px 10px;
+            padding: 20px 10px;
             text-decoration: none;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            color: #000000 !important;
-            font-size: 14px;
+            gap: 10px;
+            color: #000000;
+            font-size: 13px;
             font-weight: 600;
+            text-align: center;
         }
 
         .icon-img {
             height: 32px;
             width: auto;
             object-fit: contain;
+        }
+
+        /* Emergency Action Section Rows */
+        .emergency-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 5px;
+        }
+
+        .btn-emergency {
+            border-radius: 10px;
+            padding: 12px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-police {
+            background-color: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fee2e2;
+        }
+
+        .btn-ambulance {
+            background-color: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #dcfce7;
         }
 
         #loading-screen {
@@ -205,13 +239,13 @@
         
         <div class="header-strip">
             <span class="header-title">AlertoQR Helper</span>
-            <span class="sticker-id-tag" id="lbl-sticker-id">ID: AGRA001</span>
+            <span class="sticker-id-tag" id="lbl-sticker-id">ID: ----</span>
         </div>
 
         <div class="owner-info-card">
             <div class="label-v-owner">Vehicle Owner</div>
-            <div class="owner-name" id="lbl-owner-name">SAJAR ABBAS</div>
-            <div class="vehicle-plate-badge" id="lbl-vehicle-number">UP32DD2420</div>
+            <div class="owner-name" id="lbl-owner-name">LOADING...</div>
+            <div class="vehicle-plate-badge" id="lbl-vehicle-number">--------</div>
         </div>
 
         <div class="call-actions-row">
@@ -237,13 +271,23 @@
             </a>
 
             <a href="#" id="lnk-alert-window" target="_blank" class="grid-alert-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/2921/2921319.png" class="icon-img" alt="Open Window">
-                <span>Open Window</span>
+                <img src="https://cdn-icons-png.flaticon.com/512/2921/2921319.png" class="icon-img" alt="Window or Light Open">
+                <span>Window / Light Open</span>
             </a>
 
-            <a href="#" id="lnk-alert-location" target="_blank" class="grid-alert-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" class="icon-img" alt="Share Location">
-                <span>Share Location</span>
+            <a href="#" id="lnk-alert-photo" target="_blank" class="grid-alert-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" class="icon-img" alt="Share Photo">
+                <span>Share Photo</span>
+            </a>
+        </div>
+
+        <div class="section-divider-title">Emergency Links</div>
+        <div class="emergency-container">
+            <a href="tel:112" class="btn-emergency btn-police">
+                <i class="fa-solid fa-building-shield"></i> Call Police (112)
+            </a>
+            <a href="tel:102" class="btn-emergency btn-ambulance">
+                <i class="fa-solid fa-truck-medical"></i> Ambulance (102)
             </a>
         </div>
 
@@ -264,8 +308,6 @@
     window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
         
-        // CRITICAL CACHE ACTION BUSTER:
-        // Agar link me '?v=' time token nahi hai, toh page browser cache ko skip karke naya reload karega!
         if (!urlParams.has('v')) {
             urlParams.set('v', Date.now());
             window.location.search = urlParams.toString();
@@ -299,27 +341,25 @@
             }
 
             if (data.status === 'Active') {
-                // Populate operational fields data directly
                 document.getElementById('lbl-owner-name').innerText = data.full_name || "Vehicle Owner";
                 document.getElementById('lbl-vehicle-number').innerText = data.vehicle_number;
                 
                 document.getElementById('lnk-main-call').href = `tel:${data.mobile_number}`;
                 document.getElementById('lnk-alt-call').href = `tel:${data.mobile_number}`;
                 
-                // Formulate custom dynamic messages text
                 const txtParking = encodeURIComponent(`Urgent Alert: Your vehicle (${data.vehicle_number}) is wrongly parked. Please check immediately.`);
                 document.getElementById('lnk-alert-parking').href = `https://wa.me/91${data.mobile_number}?text=${txtParking}`;
                 
                 const txtTow = encodeURIComponent(`Urgent Alert: Your vehicle (${data.vehicle_number}) is about to be towed. Please reach out immediately.`);
                 document.getElementById('lnk-alert-tow').href = `https://wa.me/91${data.mobile_number}?text=${txtTow}`;
                 
-                const txtWindow = encodeURIComponent(`Alert: Your vehicle (${data.vehicle_number}) window is left open.`);
+                // Combined Alert Message for Window / Light Open
+                const txtWindow = encodeURIComponent(`Alert: Your vehicle (${data.vehicle_number}) window is open or the cabin lights are left ON. Please check and secure it.`);
                 document.getElementById('lnk-alert-window').href = `https://wa.me/91${data.mobile_number}?text=${txtWindow}`;
                 
-                const txtLocation = encodeURIComponent(`Hello, I am near your vehicle (${data.vehicle_number}). Sharing live location context.`);
-                document.getElementById('lnk-alert-location').href = `https://wa.me/91${data.mobile_number}?text=${txtLocation}`;
+                const txtPhoto = encodeURIComponent(`Hello, I want to send you a live photo status of your vehicle (${data.vehicle_number}). Please reply so I can share it.`);
+                document.getElementById('lnk-alert-photo').href = `https://wa.me/91${data.mobile_number}?text=${txtPhoto}`;
 
-                // Force visibility styles overrides
                 document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
                 document.getElementById('dashboard-view').style.setProperty('display', 'block', 'important');
             } else {
