@@ -134,7 +134,7 @@
             gap: 8px;
         }
 
-        /* Quick Alerts Grid Layout */
+        /* Quick Alerts 3x2 Grid Layout */
         .section-divider-title {
             font-size: 12px;
             text-transform: uppercase;
@@ -284,6 +284,11 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" class="icon-img" alt="Share Location">
                 <span>Share Location</span>
             </a>
+
+            <a href="#" id="lnk-alert-voice" target="_blank" class="grid-alert-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" class="icon-img" alt="Share Voice Recording">
+                <span>Share Voice</span>
+            </a>
         </div>
 
         <div class="section-divider-title">Emergency Links</div>
@@ -366,6 +371,10 @@
 
                 const txtLocation = encodeURIComponent(`Hello, I am near your vehicle (${data.vehicle_number}). Please tap here to share your location or connect with me.`);
                 document.getElementById('lnk-alert-location').href = `https://wa.me/91${data.mobile_number}?text=${txtLocation}`;
+
+                // Voice Note Action Hook Integration
+                const txtVoice = encodeURIComponent(`Hello, I want to send you a voice details alert regarding your vehicle (${data.vehicle_number}). Please tap on the microphone icon in your chat window to receive my voice message.`);
+                document.getElementById('lnk-alert-voice').href = `https://wa.me/91${data.mobile_number}?text=${txtVoice}`;
 
                 document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
                 document.getElementById('dashboard-view').style.setProperty('display', 'block', 'important');
