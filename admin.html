@@ -16,185 +16,57 @@
             margin: 0;
             padding: 20px;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        /* Top Header & Export Utilities */
-        .header-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+        .container { max-width: 1250px; margin: 0 auto; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h2 { color: #38bdf8; margin: 0; font-size: 28px; }
         
         .btn-excel {
-            background-color: #10b981;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.2s;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+            background-color: #10b981; color: white; border: none; padding: 10px 20px;
+            border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;
+            transition: background 0.2s; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
         }
         .btn-excel:hover { background-color: #059669; }
 
-        /* Stats Counters Row */
-        .stats-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-        .stat-card {
-            flex: 1;
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 15px 20px;
-            text-align: center;
-        }
-        .stat-title { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stats-row { display: flex; gap: 20px; margin-bottom: 25px; }
+        .stat-card { flex: 1; background-color: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 15px 20px; text-align: center; }
+        .stat-title { font-size: 12px; color: #94a3b8; text-transform: uppercase; }
         .stat-value { font-size: 28px; font-weight: 800; margin-top: 5px; }
 
-        /* Bulk Generator Panel Box */
-        .card {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 25px;
-            position: relative;
-            z-index: 1;
-        }
-        .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .global-domain-badge {
-            background-color: rgba(16, 185, 129, 0.1);
-            border: 1px solid #10b981;
-            color: #34d399;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            margin-bottom: 20px;
-        }
+        .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; margin-bottom: 25px; }
+        .card-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+        .global-domain-badge { background-color: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #34d399; padding: 8px 12px; border-radius: 6px; font-size: 12px; margin-bottom: 20px; }
 
-        /* Inputs Grid setup - Fixed Overlapping */
-        .input-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-            clear: both;
-        }
-        @media(min-width: 768px) {
-            .input-grid { grid-template-columns: 2fr 1fr 1fr; }
-        }
+        .input-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 20px; }
+        @media(min-width: 768px) { .input-grid { grid-template-columns: 2fr 1fr 1fr; } }
         .field-group { display: flex; flex-direction: column; }
         .field-group label { font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
-        .field-group input {
-            background-color: #0f172a;
-            border: 1px solid #475569;
-            color: white;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 14px;
-            width: 100%;
-            box-sizing: border-box;
-        }
+        .field-group input { background-color: #0f172a; border: 1px solid #475569; color: white; padding: 10px; border-radius: 6px; font-size: 14px; }
 
-        /* Control Buttons styling */
-        .btn-group { 
-            display: flex; 
-            gap: 12px; 
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 10;
-        }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .btn-group { display: flex; gap: 12px; margin-bottom: 20px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; }
         .btn-primary { background-color: #2563eb; color: white; }
-        .btn-primary:hover { background-color: #1d4ed8; }
         .btn-secondary { background-color: #10b981; color: white; }
-        .btn-secondary:hover { background-color: #059669; }
 
-        /* Preview QR Layout Grid */
-        #bulk-preview-area {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            background-color: #0f172a;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            max-height: 250px;
-            overflow-y: auto;
-            margin-top: 10px;
-        }
-        .qr-print-block {
-            background: white;
-            color: black;
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-            width: 110px;
-            font-size: 10px;
-            font-weight: bold;
-        }
+        #bulk-preview-area { display: flex; flex-wrap: wrap; gap: 15px; background-color: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155; max-height: 250px; overflow-y: auto; }
+        .qr-print-block { background: white; color: black; padding: 10px; border-radius: 6px; text-align: center; width: 110px; font-size: 10px; font-weight: bold; }
 
-        /* Responsive Customers Registrations Table */
         .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 14px 16px; border-bottom: 1px solid #334155; font-size: 14px; }
-        th { color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+        th, td { padding: 12px 16px; border-bottom: 1px solid #334155; font-size: 14px; vertical-align: middle; }
+        th { color: #94a3b8; font-size: 11px; text-transform: uppercase; }
         
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .status-pending { background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
         .status-active { background-color: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
 
-        /* Row Controls */
-        .btn-action {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 12px;
-            margin-right: 5px;
-            transition: opacity 0.2s;
-            display: inline-block;
-        }
-        .btn-action:hover { opacity: 0.9; }
+        .btn-action { padding: 6px 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px; margin-right: 5px; }
         .btn-activate { background-color: #2563eb; color: white; }
         .btn-edit { background-color: #eab308; color: #0f172a; }
         .btn-delete { background-color: #dc2626; color: white; }
 
-        /* Hidden Layout For Direct Sheets Print Mapping */
+        /* Mini Permanent QR Styling in Table */
+        .table-qr-container { background: white; padding: 4px; border-radius: 4px; display: inline-block; margin-top: 5px; }
+
         @media print {
             body * { visibility: hidden; }
             #bulk-preview-area, #bulk-preview-area * { visibility: visible; }
@@ -206,46 +78,27 @@
 <body>
 
 <div class="container">
-    
     <div class="header-flex">
         <h2>AlertoQR Customer Registrations</h2>
         <button class="btn-excel" onclick="exportToExcel()">📥 EXPORT DATA TO EXCEL</button>
     </div>
 
     <div class="stats-row">
-        <div class="stat-card">
-            <div class="stat-title">Total Revenue</div>
-            <div class="stat-value" id="stat-revenue" style="color: #38bdf8;">₹0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-title">Active Registrations</div>
-            <div class="stat-value" id="stat-active" style="color: #10b981;">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-title">Pending Approvals</div>
-            <div class="stat-value" id="stat-pending" style="color: #fbbf24;">0</div>
-        </div>
+        <div class="stat-card"><div class="stat-title">Total Revenue</div><div class="stat-value" id="stat-revenue" style="color: #38bdf8;">₹0</div></div>
+        <div class="stat-card"><div class="stat-title">Active Registrations</div><div class="stat-value" id="stat-active" style="color: #10b981;">0</div></div>
+        <div class="stat-card"><div class="stat-title">Pending Approvals</div><div class="stat-value" id="stat-pending" style="color: #fbbf24;">0</div></div>
     </div>
 
     <div class="card">
         <div class="card-title">🔮 Smart Bulk QR Code Generator</div>
         <div class="global-domain-badge">
-            🚀 <strong>Global Domain Active:</strong> QR Generation links are bound to <a href="https://alertoqr.in/register.html" target="_blank" style="color:#34d399; font-weight:bold;">https://alertoqr.in/register.html</a>
+            🚀 <strong>Global Domain Active:</strong> QR Links path: <a href="https://alertoqr.in/register.html" target="_blank" style="color:#34d399; font-weight:bold;">https://alertoqr.in/register.html</a>
         </div>
 
         <div class="input-grid">
-            <div class="field-group">
-                <label>Series Code (Prefix)</label>
-                <input type="text" id="qr-prefix" value="ALQR" placeholder="e.g. ALQR">
-            </div>
-            <div class="field-group">
-                <label>Start No.</label>
-                <input type="number" id="qr-start" value="1" placeholder="1">
-            </div>
-            <div class="field-group">
-                <label>End No.</label>
-                <input type="number" id="qr-end" value="10" placeholder="10">
-            </div>
+            <div class="field-group"><label>Series Code (Prefix)</label><input type="text" id="qr-prefix" value="ALQR"></div>
+            <div class="field-group"><label>Start No.</label><input type="number" id="qr-start" value="1"></div>
+            <div class="field-group"><label>End No.</label><input type="number" id="qr-end" value="10"></div>
         </div>
 
         <div class="btn-group">
@@ -254,9 +107,7 @@
         </div>
 
         <div id="bulk-preview-area">
-            <div style="color: #475569; width: 100%; text-align: center; font-size: 13px; padding: 20px 0;">
-                Click "Generate" to structure bulk layout view sheets.
-            </div>
+            <div style="color: #475569; width: 100%; text-align: center; font-size: 13px; padding: 20px 0;">Click "Generate" to structure bulk layout view sheets.</div>
         </div>
     </div>
 
@@ -266,7 +117,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Sticker ID</th>
+                        <th>Sticker ID & QR</th>
                         <th>Owner Name</th>
                         <th>Vehicle Number</th>
                         <th>Mobile</th>
@@ -276,14 +127,11 @@
                     </tr>
                 </thead>
                 <tbody id="table-body">
-                    <tr>
-                        <td colspan="7" style="text-align:center; color:#64748b; padding: 30px 0;">Loading customer logs registry matrix...</td>
-                    </tr>
+                    <tr><td colspan="7" style="text-align:center; color:#64748b; padding: 30px 0;">Loading customer logs registry...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
-
 </div>
 
 <script>
@@ -295,165 +143,94 @@
 
     async function refreshAdminDashboardLogs() {
         try {
-            const { data, error } = await _supabase
-                .from('registrations')
-                .select('*')
-                .order('created_at', { ascending: false });
-
+            const { data, error } = await _supabase.from('registrations').select('*').order('created_at', { ascending: false });
             if (error) throw error;
             fetchedCachedRecords = data || [];
-            
             rebuildAnalyticalCounters(fetchedCachedRecords);
             renderTableGrid(fetchedCachedRecords);
         } catch(err) {
             console.error(err);
-            document.getElementById('table-body').innerHTML = `<tr><td colspan="7" style="color:#f87171; text-align:center;">Network error sync table logs: ${err.message}</td></tr>`;
         }
     }
 
     function rebuildAnalyticalCounters(records) {
-        let activeCount = 0;
-        let pendingCount = 0;
-
-        records.forEach(r => {
-            if (r.status === 'Active') activeCount++;
-            else pendingCount++;
-        });
-
-        const grossRevenue = activeCount * 299;
-        document.getElementById('stat-revenue').innerText = `₹${grossRevenue}`;
-        document.getElementById('stat-active').innerText = activeCount;
-        document.getElementById('stat-pending').innerText = pendingCount;
+        let active = 0, pending = 0;
+        records.forEach(r => { if (r.status === 'Active') active++; else pending++; });
+        document.getElementById('stat-revenue').innerText = `₹${active * 299}`;
+        document.getElementById('stat-active').innerText = active;
+        document.getElementById('stat-pending').innerText = pending;
     }
 
     function renderTableGrid(records) {
         const tbody = document.getElementById('table-body');
         if(records.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#64748b;">No items cataloged inside remote architecture yet.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#64748b;">No items cataloged inside database.</td></tr>`;
             return;
         }
 
         tbody.innerHTML = records.map(row => {
             const statusClass = row.status === 'Active' ? 'status-active' : 'status-pending';
             const cleanStatus = row.status || 'Pending';
-            const displayExpiry = row.status === 'Active' ? '1 Year Active' : 'N/A';
-
             return `
                 <tr>
-                    <td style="font-weight:bold; color:#38bdf8;">${row.sticker_id}</td>
+                    <td>
+                        <div style="font-weight:bold; color:#38bdf8; margin-bottom:4px;">${row.sticker_id}</div>
+                        <div class="table-qr-container" id="tqr-${row.sticker_id}"></div>
+                    </td>
                     <td>${row.full_name || '—'}</td>
                     <td>${row.vehicle_number || '—'}</td>
                     <td>${row.mobile_number || '—'}</td>
                     <td><span class="status-badge ${statusClass}">${cleanStatus}</span></td>
-                    <td style="color:#94a3b8; font-size:13px;">${displayExpiry}</td>
+                    <td style="color:#94a3b8; font-size:13px;">${row.status === 'Active' ? '1 Year Active' : 'N/A'}</td>
                     <td>
-                        ${cleanStatus !== 'Active' ? `<button class="btn-action btn-activate" onclick="modifyAccountActivationState('${row.sticker_id}')">⚡ Activate (1 Year)</button>` : ''}
-                        <button class="btn-action btn-edit" onclick="triggerManualEditFlow('${row.sticker_id}')">📝 Edit</button>
+                        ${cleanStatus !== 'Active' ? `<button class="btn-action btn-activate" onclick="modifyAccountActivationState('${row.sticker_id}')">⚡ Activate</button>` : ''}
+                        <button class="btn-action btn-edit" onclick="triggerManualEditFlow('${row.sticker_id}')">编 Edit</button>
                         <button class="btn-action btn-delete" onclick="executeEntryPurgeSequence('${row.sticker_id}')">🗑️ Delete</button>
                     </td>
                 </tr>
             `;
         }).join('');
+
+        // Generate permanent Mini QRs inside the loaded table rows
+        records.forEach(row => {
+            new QRCode(document.getElementById(`tqr-${row.sticker_id}`), {
+                text: `https://alertoqr.in/register.html?id=${row.sticker_id}`,
+                width: 65, height: 65,
+                colorDark : "#000000", colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
+        });
     }
 
-    async function modifyAccountActivationState(stickerId) {
-        if(!confirm(`Confirm setup subscription protocol allocation state for sticker node segment profile: ${stickerId}?`)) return;
-        
-        const { error } = await _supabase
-            .from('registrations')
-            .update({ status: 'Active' })
-            .eq('sticker_id', stickerId);
-
-        if(error) alert("Remote platform exception failed mutation protocol: " + error.message);
-        else refreshAdminDashboardLogs();
-    }
-
-    function triggerManualEditFlow(stickerId) {
-        const record = fetchedCachedRecords.find(r => r.sticker_id === stickerId);
-        if(!record) return;
-
-        const newName = prompt("Modify Customer Name Profile:", record.full_name || "");
-        if(newName === null) return; 
-        
-        const newVehicle = prompt("Modify Associated Vehicle Registration plate:", record.vehicle_number || "");
-        if(newVehicle === null) return;
-
-        const newMobile = prompt("Modify Primary Contact Number:", record.mobile_number || "");
-        if(newMobile === null) return;
-
-        executeEditDatabaseSave(stickerId, newName, newVehicle, newMobile);
-    }
-
-    async function executeEditDatabaseSave(id, name, vehicle, mobile) {
-        const { error } = await _supabase
-            .from('registrations')
-            .update({
-                full_name: name.trim(),
-                vehicle_number: vehicle.trim().toUpperCase(),
-                mobile_number: mobile.trim()
-            })
-            .eq('sticker_id', id);
-
-        if(error) alert("Database update failure: " + error.message);
-        else refreshAdminDashboardLogs();
-    }
-
-    async function executeEntryPurgeSequence(stickerId) {
-        if(!confirm(`⚠️ DANGER WARNING:\n\nKya aap such me Sticker ID ${stickerId} ka poora customer data delete karna chahte hain?`)) return;
-        
-        try {
-            const { error } = await _supabase
-                .from('registrations')
-                .delete()
-                .eq('sticker_id', stickerId);
-
-            if (error) throw error;
-            alert(`Sticker ${stickerId} successfully delete ho gaya.`);
-            refreshAdminDashboardLogs();
-        } catch(err) {
-            alert("Record deletion failure: " + err.message);
-        }
-    }
-
-    function exportToExcel() {
-        if(fetchedCachedRecords.length === 0) {
-            alert("Export karne ke liye koi data nahi hai!");
-            return;
-        }
-
-        const dataWorkbookMappingRows = fetchedCachedRecords.map(dataUnitNode => ({
-            "STICKER SERIAL KEY ID": dataUnitNode.sticker_id,
-            "CUSTOMER IDENTITY NAME": dataUnitNode.full_name || 'N/A',
-            "EMERGENCY CONTACT LINE": dataUnitNode.mobile_number || 'N/A',
-            "VEHICLE LICENSE PLATE": dataUnitNode.vehicle_number || 'N/A',
-            "ACCOUNT STATUS MATRIX": dataUnitNode.status || 'Pending',
-            "REGISTRATION TIMESTAMP": dataUnitNode.created_at ? new Date(dataUnitNode.created_at).toLocaleString() : 'N/A'
-        }));
-
-        const sheetObjectContext = XLSX.utils.json_to_sheet(dataWorkbookMappingRows);
-        const structureWorkbookContainer = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(structureWorkbookContainer, sheetObjectContext, "Master Records");
-
-        XLSX.writeFile(structureWorkbookContainer, `AlertoQR_Live_Analytics_Dataset.xlsx`);
-    }
-
-    // 🔮 FIXED BULK QR GENERATION CLICK LOGIC
-    function generateBulkQRCodes() {
+    // 🔮 FIXED GENERATE BUTTON WITH LIVE SUPABASE DUPLICATE CHECK
+    async function generateBulkQRCodes() {
         const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
         const startNo = parseInt(document.getElementById('qr-start').value);
         const endNo = parseInt(document.getElementById('qr-end').value);
         const previewArea = document.getElementById('bulk-preview-area');
 
         if(!prefix || isNaN(startNo) || isNaN(endNo) || startNo > endNo) {
-            alert("Invalid input metrics parameters!");
+            alert("Please enter valid sequencing range parameters!");
             return;
         }
 
+        // Fresh sync with server to ensure accuracy before running block check
+        const { data: latestRecords } = await _supabase.from('registrations').select('sticker_id');
+        const registeredIDs = new Set((latestRecords || []).map(r => r.sticker_id.toUpperCase()));
+
         previewArea.innerHTML = ""; 
+        let skippedIds = [];
 
         for(let trackPointer = startNo; trackPointer <= endNo; trackPointer++) {
             const paddedNumericValueString = String(trackPointer).padStart(3, '0');
             const constructedStickerIdentitySerialKey = `${prefix}${paddedNumericValueString}`;
+
+            // 🛑 CRITICAL CHECK: If already saved in DB, skip it right here!
+            if (registeredIDs.has(constructedStickerIdentitySerialKey)) {
+                skippedIds.push(constructedStickerIdentitySerialKey);
+                continue; 
+            }
+
             const deploymentTargetRoutingRegistrationLinkURL = `https://alertoqr.in/register.html?id=${constructedStickerIdentitySerialKey}`;
 
             const printableQRBlockContainerElementNode = document.createElement('div');
@@ -472,13 +249,44 @@
 
             new QRCode(internalQRImageVectorPlaceholderBox, {
                 text: deploymentTargetRoutingRegistrationLinkURL,
-                width: 90,
-                height: 90,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
+                width: 90, height: 90,
+                colorDark : "#000000", colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.M
             });
         }
+
+        if (skippedIds.length > 0) {
+            alert(`⚠️ Notification:\nFollowing IDs are already registered/used by customers, so they were SKIPPED:\n\n${skippedIds.join(', ')}`);
+        }
+    }
+
+    async function modifyAccountActivationState(stickerId) {
+        if(!confirm(`Confirm subscription for sticker: ${stickerId}?`)) return;
+        const { error } = await _supabase.from('registrations').update({ status: 'Active' }).eq('sticker_id', stickerId);
+        if(error) alert("Error: " + error.message); else refreshAdminDashboardLogs();
+    }
+
+    function triggerManualEditFlow(stickerId) {
+        const record = fetchedCachedRecords.find(r => r.sticker_id === stickerId);
+        if(!record) return;
+        const newName = prompt("Modify Name:", record.full_name || ""); if(newName === null) return; 
+        const newVehicle = prompt("Modify Vehicle Number:", record.vehicle_number || ""); if(newVehicle === null) return;
+        const newMobile = prompt("Modify Mobile:", record.mobile_number || ""); if(newMobile === null) return;
+
+        _supabase.from('registrations').update({ full_name: newName.trim(), vehicle_number: newVehicle.trim().toUpperCase(), mobile_number: newMobile.trim() }).eq('sticker_id', stickerId).then(() => refreshAdminDashboardLogs());
+    }
+
+    async function executeEntryPurgeSequence(stickerId) {
+        if(!confirm(`⚠️ WARNING: Delete Sticker ID ${stickerId}?`)) return;
+        const { error } = await _supabase.from('registrations').delete().eq('sticker_id', stickerId);
+        if (error) alert(error.message); else refreshAdminDashboardLogs();
+    }
+
+    function exportToExcel() {
+        if(fetchedCachedRecords.length === 0) return;
+        const cleanRows = fetchedCachedRecords.map(item => ({ "STICKER ID": item.sticker_id, "CUSTOMER NAME": item.full_name, "MOBILE": item.mobile_number, "VEHICLE NUMBER": item.vehicle_number, "STATUS": item.status || 'Pending' }));
+        const ws = XLSX.utils.json_to_sheet(cleanRows); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Master Records");
+        XLSX.writeFile(wb, `AlertoQR_Dataset.xlsx`);
     }
 
     window.onload = refreshAdminDashboardLogs;
