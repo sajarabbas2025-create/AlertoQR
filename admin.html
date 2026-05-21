@@ -68,6 +68,8 @@
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
         }
         .card-title {
             font-size: 18px;
@@ -87,12 +89,13 @@
             margin-bottom: 20px;
         }
 
-        /* Inputs Grid setup */
+        /* Inputs Grid setup - Fixed Overlapping */
         .input-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1xl);
+            grid-template-columns: 1fr;
             gap: 20px;
             margin-bottom: 20px;
+            clear: both;
         }
         @media(min-width: 768px) {
             .input-grid { grid-template-columns: 2fr 1fr 1fr; }
@@ -106,10 +109,18 @@
             padding: 10px;
             border-radius: 6px;
             font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         /* Control Buttons styling */
-        .btn-group { display: flex; gap: 12px; margin-bottom: 20px; }
+        .btn-group { 
+            display: flex; 
+            gap: 12px; 
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 10;
+        }
         .btn {
             padding: 10px 20px;
             border: none;
@@ -137,6 +148,7 @@
             border: 1px solid #334155;
             max-height: 250px;
             overflow-y: auto;
+            margin-top: 10px;
         }
         .qr-print-block {
             background: white;
@@ -175,6 +187,7 @@
             font-size: 12px;
             margin-right: 5px;
             transition: opacity 0.2s;
+            display: inline-block;
         }
         .btn-action:hover { opacity: 0.9; }
         .btn-activate { background-color: #2563eb; color: white; }
@@ -274,14 +287,12 @@
 </div>
 
 <script>
-    // System Core Database Client Key Matrix Initialization
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    let fetchedCachedRecords = []; // Global pointer copy storage cache reference mapping matrix
+    let fetchedCachedRecords = [];
 
-    // 1. Fetch Logs Layer Routine Function Layout Matrix
     async function refreshAdminDashboardLogs() {
         try {
             const { data, error } = await _supabase
@@ -300,7 +311,6 @@
         }
     }
 
-    // 2. Analytics Matrix Loader Component mapping view structure layout
     function rebuildAnalyticalCounters(records) {
         let activeCount = 0;
         let pendingCount = 0;
@@ -316,7 +326,6 @@
         document.getElementById('stat-pending').innerText = pendingCount;
     }
 
-    // 3. Grid Visual Render Stream Component Structure
     function renderTableGrid(records) {
         const tbody = document.getElementById('table-body');
         if(records.length === 0) {
@@ -347,7 +356,6 @@
         }).join('');
     }
 
-    // 4. Update Handler Engine Stream Logic Trigger System Blueprint
     async function modifyAccountActivationState(stickerId) {
         if(!confirm(`Confirm setup subscription protocol allocation state for sticker node segment profile: ${stickerId}?`)) return;
         
@@ -360,18 +368,17 @@
         else refreshAdminDashboardLogs();
     }
 
-    // 5. Original Edit Row Control Action Matrix
     function triggerManualEditFlow(stickerId) {
         const record = fetchedCachedRecords.find(r => r.sticker_id === stickerId);
         if(!record) return;
 
-        const newName = prompt("Modify Customer Name Profile mapping label state:", record.full_name || "");
+        const newName = prompt("Modify Customer Name Profile:", record.full_name || "");
         if(newName === null) return; 
         
-        const newVehicle = prompt("Modify Associated Vehicle Registration Matrix Key plate:", record.vehicle_number || "");
+        const newVehicle = prompt("Modify Associated Vehicle Registration plate:", record.vehicle_number || "");
         if(newVehicle === null) return;
 
-        const newMobile = prompt("Modify Primary Gateway Alert Contact Network Line sequence phone digits:", record.mobile_number || "");
+        const newMobile = prompt("Modify Primary Contact Number:", record.mobile_number || "");
         if(newMobile === null) return;
 
         executeEditDatabaseSave(stickerId, newName, newVehicle, newMobile);
@@ -387,13 +394,12 @@
             })
             .eq('sticker_id', id);
 
-        if(error) alert("Database tracking configuration structure mutation drop failure: " + error.message);
+        if(error) alert("Database update failure: " + error.message);
         else refreshAdminDashboardLogs();
     }
 
-    // 6. ❤️ NEW DELETE FUNCTION BLOCK
     async function executeEntryPurgeSequence(stickerId) {
-        if(!confirm(`⚠️ DANGER WARNING:\n\nKya aap such me Sticker ID ${stickerId} ka poora customer data humesha ke liye DELETE karna chahte hain?`)) return;
+        if(!confirm(`⚠️ DANGER WARNING:\n\nKya aap such me Sticker ID ${stickerId} ka poora customer data delete karna chahte hain?`)) return;
         
         try {
             const { error } = await _supabase
@@ -402,17 +408,16 @@
                 .eq('sticker_id', stickerId);
 
             if (error) throw error;
-            alert(`Sticker ${stickerId} database records table space se successfully wipe out kar diya gaya.`);
+            alert(`Sticker ${stickerId} successfully delete ho gaya.`);
             refreshAdminDashboardLogs();
         } catch(err) {
-            alert("Record deletion routine sequence dropped down failure exception: " + err.message);
+            alert("Record deletion failure: " + err.message);
         }
     }
 
-    // 7. 📥 SHEETJS COMPONENT ENGINE LOGISTIC DOWNLOAD RUNTIME INTERACTION
     function exportToExcel() {
         if(fetchedCachedRecords.length === 0) {
-            alert("No available active records matrix context stack buffered to deploy file translation export schema allocation down!");
+            alert("Export karne ke liye koi data nahi hai!");
             return;
         }
 
@@ -432,7 +437,7 @@
         XLSX.writeFile(structureWorkbookContainer, `AlertoQR_Live_Analytics_Dataset.xlsx`);
     }
 
-    // 8. 🔮 AUTOMATED BATCH SERIAL ASSIGNMENT LINK GENERATOR ENGINE
+    // 🔮 FIXED BULK QR GENERATION CLICK LOGIC
     function generateBulkQRCodes() {
         const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
         const startNo = parseInt(document.getElementById('qr-start').value);
@@ -440,18 +445,15 @@
         const previewArea = document.getElementById('bulk-preview-area');
 
         if(!prefix || isNaN(startNo) || isNaN(endNo) || startNo > endNo) {
-            alert("Invalid configuration matrix sequencing metrics array limits parameters!");
+            alert("Invalid input metrics parameters!");
             return;
         }
 
-        previewArea.innerHTML = ""; // Flush previous workspace preview layout
+        previewArea.innerHTML = ""; 
 
         for(let trackPointer = startNo; trackPointer <= endNo; trackPointer++) {
-            // Padding dynamic numbers logic loop (001, 002... system sequence)
             const paddedNumericValueString = String(trackPointer).padStart(3, '0');
             const constructedStickerIdentitySerialKey = `${prefix}${paddedNumericValueString}`;
-            
-            // Domain link dynamic bind routing mapping url string pipeline parameters tracking metrics configuration setup
             const deploymentTargetRoutingRegistrationLinkURL = `https://alertoqr.in/register.html?id=${constructedStickerIdentitySerialKey}`;
 
             const printableQRBlockContainerElementNode = document.createElement('div');
@@ -468,5 +470,18 @@
             printableQRBlockContainerElementNode.appendChild(labelTextDescriptionSpanElementNode);
             previewArea.appendChild(printableQRBlockContainerElementNode);
 
-            // Vector Compilation Instance Injection Runtime Trigger setup Engine
             new QRCode(internalQRImageVectorPlaceholderBox, {
+                text: deploymentTargetRoutingRegistrationLinkURL,
+                width: 90,
+                height: 90,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
+        }
+    }
+
+    window.onload = refreshAdminDashboardLogs;
+</script>
+</body>
+</html>
