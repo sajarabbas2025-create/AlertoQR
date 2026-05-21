@@ -27,7 +27,7 @@
         }
 
         .admin-wrapper {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -125,7 +125,7 @@
         .btn-generate { background-color: #2563eb; color: white; }
         .btn-print { background-color: #10b981; color: white; }
 
-        /* Realtime Hidden Render Matrix */
+        /* Realtime Grid View Area */
         #bulk-render-matrix {
             background-color: #0b1329;
             padding: 15px;
@@ -144,18 +144,21 @@
 
         .qr-render-card {
             background: white;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            gap: 8px;
             color: #000;
         }
 
         .qr-render-card span {
-            font-size: 11px;
-            font-weight: 700;
+            font-size: 13px;
+            font-weight: 800;
+            color: #000000;
+            letter-spacing: 0.5px;
         }
 
         /* Database View Table Logs Layout */
@@ -197,20 +200,26 @@
             display: inline-block;
         }
 
-        .status-badge {
-            background-color: #10b981;
-            color: white;
-            padding: 4px 8px;
+        /* Status Toggles Styles */
+        .status-btn {
+            padding: 6px 12px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
-            display: inline-block;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: opacity 0.2s;
         }
+        .status-active { background-color: #10b981; color: white; }
+        .status-deactive { background-color: #64748b; color: white; }
 
         .btn-action-edit { background-color: #f59e0b; color: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; border: none; font-weight: 600; margin-right: 5px;}
         .btn-action-delete { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; border: none; font-weight: 600;}
 
-        /* PRINT INTERFACE FRAMEWORK OVERRIDES (STRICT HD FOR A4 PRINTING) */
+        /* PRINT OVERRIDES (QR KE NICHE STICKER ID APNE AAP LOCK HO JAYEGI) */
         @media print {
             body {
                 background: white !important;
@@ -218,20 +227,20 @@
                 padding: 0 !important;
                 margin: 0 !important;
             }
-            .admin-wrapper, .panel-card, .global-strip, .config-grid, .action-row-buttons, .table-overflow, .panel-header, .section-divider-title {
+            .admin-wrapper, .panel-card, .global-strip, .config-grid, .action-row-buttons, .table-overflow, .panel-header {
                 display: none !important;
             }
             #bulk-render-matrix {
                 display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important; /* Perfect 3 Columns in A4 Row */
-                gap: 25px !important;
-                padding: 20px !important;
+                grid-template-columns: repeat(3, 1fr) !important; /* A4 size sheet par perfectly 3 QR columns adjust honge */
+                gap: 30px !important;
+                padding: 25px !important;
                 border: none !important;
                 background: white !important;
             }
             .qr-render-card {
                 page-break-inside: avoid !important;
-                border: 2px solid #000000 !important;
+                border: 1px dashed #000000 !important; /* Sticker cutting boundary margin lines */
                 padding: 16px !important;
                 background: white !important;
                 box-shadow: none !important;
@@ -241,16 +250,17 @@
                 justify-content: center !important;
             }
             .qr-render-card canvas, .qr-render-card img {
-                width: 180px !important; /* Fixed crisp dimension target */
-                height: 180px !important;
+                width: 170px !important; /* Perfect balance HD printable dimension structure */
+                height: 170px !important;
                 image-rendering: crisp-edges !important;
                 image-rendering: pixelated !important;
             }
             .qr-render-card span {
-                font-size: 14px !important;
+                font-size: 15px !important;
                 color: #000000 !important;
-                margin-top: 10px !important;
-                font-weight: 800 !important;
+                margin-top: 12px !important; /* QR code ke thik niche high clarity text distance placement */
+                font-weight: 900 !important;
+                display: block !important;
             }
         }
     </style>
@@ -306,8 +316,8 @@
                         <th>Owner Name</th>
                         <th>Vehicle Number</th>
                         <th>Mobile</th>
-                        <th>Status</th>
-                        <th>Expiry Date</th>
+                        <th>Status Control</th>
+                        <th>Calculated Expiry</th>
                         <th>Action Controls</th>
                     </tr>
                 </thead>
@@ -331,14 +341,14 @@
         fetchLiveDatabaseLogs();
     });
 
-    // 🚀 ULTRA HD BULK GENERATION IMPLEMENTATION
+    // 🚀 ULTRA HD BULK GENERATION IMPLEMENTATION (QR PHATNE SE BACHANE KE LIYE)
     function generateHDMatrix() {
         const prefix = document.getElementById('txt-prefix').value.trim().toUpperCase();
         const start = parseInt(document.getElementById('txt-start').value);
         const end = parseInt(document.getElementById('txt-end').value);
         
         const matrixContainer = document.getElementById('bulk-render-matrix');
-        matrixContainer.innerHTML = ""; // Clear State
+        matrixContainer.innerHTML = ""; // Clean layout screen view
 
         if(!prefix || isNaN(start) || isNaN(end) || start > end) {
             alert("Invalid configuration limits.");
@@ -346,49 +356,43 @@
         }
 
         for (let i = start; i <= end; i++) {
-            // Pad sequence numbers (e.g., 001, 002)
             const sequenceStr = String(i).padStart(3, '0');
             const finalStickerId = `${prefix}${sequenceStr}`;
             const targetRedirectionUrl = `https://alertoqr.in/register.html?id=${finalStickerId}`;
 
-            // Create printable wrapper card
+            // Create container element box
             const card = document.createElement('div');
             card.className = 'qr-render-card';
 
             const qrContainer = document.createElement('div');
             card.appendChild(qrContainer);
 
+            // STICKER ID UNDER QR CODE: Niche ID display ke liye label placement block
             const label = document.createElement('span');
             label.innerText = finalStickerId;
             card.appendChild(label);
 
             matrixContainer.appendChild(card);
 
-            // Engine Injection with High-Resolution (500x500 Matrix upscale for zero pixelation)
+            // Upscaled Canvas Matrix Injection (Zero compression pixel engine block)
             new QRCode(qrContainer, {
                 text: targetRedirectionUrl,
-                width: 500,  // Dynamic upscale matrix size
-                height: 500, // Dynamic upscale matrix size
+                width: 600,  
+                height: 600, 
                 colorDark: "#000000",
                 colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // Highest Error correction strategy (Best for print media)
+                correctLevel: QRCode.CorrectLevel.H // Super solid clarity matrix level alignment setup
             });
             
-            // Adjust visual element on screen viewport safely
+            // Layout dimension parameters tracking adjustments
             const renderedImg = qrContainer.querySelector('img');
-            if(renderedImg) {
-                renderedImg.style.width = "100px";
-                renderedImg.style.height = "100px";
-            }
+            if(renderedImg) { renderedImg.style.width = "100px"; renderedImg.style.height = "100px"; }
             const renderedCanvas = qrContainer.querySelector('canvas');
-            if(renderedCanvas) {
-                renderedCanvas.style.width = "100px";
-                renderedCanvas.style.height = "100px";
-            }
+            if(renderedCanvas) { renderedCanvas.style.width = "100px"; renderedCanvas.style.height = "100px"; }
         }
     }
 
-    // STREAM LIVE ENTRIES FROM SUPABASE
+    // STREAM LIVE DATABASE MANAGEMENT REGISTRY
     async function fetchLiveDatabaseLogs() {
         const targetTableBody = document.getElementById('table-data-rows');
         
@@ -410,16 +414,34 @@
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 
+                // DYNAMIC 1 YEAR EXPIRY DATE CALCULATION LOGIC ENGINE
+                let expiryString = "1 Year Active";
+                if(row.created_at) {
+                    let regDate = new Date(row.created_at);
+                    regDate.setFullYear(regDate.getFullYear() + 1); // Dynamic shift target calculation (+1 Year Exactly)
+                    
+                    const day = String(regDate.getDate()).padStart(2, '0');
+                    const month = String(regDate.getMonth() + 1).padStart(2, '0');
+                    const year = regDate.getFullYear();
+                    expiryString = `${day}-${month}-${year}`; // Beautiful clean DD-MM-YYYY execution output format
+                }
+
+                // DYNAMIC INTERFACE BUTTON TOGGLE RENDER CONDITIONS
+                const isCurrentActive = row.status === 'Active';
+                const statusButtonHTML = isCurrentActive 
+                    ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
+                    : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
+
                 tr.innerHTML = `
                     <td>
                         <strong style="color: #3b82f6; display:block; margin-bottom:5px;">${row.sticker_id}</strong>
                         <div class="table-qr-holder" id="inline-qr-${row.sticker_id}"></div>
                     </td>
                     <td>${row.full_name || 'N/A'}</td>
-                    <td><span style="background-color:#0b1329; padding: 4px 8px; border-radius:4px; font-weight:700;">${row.vehicle_number}</span></td>
+                    <td><span style="background-color:#0b1329; padding: 4px 8px; border-radius:4px; font-weight:700; color: #f59e0b;">${row.vehicle_number}</span></td>
                     <td>${row.mobile_number}</td>
-                    <td><span class="status-badge">${row.status}</span></td>
-                    <td>${row.expiry_date || '1 Year Active'}</td>
+                    <td>${statusButtonHTML}</td>
+                    <td><strong style="color: #cbd5e1;">${expiryString}</strong></td>
                     <td>
                         <button class="btn-action-edit" onclick="alert('Editing ID: ${row.sticker_id}')">Edit</button>
                         <button class="btn-action-delete" onclick="deleteStickerRow('${row.sticker_id}')">Delete</button>
@@ -427,7 +449,7 @@
                 `;
                 targetTableBody.appendChild(tr);
 
-                // Small Inline preview for internal reference
+                // Small Row Preview Engine setup parameters
                 new QRCode(document.getElementById(`inline-qr-${row.sticker_id}`), {
                     text: `https://alertoqr.in/register.html?id=${row.sticker_id}`,
                     width: 120,
@@ -445,6 +467,27 @@
 
         } catch (err) {
             targetTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color:#ef4444; padding:20px;">Failed to fetch live database.</td></tr>`;
+        }
+    }
+
+    // 🔥 LIVE STATUS SWITCH IMPLEMENTATION FUNCTION (ACTIVATE / DEACTIVATE SWITCH)
+    async function toggleStickerStatus(stickerId, newStatus) {
+        try {
+            const { error } = await _supabase
+                .from('registrations')
+                .update({ status: newStatus })
+                .eq('sticker_id', stickerId);
+
+            if(error) {
+                alert("Status alteration operation rejected by security parameters.");
+                return;
+            }
+            
+            // Reload stream layout silently
+            fetchLiveDatabaseLogs();
+            
+        } catch(err) {
+            alert("Database tracking execution mismatch error.");
         }
     }
 
