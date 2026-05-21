@@ -64,14 +64,15 @@
         .btn-edit { background-color: #eab308; color: #0f172a; }
         .btn-delete { background-color: #dc2626; color: white; }
 
-        /* Mini Permanent QR Styling in Table */
-        .table-qr-container { background: white; padding: 4px; border-radius: 4px; display: inline-block; margin-top: 5px; }
+        .table-qr-container { background: white; padding: 6px; border-radius: 4px; display: inline-block; margin-top: 5px; text-align: center; }
+        .btn-download-qr { display: block; background-color: #0f172a; color: #38bdf8; border: 1px solid #334155; font-size: 10px; padding: 3px 6px; margin-top: 5px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; }
+        .btn-download-qr:hover { background-color: #1e293b; color: white; }
 
         @media print {
             body * { visibility: hidden; }
             #bulk-preview-area, #bulk-preview-area * { visibility: visible; }
             #bulk-preview-area { position: absolute; left: 0; top: 0; max-height: none; overflow: visible; border: none; background: transparent; }
-            .qr-print-block { page-break-inside: avoid; margin-bottom: 20px; border: 1px solid #000; }
+            .qr-print-block { page-break-inside: avoid; margin-bottom: 20px; border: 1px solid #000; display: inline-block !important; }
         }
     </style>
 </head>
@@ -175,7 +176,10 @@
                 <tr>
                     <td>
                         <div style="font-weight:bold; color:#38bdf8; margin-bottom:4px;">${row.sticker_id}</div>
-                        <div class="table-qr-container" id="tqr-${row.sticker_id}"></div>
+                        <div class="table-qr-container">
+                            <div id="tqr-${row.sticker_id}"></div>
+                            <button class="btn-download-qr" onclick="downloadSingleQR('${row.sticker_id}')">⬇️ Save PNG</button>
+                        </div>
                     </td>
                     <td>${row.full_name || '—'}</td>
                     <td>${row.vehicle_number || '—'}</td>
@@ -191,16 +195,32 @@
             `;
         }).join('');
 
-        // Render permanent QR inside each customer row
+        // Generate permanent QR matrix
         records.forEach(row => {
             document.getElementById(`tqr-${row.sticker_id}`).innerHTML = "";
             new QRCode(document.getElementById(`tqr-${row.sticker_id}`), {
                 text: `https://alertoqr.in/register.html?id=${row.sticker_id}`,
-                width: 65, height: 65,
+                width: 75, height: 75,
                 colorDark : "#000000", colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.M
             });
         });
+    }
+
+    // FUNCTION TO DOWNLOAD SPECIFIC STICKER QR AS PNG FILE IMAGE
+    function downloadSingleQR(stickerId) {
+        const qrContainer = document.getElementById(`tqr-${stickerId}`);
+        const imgElement = qrContainer.querySelector('img');
+        if(imgElement) {
+            const saveLink = document.createElement('a');
+            saveLink.href = imgElement.src;
+            saveLink.download = `${stickerId}_QR.png`;
+            document.body.appendChild(saveLink);
+            saveLink.click();
+            document.body.removeChild(saveLink);
+        } else {
+            alert("QR Image not ready yet. Please try again!");
+        }
     }
 
     // GENERATE WITH REALTIME DATABASE BLOCK/SKIP LOGIC
@@ -215,7 +235,6 @@
             return;
         }
 
-        // Fetch latest used IDs from database before generating
         const { data: latestRecords } = await _supabase.from('registrations').select('sticker_id');
         const registeredIDs = new Set((latestRecords || []).map(r => r.sticker_id.toUpperCase()));
 
@@ -226,7 +245,6 @@
             const paddedNumericValueString = String(trackPointer).padStart(3, '0');
             const constructedStickerIdentitySerialKey = `${prefix}${paddedNumericValueString}`;
 
-            // Check if already exist in DB, if true -> skip it!
             if (registeredIDs.has(constructedStickerIdentitySerialKey)) {
                 skippedIds.push(constructedStickerIdentitySerialKey);
                 continue; 
@@ -282,10 +300,6 @@
         const { error } = await _supabase.from('registrations').delete().eq('sticker_id', stickerId);
         if (error) alert(error.message); else refreshAdminDashboardLogs();
     }
-
-    document.addEventListener("click", function(e) {
-        // Safe check for button interactions click layer bounds
-    });
 
     function exportToExcel() {
         if(fetchedCachedRecords.length === 0) return;
