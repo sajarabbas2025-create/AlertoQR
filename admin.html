@@ -40,7 +40,7 @@
         @media(min-width: 768px) { .input-grid { grid-template-columns: 2fr 1fr 1fr; } }
         .field-group { display: flex; flex-direction: column; }
         .field-group label { font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
-        .field-group input { background-color: #0f172a; border: 1px solid #475569; color: white; padding: 10px; border-radius: 6px; font-size: 14px; }
+        .field-group input { background-color: #0f172a; border: 1px solid #475569; color: white; padding: 10px; border-radius: 6px; font-size: 14px; width: 100%; box-sizing: border-box; }
 
         .btn-group { display: flex; gap: 12px; margin-bottom: 20px; }
         .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; }
@@ -184,15 +184,16 @@
                     <td style="color:#94a3b8; font-size:13px;">${row.status === 'Active' ? '1 Year Active' : 'N/A'}</td>
                     <td>
                         ${cleanStatus !== 'Active' ? `<button class="btn-action btn-activate" onclick="modifyAccountActivationState('${row.sticker_id}')">⚡ Activate</button>` : ''}
-                        <button class="btn-action btn-edit" onclick="triggerManualEditFlow('${row.sticker_id}')">编 Edit</button>
+                        <button class="btn-action btn-edit" onclick="triggerManualEditFlow('${row.sticker_id}')">📝 Edit</button>
                         <button class="btn-action btn-delete" onclick="executeEntryPurgeSequence('${row.sticker_id}')">🗑️ Delete</button>
                     </td>
                 </tr>
             `;
         }).join('');
 
-        // Generate permanent Mini QRs inside the loaded table rows
+        // Render permanent QR inside each customer row
         records.forEach(row => {
+            document.getElementById(`tqr-${row.sticker_id}`).innerHTML = "";
             new QRCode(document.getElementById(`tqr-${row.sticker_id}`), {
                 text: `https://alertoqr.in/register.html?id=${row.sticker_id}`,
                 width: 65, height: 65,
@@ -202,7 +203,7 @@
         });
     }
 
-    // 🔮 FIXED GENERATE BUTTON WITH LIVE SUPABASE DUPLICATE CHECK
+    // GENERATE WITH REALTIME DATABASE BLOCK/SKIP LOGIC
     async function generateBulkQRCodes() {
         const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
         const startNo = parseInt(document.getElementById('qr-start').value);
@@ -210,11 +211,11 @@
         const previewArea = document.getElementById('bulk-preview-area');
 
         if(!prefix || isNaN(startNo) || isNaN(endNo) || startNo > endNo) {
-            alert("Please enter valid sequencing range parameters!");
+            alert("Please enter valid range parameters!");
             return;
         }
 
-        // Fresh sync with server to ensure accuracy before running block check
+        // Fetch latest used IDs from database before generating
         const { data: latestRecords } = await _supabase.from('registrations').select('sticker_id');
         const registeredIDs = new Set((latestRecords || []).map(r => r.sticker_id.toUpperCase()));
 
@@ -225,7 +226,7 @@
             const paddedNumericValueString = String(trackPointer).padStart(3, '0');
             const constructedStickerIdentitySerialKey = `${prefix}${paddedNumericValueString}`;
 
-            // 🛑 CRITICAL CHECK: If already saved in DB, skip it right here!
+            // Check if already exist in DB, if true -> skip it!
             if (registeredIDs.has(constructedStickerIdentitySerialKey)) {
                 skippedIds.push(constructedStickerIdentitySerialKey);
                 continue; 
@@ -281,6 +282,10 @@
         const { error } = await _supabase.from('registrations').delete().eq('sticker_id', stickerId);
         if (error) alert(error.message); else refreshAdminDashboardLogs();
     }
+
+    document.addEventListener("click", function(e) {
+        // Safe check for button interactions click layer bounds
+    });
 
     function exportToExcel() {
         if(fetchedCachedRecords.length === 0) return;
