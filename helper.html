@@ -134,7 +134,7 @@
             gap: 8px;
         }
 
-        /* Quick Alerts Subsection Grid Layout */
+        /* Quick Alerts Grid Layout */
         .section-divider-title {
             font-size: 12px;
             text-transform: uppercase;
@@ -279,6 +279,11 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" class="icon-img" alt="Share Photo">
                 <span>Share Photo</span>
             </a>
+
+            <a href="#" id="lnk-alert-location" target="_blank" class="grid-alert-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" class="icon-img" alt="Share Location">
+                <span>Share Location</span>
+            </a>
         </div>
 
         <div class="section-divider-title">Emergency Links</div>
@@ -353,12 +358,14 @@
                 const txtTow = encodeURIComponent(`Urgent Alert: Your vehicle (${data.vehicle_number}) is about to be towed. Please reach out immediately.`);
                 document.getElementById('lnk-alert-tow').href = `https://wa.me/91${data.mobile_number}?text=${txtTow}`;
                 
-                // Combined Alert Message for Window / Light Open
                 const txtWindow = encodeURIComponent(`Alert: Your vehicle (${data.vehicle_number}) window is open or the cabin lights are left ON. Please check and secure it.`);
                 document.getElementById('lnk-alert-window').href = `https://wa.me/91${data.mobile_number}?text=${txtWindow}`;
                 
                 const txtPhoto = encodeURIComponent(`Hello, I want to send you a live photo status of your vehicle (${data.vehicle_number}). Please reply so I can share it.`);
                 document.getElementById('lnk-alert-photo').href = `https://wa.me/91${data.mobile_number}?text=${txtPhoto}`;
+
+                const txtLocation = encodeURIComponent(`Hello, I am near your vehicle (${data.vehicle_number}). Please tap here to share your location or connect with me.`);
+                document.getElementById('lnk-alert-location').href = `https://wa.me/91${data.mobile_number}?text=${txtLocation}`;
 
                 document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
                 document.getElementById('dashboard-view').style.setProperty('display', 'block', 'important');
