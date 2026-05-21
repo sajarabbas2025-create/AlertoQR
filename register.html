@@ -63,7 +63,6 @@
             border-radius: 8px; 
             box-sizing: border-box; 
             font-size: 15px; 
-            transition: border-color 0.2s;
         }
         input:focus { 
             outline: none; 
@@ -86,10 +85,6 @@
             font-weight: bold; 
             cursor: pointer; 
             margin-top: 10px; 
-            transition: background-color 0.2s;
-        }
-        .btn-submit:hover {
-            background-color: #1d4ed8;
         }
         .btn-submit:disabled {
             background-color: #334155;
@@ -135,10 +130,6 @@
             display: inline-block; 
             box-sizing: border-box; 
             margin-top: 12px; 
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-        }
-        .btn-pay:hover {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
         }
         .qr-wrapper { 
             background: white; 
@@ -193,29 +184,24 @@
 </div>
 
 <script>
-    // Supabase Engine Security Configuration Parameter Node References
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // Business Merchant Routing Address Information Map Parameters
     const BUSINESS_UPI_ID = "6388522427@ptsbi"; 
     const BUSINESS_NAME = "SAJAR ABBAS";
 
-    // URL Parameter extraction node tracking setup on document initialization layer
     window.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const urlStickerId = urlParams.get('id');
         if (urlStickerId) {
             document.getElementById('sticker_id').value = urlStickerId.trim().toUpperCase();
         } else {
-            // Fallback warning layer configuration in case id context tracking pointer parameter is missing
             document.getElementById('sticker_id').removeAttribute('readonly');
             document.getElementById('sticker_id').placeholder = "Enter Sticker ID Manually";
         }
     });
 
-    // Form registration processing module architecture handler setup code blocks
     async function handleRegistration(event) {
         event.preventDefault();
         const submitBtn = document.getElementById('submit-btn');
@@ -232,7 +218,7 @@
         const secretPin = document.getElementById('secret_pin').value.trim();
 
         try {
-            // Remote Supabase Data Matrix Storage Transaction Insert Action Execution Block
+            // FIXED SCHEMA COLUMN NAME HERE -> mobile_number
             const { error: insertError } = await _supabase.from('registrations').insert([{ 
                 sticker_id: stickerId, 
                 full_name: fullName, 
@@ -244,27 +230,20 @@
 
             if (insertError) throw insertError;
 
-            // Construct Deep Link UPI Intent Dynamic Payment Routing URL String Nodes
             const upiUrl = `upi://pay?pa=${BUSINESS_UPI_ID}&pn=${encodeURIComponent(BUSINESS_NAME)}&am=299.00&cu=INR&tn=${encodeURIComponent('Activation ' + stickerId)}`;
             document.getElementById('upi-pay-link').href = upiUrl;
             
-            // Build Dynamic Checkout QR Vector Image Representation Mapping Object View Data Controls
             document.getElementById('qrcode').innerHTML = "";
             new QRCode(document.getElementById("qrcode"), { 
-                text: upiUrl, 
-                width: 160, 
-                height: 160,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
+                text: upiUrl, width: 160, height: 160,
+                colorDark : "#000000", colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.M
             });
 
-            // Transition UI State from Registration Form fields data context to Active Checkout UI layer blocks
             document.getElementById('registration-form').style.display = 'none';
             document.getElementById('payment-container').style.display = 'block';
 
         } catch (err) {
-            // Exception catch layer error formatting and recovery interface reset triggers
             errorBox.innerText = "Registration Failed: " + err.message;
             errorBox.style.display = 'block';
             submitBtn.innerText = "📝 SUBMIT & PROCEED TO PAY";
