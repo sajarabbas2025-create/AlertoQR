@@ -27,7 +27,7 @@
         }
 
         .admin-wrapper {
-            max-width: 1200px;
+            max-width: 1250px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -64,7 +64,7 @@
             margin-bottom: 20px;
         }
 
-        /* Form Configuration Fields Layout */
+        /* Configuration Grid Layout */
         .config-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
@@ -97,9 +97,7 @@
             font-weight: 600;
         }
 
-        .form-input:focus {
-            border-color: #3b82f6;
-        }
+        .form-input:focus { border-color: #3b82f6; }
 
         /* Controls Row */
         .action-row-buttons {
@@ -125,14 +123,14 @@
         .btn-generate { background-color: #2563eb; color: white; }
         .btn-print { background-color: #10b981; color: white; }
 
-        /* Realtime Grid View Area */
+        /* Bulk Grid System */
         #bulk-render-matrix {
             background-color: #0b1329;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
             min-height: 80px;
             align-items: center;
             justify-content: center;
@@ -155,13 +153,32 @@
         }
 
         .qr-render-card span {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 800;
             color: #000000;
             letter-spacing: 0.5px;
         }
 
-        /* Database View Table Logs Layout */
+        /* Action Mini Download Button */
+        .btn-mini-download {
+            background-color: #0f172a;
+            color: #ffffff;
+            border: none;
+            padding: 5px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            width: 100%;
+            justify-content: center;
+            margin-top: 2px;
+        }
+        .btn-mini-download:hover { background-color: #2563eb; }
+
+        /* Table Design Framework */
         .table-overflow {
             overflow-x: auto;
             margin-top: 15px;
@@ -193,14 +210,21 @@
 
         .table-qr-holder {
             background: white;
-            padding: 4px;
+            padding: 5px;
             border-radius: 4px;
-            width: 50px;
-            height: 50px;
+            width: 54px;
+            height: 54px;
             display: inline-block;
         }
 
-        /* Status Toggles Styles */
+        .table-qr-container-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        /* Status Controls */
         .status-btn {
             padding: 6px 12px;
             border-radius: 4px;
@@ -211,7 +235,6 @@
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            transition: opacity 0.2s;
         }
         .status-active { background-color: #10b981; color: white; }
         .status-deactive { background-color: #64748b; color: white; }
@@ -219,7 +242,7 @@
         .btn-action-edit { background-color: #f59e0b; color: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; border: none; font-weight: 600; margin-right: 5px;}
         .btn-action-delete { background-color: #ef4444; color: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; border: none; font-weight: 600;}
 
-        /* PRINT OVERRIDES (QR KE NICHE STICKER ID APNE AAP LOCK HO JAYEGI) */
+        /* MASTER SCREEN MEDIA PRINT STYLESHEET (FOR ALL BULK CODES AT ONCE) */
         @media print {
             body {
                 background: white !important;
@@ -232,7 +255,7 @@
             }
             #bulk-render-matrix {
                 display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important; /* A4 size sheet par perfectly 3 QR columns adjust honge */
+                grid-template-columns: repeat(3, 1fr) !important;
                 gap: 30px !important;
                 padding: 25px !important;
                 border: none !important;
@@ -240,28 +263,27 @@
             }
             .qr-render-card {
                 page-break-inside: avoid !important;
-                border: 1px dashed #000000 !important; /* Sticker cutting boundary margin lines */
+                border: 1px dashed #000000 !important;
                 padding: 16px !important;
                 background: white !important;
-                box-shadow: none !important;
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
                 justify-content: center !important;
             }
             .qr-render-card canvas, .qr-render-card img {
-                width: 170px !important; /* Perfect balance HD printable dimension structure */
+                width: 170px !important;
                 height: 170px !important;
-                image-rendering: crisp-edges !important;
                 image-rendering: pixelated !important;
             }
             .qr-render-card span {
                 font-size: 15px !important;
                 color: #000000 !important;
-                margin-top: 12px !important; /* QR code ke thik niche high clarity text distance placement */
+                margin-top: 12px !important;
                 font-weight: 900 !important;
                 display: block !important;
             }
+            .btn-mini-download { display: none !important; }
         }
     </style>
 </head>
@@ -295,7 +317,7 @@
 
         <div class="action-row-buttons">
             <button class="btn btn-generate" onclick="generateHDMatrix()"><i class="fa-solid fa-gear"></i> Generate QR Codes</button>
-            <button class="btn btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Sheets (PDF)</button>
+            <button class="btn btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Bulk Sheets (PDF)</button>
         </div>
 
         <div id="bulk-render-matrix">
@@ -312,7 +334,7 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Sticker ID & QR</th>
+                        <th>Sticker ID & QR Preview</th>
                         <th>Owner Name</th>
                         <th>Vehicle Number</th>
                         <th>Mobile</th>
@@ -341,14 +363,14 @@
         fetchLiveDatabaseLogs();
     });
 
-    // 🚀 ULTRA HD BULK GENERATION IMPLEMENTATION (QR PHATNE SE BACHANE KE LIYE)
+    // 🚀 MATRIX BULK LAYOUT CONTROLLER
     function generateHDMatrix() {
         const prefix = document.getElementById('txt-prefix').value.trim().toUpperCase();
         const start = parseInt(document.getElementById('txt-start').value);
         const end = parseInt(document.getElementById('txt-end').value);
         
         const matrixContainer = document.getElementById('bulk-render-matrix');
-        matrixContainer.innerHTML = ""; // Clean layout screen view
+        matrixContainer.innerHTML = ""; 
 
         if(!prefix || isNaN(start) || isNaN(end) || start > end) {
             alert("Invalid configuration limits.");
@@ -360,39 +382,47 @@
             const finalStickerId = `${prefix}${sequenceStr}`;
             const targetRedirectionUrl = `https://alertoqr.in/register.html?id=${finalStickerId}`;
 
-            // Create container element box
             const card = document.createElement('div');
             card.className = 'qr-render-card';
 
             const qrContainer = document.createElement('div');
             card.appendChild(qrContainer);
 
-            // STICKER ID UNDER QR CODE: Niche ID display ke liye label placement block
+            // Sticker text ID label
             const label = document.createElement('span');
             label.innerText = finalStickerId;
             card.appendChild(label);
 
+            // ⚡ INDIVIDUAL PDF SINGLE DOWNLOAD ACTION SHORTCUT BUTTON
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'btn-mini-download';
+            downloadBtn.innerHTML = `<i class="fa-solid fa-file-pdf"></i> PDF`;
+            downloadBtn.onclick = (e) => {
+                e.stopPropagation();
+                downloadSingleTargetPDF(finalStickerId, targetRedirectionUrl);
+            };
+            card.appendChild(downloadBtn);
+
             matrixContainer.appendChild(card);
 
-            // Upscaled Canvas Matrix Injection (Zero compression pixel engine block)
+            // 600px HD Generator Core
             new QRCode(qrContainer, {
                 text: targetRedirectionUrl,
                 width: 600,  
                 height: 600, 
                 colorDark: "#000000",
                 colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // Super solid clarity matrix level alignment setup
+                correctLevel: QRCode.CorrectLevel.H
             });
             
-            // Layout dimension parameters tracking adjustments
             const renderedImg = qrContainer.querySelector('img');
-            if(renderedImg) { renderedImg.style.width = "100px"; renderedImg.style.height = "100px"; }
+            if(renderedImg) { renderedImg.style.width = "110px"; renderedImg.style.height = "110px"; }
             const renderedCanvas = qrContainer.querySelector('canvas');
-            if(renderedCanvas) { renderedCanvas.style.width = "100px"; renderedCanvas.style.height = "100px"; }
+            if(renderedCanvas) { renderedCanvas.style.width = "110px"; renderedCanvas.style.height = "110px"; }
         }
     }
 
-    // STREAM LIVE DATABASE MANAGEMENT REGISTRY
+    // STREAM LIVE ENTRIES FROM DATABASE LOGS
     async function fetchLiveDatabaseLogs() {
         const targetTableBody = document.getElementById('table-data-rows');
         
@@ -403,7 +433,6 @@
                 .order('created_at', { ascending: false });
 
             if(error) throw error;
-
             if(!data || data.length === 0) {
                 targetTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color:#64748b; padding:20px;">No registered cards found.</td></tr>`;
                 return;
@@ -414,28 +443,34 @@
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 
-                // DYNAMIC 1 YEAR EXPIRY DATE CALCULATION LOGIC ENGINE
+                // 1 Year Date Calculation Engine
                 let expiryString = "1 Year Active";
                 if(row.created_at) {
                     let regDate = new Date(row.created_at);
-                    regDate.setFullYear(regDate.getFullYear() + 1); // Dynamic shift target calculation (+1 Year Exactly)
+                    regDate.setFullYear(regDate.getFullYear() + 1);
                     
                     const day = String(regDate.getDate()).padStart(2, '0');
                     const month = String(regDate.getMonth() + 1).padStart(2, '0');
                     const year = regDate.getFullYear();
-                    expiryString = `${day}-${month}-${year}`; // Beautiful clean DD-MM-YYYY execution output format
+                    expiryString = `${day}-${month}-${year}`;
                 }
 
-                // DYNAMIC INTERFACE BUTTON TOGGLE RENDER CONDITIONS
                 const isCurrentActive = row.status === 'Active';
                 const statusButtonHTML = isCurrentActive 
                     ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
                     : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
 
+                const finalUrlLink = `https://alertoqr.in/register.html?id=${row.sticker_id}`;
+
                 tr.innerHTML = `
                     <td>
-                        <strong style="color: #3b82f6; display:block; margin-bottom:5px;">${row.sticker_id}</strong>
-                        <div class="table-qr-holder" id="inline-qr-${row.sticker_id}"></div>
+                        <div class="table-qr-container-block">
+                            <strong style="color: #3b82f6;">${row.sticker_id}</strong>
+                            <div class="table-qr-holder" id="inline-qr-${row.sticker_id}"></div>
+                            <button class="btn-mini-download" style="width:54px;" onclick="downloadSingleTargetPDF('${row.sticker_id}', '${finalUrlLink}')">
+                                <i class="fa-solid fa-file-pdf"></i> PDF
+                            </button>
+                        </div>
                     </td>
                     <td>${row.full_name || 'N/A'}</td>
                     <td><span style="background-color:#0b1329; padding: 4px 8px; border-radius:4px; font-weight:700; color: #f59e0b;">${row.vehicle_number}</span></td>
@@ -449,9 +484,9 @@
                 `;
                 targetTableBody.appendChild(tr);
 
-                // Small Row Preview Engine setup parameters
+                // Preview Engine Injection
                 new QRCode(document.getElementById(`inline-qr-${row.sticker_id}`), {
-                    text: `https://alertoqr.in/register.html?id=${row.sticker_id}`,
+                    text: finalUrlLink,
                     width: 120,
                     height: 120,
                     colorDark: "#000000",
@@ -460,9 +495,9 @@
                 });
 
                 const inlineImg = document.getElementById(`inline-qr-${row.sticker_id}`).querySelector('img');
-                if(inlineImg) { inlineImg.style.width = "42px"; inlineImg.style.height = "42px"; }
+                if(inlineImg) { inlineImg.style.width = "44px"; inlineImg.style.height = "44px"; }
                 const inlineCanvas = document.getElementById(`inline-qr-${row.sticker_id}`).querySelector('canvas');
-                if(inlineCanvas) { inlineCanvas.style.width = "42px"; inlineCanvas.style.height = "42px"; }
+                if(inlineCanvas) { inlineCanvas.style.width = "44px"; inlineCanvas.style.height = "44px"; }
             });
 
         } catch (err) {
@@ -470,34 +505,26 @@
         }
     }
 
-    // 🔥 LIVE STATUS SWITCH IMPLEMENTATION FUNCTION (ACTIVATE / DEACTIVATE SWITCH)
-    async function toggleStickerStatus(stickerId, newStatus) {
-        try {
-            const { error } = await _supabase
-                .from('registrations')
-                .update({ status: newStatus })
-                .eq('sticker_id', stickerId);
+    // ⚡ VIRTUAL SILENT IFRAME ENGINE: HAR STICKER KO ALAG SE CRISP PDF BANANE KE LIYE
+    function downloadSingleTargetPDF(stickerId, redirectionUrl) {
+        // Ek hidden temporary container tayyar karte hain pure isolated printing ke liye
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.right = '0';
+        iframe.style.bottom = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
 
-            if(error) {
-                alert("Status alteration operation rejected by security parameters.");
-                return;
-            }
-            
-            // Reload stream layout silently
-            fetchLiveDatabaseLogs();
-            
-        } catch(err) {
-            alert("Database tracking execution mismatch error.");
-        }
-    }
-
-    async function deleteStickerRow(id) {
-        if(confirm(`Are you sure you want to delete ${id}?`)) {
-            const { error } = await _supabase.from('registrations').delete().eq('sticker_id', id);
-            if(error) { alert("Delete operation failed."); } 
-            else { fetchLiveDatabaseLogs(); }
-        }
-    }
-</script>
-</body>
-</html>
+        const doc = iframe.contentWindow.document;
+        doc.open();
+        doc.write(`
+            <html>
+            <head>
+                <title>${stickerId}_QR_Sticker</title>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+                <style>
+                    body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #fff; }
+                    .print-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; border: 2px dashed #000; border-radius: 8px; background: #fff; }
+                    .print-box c
