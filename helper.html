@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>AlertoQR Helper</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -18,8 +21,8 @@
         }
 
         body {
-            background-color: #f8fafc;
-            color: #000000;
+            background-color: #ffffff !important;
+            color: #000000 !important;
             padding: 20px 16px;
             display: flex;
             justify-content: center;
@@ -28,19 +31,18 @@
         .container {
             width: 100%;
             max-width: 450px;
-            background-color: #ffffff;
-            min-height: 90vh;
+            background-color: #ffffff !important;
             display: flex;
             flex-direction: column;
         }
 
-        /* Top Header Navigation Strip */
+        /* Top Header Navigation Strip matching original image */
         .header-strip {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 4px;
-            margin-bottom: 25px;
+            padding: 10px 4px 15px 4px;
+            margin-bottom: 20px;
             border-bottom: 1px solid #f1f5f9;
         }
 
@@ -57,14 +59,13 @@
             letter-spacing: 0.5px;
         }
 
-        /* Main Profile Information Box Card */
+        /* Profile Data Box View Card matching original upload template */
         .owner-info-card {
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             padding: 24px 20px;
             margin-bottom: 20px;
-            background-color: #ffffff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            background-color: #ffffff !important;
         }
 
         .label-v-owner {
@@ -73,7 +74,7 @@
             color: #94a3b8;
             font-weight: 700;
             letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .owner-name {
@@ -95,7 +96,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* Top Call Action Triggers Container Row */
+        /* Call Action Elements Layout Framework */
         .call-actions-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -104,8 +105,8 @@
         }
 
         .btn-call-main {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: #000000 !important;
+            color: #ffffff !important;
             border: 1px solid #000000;
             border-radius: 8px;
             padding: 14px 10px;
@@ -116,12 +117,11 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            cursor: pointer;
         }
 
         .btn-call-alt {
-            background-color: #ffffff;
-            color: #000000;
+            background-color: #ffffff !important;
+            color: #000000 !important;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
             padding: 14px 10px;
@@ -132,10 +132,9 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            cursor: pointer;
         }
 
-        /* Quick Alerts Subsection Grid Layout */
+        /* Quick Alerts Subsection Grid Layout Framework components */
         .section-divider-title {
             font-size: 12px;
             text-transform: uppercase;
@@ -153,7 +152,7 @@
         }
 
         .grid-alert-card {
-            background-color: #ffffff;
+            background-color: #ffffff !important;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             padding: 22px 10px;
@@ -163,24 +162,17 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
-            color: #000000;
+            color: #000000 !important;
             font-size: 14px;
             font-weight: 600;
-            transition: background-color 0.15s ease;
         }
 
-        .grid-alert-card:active {
-            background-color: #f8fafc;
-        }
-
-        /* Feature Icon Graphics Scaling matching layout rules */
         .icon-img {
             height: 32px;
             width: auto;
             object-fit: contain;
         }
 
-        /* Screen States Infrastructure Nodes */
         #loading-screen {
             display: flex;
             flex-direction: column;
@@ -189,7 +181,6 @@
             padding: 100px 0;
             color: #64748b;
             font-weight: 600;
-            font-size: 15px;
         }
 
         #error-screen {
@@ -207,27 +198,27 @@
 
     <div id="loading-screen">
         <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 28px; color: #000; margin-bottom: 16px;"></i>
-        <div>Loading Vehicle Control Dashboard...</div>
+        <div>Verifying Vehicle Profile Live...</div>
     </div>
 
-    <div id="dashboard-view" style="display: none;">
+    <div id="dashboard-view" style="display: none !important;">
         
         <div class="header-strip">
             <span class="header-title">AlertoQR Helper</span>
-            <span class="sticker-id-tag" id="lbl-sticker-id">ID: ----</span>
+            <span class="sticker-id-tag" id="lbl-sticker-id">ID: AGRA001</span>
         </div>
 
         <div class="owner-info-card">
             <div class="label-v-owner">Vehicle Owner</div>
-            <div class="owner-name" id="lbl-owner-name">LOADING...</div>
-            <div class="vehicle-plate-badge" id="lbl-vehicle-number">--------</div>
+            <div class="owner-name" id="lbl-owner-name">SAJAR ABBAS</div>
+            <div class="vehicle-plate-badge" id="lbl-vehicle-number">UP32DD2420</div>
         </div>
 
         <div class="call-actions-row">
-            <a href="#" id="lnk-main-call" class="btn-custom btn-call-main">
+            <a href="#" id="lnk-main-call" class="btn-call-main">
                 <i class="fa-solid fa-phone"></i> Call Owner
             </a>
-            <a href="#" id="lnk-alt-call" class="btn-custom btn-call-alt">
+            <a href="#" id="lnk-alt-call" class="btn-call-alt">
                 <i class="fa-solid fa-phone"></i> Call Alternate
             </a>
         </div>
@@ -235,7 +226,6 @@
         <div class="section-divider-title">Quick Alerts</div>
         
         <div class="alerts-grid">
-            
             <a href="#" id="lnk-alert-parking" target="_blank" class="grid-alert-card">
                 <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" class="icon-img" alt="Wrong Parking">
                 <span>Wrong Parking</span>
@@ -255,28 +245,34 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" class="icon-img" alt="Share Location">
                 <span>Share Location</span>
             </a>
-
         </div>
 
     </div>
 
     <div id="error-screen">
         <i class="fa-solid fa-triangle-exclamation" style="font-size: 32px; margin-bottom: 12px;"></i>
-        <div id="error-message-text">Sticker details setup verification mismatch.</div>
+        <div id="error-message-text">Sticker setup configuration missing.</div>
     </div>
 
 </div>
 
 <script>
-    // Supabase Core Infrastructure Setup
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
-        const stickerId = urlParams.get('id');
+        
+        // CRITICAL CACHE ACTION BUSTER:
+        // Agar link me '?v=' time token nahi hai, toh page browser cache ko skip karke naya reload karega!
+        if (!urlParams.has('v')) {
+            urlParams.set('v', Date.now());
+            window.location.search = urlParams.toString();
+            return;
+        }
 
+        const stickerId = urlParams.get('id');
         if (!stickerId || stickerId.trim() === "") {
             showErrorState("Scan Error: Missing Sticker ID Parameter.");
             return;
@@ -286,7 +282,6 @@
         document.getElementById('lbl-sticker-id').innerText = `ID: ${cleanStickerId}`;
 
         try {
-            // Fetch live operational profiles data indexes
             const { data, error } = await _supabase
                 .from('registrations')
                 .select('mobile_number, vehicle_number, status, full_name')
@@ -294,55 +289,52 @@
                 .maybeSingle();
 
             if (error) {
-                showErrorState("Database connection dropped. Please reload page.");
+                showErrorState("Database connection error.");
                 return;
             }
 
-            // Route to setup registration panel workflow if completely unallocated data matching
             if (!data) {
                 window.location.href = `register.html?id=${cleanStickerId}`;
                 return;
             }
 
             if (data.status === 'Active') {
-                // Populate DOM fields dynamically matching values
+                // Populate operational fields data directly
                 document.getElementById('lbl-owner-name').innerText = data.full_name || "Vehicle Owner";
                 document.getElementById('lbl-vehicle-number').innerText = data.vehicle_number;
                 
-                // 1. Direct Dial Communication Setup
                 document.getElementById('lnk-main-call').href = `tel:${data.mobile_number}`;
                 document.getElementById('lnk-alt-call').href = `tel:${data.mobile_number}`;
                 
-                // 2. Pre-compiled Preset Custom Alert Parameters Messaging Strings (WhatsApp Triggers)
-                const txtParking = encodeURIComponent(`Urgent Alert: Your vehicle (${data.vehicle_number}) is wrongly parked or blocking someone. Please check immediately. Sent via AlertoQR.`);
+                // Formulate custom dynamic messages text
+                const txtParking = encodeURIComponent(`Urgent Alert: Your vehicle (${data.vehicle_number}) is wrongly parked. Please check immediately.`);
                 document.getElementById('lnk-alert-parking').href = `https://wa.me/91${data.mobile_number}?text=${txtParking}`;
                 
-                const txtTow = encodeURIComponent(`Urgent Alert: Your vehicle (${data.vehicle_number}) is about to be towed or being monitored by traffic authorities. Please check immediately.`);
+                const txtTow = encodeURIComponent(`Urgent Alert: Your vehicle (${data.vehicle_number}) is about to be towed. Please reach out immediately.`);
                 document.getElementById('lnk-alert-tow').href = `https://wa.me/91${data.mobile_number}?text=${txtTow}`;
                 
-                const txtWindow = encodeURIComponent(`Alert: Your vehicle (${data.vehicle_number}) window is left open. Please secure it as soon as possible.`);
+                const txtWindow = encodeURIComponent(`Alert: Your vehicle (${data.vehicle_number}) window is left open.`);
                 document.getElementById('lnk-alert-window').href = `https://wa.me/91${data.mobile_number}?text=${txtWindow}`;
                 
-                const txtLocation = encodeURIComponent(`Hello, I am near your vehicle (${data.vehicle_number}). Please view my current live status or reach back.`);
+                const txtLocation = encodeURIComponent(`Hello, I am near your vehicle (${data.vehicle_number}). Sharing live location context.`);
                 document.getElementById('lnk-alert-location').href = `https://wa.me/91${data.mobile_number}?text=${txtLocation}`;
 
-                // Toggle visibility view blocks configurations
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('dashboard-view').style.display = 'block';
+                // Force visibility styles overrides
+                document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
+                document.getElementById('dashboard-view').style.setProperty('display', 'block', 'important');
             } else {
                 window.location.href = `register.html?id=${cleanStickerId}`;
             }
 
         } catch (err) {
-            console.error(err);
-            showErrorState("System dashboard execution failure.");
+            showErrorState("System configuration failure.");
         }
     });
 
     function showErrorState(msg) {
-        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
         document.getElementById('error-message-text').innerText = msg;
-        document.getElementById('error-screen').style.display = 'block';
+        document.getElementById('error-screen').style.setProperty('display', 'block', 'important');
     }
 </script>
 </body>
