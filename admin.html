@@ -5,213 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlertoQR | Super Admin Panel</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #fff; margin: 0; padding: 20px; }
-        .container { max-width: 1100px; margin: 0 auto; }
-        h1 { color: #38bdf8; text-align: center; margin-bottom: 30px; font-size: 28px; font-weight: 700; letter-spacing: 0.5px; }
-        
-        /* 📊 Stats Grid Layout */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .stat-card h3 { margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; }
-        .stat-card p { margin: 0; font-size: 32px; font-weight: bold; }
-        .stat-earning { color: #38bdf8; }
-        .stat-active { color: #10b981; }
-        .stat-expired { color: #ef4444; }
-
-        /* 🖨️ Generator Box Styling */
-        .section-box { background: #1e293b; border: 1px solid #334155; padding: 25px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .section-title { font-size: 18px; color: #f8fafc; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 600; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .form-group { text-align: left; }
-        label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
-        input { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #475569; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 14px; }
-        
-        /* Buttons Setup */
-        .btn { padding: 10px 18px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
-        .btn-primary { background: #2563eb; color: #fff; }
-        .btn-primary:hover { background: #1d4ed8; }
-        .btn-success { background: #10b981; color: #fff; }
-        .btn-success:hover { background: #059669; }
-        .btn-danger { background: #dc2626; color: #fff; }
-        .btn-danger:hover { background: #b91c1c; }
-        .btn-edit { background: #eab308; color: #0f172a; }
-        .btn-edit:hover { background: #ca8a04; }
-
-        /* Table Architecture */
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; font-size: 14px; }
-        th { background: #0f172a; color: #94a3b8; padding: 12px; border-bottom: 2px solid #334155; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
-        td { padding: 12px; border-bottom: 1px solid #334155; color: #cbd5e1; vertical-align: middle; }
-        tr:hover { background: #1e293b60; }
-        
-        /* Badges layout */
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; }
-        .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
-        .badge-pending { background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308; }
-
-        /* 🖨️ Premium High-Fidelity Print Sheet Core Rules */
-        #print-area { display: none; background: white; padding: 10px; }
-        .qr-print-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; justify-items: center; }
-        
-        /* Premium Sticker Frame Grid - Compact, Space Reduced & Colorful Sides */
-        .sticker-box-layout {
-            width: 220px; /* Reduced width to make it compact */
-            background: #e0f2fe; /* Premium light sky blue background for sides */
-            border: 3px solid #000000;
-            border-radius: 14px;
-            overflow: hidden;
-            box-sizing: border-box;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Strict Horizontal Centering */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
         }
-        
-        /* 1. TOP HEADER: Radiant Call To Owner Bar */
-        .st-top-cta {
-            width: 100%;
-            background: linear-gradient(135deg, #ffcc00 0%, #ff9900 100%); /* Bright Vibrant Gradient */
-            padding: 8px 0; /* Reduced padding to save vertical space */
-            color: #000000;
-            border-bottom: 3px solid #000000;
-            text-align: center;
-            box-sizing: border-box;
-        }
-        .st-top-title { font-size: 13px; font-weight: 900; margin: 0; font-family: 'Arial Black', sans-serif; letter-spacing: 0.3px; }
-        
-        /* 2. CENTER PIECE: Perfect QR Enclosure with Tight Padding */
-        .st-qr-frame {
-            width: 100%;
-            padding: 8px 0; /* Reduced padding from 16px to 8px to close extra space */
-            background: #e0f2fe; /* Colorful side background active */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center; 
-            box-sizing: border-box;
-        }
-        .st-qr-frame img {
-            width: 140px; 
-            height: 140px;
-            background: #ffffff;
-            padding: 6px;
-            border: 2px solid #000000;
-            border-radius: 8px;
-            display: block;
+        .container {
+            max-width: 1100px;
             margin: 0 auto;
         }
-        .st-id-badge {
-            background: #0f172a;
-            color: #ffffff;
-            padding: 2px 10px;
-            font-size: 10px;
-            font-family: monospace;
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 15px;
+        }
+        h2 { color: #38bdf8; margin: 0; }
+        .btn-excel {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
             font-weight: bold;
-            border-radius: 4px;
-            margin-top: 6px; /* Reduced margin */
-            display: inline-block;
-            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-excel:hover { background-color: #059669; }
+        .card {
+            background-color: #1e293b;
             border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            overflow-x: auto;
         }
-
-        /* 3. LOWER ANCHOR: Emergency Contacts Slate */
-        .st-bottom-emergency {
+        table {
             width: 100%;
-            background: #0f172a; /* Onyx Navy Dark Contrast */
-            color: #ffffff;
-            padding: 8px 0; /* Slightly reduced padding */
-            border-top: 3px solid #000000;
-            text-align: center;
-            margin-top: auto;
-            box-sizing: border-box;
+            border-collapse: collapse;
+            text-align: left;
         }
-        .st-bottom-title { font-size: 10px; font-weight: 900; margin: 0; font-family: 'Segoe UI', Arial, sans-serif; color: #fbbf24; letter-spacing: 0.2px; }
-        .st-bottom-sub { font-size: 8px; font-weight: 700; color: #10b981; margin: 2px 0 0 0; font-family: 'Segoe UI', Arial, sans-serif; }
-
-        @media print {
-            body * { display: none; }
-            #print-area, #print-area * { display: block; }
-            #print-area { position: absolute; left: 0; top: 0; width: 100%; background: #fff; }
-            .qr-print-grid { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 20px !important; justify-items: center !important; }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #334155;
+            font-size: 14px;
         }
+        th { color: #94a3b8; text-transform: uppercase; font-size: 12px; }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-pending { background-color: #b45309; color: #fef3c7; }
+        .status-active { background-color: #065f46; color: #d1fae5; }
+        .btn-action {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        .btn-activate { background-color: #2563eb; color: white; }
+        .btn-delete { background-color: #dc2626; color: white; }
+        .btn-delete:hover { background-color: #b91c1c; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>AlertoQR Control Panel</h1>
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h3>Total Earnings</h3>
-            <p class="stat-earning" id="stat-earnings">₹0</p>
-        </div>
-        <div class="stat-card">
-            <h3>Active Users</h3>
-            <p class="stat-active" id="stat-active">0</p>
-        </div>
-        <div class="stat-card">
-            <h3>Expired / Pending Users</h3>
-            <p class="stat-expired" id="stat-expired">0</p>
-        </div>
+    <div class="header-flex">
+        <h2>AlertoQR Customer Registrations</h2>
+        <button class="btn-excel" onclick="exportToExcel()">📥 EXPORT DATA TO EXCEL</button>
     </div>
 
-    <div class="section-box">
-        <div class="section-title">🖨️ Smart Bulk QR Code Generator</div>
-        
-        <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; padding: 10px 15px; border-radius: 6px; font-size: 13px; color: #10b981; margin-bottom: 20px; font-weight: 500;">
-            🚀 Global Domain Active: QR Generation links are bound to <strong>https://alertoqr.in/register.html</strong>
-        </div>
-
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Series Code (Prefix)</label>
-                <input type="text" id="qr-prefix" value="ALQR">
-            </div>
-            <div class="form-group">
-                <label>Start No.</label>
-                <input type="number" id="qr-start" value="1">
-            </div>
-            <div class="form-group">
-                <label>End No.</label>
-                <input type="number" id="qr-end" value="10">
-            </div>
-        </div>
-        <button class="btn btn-primary" onclick="generateBulkQRIntents()">🚀 Generate QR Codes</button>
-        <button class="btn btn-success" style="margin-left: 10px; display: none;" id="btn-print-sheet" onclick="window.print()">🖨️ Print Sheets</button>
-        
-        <div id="preview-container" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;"></div>
+    <div class="card">
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>Sticker ID</th>
+                    <th>Owner Name</th>
+                    <th>Vehicle Number</th>
+                    <th>Mobile</th>
+                    <th>Status</th>
+                    <th>Action Controls</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <tr>
+                    <td colspan="6" style="text-align:center; color:#94a3b8;">Loading registrations...</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-
-    <div class="section-box">
-        <div class="section-title">👥 Customer Registrations & Plan Controls</div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Sticker ID</th>
-                        <th>Owner Name</th>
-                        <th>Vehicle Number</th>
-                        <th>Mobile</th>
-                        <th>Status</th>
-                        <th>Expiry Date</th>
-                        <th>Action Controls</th>
-                    </tr>
-                </thead>
-                <tbody id="registrations-table-body">
-                    <tr>
-                        <td colspan="7" style="text-align: center; color: #94a3b8;">Connecting to Supabase Records...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div id="print-area">
-    <div class="qr-print-grid" id="print-grid-box"></div>
 </div>
 
 <script>
@@ -219,175 +113,98 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function loadAdminDashboardData() {
-        let { data, error } = await _supabase
-            .from('registrations')
-            .select('*')
-            .order('created_at', { ascending: false });
+    let allData = [];
 
-        if (error) {
-            console.error("Fetch Exception Handled Logs:", error);
+    async function fetchRegistrations() {
+        try {
+            const { data, error } = await _supabase
+                .from('registrations')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            allData = data || [];
+            renderTable(allData);
+        } catch (err) {
+            console.error(err);
+            document.getElementById('table-body').innerHTML = `<tr><td colspan="6" style="color:#f87171; text-align:center;">Error: ${err.message}</td></tr>`;
+        }
+    }
+
+    function renderTable(records) {
+        const tbody = document.getElementById('table-body');
+        if(records.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Koi data nahi mila.</td></tr>`;
             return;
         }
 
-        const tbody = document.getElementById('registrations-table-body');
-        tbody.innerHTML = "";
-
-        if (!data || data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color:#94a3b8;">No registered records found in Database.</td></tr>`;
-            updateStatsUI(0, 0, 0);
-            return;
-        }
-
-        let totalEarnings = 0;
-        let activeCount = 0;
-        let pendingCount = 0;
-
-        data.forEach(row => {
-            if (row.status === 'Active') {
-                totalEarnings += 299;
-                activeCount++;
-            } else {
-                pendingCount++;
-            }
-
-            const isCurrentActive = row.status === 'Active';
-            const statusBadgeClass = isCurrentActive ? 'badge-active' : 'badge-pending';
-            
-            const controlButtonMarkup = isCurrentActive 
-                ? `<button class="btn btn-danger" onclick="toggleActivationState('${row.sticker_id}', 'Active')">🛑 Deactivate</button>` 
-                : `<button class="btn btn-success" onclick="toggleActivationState('${row.sticker_id}', 'Pending')">⚡ Activate (1 Year)</button>`;
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="font-weight: bold; color: #38bdf8;">${row.sticker_id}</td>
-                <td>${row.full_name || 'N/A'}</td>
-                <td style="letter-spacing: 0.5px; font-weight:600;">${row.vehicle_number || 'N/A'}</td>
-                <td>${row.mobile_number || 'N/A'}</td>
-                <td><span class="badge ${statusBadgeClass}">${row.status || 'Pending'}</span></td>
-                <td style="font-family: monospace;">${row.expiry_date || 'N/A'}</td>
-                <td>
-                    ${controlButtonMarkup}
-                    <button class="btn btn-edit" style="margin-left:4px;" onclick="triggerInlineEdit('${row.sticker_id}', '${row.full_name}', '${row.vehicle_number}', '${row.mobile_number}')">✏️ Edit</button>
-                </td>
+        tbody.innerHTML = records.map(row => {
+            const statusClass = row.status === 'Active' ? 'status-active' : 'status-pending';
+            return `
+                <tr>
+                    <td style="font-weight:bold; color:#38bdf8;">${row.sticker_id}</td>
+                    <td>${row.full_name}</td>
+                    <td>${row.vehicle_number}</td>
+                    <td>${row.mobile_number}</td>
+                    <td><span class="status-badge ${statusClass}">${row.status || 'Pending'}</span></td>
+                    <td>
+                        ${row.status !== 'Active' ? `<button class="btn-action btn-activate" onclick="activateSticker('${row.sticker_id}')">⚡ Activate</button>` : ''}
+                        <button class="btn-action btn-delete" onclick="deleteRegistration('${row.sticker_id}')">🗑️ Delete</button>
+                    </td>
+                </tr>
             `;
-            tbody.appendChild(tr);
-        });
-
-        updateStatsUI(totalEarnings, activeCount, pendingCount);
+        }).join('');
     }
 
-    function updateStatsUI(earnings, active, pending) {
-        document.getElementById('stat-earnings').innerText = `₹${earnings}`;
-        document.getElementById('stat-active').innerText = active;
-        document.getElementById('stat-expired').innerText = pending;
+    async function activateSticker(id) {
+        if(!confirm(`Kya aap Sticker ${id} ko active karna chahte hain?`)) return;
+        const { error } = await _supabase.from('registrations').update({ status: 'Active' }).eq('sticker_id', id);
+        if(error) alert("Error activating: " + error.message);
+        else fetchRegistrations();
     }
 
-    async function toggleActivationState(stickerId, currentStatus) {
-        const nextTargetStatusValue = (currentStatus === 'Active') ? 'Pending' : 'Active';
+    // 🗑️ DELETE REGISTRATION FUNCTION
+    async function deleteRegistration(id) {
+        if(!confirm(`⚠️ WARNING: Kya aap such me Sticker ID ${id} ka poora data delete karna chahte hain?`)) return;
         
-        let calculatedDateObj = new Date();
-        calculatedDateObj.setFullYear(calculatedDateObj.getFullYear() + 1);
-        const transformedExpiryDateString = calculatedDateObj.toISOString().split('T')[0];
+        try {
+            const { error } = await _supabase
+                .from('registrations')
+                .delete()
+                .eq('sticker_id', id);
 
-        const { error } = await _supabase
-            .from('registrations')
-            .update({ 
-                status: nextTargetStatusValue,
-                expiry_date: nextTargetStatusValue === 'Active' ? transformedExpiryDateString : null
-            })
-            .eq('sticker_id', stickerId);
-
-        if (error) {
-            alert("Database Error: " + error.message);
-        } else {
-            alert(`Sticker status of ${stickerId} successfully changed to ${nextTargetStatusValue.toUpperCase()}`);
-            loadAdminDashboardData();
+            if (error) throw error;
+            alert(`Sticker ${id} successfully delete ho gaya.`);
+            fetchRegistrations();
+        } catch (err) {
+            alert("Delete karne me error aaya: " + err.message);
         }
     }
 
-    async function triggerInlineEdit(stickerId, existingName, existingVehicle, existingMobile) {
-        const promptName = prompt("Modify Registration Owner Full Name:", existingName);
-        if (promptName === null) return;
-        const promptVehicle = prompt("Modify Target Vehicle Tracker Registration Plate No:", existingVehicle);
-        if (promptVehicle === null) return;
-        const promptMobile = prompt("Modify Primary Emergency Contact Mapping Mobile No:", existingMobile);
-        if (promptMobile === null) return;
-
-        const { error } = await _supabase
-            .from('registrations')
-            .update({
-                full_name: promptName.trim(),
-                vehicle_number: promptVehicle.trim().toUpperCase(),
-                mobile_number: promptMobile.trim()
-            })
-            .eq('sticker_id', stickerId);
-
-        if (error) { 
-            alert("Transaction Write Exception occurred."); 
-        } else { 
-            alert("Record parameters cleanly successfully committed."); 
-            loadAdminDashboardData(); 
-        }
-    }
-
-    function generateBulkQRIntents() {
-        const prefix = document.getElementById('qr-prefix').value.trim().toUpperCase();
-        const start = parseInt(document.getElementById('qr-start').value);
-        const end = parseInt(document.getElementById('qr-end').value);
-
-        if (!prefix || isNaN(start) || isNaN(end) || start > end) {
-            alert("Config range parsing fault detected!");
+    // 📥 EXPORT TO EXCEL FUNCTION
+    function exportToExcel() {
+        if(allData.length === 0) {
+            alert("Export karne ke liye koi data nahi hai!");
             return;
         }
 
-        const printGridBox = document.getElementById('print-grid-box');
-        const previewGridBox = document.getElementById('preview-container');
-        
-        printGridBox.innerHTML = ""; 
-        previewGridBox.innerHTML = "";
+        const cleanRows = allData.map(item => ({
+            "Sticker ID": item.sticker_id,
+            "Customer Name": item.full_name,
+            "Mobile Number": item.mobile_number,
+            "Vehicle Number": item.vehicle_number,
+            "Status": item.status || 'Pending',
+            "Date Registered": item.created_at ? new Date(item.created_at).toLocaleString() : 'N/A'
+        }));
 
-        const routeTargetUrl = "https://alertoqr.in/register.html";
+        const worksheet = XLSX.utils.json_to_sheet(cleanRows);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Registrations");
 
-        for (let idx = start; idx <= end; idx++) {
-            const indexPaddedStr = String(idx).padStart(3, '0');
-            const loopStickerID = `${prefix}${indexPaddedStr}`;
-            const completeDeepLinkUrl = `${routeTargetUrl}?id=${loopStickerID}`;
-
-            const googleChartApiUrlLinkStr = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(completeDeepLinkUrl)}`;
-
-            const printCardDiv = document.createElement('div');
-            printCardDiv.className = 'sticker-box-layout';
-            printCardDiv.innerHTML = `
-                <div class="st-top-cta">
-                    <div class="st-top-title">📞 SCAN TO CALL OWNER</div>
-                </div>
-                <div class="st-qr-frame">
-                    <img src="${googleChartApiUrlLinkStr}" alt="QR">
-                    <div class="st-id-badge">ID: ${loopStickerID}</div>
-                </div>
-                <div class="st-bottom-emergency">
-                    <div class="st-bottom-title">⚠️ EMERGENCY ALERTOQR CONTACT</div>
-                    <div class="st-bottom-sub">(गलत पार्किंग या समस्या होने पर स्कैन करें)</div>
-                </div>
-            `;
-            printGridBox.appendChild(printCardDiv);
-
-            const visualPreviewDiv = document.createElement('div');
-            visualPreviewDiv.style.cssText = "background:#1e293b; padding:8px; border-radius:8px; border:1px solid #334155; text-align:center;";
-            visualPreviewDiv.innerHTML = `
-                <div style="font-size:8px; color:#fbbf24; font-weight:bold; margin-bottom:4px;">📞 CALL OWNER</div>
-                <img src="${googleChartApiUrlLinkStr}" style="width:85px; height:85px; border-radius:4px; background:white; padding:4px; display:block; margin:0 auto;">
-                <div style="font-size:10px; font-family:monospace; color:#38bdf8; font-weight:bold; margin-top:4px;">${loopStickerID}</div>
-            `;
-            previewGridBox.appendChild(visualPreviewDiv);
-        }
-
-        document.getElementById('btn-print-sheet').style.display = 'inline-flex';
-        alert(`🎯 ${((end - start) + 1)} Compact Stickers Rendered! Extra whitespace reduced.`);
+        XLSX.writeFile(workbook, `AlertoQR_Customers_Report.xlsx`);
     }
 
-    loadAdminDashboardData();
+    window.onload = fetchRegistrations;
 </script>
 </body>
 </html>
