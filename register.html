@@ -3,160 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR Safety | Register Smart Sticker</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>AlertoQR - Vehicle Registration</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #0f172a; 
-            color: #f8fafc; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0; 
-            padding: 20px; 
-            box-sizing: border-box; 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        .form-container { 
-            background-color: #1e293b; 
-            padding: 30px; 
-            border-radius: 16px; 
-            width: 100%; 
-            max-width: 450px; 
-            border: 1px solid #334155; 
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            padding: 20px 16px;
+            display: flex;
+            justify-content: center;
         }
-        h2 { 
-            text-align: center; 
-            color: #38bdf8; 
-            margin: 0 0 8px 0; 
-            font-size: 24px;
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Navigation */
+        .header-strip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 4px 15px 4px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .header-title {
+            font-size: 20px;
             font-weight: 700;
+            color: #000000;
         }
-        .subtitle { 
-            text-align: center; 
-            color: #94a3b8; 
-            font-size: 14px; 
-            margin-bottom: 24px; 
-        }
-        .form-group { 
-            margin-bottom: 20px; 
-        }
-        label { 
-            display: block; 
-            margin-bottom: 8px; 
-            font-size: 12px; 
-            font-weight: 600; 
-            color: #94a3b8; 
-            text-transform: uppercase; 
+
+        .sticker-id-tag {
+            font-size: 14px;
+            font-weight: 700;
+            color: #64748b;
             letter-spacing: 0.5px;
         }
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #475569; 
-            background-color: #0f172a; 
-            color: #fff; 
-            border-radius: 8px; 
-            box-sizing: border-box; 
-            font-size: 15px; 
+
+        .instruction-text {
+            font-size: 14px;
+            color: #475569;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            padding: 0 4px;
         }
-        input:focus { 
-            outline: none; 
-            border-color: #38bdf8; 
+
+        /* Form Elements Styling */
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
-        input[readonly] { 
-            background-color: #1e293b; 
-            border-color: #334155; 
-            color: #64748b; 
-            cursor: not-allowed; 
-        }
-        .btn-submit { 
-            width: 100%; 
-            padding: 14px; 
-            background-color: #2563eb; 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 16px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            margin-top: 10px; 
-        }
-        .btn-submit:disabled {
-            background-color: #334155;
+
+        .form-group label {
+            font-size: 12px;
+            text-transform: uppercase;
             color: #64748b;
-            cursor: not-allowed;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
-        .error-msg { 
-            background-color: rgba(239, 68, 68, 0.15); 
-            border: 1px solid #ef4444; 
-            color: #f87171; 
-            padding: 12px; 
-            border-radius: 8px; 
-            font-size: 13px; 
-            margin-top: 15px; 
-            display: none; 
-            text-align: center; 
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
-        .success-box {
-            background-color: rgba(16, 185, 129, 0.15);
-            border: 1px solid #10b981;
-            color: #34d399;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            display: none;
-            margin-top: 10px;
-        }
-        #loading-screen {
-            text-align: center;
+
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            color: #94a3b8;
             font-size: 16px;
-            color: #38bdf8;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 14px 14px 42px;
+            font-size: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            color: #000000;
+            background-color: #ffffff;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #000000;
+        }
+
+        /* Submit Button Styling */
+        .btn-submit {
+            width: 100%;
+            background-color: #000000;
+            color: #ffffff;
+            border: 1px solid #000000;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-submit:active {
+            opacity: 0.8;
+        }
+
+        #loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 0;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        #error-screen {
+            display: none;
+            color: #ef4444;
+            text-align: center;
+            padding: 60px 20px;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-<div class="form-container">
-    <div id="loading-screen">Checking Sticker Status...</div>
+<div class="container">
 
-    <div id="main-form-wrapper" style="display: none;">
-        <h2>AlertoQR Safety</h2>
-        <div class="subtitle">Register & Activate Your Smart Sticker</div>
+    <div id="loading-screen">
+        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 28px; color: #000; margin-bottom: 16px;"></i>
+        <div>Initializing Setup Window...</div>
+    </div>
 
-        <form id="registration-form" onsubmit="handleRegistration(event)">
+    <div id="registration-view" style="display: none !important;">
+        
+        <div class="header-strip">
+            <span class="header-title">Activate Sticker</span>
+            <span class="sticker-id-tag" id="lbl-sticker-id">ID: ----</span>
+        </div>
+
+        <p class="instruction-text">
+            Enter your vehicle and contact details below to link this smart safety QR sticker to your profile instantly.
+        </p>
+
+        <form id="form-register">
             <div class="form-group">
-                <label>Sticker Serial ID</label>
-                <input type="text" id="sticker_id" required readonly placeholder="Scanning Serial ID...">
+                <label for="txt-owner-name">Owner Full Name</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="txt-owner-name" class="form-control" placeholder="e.g. Ramesh Kumar" required>
+                </div>
             </div>
+
             <div class="form-group">
-                <label>Owner Full Name</label>
-                <input type="text" id="full_name" placeholder="Enter owner's full name" required>
+                <label for="txt-mobile">WhatsApp Mobile Number</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-phone"></i>
+                    <input type="tel" id="txt-mobile" class="form-control" placeholder="10 Digit Number" pattern="[0-9]{10}" title="Please enter valid 10 digit number" required>
+                </div>
             </div>
+
             <div class="form-group">
-                <label>Mobile Number</label>
-                <input type="tel" id="mobile_number" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" required>
+                <label for="txt-vehicle">Vehicle Number</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-car"></i>
+                    <input type="text" id="txt-vehicle" class="form-control" placeholder="e.g. UP80AB1234" style="text-transform: uppercase;" required>
+                </div>
             </div>
+
             <div class="form-group">
-                <label>Vehicle Plate Number</label>
-                <input type="text" id="vehicle_number" placeholder="e.g. UP32PD2478" style="text-transform: uppercase;" required>
+                <label for="txt-pin">Set Secret Security PIN</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="txt-pin" class="form-control" placeholder="4 Digit Number PIN" pattern="[0-9]{4}" title="Please enter 4 digit numeric PIN" required>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Create 4-Digit Secret PIN</label>
-                <input type="password" id="secret_pin" placeholder="••••" maxlength="4" pattern="[0-9]{4}" required>
-            </div>
-            <button type="submit" class="btn-submit" id="submit-btn">📝 SUBMIT FOR ACTIVATION</button>
+
+            <button type="submit" id="btn-save-action" class="btn-submit">
+                <i class="fa-solid fa-circle-check"></i> Submit & Activate Sticker
+            </button>
         </form>
 
-        <div class="error-msg" id="error-box"></div>
     </div>
 
-    <div class="success-box" id="success-container">
-        <h3 style="margin-top: 0; color: #10b981;">✨ Registration Submitted!</h3>
-        <p style="font-size: 14px; color: #cbd5e1;">Your details are saved successfully. Please contact the administrator to activate your card subscription plan.</p>
+    <div id="error-screen">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 32px; margin-bottom: 12px;"></i>
+        <div id="error-message-text">Sticker setup configuration missing.</div>
     </div>
+
 </div>
 
 <script>
@@ -164,72 +226,105 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+    let cleanStickerId = "";
+
     window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
-        const urlStickerId = urlParams.get('id');
         
-        if (urlStickerId) {
-            const cleanId = urlStickerId.trim().toUpperCase();
-            document.getElementById('sticker_id').value = cleanId;
-
-            try {
-                // Check if already registered and active in system database
-                const { data, error } = await _supabase.from('registrations').select('status').eq('sticker_id', cleanId).maybeSingle();
-                
-                if(data && data.status === 'Active') {
-                    // SEED DIRECT REDIRECTION TO THE HELPER PAGE IF STATUS IS ACTIVE
-                    window.location.href = `helper.html?id=${cleanId}`;
-                    return;
-                }
-            } catch (err) {
-                console.error("Routing validation error:", err);
-            }
-        } else {
-            document.getElementById('sticker_id').removeAttribute('readonly');
-            document.getElementById('sticker_id').placeholder = "Enter Sticker ID Manually";
+        if (!urlParams.has('v')) {
+            urlParams.set('v', Date.now());
+            window.location.search = urlParams.toString();
+            return;
         }
 
-        // Display Form elements if record status is not active/not found
-        document.getElementById('loading-screen').style.display = 'none';
-        document.getElementById('main-form-wrapper').style.display = 'block';
-    });
+        const stickerId = urlParams.get('id');
+        if (!stickerId || stickerId.trim() === "") {
+            showErrorState("Scan Error: Missing Sticker ID Parameter.");
+            return;
+        }
 
-    async function handleRegistration(event) {
-        event.preventDefault();
-        const submitBtn = document.getElementById('submit-btn');
-        const errorBox = document.getElementById('error-box');
-        
-        errorBox.style.display = 'none';
-        submitBtn.innerText = "Saving Details...";
-        submitBtn.disabled = true;
-
-        const stickerId = document.getElementById('sticker_id').value.trim().toUpperCase();
-        const fullName = document.getElementById('full_name').value.trim();
-        const mobileNumber = document.getElementById('mobile_number').value.trim();
-        const vehicleNumber = document.getElementById('vehicle_number').value.trim().toUpperCase();
-        const secretPin = document.getElementById('secret_pin').value.trim();
+        cleanStickerId = stickerId.trim().toUpperCase();
+        document.getElementById('lbl-sticker-id').innerText = `ID: ${cleanStickerId}`;
 
         try {
-            const { error: insertError } = await _supabase.from('registrations').insert([{ 
-                sticker_id: stickerId, 
-                full_name: fullName, 
-                mobile_number: mobileNumber, 
-                vehicle_number: vehicleNumber, 
-                secret_pin: secretPin,
-                status: 'Pending' 
-            }]);
+            // Check if sticker is already registered
+            const { data, error } = await _supabase
+                .from('registrations')
+                .select('status')
+                .eq('sticker_id', cleanStickerId)
+                .maybeSingle();
 
-            if (insertError) throw insertError;
+            if (error) {
+                showErrorState("Database connection error.");
+                return;
+            }
 
-            document.getElementById('main-form-wrapper').style.display = 'none';
-            document.getElementById('success-container').style.display = 'block';
+            if (data && data.status === 'Active') {
+                // If already active, send straight to dashboard
+                window.location.href = `helper.html?id=${cleanStickerId}`;
+                return;
+            }
+
+            // Show registration form if sticker is free
+            document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
+            document.getElementById('registration-view').style.setProperty('display', 'block', 'important');
 
         } catch (err) {
-            errorBox.innerText = "Error: " + err.message;
-            errorBox.style.display = 'block';
-            submitBtn.innerText = "📝 SUBMIT FOR ACTIVATION";
-            submitBtn.disabled = false;
+            showErrorState("System configuration failure.");
         }
+    });
+
+    // Form Submit Event Handler
+    document.getElementById('form-register').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const ownerName = document.getElementById('txt-owner-name').value.trim();
+        const mobileNumber = document.getElementById('txt-mobile').value.trim();
+        const vehicleNumber = document.getElementById('txt-vehicle').value.trim().toUpperCase();
+        const secretPin = document.getElementById('txt-pin').value.trim();
+        
+        const btnSave = document.getElementById('btn-save-action');
+        btnSave.disabled = true;
+        btnSave.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Activating Live...';
+
+        try {
+            // Inserting directly with 'Active' status status
+            const { data, error } = await _supabase
+                .from('registrations')
+                .insert([
+                    { 
+                        sticker_id: cleanStickerId, 
+                        full_name: ownerName, 
+                        mobile_number: mobileNumber, 
+                        vehicle_number: vehicleNumber, 
+                        secret_pin: secretPin,
+                        status: 'Active', 
+                        expiry_date: '1 Year Active'
+                    }
+                ]);
+
+            if (error) {
+                alert("Registration failed. Please try again.");
+                btnSave.disabled = false;
+                btnSave.innerHTML = '<i class="fa-solid fa-circle-check"></i> Submit & Activate Sticker';
+                return;
+            }
+
+            alert("🎉 Your Smart AlertoQR Sticker is Now Live and Active!");
+            // Instant redirect directly to helper dashboard setup view
+            window.location.href = `helper.html?id=${cleanStickerId}`;
+
+        } catch (err) {
+            alert("Network connection error. Try again.");
+            btnSave.disabled = false;
+            btnSave.innerHTML = '<i class="fa-solid fa-circle-check"></i> Submit & Activate Sticker';
+        }
+    });
+
+    function showErrorState(msg) {
+        document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
+        document.getElementById('error-message-text').innerText = msg;
+        document.getElementById('error-screen').style.setProperty('display', 'block', 'important');
     }
 </script>
 </body>
