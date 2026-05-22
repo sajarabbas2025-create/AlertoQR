@@ -223,6 +223,7 @@
 
 <script>
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    // Isko hamesha apni PUBLIC ANON KEY se hi badlein, service_role key frontend par nahi lagate.
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
@@ -260,12 +261,10 @@
             }
 
             if (data && data.status === 'Active') {
-                // If already active, send straight to dashboard
                 window.location.href = `helper.html?id=${cleanStickerId}`;
                 return;
             }
 
-            // Show registration form if sticker is free
             document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
             document.getElementById('registration-view').style.setProperty('display', 'block', 'important');
 
@@ -274,7 +273,7 @@
         }
     });
 
-    // Form Submit Event Handler
+    // Updated Secure Form Submit Handler calling RPC Function
     document.getElementById('form-register').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -288,30 +287,23 @@
         btnSave.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Activating Live...';
 
         try {
-            // Inserting directly with 'Active' status status
-            const { data, error } = await _supabase
-                .from('registrations')
-                .insert([
-                    { 
-                        sticker_id: cleanStickerId, 
-                        full_name: ownerName, 
-                        mobile_number: mobileNumber, 
-                        vehicle_number: vehicleNumber, 
-                        secret_pin: secretPin,
-                        status: 'Active', 
-                        expiry_date: '1 Year Active'
-                    }
-                ]);
+            // Secure RPC call to handle server-side inserting bypassing RLS blocks
+            const { data, error } = await _supabase.rpc('register_qrcode_sticker', {
+                p_sticker_id: cleanStickerId,
+                p_full_name: ownerName,
+                p_mobile_number: mobileNumber,
+                p_vehicle_number: vehicleNumber,
+                p_secret_pin: secretPin
+            });
 
             if (error) {
-                alert("Registration failed. Please try again.");
+                alert("Registration failed: " + error.message);
                 btnSave.disabled = false;
                 btnSave.innerHTML = '<i class="fa-solid fa-circle-check"></i> Submit & Activate Sticker';
                 return;
             }
 
             alert("🎉 Your Smart AlertoQR Sticker is Now Live and Active!");
-            // Instant redirect directly to helper dashboard setup view
             window.location.href = `helper.html?id=${cleanStickerId}`;
 
         } catch (err) {
