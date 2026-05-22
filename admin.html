@@ -104,7 +104,7 @@
         .btn-generate { background-color: #2563eb; color: white; }
         .btn-print { background-color: #10b981; color: white; }
 
-        /* Bulk Render Matrix (PDF layout) */
+        /* Bulk Grid Sheet Matrix Layout */
         #bulk-render-matrix {
             background-color: #0b1329;
             padding: 20px;
@@ -117,68 +117,102 @@
             color: #64748b;
             font-size: 13px;
             text-align: center;
+            justify-items: center;
         }
 
-        /* Bulk PDF Sticker UI (image_14.png layout) */
+        /* 3.5" Professional Vehicle Smart Safety Sticker Graphic CSS Structure */
         .smart-car-sticker {
-            background: #ffffff;
-            color: #000000;
-            width: 280px;
-            border: 4px solid #000000;
+            background: #ffffff !important;
+            color: #000000 !important;
+            width: 260px;
+            height: 260px;
+            border: 4px solid #000000 !important;
             border-radius: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 12px;
+            justify-content: space-between;
+            padding: 10px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
         .sticker-header {
-            background-color: #ff3838;
-            color: #ffffff;
-            width: 106%;
+            background-color: #ff3838 !important;
+            color: #ffffff !important;
+            width: 105%;
             margin-top: -2px;
             text-align: center;
             font-weight: 900;
-            font-size: 14px;
-            padding: 6px 0;
+            font-size: 13px;
+            padding: 5px 0;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
         .sticker-sub-tag {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 800;
-            color: #1d2939;
-            margin: 8px 0;
+            color: #1d2939 !important;
+            margin-top: 4px;
         }
 
         .sticker-qr-slot {
-            margin: 6px 0;
-            display: flex; justify-content: center; align-items: center;
+            margin: 4px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .sticker-footer-id {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 900;
-            color: #000000;
-            margin: 10px 0;
-            background: #f2f4f7;
-            padding: 2px 12px;
+            color: #000000 !important;
+            letter-spacing: 1px;
+            background: #f2f4f7 !important;
+            padding: 2px 10px;
             border-radius: 4px;
+            border: 1px solid #d0d5dd;
         }
 
         .sticker-privacy-strip {
             width: 100%;
             text-align: center;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
-            color: #054f31;
-            background-color: #ecfdf3;
+            color: #054f31 !important;
+            background-color: #ecfdf3 !important;
             padding: 4px 0;
             border-radius: 4px;
+            margin-bottom: -2px;
         }
 
-        /* Table CSS (image_15.png layout) */
+        .sticker-card-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-mini-download {
+            background-color: #1e293b;
+            color: #ffffff;
+            border: none;
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-mini-download:hover { background-color: #2563eb; }
+
+        /* Customers Logs Database Grid Viewport Framework */
         .table-overflow { overflow-x: auto; margin-top: 15px; }
         .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
         .data-table th { background-color: #0b1329; color: #94a3b8; padding: 14px; font-weight: 700; border-bottom: 2px solid #334155; }
@@ -187,37 +221,46 @@
         .id-link { color: #3b82f6; text-decoration: underline; cursor: pointer; font-weight: 600; }
         .vehicle-tag { background-color: #f59e0b; color: #0b1329; padding: 4px 8px; border-radius: 4px; font-weight: 700; }
         
-        .status-btn { padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+        .status-btn { padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
         .status-active { background-color: #10b981; color: white; }
+        .status-deactive { background-color: #64748b; color: white; }
         
         .btn-action { padding: 6px 12px; border-radius: 4px; border: none; font-size: 12px; cursor: pointer; font-weight: 600; }
         .btn-edit { background-color: #f59e0b; color: white; margin-right: 5px; }
         .btn-delete { background-color: #ef4444; color: white; }
 
-        /* Modal / Dialog */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
-        .modal-content { background: white; color: black; padding: 30px; border-radius: 12px; width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .modal-header { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        /* Micro System Popups & Modals Style Architecture */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); align-items: center; justify-content: center; }
+        .modal-content { background: white; color: black; padding: 25px; border-radius: 12px; width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-header { font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; width: 100%; }
 
-        /* 🖨️ MEDIA PRINT FOR 3.5x3.5 INCHES STICKERS */
+        /* 🖨️ ADVANCED BULK MEDIA SHEET RENDERING LAYOUT RULES */
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
-            .admin-wrapper, .panel-card, .table-overflow, .modal { display: none !important; }
+            .admin-wrapper, .panel-card, .table-overflow, .modal, .btn-mini-download { display: none !important; }
             #bulk-render-matrix {
                 display: grid !important;
                 grid-template-columns: repeat(2, 1fr) !important;
-                gap: 25px !important;
-                padding: 10px !important;
+                gap: 35px !important;
+                padding: 20px !important;
                 border: none !important;
                 background: white !important;
             }
             .smart-car-sticker {
                 width: 3.5in !important;
                 height: 3.5in !important;
+                border: 5px solid #000000 !important;
                 page-break-inside: avoid !important;
                 box-shadow: none !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
+            .sticker-header { background-color: #ff3838 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 16px !important; }
+            .sticker-sub-tag { font-size: 13px !important; font-weight: 900 !important; }
+            .sticker-qr-slot canvas, .smart-car-sticker img { width: 160px !important; height: 160px !important; }
+            .sticker-footer-id { font-size: 15px !important; }
+            .sticker-privacy-strip { background-color: #ecfdf3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11px !important; }
         }
     </style>
 </head>
@@ -264,13 +307,13 @@
                         <th>Owner Name</th>
                         <th>Vehicle Number</th>
                         <th>Mobile</th>
-                        <th>Status Control</th>
+                        <th>Status Control (Click to Toggle)</th>
                         <th>Calculated Expiry</th>
                         <th>Action Controls</th>
                     </tr>
                 </thead>
                 <tbody id="table-data-rows">
-                    <tr><td colspan="7" style="text-align:center;">Loading database...</td></tr>
+                    <tr><td colspan="7" style="text-align:center; padding:30px;">Loading data streams from server configurations...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -281,25 +324,37 @@
 <div id="editModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">Edit Registration: <span id="mdl-title-id"></span></div>
-        <label style="font-size:12px; color:grey;">Owner Name</label>
-        <input type="text" id="mdl-txt-name" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:6px;">
-        <label style="font-size:12px; color:grey;">Vehicle Number</label>
-        <input type="text" id="mdl-txt-vehicle" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:6px; text-transform:uppercase;">
-        <label style="font-size:12px; color:grey;">Expiry Date</label>
-        <input type="date" id="mdl-txt-expiry" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+        <label style="font-size:12px; color:grey; font-weight:700;">OWNER FULL NAME</label>
+        <input type="text" id="mdl-txt-name" style="width:100%; padding:11px; margin-bottom:15px; border:1px solid #cbd5e1; border-radius:6px; font-weight:600;">
+        
+        <label style="font-size:12px; color:grey; font-weight:700;">VEHICLE NUMBER</label>
+        <input type="text" id="mdl-txt-vehicle" style="width:100%; padding:11px; margin-bottom:15px; border:1px solid #cbd5e1; border-radius:6px; font-weight:700; text-transform:uppercase;">
+        
+        <label style="font-size:12px; color:grey; font-weight:700;">EXPIRY DATE CONTROL</label>
+        <input type="date" id="mdl-txt-expiry" style="width:100%; padding:11px; border:1px solid #cbd5e1; border-radius:6px; font-weight:600;">
+        
         <div class="modal-actions">
-            <button class="btn" style="background:grey; color:white;" onclick="closeModal()">Cancel</button>
-            <button class="btn btn-generate" onclick="saveEdit()">Save Changes</button>
+            <button class="btn" style="background:#64748b; color:white; padding:10px 18px;" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-generate" style="padding:10px 18px;" onclick="saveEdit()">Save Records</button>
         </div>
     </div>
 </div>
 
 <div id="qrModal" class="modal">
-    <div class="modal-content" style="width: 320px; display:flex; flex-direction:column; align-items:center;">
-        <div class="modal-header" style="margin-bottom:10px;">QR: <span id="qr-mdl-id"></span></div>
-        <div id="qr-modal-holder"></div>
-        <div class="modal-actions" style="margin-top:15px;">
-            <button class="btn" style="background:grey; color:white; width:100%;" onclick="closeModal()">Close</button>
+    <div class="modal-content" style="width: 340px; display:flex; flex-direction:column; align-items:center; background: #1c2541; border: 1px solid #334155;">
+        <div class="modal-header" style="margin-bottom:15px; color:white; border-bottom:1px solid #334155; width:100%; padding-bottom:8px;">Sticker View: <span id="qr-mdl-id"></span></div>
+        
+        <div class="smart-car-sticker" id="modal-sticker-embed">
+            <div class="sticker-header">⚠️ EMERGENCY CONTACT QR</div>
+            <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
+            <div class="sticker-qr-slot" id="modal-qr-holder"></div>
+            <div class="sticker-footer-id" id="modal-sticker-id-badge">ALQR000</div>
+            <div class="sticker-privacy-strip">🔒 Privacy Safe • Mobile Number Hidden</div>
+        </div>
+
+        <div class="modal-actions" style="flex-direction:column; gap:10px; margin-top:18px;">
+            <button class="btn btn-mini-download" id="btn-modal-download-trigger" style="width:100%; padding:12px; background-color:#10b981; color:white;"><i class="fa-solid fa-file-pdf"></i> Download PDF Sticker</button>
+            <button class="btn" style="background:#ef4444; color:white; width:100%; justify-content:center; padding:10px; font-weight:700;" onclick="closeModal()">Close Window</button>
         </div>
     </div>
 </div>
@@ -313,7 +368,7 @@
         fetchLiveDatabaseLogs();
     });
 
-    // 🚀 MATRIX BULK LAYOUT CONTROLLER
+    // 🚀 ENGINE 1: MATRIX STICKER BULK SHEETS STREAM GENERATOR
     function generateHDMatrix() {
         const prefix = document.getElementById('txt-prefix').value.trim().toUpperCase();
         const start = parseInt(document.getElementById('txt-start').value);
@@ -322,7 +377,7 @@
         matrixContainer.innerHTML = ""; 
 
         if(!prefix || isNaN(start) || isNaN(end) || start > end) {
-            alert("Invalid configuration limits."); return;
+            alert("Configuration settings mismatch."); return;
         }
 
         for (let i = start; i <= end; i++) {
@@ -330,7 +385,9 @@
             const finalStickerId = `${prefix}${sequenceStr}`;
             const targetRedirectionUrl = `https://alertoqr.in/register.html?id=${finalStickerId}`;
 
-            // Create Premium Sticker (Based on Image 14 Layout)
+            const cardWrapper = document.createElement('div');
+            cardWrapper.className = 'sticker-card-container';
+
             const sticker = document.createElement('div');
             sticker.className = 'smart-car-sticker';
             sticker.innerHTML = `
@@ -340,19 +397,23 @@
                 <div class="sticker-footer-id">${finalStickerId}</div>
                 <div class="sticker-privacy-strip">🔒 Privacy Safe • Mobile Number Hidden</div>
             `;
-            matrixContainer.appendChild(sticker);
+            cardWrapper.appendChild(sticker);
 
-            // Inject HD QR (250px inside slot)
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'btn-mini-download';
+            downloadBtn.innerHTML = `<i class="fa-solid fa-file-pdf"></i> Download PDF Sticker`;
+            downloadBtn.onclick = () => { downloadSingleTargetPDF(finalStickerId, targetRedirectionUrl); };
+            cardWrapper.appendChild(downloadBtn);
+            
+            matrixContainer.appendChild(cardWrapper);
+
             new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), {
                 text: targetRedirectionUrl,
-                width: 250,  
-                height: 250, 
-                colorDark: "#000000",
-                colorLight: "#ffffff",
+                width: 250, height: 250,
+                colorDark: "#000000", colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
             
-            // Fix dimensions in HTML view
             const qrImg = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('img');
             if(qrImg) { qrImg.style.width = "115px"; qrImg.style.height = "115px"; }
             const qrCanvas = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('canvas');
@@ -360,7 +421,7 @@
         }
     }
 
-    // 📝 STREAM LIVE DATABASE LOGS (Based on Image 15 Table Layout)
+    // 📝 ENGINE 2: LIVE STREAM CUSTOMER DATA LOGS TABLE LOADER
     async function fetchLiveDatabaseLogs() {
         const targetTableBody = document.getElementById('table-data-rows');
         try {
@@ -371,7 +432,7 @@
 
             if(error) throw error;
             if(!data || data.length === 0) {
-                targetTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">No registered stickers found.</td></tr>`;
+                targetTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding:20px;">No registered active records configured in data streams.</td></tr>`;
                 return;
             }
 
@@ -380,88 +441,119 @@
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 
-                // Expiry Date Formatting (DD-MM-YYYY)
+                // Formulate system computed expiry loops
                 let expiryString = "1 Year Active";
                 if(row.expiry_date) {
                     const expDate = new Date(row.expiry_date);
-                    const day = String(expDate.getDate()).padStart(2, '0');
-                    const month = String(expDate.getMonth() + 1).padStart(2, '0');
-                    const year = expDate.getFullYear();
-                    expiryString = `${day}-${month}-${year}`;
+                    expiryString = `${String(expDate.getDate()).padStart(2, '0')}-${String(expDate.getMonth()+1).padStart(2, '0')}-${expDate.getFullYear()}`;
+                } else if(row.created_at) {
+                    const regDate = new Date(row.created_at);
+                    regDate.setFullYear(regDate.getFullYear() + 1);
+                    expiryString = `${String(regDate.getDate()).padStart(2, '0')}-${String(regDate.getMonth()+1).padStart(2, '0')}-${regDate.getFullYear()}`;
                 }
 
+                // Interactive Dynamic Status Buttons Engine
+                const isCurrentActive = (row.status === 'Active' || row.status === 'Activated');
+                const statusButtonHTML = isCurrentActive 
+                    ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
+                    : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
+
                 tr.innerHTML = `
-                    <td><strong class="id-link" onclick="viewQRPopup('${row.sticker_id}')">${row.sticker_id}</strong></td>
+                    <td><strong class="id-link" onclick="viewPremiumStickerPopup('${row.sticker_id}')">${row.sticker_id}</strong></td>
                     <td>${row.full_name || 'N/A'}</td>
-                    <td><span class="vehicle-tag">${row.vehicle_number}</span></td>
-                    <td>${row.mobile_number}</td>
-                    <td><button class="status-btn status-active"><i class="fa-solid fa-circle-check"></i> ${row.status}</button></td>
+                    <td><span class="vehicle-tag">${row.vehicle_number || 'N/A'}</span></td>
+                    <td>${row.mobile_number || 'N/A'}</td>
+                    <td>${statusButtonHTML}</td>
                     <td><strong style="color: #cbd5e1;">${expiryString}</strong></td>
                     <td>
                         <button class="btn-action btn-edit" onclick="openEditModal('${row.sticker_id}', '${row.full_name}', '${row.vehicle_number}', '${row.expiry_date}')">Edit</button>
-                        <button class="btn-action btn-delete" onclick="deleteSticker('${row.sticker_id}')">Delete</button>
+                        <button class="btn-action btn-delete" onclick="deleteStickerRow('${row.sticker_id}')">Delete</button>
                     </td>
                 `;
                 targetTableBody.appendChild(tr);
             });
-
         } catch (err) {
-            targetTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color:#ef4444;">Failed to fetch database.</td></tr>`;
+            targetTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color:#ef4444; padding:20px;">Supabase active configuration tracking lost.</td></tr>`;
         }
     }
 
-    // ⚙️ MODAL CONTROLS & DATABASE ACTIONS
-    let activeEditId = null;
+    // ⚡ SWITCH AND INTERCHANGE USER CONFIG STATUS MANUALLY (Active <=> Deactivated)
+    async function toggleStickerStatus(id, targetStatus) {
+        try {
+            const { error } = await _supabase
+                .from('registrations')
+                .update({ status: targetStatus })
+                .eq('sticker_id', id);
 
+            if (error) throw error;
+            
+            // Instantly refresh records locally upon successful transaction pipelines
+            fetchLiveDatabaseLogs();
+        } catch(e) { 
+            alert("Database status compilation sync failure. Verify tables schema controls."); 
+        }
+    }
+
+    // 🖼️ LAUNCH PREMIUM POPUP GRAPHIC DISPLAY ENGINE
+    function viewPremiumStickerPopup(stickerId) {
+        const targetUrl = `https://alertoqr.in/register.html?id=${stickerId}`;
+        document.getElementById('qr-mdl-id').innerText = stickerId;
+        document.getElementById('modal-sticker-id-badge').innerText = stickerId;
+        
+        const holder = document.getElementById('modal-qr-holder');
+        holder.innerHTML = ""; 
+        
+        document.getElementById('qrModal').style.display = 'flex';
+        
+        new QRCode(holder, {
+            text: targetUrl,
+            width: 250, height: 250,
+            colorDark: "#000000", colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        setTimeout(() => {
+            const img = holder.querySelector('img');
+            if(img) { img.style.width = "115px"; img.style.height = "115px"; }
+            const cvs = holder.querySelector('canvas');
+            if(cvs) { cvs.style.width = "115px"; cvs.style.height = "115px"; }
+        }, 120);
+
+        // Map Download actions trigger point safely
+        document.getElementById('btn-modal-download-trigger').onclick = () => {
+            downloadSingleTargetPDF(stickerId, targetUrl);
+        };
+    }
+
+    // ⚙️ BACKEND DATA MODALS MUTATIONS CONTROLS
+    let activeEditId = null;
     function closeModal() {
         document.getElementById('editModal').style.display = 'none';
         document.getElementById('qrModal').style.display = 'none';
-        document.getElementById('qr-modal-holder').innerHTML = ""; // clean QR holder
     }
 
-    // View QR Popup (Clicking ID in table)
-    function viewQRPopup(stickerId) {
-        activeEditId = stickerId;
-        const targetUrl = `https://alertoqr.in/register.html?id=${stickerId}`;
-        document.getElementById('qr-mdl-id').innerText = stickerId;
-        document.getElementById('qrModal').style.display = 'flex';
-        
-        new QRCode(document.getElementById('qr-modal-holder'), {
-            text: targetUrl,
-            width: 200, height: 200,
-            colorDark: "#000000", colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.M
-        });
-    }
-
-    // Open REAL Edit Modal
     function openEditModal(stickerId, name, vehicle, expiry) {
         activeEditId = stickerId;
         document.getElementById('mdl-title-id').innerText = stickerId;
-        document.getElementById('mdl-txt-name').value = (name !== 'N/A' ? name : "");
-        document.getElementById('mdl-txt-vehicle').value = vehicle;
+        document.getElementById('mdl-txt-name').value = (name !== 'N/A' && name !== 'null') ? name : "";
+        document.getElementById('mdl-txt-vehicle').value = (vehicle !== 'N/A') ? vehicle : "";
         
-        // Date format handling for input[type=date] (YYYY-MM-DD)
-        if(expiry && expiry !== 'N/A') {
+        if(expiry && expiry !== 'null' && expiry !== 'N/A') {
             const expDate = new Date(expiry);
-            const formattedDate = expDate.toISOString().split('T')[0];
-            document.getElementById('mdl-txt-expiry').value = formattedDate;
+            document.getElementById('mdl-txt-expiry').value = expDate.toISOString().split('T')[0];
         } else {
             document.getElementById('mdl-txt-expiry').value = "";
         }
-
         document.getElementById('editModal').style.display = 'flex';
     }
 
-    // Real-time Database SAVE Changes
     async function saveEdit() {
         if(!activeEditId) return;
-        
         const newName = document.getElementById('mdl-txt-name').value.trim();
         const newVehicle = document.getElementById('mdl-txt-vehicle').value.trim().toUpperCase();
-        const newExpiry = document.getElementById('mdl-txt-expiry').value; // YYYY-MM-DD
+        const newExpiry = document.getElementById('mdl-txt-expiry').value;
 
-        if(!newName || !newVehicle) { alert("Owner Name and Vehicle Number cannot be empty."); return; }
+        if(!newName || !newVehicle) { alert("Inputs cannot be left blank."); return; }
 
         try {
             const { error } = await _supabase
@@ -469,37 +561,100 @@
                 .update({ 
                     full_name: newName, 
                     vehicle_number: newVehicle,
-                    expiry_date: (newExpiry ? newExpiry : null) // Set null if empty date
+                    expiry_date: newExpiry ? newExpiry : null
                 })
                 .eq('sticker_id', activeEditId);
 
             if (error) throw error;
-
-            alert(`✅ Registration for ${activeEditId} updated successfully.`);
+            alert(`✅ Record changes committed successfully.`);
             closeModal();
-            fetchLiveDatabaseLogs(); // Refresh table
-        } catch (err) {
-            alert(`Database Error: ${err.message}`);
-        }
+            fetchLiveDatabaseLogs();
+        } catch (err) { alert(`Error updating record layout: ${err.message}`); }
     }
 
-    // Database DELETE row
-    async function deleteSticker(stickerId) {
-        if(!confirm(`WARNING: Are you sure you want to PERMANENTLY DELETE sticker configuration for ID: ${stickerId}?`)) return;
-
+    async function deleteStickerRow(id) {
+        if(!confirm(`Are you certain you want to erase configurations for ${id}?`)) return;
         try {
             const { error } = await _supabase
                 .from('registrations')
                 .delete()
-                .eq('sticker_id', stickerId);
-
+                .eq('sticker_id', id);
             if (error) throw error;
+            fetchLiveDatabaseLogs();
+        } catch(e) { alert("Row deletion transaction error."); }
+    }
 
-            alert(`✅ Sticker ${stickerId} has been deleted.`);
-            fetchLiveDatabaseLogs(); // Refresh table
-        } catch (err) {
-            alert(`Delete Action Failed: ${err.message}`);
-        }
+    // 🖨️ SILENT ACCELERATED RENDERING PDF EMULATOR FOR 3.5" VEHICLE STICKERS
+    function downloadSingleTargetPDF(stickerId, redirectionUrl) {
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed'; iframe.style.bottom = '0'; iframe.style.right = '0';
+        iframe.style.width = '0'; iframe.style.height = '0'; iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+
+        const doc = iframe.contentWindow.document;
+        doc.open();
+        doc.write(`
+            <html>
+            <head>
+                <title>${stickerId}_Smart_Sticker</title>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+                <style>
+                    body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #fff; }
+                    .smart-car-sticker {
+                        background: #ffffff !important; color: #000000 !important;
+                        width: 3.5in; height: 3.5in;
+                        border: 5px solid #000000 !important; border-radius: 16px;
+                        display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+                        padding: 12px; box-sizing: border-box;
+                    }
+                    .sticker-header {
+                        background-color: #ff3838 !important; color: #ffffff !important;
+                        width: 106%; margin-top: -2px; text-align: center;
+                        font-weight: 900; font-size: 15px; padding: 6px 0;
+                        letter-spacing: 0.5px; text-transform: uppercase;
+                        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+                    }
+                    .sticker-sub-tag { font-size: 12px; font-weight: 800; color: #1d2939 !important; margin-top: 4px; text-align: center; }
+                    .sticker-qr-slot { margin: 5px 0; display:flex; justify-content:center; align-items:center; }
+                    .sticker-footer-id {
+                        font-size: 14px; font-weight: 900; color: #000000 !important;
+                        letter-spacing: 1px; background: #f2f4f7 !important; padding: 2px 12px;
+                        border-radius: 4px; border: 1px solid #d0d5dd;
+                    }
+                    .sticker-privacy-strip {
+                        width: 100%; text-align: center; font-size: 10px; font-weight: 700;
+                        color: #054f31 !important; background-color: #ecfdf3 !important; padding: 4px 0;
+                        border-radius: 4px; margin-bottom: -2px;
+                        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="smart-car-sticker">
+                    <div class="sticker-header">⚠️ EMERGENCY CONTACT QR</div>
+                    <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
+                    <div class="sticker-qr-slot" id="print-qr"></div>
+                    <div class="sticker-footer-id">${stickerId}</div>
+                    <div class="sticker-privacy-strip">🔒 Privacy Safe • Mobile Number Hidden</div>
+                </div>
+                <script>
+                    new QRCode(document.getElementById('print-qr'), {
+                        text: "${redirectionUrl}",
+                        width: 250, height: 250,
+                        colorDark: "#000000", colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                    setTimeout(() => {
+                        const img = document.getElementById('print-qr').querySelector('img');
+                        if(img) { img.style.width = "155px"; img.style.height = "155px"; }
+                        window.print();
+                        window.frameElement.remove();
+                    }, 650);
+                <\/script>
+            </body>
+            </html>
+        `);
+        doc.close();
     }
 </script>
 </body>
