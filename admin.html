@@ -445,10 +445,15 @@
                 
                 // 1 Year Date Calculation Engine
                 let expiryString = "1 Year Active";
-                if(row.created_at) {
+                if(row.expiry_date) {
+                    let expDate = new Date(row.expiry_date);
+                    const day = String(expDate.getDate()).padStart(2, '0');
+                    const month = String(expDate.getMonth() + 1).padStart(2, '0');
+                    const year = expDate.getFullYear();
+                    expiryString = `${day}-${month}-${year}`;
+                } else if(row.created_at) {
                     let regDate = new Date(row.created_at);
                     regDate.setFullYear(regDate.getFullYear() + 1);
-                    
                     const day = String(regDate.getDate()).padStart(2, '0');
                     const month = String(regDate.getMonth() + 1).padStart(2, '0');
                     const year = regDate.getFullYear();
@@ -473,8 +478,8 @@
                         </div>
                     </td>
                     <td>${row.full_name || 'N/A'}</td>
-                    <td><span style="background-color:#0b1329; padding: 4px 8px; border-radius:4px; font-weight:700; color: #f59e0b;">${row.vehicle_number}</span></td>
-                    <td>${row.mobile_number}</td>
+                    <td><span style="background-color:#0b1329; padding: 4px 8px; border-radius:4px; font-weight:700; color: #f59e0b;">${row.vehicle_number || 'N/A'}</span></td>
+                    <td>${row.mobile_number || 'N/A'}</td>
                     <td>${statusButtonHTML}</td>
                     <td><strong style="color: #cbd5e1;">${expiryString}</strong></td>
                     <td>
@@ -505,9 +510,37 @@
         }
     }
 
+    // Status toggle helper function (Placeholder to avoid errors)
+    async function toggleStickerStatus(id, targetStatus) {
+        try {
+            const { error } = await _supabase
+                .from('registrations')
+                .update({ status: targetStatus })
+                .eq('sticker_id', id);
+            if (error) throw error;
+            fetchLiveDatabaseLogs();
+        } catch(e) {
+            alert("Status update failed.");
+        }
+    }
+
+    // Row Delete helper function (Placeholder to avoid errors)
+    async function deleteStickerRow(id) {
+        if(!confirm("Are you sure you want to delete this sticker configuration?")) return;
+        try {
+            const { error } = await _supabase
+                .from('registrations')
+                .delete()
+                .eq('sticker_id', id);
+            if (error) throw error;
+            fetchLiveDatabaseLogs();
+        } catch(e) {
+            alert("Delete action failed.");
+        }
+    }
+
     // ⚡ VIRTUAL SILENT IFRAME ENGINE: HAR STICKER KO ALAG SE CRISP PDF BANANE KE LIYE
     function downloadSingleTargetPDF(stickerId, redirectionUrl) {
-        // Ek hidden temporary container tayyar karte hain pure isolated printing ke liye
         const iframe = document.createElement('iframe');
         iframe.style.position = 'fixed';
         iframe.style.right = '0';
@@ -527,4 +560,33 @@
                 <style>
                     body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #fff; }
                     .print-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; border: 2px dashed #000; border-radius: 8px; background: #fff; }
-                    .print-box c
+                    .print-box span { margin-top: 15px; font-family: Arial, sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 1px; color: #000; }
+                </style>
+            </head>
+            <body>
+                <div class="print-box">
+                    <div id="print-qr"></div>
+                    <span>${stickerId}</span>
+                </div>
+                <script>
+                    new QRCode(document.getElementById('print-qr'), {
+                        text: "${redirectionUrl}",
+                        width: 250,
+                        height: 250,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                    setTimeout(() => {
+                        window.print();
+                        window.frameElement.remove();
+                    }, 500);
+                <\/script>
+            </body>
+            </html>
+        `);
+        doc.close();
+    }
+</script>
+</body>
+</html>
