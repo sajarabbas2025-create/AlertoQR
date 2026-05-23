@@ -9,6 +9,7 @@
     <title>AlertoQR Helper</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -132,14 +133,6 @@
             justify-content: center;
             gap: 8px;
         }
-        
-        .btn-call-alt.disabled-btn {
-            opacity: 0.5;
-            background-color: #f1f5f9;
-            color: #94a3b8;
-            cursor: not-allowed;
-            border-color: #e2e8f0;
-        }
 
         /* Quick Alerts 3x2 Grid Layout */
         .section-divider-title {
@@ -215,35 +208,31 @@
             border: 1px solid #dcfce7;
         }
 
-        /* Form Controls for Owner Configuration Dashboard */
-        .btn-owner-trigger {
-            background: none;
+        /* Owner Login Edit Profile Button Wrapper */
+        .owner-login-container {
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+
+        .btn-owner-login {
+            background-color: #f8fafc;
+            color: #2563eb;
             border: 1px dashed #cbd5e1;
-            padding: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #64748b;
-            border-radius: 8px;
-            cursor: pointer;
+            border-radius: 10px;
+            padding: 14px 10px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            width: 100%;
-            margin-top: 10px;
+            transition: background-color 0.2s;
         }
-        .btn-owner-trigger:hover { background-color: #f8fafc; color: #000000; }
 
-        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; text-align: left; }
-        .form-group label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; }
-        .form-input { background-color: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; color: #000000; font-size: 15px; outline: none; width: 100%; }
-        .form-input:focus { border-color: #000000; }
-        
-        .btn-action-master { width: 100%; padding: 13px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; border: none; }
-
-        /* Security Dialog Structure */
-        .modal-overlay { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; padding: 16px; }
-        .modal-box { background: #ffffff; border-radius: 14px; width: 100%; max-width: 400px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .btn-owner-login:hover {
+            background-color: #f1f5f9;
+        }
 
         #loading-screen {
             display: flex;
@@ -262,9 +251,6 @@
             padding: 60px 20px;
             font-weight: 600;
         }
-        
-        .view-panel { display: none; }
-        .active-panel { display: block !important; }
     </style>
 </head>
 <body>
@@ -283,93 +269,69 @@
             <span class="sticker-id-tag" id="lbl-sticker-id">ID: ----</span>
         </div>
 
-        <div id="main-public-interface" class="view-panel active-panel">
-            <div class="owner-info-card">
-                <div class="label-v-owner">Vehicle Owner</div>
-                <div class="owner-name" id="lbl-owner-name">LOADING...</div>
-                <div class="vehicle-plate-badge" id="lbl-vehicle-number">--------</div>
-            </div>
-
-            <div class="call-actions-row">
-                <a href="#" id="lnk-main-call" class="btn-call-main">
-                    <i class="fa-solid fa-phone"></i> Call Owner
-                </a>
-                <a href="#" id="lnk-alt-call" class="btn-call-alt">
-                    <i class="fa-solid fa-phone"></i> Call Alternate
-                </a>
-            </div>
-
-            <div class="section-divider-title">Quick Alerts</div>
-            
-            <div class="alerts-grid">
-                <a href="#" id="lnk-alert-parking" target="_blank" class="grid-alert-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" class="icon-img" alt="Wrong Parking">
-                    <span>Wrong Parking</span>
-                </a>
-
-                <a href="#" id="lnk-alert-tow" target="_blank" class="grid-alert-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2330/2330453.png" class="icon-img" alt="Tow Alert">
-                    <span>Tow Alert</span>
-                </a>
-
-                <a href="#" id="lnk-alert-window" target="_blank" class="grid-alert-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2921/2921319.png" class="icon-img" alt="Window or Light Open">
-                    <span>Window / Light Open</span>
-                </a>
-
-                <a href="#" id="lnk-alert-photo" target="_blank" class="grid-alert-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" class="icon-img" alt="Share Photo">
-                    <span>Share Photo</span>
-                </a>
-
-                <a href="#" id="lnk-alert-location" target="_blank" class="grid-alert-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" class="icon-img" alt="Share Location">
-                    <span>Share Location</span>
-                </a>
-
-                <a href="#" id="lnk-alert-voice" target="_blank" class="grid-alert-card">
-                    <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" class="icon-img" alt="Share Voice Recording">
-                    <span>Share Voice</span>
-                </a>
-            </div>
-
-            <div class="section-divider-title">Emergency Links</div>
-            <div class="emergency-container">
-                <a href="tel:112" class="btn-emergency btn-police">
-                    <i class="fa-solid fa-building-shield"></i> Call Police (112)
-                </a>
-                <a href="tel:102" class="btn-emergency btn-ambulance">
-                    <i class="fa-solid fa-truck-medical"></i> Ambulance (102)
-                </a>
-            </div>
-
-            <button class="btn-owner-trigger" onclick="openGatekeeperModal()"><i class="fa-solid fa-user-gear"></i> Vehicle Owner Settings Portal</button>
+        <div class="owner-info-card">
+            <div class="label-v-owner">Vehicle Owner</div>
+            <div class="owner-name" id="lbl-owner-name">LOADING...</div>
+            <div class="vehicle-plate-badge" id="lbl-vehicle-number">--------</div>
         </div>
 
-        <div id="owner-edit-interface" class="view-panel">
-            <h3 style="font-size:18px; font-weight:700; margin-bottom:15px;"><i class="fa-solid fa-user-pen"></i> Edit Profile Details</h3>
-            
-            <div class="form-group">
-                <label>Owner Full Name</label>
-                <input type="text" id="form-edit-name" class="form-input">
-            </div>
-            <div class="form-group">
-                <label>Primary Mobile Number</label>
-                <input type="tel" id="form-edit-mobile" class="form-input" maxlength="10">
-            </div>
-            <div class="form-group">
-                <label>Alternate Mobile Number</label>
-                <input type="tel" id="form-edit-alt" class="form-input" maxlength="10" placeholder="Family / Emergency Number">
-            </div>
-            <div class="form-group">
-                <label>Vehicle Number Plate</label>
-                <input type="text" id="form-edit-vehicle" class="form-input" style="text-transform: uppercase;">
-            </div>
+        <div class="call-actions-row">
+            <a href="#" id="lnk-main-call" class="btn-call-main">
+                <i class="fa-solid fa-phone"></i> Call Owner
+            </a>
+            <a href="#" id="lnk-alt-call" class="btn-call-alt" style="display: none;">
+                <i class="fa-solid fa-phone-flip"></i> Call Alternate
+            </a>
+        </div>
 
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button class="btn-action-master" style="background:#cbd5e1; color:#000;" onclick="exitConfigurator()"><i class="fa-solid fa-xmark"></i> Cancel</button>
-                <button class="btn-action-master" style="background:#000000; color:#fff;" onclick="saveConfiguratorUpdates()"><i class="fa-solid fa-floppy-disk"></i> Save Dashboard</button>
-            </div>
+        <div class="section-divider-title">Quick Alerts</div>
+        
+        <div class="alerts-grid">
+            <a href="#" id="lnk-alert-parking" target="_blank" class="grid-alert-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" class="icon-img" alt="Wrong Parking">
+                <span>Wrong Parking</span>
+            </a>
+
+            <a href="#" id="lnk-alert-tow" target="_blank" class="grid-alert-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/2330/2330453.png" class="icon-img" alt="Tow Alert">
+                <span>Tow Alert</span>
+            </a>
+
+            <a href="#" id="lnk-alert-window" target="_blank" class="grid-alert-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/2921/2921319.png" class="icon-img" alt="Window or Light Open">
+                <span>Window / Light Open</span>
+            </a>
+
+            <a href="#" id="lnk-alert-photo" target="_blank" class="grid-alert-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" class="icon-img" alt="Share Photo">
+                <span>Share Photo</span>
+            </a>
+
+            <a href="#" id="lnk-alert-location" target="_blank" class="grid-alert-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" class="icon-img" alt="Share Location">
+                <span>Share Location</span>
+            </a>
+
+            <a href="#" id="lnk-alert-voice" target="_blank" class="grid-alert-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" class="icon-img" alt="Share Voice Recording">
+                <span>Share Voice</span>
+            </a>
+        </div>
+
+        <div class="section-divider-title">Emergency Links</div>
+        <div class="emergency-container">
+            <a href="tel:112" class="btn-emergency btn-police">
+                <i class="fa-solid fa-building-shield"></i> Call Police (112)
+            </a>
+            <a href="tel:102" class="btn-emergency btn-ambulance">
+                <i class="fa-solid fa-truck-medical"></i> Ambulance (102)
+            </a>
+        </div>
+
+        <div class="owner-login-container">
+            <a href="#" id="lnk-owner-login" class="btn-owner-login">
+                <i class="fa-solid fa-user-gear"></i> Owner Login / Edit Profile
+            </a>
         </div>
 
     </div>
@@ -381,50 +343,10 @@
 
 </div>
 
-<div id="gatekeeperModal" class="modal-overlay">
-    <div class="modal-box">
-        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px; padding-bottom: 6px; border-bottom: 1px solid #e2e8f0;"><i class="fa-solid fa-lock"></i> Verification Required</h3>
-        
-        <div id="flow-pin-check">
-            <div class="form-group">
-                <label>Enter 4-Digit Security PIN</label>
-                <input type="password" id="input-verify-pin" class="form-input" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="••••">
-            </div>
-            <span style="color:#2563eb; font-size:12px; font-weight:600; cursor:pointer; display:block; text-align:right; margin-bottom:15px;" onclick="switchGatekeeperFlow(true)">Forgot PIN?</span>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-action-master" style="background:#f1f5f9; color:#000;" onclick="closeGatekeeperModal()">Close</button>
-                <button class="btn-action-master" style="background:#000; color:#fff;" onclick="authenticatePinToken()">Verify & Enter</button>
-            </div>
-        </div>
-
-        <div id="flow-pin-forgot" style="display:none;">
-            <p style="font-size:12px; color:#64748b; margin-bottom:12px;">Confirm account identities to reset tracking parameter locks:</p>
-            <div class="form-group"><label>Primary Mobile No</label><input type="tel" id="reset-p-mobile" class="form-input" maxlength="10"></div>
-            <div class="form-group"><label>Vehicle Number</label><input type="text" id="reset-p-vehicle" class="form-input" style="text-transform: uppercase;"></div>
-            <div class="form-group"><label>Chassis Last 4 Digits</label><input type="text" id="reset-p-chassis" class="form-input" maxlength="4"></div>
-            <div style="display:flex; gap:10px; margin-top:15px;">
-                <button class="btn-action-master" style="background:#f1f5f9; color:#000;" onclick="switchGatekeeperFlow(false)">Back</button>
-                <button class="btn-action-master" style="background:#2563eb; color:#fff;" onclick="verifyResetIdentity()">Match Profile</button>
-            </div>
-        </div>
-
-        <div id="flow-pin-update" style="display:none;">
-            <div class="form-group">
-                <label>Setup New 4-Digit Security PIN</label>
-                <input type="password" id="reset-p-newpin" class="form-input" maxlength="4" pattern="[0-9]*" inputmode="numeric" placeholder="••••">
-            </div>
-            <button class="btn-action-master" style="background:#16a34a; color:#fff;" onclick="commitNewPinToken()">Apply Changes</button>
-        </div>
-    </div>
-</div>
-
 <script>
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-    let RUNTIME_CLEAN_ID = "";
-    let ACCOUNT_CACHE_STORE = null;
 
     window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -441,18 +363,18 @@
             return;
         }
 
-        RUNTIME_CLEAN_ID = stickerId.trim().toUpperCase();
-        document.getElementById('lbl-sticker-id').innerText = `ID: ${RUNTIME_CLEAN_ID}`;
+        const cleanStickerId = stickerId.trim().toUpperCase();
+        document.getElementById('lbl-sticker-id').innerText = `ID: ${cleanStickerId}`;
 
-        await reloadDataPipelines();
-    });
+        // Binding the Sticker ID parameter dynamically to the Edit Profile page url
+        document.getElementById('lnk-owner-login').href = `edit-profile.html?id=${cleanStickerId}`;
 
-    async function reloadDataPipelines() {
         try {
+            // FIXED: Added alternate_number to the selection query array string
             const { data, error } = await _supabase
                 .from('registrations')
-                .select('*')
-                .eq('sticker_id', RUNTIME_CLEAN_ID)
+                .select('mobile_number, alternate_number, vehicle_number, status, full_name')
+                .eq('sticker_id', cleanStickerId)
                 .maybeSingle();
 
             if (error) {
@@ -461,131 +383,54 @@
             }
 
             if (!data) {
-                window.location.href = `register.html?id=${RUNTIME_CLEAN_ID}`;
+                window.location.href = `register.html?id=${cleanStickerId}`;
                 return;
             }
 
             if (data.status === 'Active') {
-                ACCOUNT_CACHE_STORE = data;
-                
                 document.getElementById('lbl-owner-name').innerText = data.full_name || "Vehicle Owner";
                 document.getElementById('lbl-vehicle-number').innerText = data.vehicle_number;
                 
-                // Primary Caller Initialization
                 document.getElementById('lnk-main-call').href = `tel:${data.mobile_number}`;
                 
-                // Alternate Caller Engine Check
-                const altCallBtn = document.getElementById('lnk-alt-call');
-                if(data.alternate_number && data.alternate_number.trim().length === 10) {
-                    altCallBtn.href = `tel:${data.alternate_number.trim()}`;
-                    altCallBtn.classList.remove('disabled-btn');
+                // Logic checks to handle layout adjustments based on alternate number data
+                if (data.alternate_number && data.alternate_number.trim() !== "") {
+                    const altCallBtn = document.getElementById('lnk-alt-call');
+                    altCallBtn.href = `tel:${data.alternate_number}`;
+                    altCallBtn.style.display = 'flex'; // Visible display status change if present
                 } else {
-                    altCallBtn.href = "javascript:void(0)";
-                    altCallBtn.classList.add('disabled-btn');
-                    altCallBtn.innerHTML = `<i class="fa-solid fa-phone-slash"></i> No Alternate`;
+                    // Adjust grid framework styling to stretch the main button across 100% width if no alternate exists
+                    document.querySelector('.call-actions-row').style.gridTemplateColumns = '1fr';
                 }
                 
-                // WhatsApp URL Parsers Setup
-                const setupAlert = (elementId, templateText) => {
-                    const cleanTxt = templateText.replace("{VEHICLE}", data.vehicle_number);
-                    document.getElementById(elementId).href = `https://wa.me/91${data.mobile_number}?text=${encodeURIComponent(cleanTxt)}`;
-                };
+                const txtParking = encodeURIComponent(`Urgent Alert: Your vehicle (${data.vehicle_number}) is wrongly parked. Please check immediately.`);
+                document.getElementById('lnk-alert-parking').href = `https://wa.me/91${data.mobile_number}?text=${txtParking}`;
+                
+                const txtTow = encodeURIComponent(`Urgent Alert: Your vehicle (${data.vehicle_number}) is about to be towed. Please reach out immediately.`);
+                document.getElementById('lnk-alert-tow').href = `https://wa.me/91${data.mobile_number}?text=${txtTow}`;
+                
+                const txtWindow = encodeURIComponent(`Alert: Your vehicle (${data.vehicle_number}) window is open or the cabin lights are left ON. Please check and secure it.`);
+                document.getElementById('lnk-alert-window').href = `https://wa.me/91${data.mobile_number}?text=${txtWindow}`;
+                
+                const txtPhoto = encodeURIComponent(`Hello, I want to send you a live photo status of your vehicle (${data.vehicle_number}). Please reply so I can share it.`);
+                document.getElementById('lnk-alert-photo').href = `https://wa.me/91${data.mobile_number}?text=${txtPhoto}`;
 
-                setupAlert('lnk-alert-parking', "Urgent Alert: Your vehicle ({VEHICLE}) is wrongly parked. Please check immediately.");
-                setupAlert('lnk-alert-tow', "Urgent Alert: Your vehicle ({VEHICLE}) is about to be towed. Please reach out immediately.");
-                setupAlert('lnk-alert-window', "Alert: Your vehicle ({VEHICLE}) window is open or the cabin lights are left ON. Please check and secure it.");
-                setupAlert('lnk-alert-photo', "Hello, I want to send you a live photo status of your vehicle ({VEHICLE}). Please reply so I can share it.");
-                setupAlert('lnk-alert-location', "Hello, I am near your vehicle ({VEHICLE}). Please tap here to share your location or connect with me.");
-                setupAlert('lnk-alert-voice', "Hello, I want to send you a voice details alert regarding your vehicle ({VEHICLE}). Please tap on the microphone icon in your chat window to receive my voice message.");
+                const txtLocation = encodeURIComponent(`Hello, I am near your vehicle (${data.vehicle_number}). Please tap here to share your location or connect with me.`);
+                document.getElementById('lnk-alert-location').href = `https://wa.me/91${data.mobile_number}?text=${txtLocation}`;
+
+                const txtVoice = encodeURIComponent(`Hello, I want to send you a voice details alert regarding your vehicle (${data.vehicle_number}). Please tap on the microphone icon in your chat window to receive my voice message.`);
+                document.getElementById('lnk-alert-voice').href = `https://wa.me/91${data.mobile_number}?text=${txtVoice}`;
 
                 document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
                 document.getElementById('dashboard-view').style.setProperty('display', 'block', 'important');
             } else {
-                window.location.href = `register.html?id=${RUNTIME_CLEAN_ID}`;
+                window.location.href = `register.html?id=${cleanStickerId}`;
             }
 
         } catch (err) {
             showErrorState("System configuration failure.");
         }
-    }
-
-    // Modal Operations Configuration
-    function openGatekeeperModal() { document.getElementById('gatekeeperModal').style.display = "flex"; }
-    function closeGatekeeperModal() { document.getElementById('gatekeeperModal').style.display = "none"; }
-    
-    function switchGatekeeperFlow(isForgot) {
-        document.getElementById('flow-pin-check').style.display = isForgot ? "none" : "block";
-        document.getElementById('flow-pin-forgot').style.display = isForgot ? "block" : "none";
-    }
-
-    // Verify Master PIN 
-    function authenticatePinToken() {
-        const pinToken = document.getElementById('input-verify-pin').value.trim();
-        const secureValidationToken = ACCOUNT_CACHE_STORE.mpin || "1234";
-
-        if(pinToken === String(secureValidationToken).trim()) {
-            closeGatekeeperModal();
-            
-            // Hydrate Data Inputs Forms
-            document.getElementById('form-edit-name').value = ACCOUNT_CACHE_STORE.full_name || "";
-            document.getElementById('form-edit-mobile').value = ACCOUNT_CACHE_STORE.mobile_number || "";
-            document.getElementById('form-edit-alt').value = ACCOUNT_CACHE_STORE.alternate_number || "";
-            document.getElementById('form-edit-vehicle').value = ACCOUNT_CACHE_STORE.vehicle_number || "";
-            
-            // Switch Framework Views
-            document.getElementById('main-public-interface').classList.remove('active-panel');
-            document.getElementById('owner-edit-interface').classList.add('active-panel');
-        } else { alert("❌ Security Token Mismatch! PIN invalid."); }
-    }
-
-    function exitConfigurator() {
-        document.getElementById('owner-edit-interface').classList.remove('active-panel');
-        document.getElementById('main-public-interface').classList.add('active-panel');
-    }
-
-    // Save profile configurations updates to server logs
-    async function saveConfiguratorUpdates() {
-        const upName = document.getElementById('form-edit-name').value.trim();
-        const upMob = document.getElementById('form-edit-mobile').value.trim();
-        const upAlt = document.getElementById('form-edit-alt').value.trim();
-        const upVeh = document.getElementById('form-edit-vehicle').value.trim().toUpperCase();
-
-        if(!upName || !upMob || !upVeh) { alert("Please complete required entries."); return; }
-
-        try {
-            const { error } = await _supabase.from('registrations').update({
-                full_name: upName, mobile_number: upMob, alternate_number: upAlt, vehicle_number: upVeh
-            }).eq('sticker_id', RUNTIME_CLEAN_ID);
-
-            if(error) throw error;
-            alert("✅ Configuration Dashboard Synchronized Successfully!");
-            location.reload();
-        } catch(e) { alert(`Pipeline Sync Failure: ${e.message}`); }
-    }
-
-    // Recovery Protocols
-    function verifyResetIdentity() {
-        const m = document.getElementById('reset-p-mobile').value.trim();
-        const v = document.getElementById('reset-p-vehicle').value.trim().toUpperCase();
-        const c = document.getElementById('reset-p-chassis').value.trim();
-
-        if(m === ACCOUNT_CACHE_STORE.mobile_number && v === ACCOUNT_CACHE_STORE.vehicle_number && c === ACCOUNT_CACHE_STORE.chassis_last_4) {
-            document.getElementById('flow-pin-forgot').style.display = "none";
-            document.getElementById('flow-pin-update').style.display = "block";
-        } else { alert("❌ Credentials validation mismatch."); }
-    }
-
-    async function commitNewPinToken() {
-        const freshPin = document.getElementById('reset-p-newpin').value.trim();
-        if(freshPin.length !== 4) { alert("PIN must be exactly 4 digits."); return; }
-        
-        try {
-            const { error } = await _supabase.from('registrations').update({ mpin: freshPin }).eq('sticker_id', RUNTIME_CLEAN_ID);
-            if(error) throw error;
-            alert("🎉 Security access token flushed and updated!");
-            location.reload();
-        } catch(e) { alert("Database error."); }
-    }
+    });
 
     function showErrorState(msg) {
         document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
