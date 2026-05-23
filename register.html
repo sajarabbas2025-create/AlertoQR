@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart QR Vehicle Registration & Safety System - AlertoQR</title>
+    <title>Smart QR Safety System - AlertoQR</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -22,38 +22,37 @@
         .sticker-badge-container { margin: 12px 0; text-align: center; }
         .sticker-badge { background: rgba(37, 99, 235, 0.2); border: 1px solid #2563eb; color: #60a5fa; padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 14px; letter-spacing: 1px; display: inline-block; }
         
-        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
-        .form-group label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group label span { color: #ef4444; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+        .form-group label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .form-input { background-color: #0b1329; border: 1px solid #475569; border-radius: 8px; padding: 13px; color: #ffffff; font-size: 15px; outline: none; width: 100%; }
+        .form-input:focus { border-color: #2563eb; }
         
-        .form-input { background-color: #0b1329; border: 1px solid #475569; border-radius: 8px; padding: 13px 16px; color: #ffffff; font-size: 15px; outline: none; transition: all 0.2s ease; width: 100%; }
-        .form-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
-        
-        .btn-action { width: 100%; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; border: none; transition: background 0.2s ease; margin-top: 10px; }
+        .btn-action { width: 100%; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; border: none; margin-top: 10px; }
         .btn-submit { background-color: #10b981; color: white; }
         .btn-submit:hover { background-color: #059669; }
         .btn-call { background-color: #ef4444; color: white; font-size: 18px; padding: 16px; margin-bottom: 12px; }
         .btn-call:hover { background-color: #dc2626; }
-        .btn-whatsapp { background-color: #25d366; color: white; font-size: 16px; padding: 12px; }
+        .btn-whatsapp { background-color: #25d366; color: white; font-size: 16px; }
         .btn-whatsapp:hover { background-color: #20ba5a; }
+        .btn-owner { background-color: transparent; color: #38bdf8; border: 1px dashed #38bdf8; font-size: 13px; padding: 10px; margin-top: 20px; }
+        .btn-owner:hover { background: rgba(56, 189, 248, 0.1); }
         
-        .alert-banner { background-color: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 14px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; display: none; display: flex; align-items: center; gap: 10px; }
+        .alert-banner { background-color: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; display: none; align-items: center; gap: 10px; }
         .info-strip { background-color: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #a7f3d0; padding: 12px; border-radius: 8px; font-size: 13px; text-align: center; margin-bottom: 20px; }
         
-        /* Unified View States */
         .view-panel { display: none; }
         .active-view { display: block; }
         
-        /* Owner Profile Grid */
         .profile-container { text-align: center; }
-        .avatar-circle { wight: 70px; height: 70px; background: #334155; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; color: #f8fafc; margin-bottom: 15px; border: 3px solid #475569; padding: 15px; }
+        .avatar-circle { width: 70px; height: 70px; background: #334155; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; color: #f8fafc; margin: 0 auto 15px auto; border: 3px solid #475569; }
         .vehicle-display { font-size: 24px; font-weight: 900; color: #f59e0b; background: #0b1329; padding: 8px 20px; border-radius: 6px; display: inline-block; border: 2px solid #334155; letter-spacing: 1px; margin-bottom: 15px; text-transform: uppercase; }
         .owner-title { font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 5px; }
         .privacy-notice { font-size: 12px; color: #94a3b8; background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 6px; margin-top: 15px; border: 1px dashed #334155; }
         
-        .loading-spinner { text-align: center; padding: 40px 0; }
-        .spinner { border: 4px solid rgba(255,255,255,0.1); width: 42px; height: 42px; border-radius: 50%; border-left-color: #2563eb; animation: spin 1s linear infinite; margin: 0 auto 15px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Modal Style */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); align-items: center; justify-content: center; padding: 15px; }
+        .modal-content { background: #1c2541; border: 1px solid #334155; color: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; }
+        .link-forgot { color: #38bdf8; font-size: 12px; cursor: pointer; text-align: right; display: block; margin-top: 4px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -61,50 +60,31 @@
 <div class="main-card">
 
     <div id="view-loading" class="view-panel active-view">
-        <div class="loading-spinner">
-            <div class="spinner"></div>
-            <p style="color: #94a3b8; font-size: 14px;">Fetching smart link security status...</p>
+        <div style="text-align: center; padding: 40px 0;">
+            <p style="color: #94a3b8; font-size: 14px;">Loading Smart Link Secured Node...</p>
         </div>
     </div>
 
-    <div id="global-error-banner" class="alert-banner" style="display:none;">
+    <div id="global-error-banner" class="alert-banner">
         <i class="fa-solid fa-triangle-exclamation"></i>
-        <span id="global-error-text">Configuration mapping issue detected.</span>
+        <span id="global-error-text">Error message</span>
     </div>
 
     <div id="view-register" class="view-panel">
         <div class="app-header">
             <h1>Activate Smart QR</h1>
-            <p>Confer ownership parameters to build security nodes</p>
-            <div class="sticker-badge-container">
-                <span class="sticker-badge id-placeholder">ALQR000</span>
-            </div>
+            <p>Fill details to link your vehicle safety sticker</p>
+            <div class="sticker-badge-container"><span class="sticker-badge id-placeholder">ALQR000</span></div>
         </div>
-        <form id="form-registration" onsubmit="processRegistration(event)">
+        <form onsubmit="processRegistration(event)">
+            <div class="form-group"><label>Owner Full Name <span>*</span></label><input type="text" id="reg-name" class="form-input" required></div>
+            <div class="form-group"><label>Mobile Number <span>*</span></label><input type="tel" id="reg-mobile" class="form-input" pattern="[0-9]{10}" maxlength="10" required></div>
+            <div class="form-group"><label>Vehicle Number <span>*</span></label><input type="text" id="reg-vehicle" class="form-input" style="text-transform: uppercase;" required></div>
             <div class="form-group">
-                <label>Owner Full Name <span>*</span></label>
-                <input type="text" id="reg-name" class="form-input" placeholder="Enter vehicle owner name" required>
+                <label>Chassis No. (Last 4 Digits) <span>*</span></label>
+                <input type="text" id="reg-chassis" class="form-input" maxlength="4" placeholder="Forgot PIN ke waqt security ke liye" required>
             </div>
-            <div class="form-group">
-                <label>Mobile Number <span>*</span></label>
-                <input type="tel" id="reg-mobile" class="form-input" placeholder="Enter 10-digit communication line" pattern="[0-9]{10}" maxlength="10" required>
-            </div>
-            <div class="form-group">
-                <label>Vehicle Number <span>*</span></label>
-                <input type="text" id="reg-vehicle" class="form-input" placeholder="e.g. UP32DD2420" style="text-transform: uppercase;" required>
-            </div>
-            
-            <div class="form-group">
-                <label>Chassis / Engine No. (Last 4 Digits) <span>*</span></label>
-                <input type="text" id="reg-chassis" class="form-input" placeholder="RC Book se dekh kar aakhri 4 ank dalein" maxlength="4" required>
-                <small style="color: #64748b; font-size: 11px;">*Password reset lock lagane ke liye aakhri 4 ank zaroori hain.</small>
-            </div>
-
-            <div class="form-group">
-                <label>Create 4-Digit Security PIN <span>*</span></label>
-                <input type="password" id="reg-pin" class="form-input" placeholder="Profile edit karne ke liye 4-ank ka PIN dalein" pattern="[0-9]{4}" maxlength="4" inputmode="numeric" required>
-            </div>
-
+            <div class="form-group"><label>Create 4-Digit PIN <span>*</span></label><input type="password" id="reg-pin" class="form-input" pattern="[0-9]{4}" maxlength="4" inputmode="numeric" required></div>
             <button type="submit" class="btn-action btn-submit"><i class="fa-solid fa-circle-check"></i> Complete Activation</button>
         </form>
     </div>
@@ -115,27 +95,73 @@
             <div class="owner-title" id="pub-owner-name">Vehicle Owner</div>
             <div><span class="vehicle-display" id="pub-vehicle-no">UP32DD0000</span></div>
             
-            <div class="info-strip">
-                <i class="fa-solid fa-shield-halved"></i> Emergency Contact Portal Active
-            </div>
+            <div class="info-strip"><i class="fa-solid fa-shield-halved"></i> Emergency Contact Portal Active</div>
 
             <button class="btn-action btn-call" id="btn-trigger-call"><i class="fa-solid fa-phone-flip"></i> CALL VEHICLE OWNER</button>
             <button class="btn-action btn-whatsapp" id="btn-trigger-whatsapp"><i class="fa-brands fa-whatsapp"></i> Send WhatsApp Alert</button>
 
             <div class="privacy-notice">
-                <i class="fa-solid fa-eye-slash"></i> <strong>Privacy Guard Protected:</strong> Owner's real phone number is encrypted and completely hidden for security.
+                <i class="fa-solid fa-eye-slash"></i> <strong>Privacy Guard Protected:</strong> Number is secure.
             </div>
             
-            <p style="margin-top: 25px; font-size: 12px; color: #475569;">Sticker Configuration ID: <span class="id-placeholder" style="font-weight:700;">ALQR000</span></p>
+            <button class="btn-action btn-owner" onclick="openOwnerAuthModal()"><i class="fa-solid fa-user-gear"></i> Owner Login / Edit Profile</button>
         </div>
+    </div>
+
+    <div id="view-owner-edit" class="view-panel">
+        <div class="app-header">
+            <h1>Edit Dashboard</h1>
+            <p>Update your communication lines securely</p>
+        </div>
+        <div class="form-group"><label>Update Full Name</label><input type="text" id="edit-name" class="form-input"></div>
+        <div class="form-group"><label>Update Mobile Number</label><input type="tel" id="edit-mobile" class="form-input" maxlength="10"></div>
+        <div class="form-group"><label>Update Vehicle Number</label><input type="text" id="edit-vehicle" class="form-input" style="text-transform: uppercase;"></div>
+        <button class="btn-action btn-submit" onclick="saveUpdatedProfile()"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+        <button class="btn-action" style="background:#475569; color:white;" onclick="location.reload()"><i class="fa-solid fa-arrow-left"></i> Back to Scan View</button>
     </div>
 
     <div id="view-success" class="view-panel" style="text-align: center; padding: 20px 0;">
         <i class="fa-solid fa-circle-check" style="font-size: 54px; color: #10b981; margin-bottom: 20px;"></i>
-        <h1>System Activated!</h1>
-        <p style="color: #94a3b8; margin-top: 10px; font-size: 15px; line-height: 1.5;">Aapka smart sticker successfully link ho gaya hai. Ab aapki gaadi bina privacy loose kiye surakshit hai.</p>
+        <h1>Successfully Activated!</h1>
+        <p style="color: #94a3b8; margin-top: 10px;">Aapka Smart QR Sticker link ho gaya hai.</p>
+        <button class="btn-action btn-submit" onclick="location.reload()" style="margin-top:20px;">Open Dashboard</button>
     </div>
 
+</div>
+
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom:15px; border-bottom:1px solid #334155; padding-bottom:8px;"><i class="fa-solid fa-lock"></i> Owner Authentication</h3>
+        <div id="modal-error" class="alert-banner" style="display:none; padding:8px; font-size:12px;"></div>
+        
+        <div id="auth-step-pin">
+            <div class="form-group">
+                <label>Enter 4-Digit Security PIN</label>
+                <input type="password" id="input-auth-pin" class="form-input" maxlength="4" pattern="[0-9]*" inputmode="numeric">
+            </div>
+            <span class="link-forgot" onclick="toggleForgotFlow(true)">Forgot PIN?</span>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-action" style="background:#475569; color:white;" onclick="closeOwnerAuthModal()">Cancel</button>
+                <button class="btn-action btn-submit" onclick="submitPinVerify()">Unlock</button>
+            </div>
+        </div>
+
+        <div id="auth-step-forgot" style="display:none;">
+            <p style="color:#f59e0b; font-size:12px; margin-bottom:10px;">Verify identity details to reset your PIN:</p>
+            <div class="form-group"><label>Registered Mobile</label><input type="tel" id="f-mobile" class="form-input" maxlength="10"></div>
+            <div class="form-group"><label>Vehicle Number</label><input type="text" id="f-vehicle" class="form-input" style="text-transform: uppercase;"></div>
+            <div class="form-group"><label>Chassis Last 4 Digits</label><input type="text" id="f-chassis" class="form-input" maxlength="4"></div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn-action" style="background:#475569; color:white;" onclick="toggleForgotFlow(false)">Back</button>
+                <button class="btn-action btn-submit" onclick="verifyIdentityForReset()">Verify</button>
+            </div>
+        </div>
+
+        <div id="auth-step-newpin" style="display:none;">
+            <div class="form-group"><label>Enter New 4-Digit PIN</label><input type="password" id="f-newpin" class="form-input" maxlength="4" pattern="[0-9]*" inputmode="numeric"></div>
+            <button class="btn-action btn-submit" onclick="commitNewPinFromForgot()">Update PIN & Login</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -144,7 +170,7 @@
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     let RUNTIME_STICKER_ID = "";
-    let CACHED_OWNER_MOBILE = "";
+    let CACHED_DB_RECORD = null;
 
     window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -152,118 +178,122 @@
 
         if(!RUNTIME_STICKER_ID) {
             switchViewState('view-loading');
-            showGlobalError("Invalid QR Link Parameter Architecture. ID Node missing.");
+            showGlobalError("Invalid QR parameters. ID node missing.");
             return;
         }
 
         RUNTIME_STICKER_ID = RUNTIME_STICKER_ID.trim().toUpperCase();
-        
-        // Populate all static display placeholders for identity consistency
         document.querySelectorAll('.id-placeholder').forEach(el => el.innerText = RUNTIME_STICKER_ID);
 
-        try {
-            // Check status mapping on Supabase data engine
-            const { data, error } = await _supabase
-                .from('registrations')
-                .select('*')
-                .eq('sticker_id', RUNTIME_STICKER_ID)
-                .maybeSingle();
+        await syncDatabase();
+    });
 
+    async function syncDatabase() {
+        try {
+            const { data, error } = await _supabase.from('registrations').select('*').eq('sticker_id', RUNTIME_STICKER_ID).maybeSingle();
             if (error) throw error;
 
             if (!data) {
-                // If ID is unassigned, switch execution to Registration Panel State
                 switchViewState('view-register');
             } else {
-                // Check if system has been administrative flagged or deactivated
                 if(String(data.status).trim().toLowerCase() === 'deactivated') {
                     switchViewState('view-loading');
-                    showGlobalError("⚠️ This Smart QR Code sticker is currently deactivated by admin controls.");
+                    showGlobalError("⚠️ This Smart QR Code sticker is currently deactivated by admin.");
                     return;
                 }
-
-                // Hydrate public parameters
+                CACHED_DB_RECORD = data;
                 document.getElementById('pub-owner-name').innerText = data.full_name || "Vehicle Owner";
                 document.getElementById('pub-vehicle-no').innerText = data.vehicle_number || "N/A";
-                CACHED_OWNER_MOBILE = data.mobile_number || "";
 
-                // Setup secure action pathways
                 document.getElementById('btn-trigger-call').onclick = () => {
-                    if(CACHED_OWNER_MOBILE) window.location.href = `tel:${CACHED_OWNER_MOBILE}`;
-                    else alert("Communication parameters mapping failure on server core.");
+                    window.location.href = `tel:${data.mobile_number}`;
                 };
-
                 document.getElementById('btn-trigger-whatsapp').onclick = () => {
-                    if(CACHED_OWNER_MOBILE) {
-                        const messageText = `Hello, I scanned your AlertoQR on vehicle ${data.vehicle_number || ''}. Please contact me regarding your vehicle context.`;
-                        window.open(`https://wa.me/91${CACHED_OWNER_MOBILE}?text=${encodeURIComponent(messageText)}`, '_blank');
-                    } else {
-                        alert("Communication parameters mapping failure on server core.");
-                    }
+                    const txt = `Hello, I scanned your AlertoQR on vehicle ${data.vehicle_number}. Please contact me.`;
+                    window.open(`https://wa.me/91${data.mobile_number}?text=${encodeURIComponent(txt)}`, '_blank');
                 };
-
                 switchViewState('view-public-scan');
             }
-        } catch(err) {
-            switchViewState('view-loading');
-            showGlobalError(`Database Sync Lost: ${err.message}`);
-        }
-    });
+        } catch(err) { showGlobalError(`Sync Error: ${err.message}`); }
+    }
 
-    // 🚀 PROCESS REGISTRATION ACTION CALL PIPELINE
     async function processRegistration(event) {
         event.preventDefault();
-        hideGlobalError();
-
         const name = document.getElementById('reg-name').value.trim();
         const mobile = document.getElementById('reg-mobile').value.trim();
         const vehicle = document.getElementById('reg-vehicle').value.trim().toUpperCase();
         const chassis = document.getElementById('reg-chassis').value.trim();
         const mpin = document.getElementById('reg-pin').value.trim();
 
-        if(chassis.length < 4 || mpin.length < 4) {
-            showGlobalError("Chassis number aur Security PIN poore 4-ank ke hone chahiye.");
-            return;
-        }
-
         try {
-            const { error } = await _supabase
-                .from('registrations')
-                .insert([{
-                    sticker_id: RUNTIME_STICKER_ID,
-                    full_name: name,
-                    mobile_number: mobile,
-                    vehicle_number: vehicle,
-                    chassis_last_4: chassis, 
-                    mpin: mpin,              
-                    status: 'Active'
-                }]);
-
+            const { error } = await _supabase.from('registrations').insert([{
+                sticker_id: RUNTIME_STICKER_ID, full_name: name, mobile_number: mobile, vehicle_number: vehicle, chassis_last_4: chassis, mpin: mpin, status: 'Active'
+            }]);
             if(error) throw error;
-
             switchViewState('view-success');
-        } catch(err) {
-            showGlobalError(`Failed to save parameters: ${err.message}`);
-        }
+        } catch(err) { showGlobalError(`Activation Error: ${err.message}`); }
     }
 
-    // STATE SWITCH SYSTEM VIEWPORTS ENGINE
-    function switchViewState(targetId) {
-        document.querySelectorAll('.view-panel').forEach(view => {
-            view.classList.remove('active-view');
-        });
-        document.getElementById(targetId).classList.add('active-view');
+    // Modal Operations
+    function openOwnerAuthModal() { document.getElementById('authModal').style.display = "flex"; }
+    function closeOwnerAuthModal() { document.getElementById('authModal').style.display = "none"; }
+    
+    function toggleForgotFlow(isForgot) {
+        document.getElementById('auth-step-pin').style.display = isForgot ? "none" : "block";
+        document.getElementById('auth-step-forgot').style.display = isForgot ? "block" : "none";
     }
 
-    function showGlobalError(msg) {
-        const err = document.getElementById('global-error-banner');
-        document.getElementById('global-error-text').innerText = msg;
-        err.style.display = "flex";
+    function submitPinVerify() {
+        const p = document.getElementById('input-auth-pin').value.trim();
+        const accuratePin = CACHED_DB_RECORD.mpin || "1234";
+        if(p === String(accuratePin).trim()) {
+            closeOwnerAuthModal();
+            document.getElementById('edit-name').value = CACHED_DB_RECORD.full_name;
+            document.getElementById('edit-mobile').value = CACHED_DB_RECORD.mobile_number;
+            document.getElementById('edit-vehicle').value = CACHED_DB_RECORD.vehicle_number;
+            switchViewState('view-owner-edit');
+        } else { alert("❌ Incorrect Security PIN!"); }
     }
 
-    function hideGlobalError() {
-        document.getElementById('global-error-banner').style.display = "none";
+    function verifyIdentityForReset() {
+        const m = document.getElementById('f-mobile').value.trim();
+        const v = document.getElementById('f-vehicle').value.trim().toUpperCase();
+        const c = document.getElementById('f-chassis').value.trim();
+
+        if(m === CACHED_DB_RECORD.mobile_number && v === CACHED_DB_RECORD.vehicle_number && c === CACHED_DB_RECORD.chassis_last_4) {
+            document.getElementById('auth-step-forgot').style.display = "none";
+            document.getElementById('auth-step-newpin').style.display = "block";
+        } else { alert("❌ Credentials Mismatch! Details do not match."); }
     }
+
+    async function commitNewPinFromForgot() {
+        const np = document.getElementById('f-newpin').value.trim();
+        if(np.length < 4) { alert("PIN must be 4 digits."); return; }
+        try {
+            const { error } = await _supabase.from('registrations').update({ mpin: np }).eq('sticker_id', RUNTIME_STICKER_ID);
+            if(error) throw error;
+            alert("🎉 PIN reset successful! Logging in.");
+            location.reload();
+        } catch(e) { alert("Database update failed."); }
+    }
+
+    async function saveUpdatedProfile() {
+        const n = document.getElementById('edit-name').value.trim();
+        const m = document.getElementById('edit-mobile').value.trim();
+        const v = document.getElementById('edit-vehicle').value.trim().toUpperCase();
+        try {
+            const { error } = await _supabase.from('registrations').update({ full_name: n, mobile_number: m, vehicle_number: v }).eq('sticker_id', RUNTIME_STICKER_ID);
+            if(error) throw error;
+            alert("✅ Changes saved successfully!");
+            location.reload();
+        } catch(e) { alert("Update failed."); }
+    }
+
+    function switchViewState(id) {
+        document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active-view'));
+        document.getElementById(id).classList.add('active-view');
+    }
+    function showGlobalError(m) { const b = document.getElementById('global-error-banner'); document.getElementById('global-error-text').innerText = m; b.style.display = "flex"; }
 </script>
 </body>
 </html>
