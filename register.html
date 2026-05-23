@@ -3,320 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>AlertoQR - Vehicle Registration</title>
+    <title>Smart QR Vehicle Registration & Safety System - AlertoQR</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: #ffffff;
-            color: #000000;
-            padding: 20px 16px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 450px;
-            background-color: #ffffff;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header Navigation */
-        .header-strip {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 4px 15px 4px;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #000000;
-        }
-
-        .sticker-id-tag {
-            font-size: 14px;
-            font-weight: 700;
-            color: #64748b;
-            letter-spacing: 0.5px;
-        }
-
-        .instruction-text {
-            font-size: 14px;
-            color: #475569;
-            margin-bottom: 25px;
-            line-height: 1.5;
-            padding: 0 4px;
-        }
-
-        /* Form Elements Styling */
-        .form-group {
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .form-group label {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #64748b;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 14px;
-            color: #94a3b8;
-            font-size: 16px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 14px 14px 14px 42px;
-            font-size: 15px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            color: #000000;
-            background-color: #ffffff;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: #000000;
-        }
-
-        /* Submit Button Styling */
-        .btn-submit {
-            width: 100%;
-            background-color: #000000;
-            color: #ffffff;
-            border: 1px solid #000000;
-            border-radius: 8px;
-            padding: 16px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-            transition: opacity 0.2s;
-        }
-
-        .btn-submit:active {
-            opacity: 0.8;
-        }
-
-        #loading-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 100px 0;
-            color: #64748b;
-            font-weight: 600;
-        }
-
-        #error-screen {
-            display: none;
-            color: #ef4444;
-            text-align: center;
-            padding: 60px 20px;
-            font-weight: 600;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+        body { background-color: #0b1329; color: #f8fafc; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        
+        .main-card { background-color: #1c2541; border: 1px solid #1e293b; border-radius: 16px; padding: 30px; width: 100%; max-width: 480px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
+        .main-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, #2563eb, #10b981); }
+        
+        .app-header { text-align: center; margin-bottom: 25px; }
+        .app-header h1 { font-size: 24px; color: #ffffff; font-weight: 800; margin-bottom: 6px; }
+        .app-header p { font-size: 13px; color: #94a3b8; }
+        
+        .sticker-badge-container { margin: 12px 0; text-align: center; }
+        .sticker-badge { background: rgba(37, 99, 235, 0.2); border: 1px solid #2563eb; color: #60a5fa; padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 14px; letter-spacing: 1px; display: inline-block; }
+        
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+        .form-group label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group label span { color: #ef4444; }
+        
+        .form-input { background-color: #0b1329; border: 1px solid #475569; border-radius: 8px; padding: 13px 16px; color: #ffffff; font-size: 15px; outline: none; transition: all 0.2s ease; width: 100%; }
+        .form-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+        
+        .btn-action { width: 100%; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; border: none; transition: background 0.2s ease; margin-top: 10px; }
+        .btn-submit { background-color: #10b981; color: white; }
+        .btn-submit:hover { background-color: #059669; }
+        .btn-call { background-color: #ef4444; color: white; font-size: 18px; padding: 16px; margin-bottom: 12px; }
+        .btn-call:hover { background-color: #dc2626; }
+        .btn-whatsapp { background-color: #25d366; color: white; font-size: 16px; padding: 12px; }
+        .btn-whatsapp:hover { background-color: #20ba5a; }
+        
+        .alert-banner { background-color: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 14px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; display: none; display: flex; align-items: center; gap: 10px; }
+        .info-strip { background-color: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #a7f3d0; padding: 12px; border-radius: 8px; font-size: 13px; text-align: center; margin-bottom: 20px; }
+        
+        /* Unified View States */
+        .view-panel { display: none; }
+        .active-view { display: block; }
+        
+        /* Owner Profile Grid */
+        .profile-container { text-align: center; }
+        .avatar-circle { wight: 70px; height: 70px; background: #334155; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; color: #f8fafc; margin-bottom: 15px; border: 3px solid #475569; padding: 15px; }
+        .vehicle-display { font-size: 24px; font-weight: 900; color: #f59e0b; background: #0b1329; padding: 8px 20px; border-radius: 6px; display: inline-block; border: 2px solid #334155; letter-spacing: 1px; margin-bottom: 15px; text-transform: uppercase; }
+        .owner-title { font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 5px; }
+        .privacy-notice { font-size: 12px; color: #94a3b8; background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 6px; margin-top: 15px; border: 1px dashed #334155; }
+        
+        .loading-spinner { text-align: center; padding: 40px 0; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); width: 42px; height: 42px; border-radius: 50%; border-left-color: #2563eb; animation: spin 1s linear infinite; margin: 0 auto 15px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="main-card">
 
-    <div id="loading-screen">
-        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 28px; color: #000; margin-bottom: 16px;"></i>
-        <div>Initializing Setup Window...</div>
-    </div>
-
-    <div id="registration-view" style="display: none !important;">
-        
-        <div class="header-strip">
-            <span class="header-title">Activate Sticker</span>
-            <span class="sticker-id-tag" id="lbl-sticker-id">ID: ----</span>
+    <div id="view-loading" class="view-panel active-view">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p style="color: #94a3b8; font-size: 14px;">Fetching smart link security status...</p>
         </div>
-
-        <p class="instruction-text">
-            Enter your vehicle and contact details below to link this smart safety QR sticker to your profile instantly.
-        </p>
-
-        <form id="form-register">
-            <div class="form-group">
-                <label for="txt-owner-name">Owner Full Name</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-user"></i>
-                    <input type="text" id="txt-owner-name" class="form-control" placeholder="e.g. Ramesh Kumar" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="txt-mobile">WhatsApp Mobile Number</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-phone"></i>
-                    <input type="tel" id="txt-mobile" class="form-control" placeholder="10 Digit Number" pattern="[0-9]{10}" title="Please enter valid 10 digit number" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="txt-vehicle">Vehicle Number</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-car"></i>
-                    <input type="text" id="txt-vehicle" class="form-control" placeholder="e.g. UP80AB1234" style="text-transform: uppercase;" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="txt-pin">Set Secret Security PIN</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="txt-pin" class="form-control" placeholder="4 Digit Number PIN" pattern="[0-9]{4}" title="Please enter 4 digit numeric PIN" required>
-                </div>
-            </div>
-
-            <button type="submit" id="btn-save-action" class="btn-submit">
-                <i class="fa-solid fa-circle-check"></i> Submit & Activate Sticker
-            </button>
-        </form>
-
     </div>
 
-    <div id="error-screen">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size: 32px; margin-bottom: 12px;"></i>
-        <div id="error-message-text">Sticker setup configuration missing.</div>
+    <div id="global-error-banner" class="alert-banner" style="display:none;">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span id="global-error-text">Configuration mapping issue detected.</span>
+    </div>
+
+    <div id="view-register" class="view-panel">
+        <div class="app-header">
+            <h1>Activate Smart QR</h1>
+            <p>Confer ownership parameters to build security nodes</p>
+            <div class="sticker-badge-container">
+                <span class="sticker-badge id-placeholder">ALQR000</span>
+            </div>
+        </div>
+        <form id="form-registration" onsubmit="processRegistration(event)">
+            <div class="form-group">
+                <label>Owner Full Name <span>*</span></label>
+                <input type="text" id="reg-name" class="form-input" placeholder="Enter vehicle owner name" required>
+            </div>
+            <div class="form-group">
+                <label>Mobile Number <span>*</span></label>
+                <input type="tel" id="reg-mobile" class="form-input" placeholder="Enter 10-digit communication line" pattern="[0-9]{10}" maxlength="10" required>
+            </div>
+            <div class="form-group">
+                <label>Vehicle Number <span>*</span></label>
+                <input type="text" id="reg-vehicle" class="form-input" placeholder="e.g. UP32DD2420" style="text-transform: uppercase;" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Chassis / Engine No. (Last 4 Digits) <span>*</span></label>
+                <input type="text" id="reg-chassis" class="form-input" placeholder="RC Book se dekh kar aakhri 4 ank dalein" maxlength="4" required>
+                <small style="color: #64748b; font-size: 11px;">*Password reset lock lagane ke liye aakhri 4 ank zaroori hain.</small>
+            </div>
+
+            <div class="form-group">
+                <label>Create 4-Digit Security PIN <span>*</span></label>
+                <input type="password" id="reg-pin" class="form-input" placeholder="Profile edit karne ke liye 4-ank ka PIN dalein" pattern="[0-9]{4}" maxlength="4" inputmode="numeric" required>
+            </div>
+
+            <button type="submit" class="btn-action btn-submit"><i class="fa-solid fa-circle-check"></i> Complete Activation</button>
+        </form>
+    </div>
+
+    <div id="view-public-scan" class="view-panel">
+        <div class="profile-container">
+            <div class="avatar-circle"><i class="fa-solid fa-car-rear"></i></div>
+            <div class="owner-title" id="pub-owner-name">Vehicle Owner</div>
+            <div><span class="vehicle-display" id="pub-vehicle-no">UP32DD0000</span></div>
+            
+            <div class="info-strip">
+                <i class="fa-solid fa-shield-halved"></i> Emergency Contact Portal Active
+            </div>
+
+            <button class="btn-action btn-call" id="btn-trigger-call"><i class="fa-solid fa-phone-flip"></i> CALL VEHICLE OWNER</button>
+            <button class="btn-action btn-whatsapp" id="btn-trigger-whatsapp"><i class="fa-brands fa-whatsapp"></i> Send WhatsApp Alert</button>
+
+            <div class="privacy-notice">
+                <i class="fa-solid fa-eye-slash"></i> <strong>Privacy Guard Protected:</strong> Owner's real phone number is encrypted and completely hidden for security.
+            </div>
+            
+            <p style="margin-top: 25px; font-size: 12px; color: #475569;">Sticker Configuration ID: <span class="id-placeholder" style="font-weight:700;">ALQR000</span></p>
+        </div>
+    </div>
+
+    <div id="view-success" class="view-panel" style="text-align: center; padding: 20px 0;">
+        <i class="fa-solid fa-circle-check" style="font-size: 54px; color: #10b981; margin-bottom: 20px;"></i>
+        <h1>System Activated!</h1>
+        <p style="color: #94a3b8; margin-top: 10px; font-size: 15px; line-height: 1.5;">Aapka smart sticker successfully link ho gaya hai. Ab aapki gaadi bina privacy loose kiye surakshit hai.</p>
     </div>
 
 </div>
 
 <script>
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
-    // Isko hamesha apni PUBLIC ANON KEY se hi badlein, service_role key frontend par nahi lagate.
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    let cleanStickerId = "";
+    let RUNTIME_STICKER_ID = "";
+    let CACHED_OWNER_MOBILE = "";
 
     window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
+        RUNTIME_STICKER_ID = urlParams.get('id');
+
+        if(!RUNTIME_STICKER_ID) {
+            switchViewState('view-loading');
+            showGlobalError("Invalid QR Link Parameter Architecture. ID Node missing.");
+            return;
+        }
+
+        RUNTIME_STICKER_ID = RUNTIME_STICKER_ID.trim().toUpperCase();
         
-        if (!urlParams.has('v')) {
-            urlParams.set('v', Date.now());
-            window.location.search = urlParams.toString();
-            return;
-        }
-
-        const stickerId = urlParams.get('id');
-        if (!stickerId || stickerId.trim() === "") {
-            showErrorState("Scan Error: Missing Sticker ID Parameter.");
-            return;
-        }
-
-        cleanStickerId = stickerId.trim().toUpperCase();
-        document.getElementById('lbl-sticker-id').innerText = `ID: ${cleanStickerId}`;
+        // Populate all static display placeholders for identity consistency
+        document.querySelectorAll('.id-placeholder').forEach(el => el.innerText = RUNTIME_STICKER_ID);
 
         try {
-            // Check if sticker is already registered
+            // Check status mapping on Supabase data engine
             const { data, error } = await _supabase
                 .from('registrations')
-                .select('status')
-                .eq('sticker_id', cleanStickerId)
+                .select('*')
+                .eq('sticker_id', RUNTIME_STICKER_ID)
                 .maybeSingle();
 
-            if (error) {
-                showErrorState("Database connection error.");
-                return;
+            if (error) throw error;
+
+            if (!data) {
+                // If ID is unassigned, switch execution to Registration Panel State
+                switchViewState('view-register');
+            } else {
+                // Check if system has been administrative flagged or deactivated
+                if(String(data.status).trim().toLowerCase() === 'deactivated') {
+                    switchViewState('view-loading');
+                    showGlobalError("⚠️ This Smart QR Code sticker is currently deactivated by admin controls.");
+                    return;
+                }
+
+                // Hydrate public parameters
+                document.getElementById('pub-owner-name').innerText = data.full_name || "Vehicle Owner";
+                document.getElementById('pub-vehicle-no').innerText = data.vehicle_number || "N/A";
+                CACHED_OWNER_MOBILE = data.mobile_number || "";
+
+                // Setup secure action pathways
+                document.getElementById('btn-trigger-call').onclick = () => {
+                    if(CACHED_OWNER_MOBILE) window.location.href = `tel:${CACHED_OWNER_MOBILE}`;
+                    else alert("Communication parameters mapping failure on server core.");
+                };
+
+                document.getElementById('btn-trigger-whatsapp').onclick = () => {
+                    if(CACHED_OWNER_MOBILE) {
+                        const messageText = `Hello, I scanned your AlertoQR on vehicle ${data.vehicle_number || ''}. Please contact me regarding your vehicle context.`;
+                        window.open(`https://wa.me/91${CACHED_OWNER_MOBILE}?text=${encodeURIComponent(messageText)}`, '_blank');
+                    } else {
+                        alert("Communication parameters mapping failure on server core.");
+                    }
+                };
+
+                switchViewState('view-public-scan');
             }
-
-            if (data && data.status === 'Active') {
-                window.location.href = `helper.html?id=${cleanStickerId}`;
-                return;
-            }
-
-            document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
-            document.getElementById('registration-view').style.setProperty('display', 'block', 'important');
-
-        } catch (err) {
-            showErrorState("System configuration failure.");
+        } catch(err) {
+            switchViewState('view-loading');
+            showGlobalError(`Database Sync Lost: ${err.message}`);
         }
     });
 
-    // Updated Secure Form Submit Handler calling RPC Function
-    document.getElementById('form-register').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const ownerName = document.getElementById('txt-owner-name').value.trim();
-        const mobileNumber = document.getElementById('txt-mobile').value.trim();
-        const vehicleNumber = document.getElementById('txt-vehicle').value.trim().toUpperCase();
-        const secretPin = document.getElementById('txt-pin').value.trim();
-        
-        const btnSave = document.getElementById('btn-save-action');
-        btnSave.disabled = true;
-        btnSave.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Activating Live...';
+    // 🚀 PROCESS REGISTRATION ACTION CALL PIPELINE
+    async function processRegistration(event) {
+        event.preventDefault();
+        hideGlobalError();
+
+        const name = document.getElementById('reg-name').value.trim();
+        const mobile = document.getElementById('reg-mobile').value.trim();
+        const vehicle = document.getElementById('reg-vehicle').value.trim().toUpperCase();
+        const chassis = document.getElementById('reg-chassis').value.trim();
+        const mpin = document.getElementById('reg-pin').value.trim();
+
+        if(chassis.length < 4 || mpin.length < 4) {
+            showGlobalError("Chassis number aur Security PIN poore 4-ank ke hone chahiye.");
+            return;
+        }
 
         try {
-            // Secure RPC call to handle server-side inserting bypassing RLS blocks
-            const { data, error } = await _supabase.rpc('register_qrcode_sticker', {
-                p_sticker_id: cleanStickerId,
-                p_full_name: ownerName,
-                p_mobile_number: mobileNumber,
-                p_vehicle_number: vehicleNumber,
-                p_secret_pin: secretPin
-            });
+            const { error } = await _supabase
+                .from('registrations')
+                .insert([{
+                    sticker_id: RUNTIME_STICKER_ID,
+                    full_name: name,
+                    mobile_number: mobile,
+                    vehicle_number: vehicle,
+                    chassis_last_4: chassis, 
+                    mpin: mpin,              
+                    status: 'Active'
+                }]);
 
-            if (error) {
-                alert("Registration failed: " + error.message);
-                btnSave.disabled = false;
-                btnSave.innerHTML = '<i class="fa-solid fa-circle-check"></i> Submit & Activate Sticker';
-                return;
-            }
+            if(error) throw error;
 
-            alert("🎉 Your Smart AlertoQR Sticker is Now Live and Active!");
-            window.location.href = `helper.html?id=${cleanStickerId}`;
-
-        } catch (err) {
-            alert("Network connection error. Try again.");
-            btnSave.disabled = false;
-            btnSave.innerHTML = '<i class="fa-solid fa-circle-check"></i> Submit & Activate Sticker';
+            switchViewState('view-success');
+        } catch(err) {
+            showGlobalError(`Failed to save parameters: ${err.message}`);
         }
-    });
+    }
 
-    function showErrorState(msg) {
-        document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
-        document.getElementById('error-message-text').innerText = msg;
-        document.getElementById('error-screen').style.setProperty('display', 'block', 'important');
+    // STATE SWITCH SYSTEM VIEWPORTS ENGINE
+    function switchViewState(targetId) {
+        document.querySelectorAll('.view-panel').forEach(view => {
+            view.classList.remove('active-view');
+        });
+        document.getElementById(targetId).classList.add('active-view');
+    }
+
+    function showGlobalError(msg) {
+        const err = document.getElementById('global-error-banner');
+        document.getElementById('global-error-text').innerText = msg;
+        err.style.display = "flex";
+    }
+
+    function hideGlobalError() {
+        document.getElementById('global-error-banner').style.display = "none";
     }
 </script>
 </body>
