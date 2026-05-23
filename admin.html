@@ -120,7 +120,7 @@
             justify-items: center;
         }
 
-        /* 3.5" Professional Vehicle Smart Safety Sticker Graphic CSS Structure */
+        /* 3.5" Professional Vehicle Smart Safety Sticker Graphic Structure */
         .smart-car-sticker {
             background: #ffffff !important;
             color: #000000 !important;
@@ -364,60 +364,92 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+    // Global store to manage existing IDs across generators dynamically
+    let globallyRegisteredIds = [];
+
     window.addEventListener('DOMContentLoaded', () => {
         fetchLiveDatabaseLogs();
     });
 
-    // 🚀 ENGINE 1: MATRIX STICKER BULK SHEETS STREAM GENERATOR
-    function generateHDMatrix() {
+    // 🚀 ENGINE 1: MATRIX STICKER BULK SHEETS STREAM GENERATOR (With Duplication Filtering Logic)
+    async function generateHDMatrix() {
         const prefix = document.getElementById('txt-prefix').value.trim().toUpperCase();
         const start = parseInt(document.getElementById('txt-start').value);
         const end = parseInt(document.getElementById('txt-end').value);
         const matrixContainer = document.getElementById('bulk-render-matrix');
-        matrixContainer.innerHTML = ""; 
+        matrixContainer.innerHTML = "<div style='color:#94a3b8; grid-column: 1/-1;'>Verifying records from database pipelines...</div>"; 
 
         if(!prefix || isNaN(start) || isNaN(end) || start > end) {
-            alert("Configuration settings mismatch."); return;
+            alert("Configuration settings mismatch."); 
+            matrixContainer.innerHTML = "Click 'Generate' to structure smart sticker layout view sheets.";
+            return;
         }
 
-        for (let i = start; i <= end; i++) {
-            const sequenceStr = String(i).padStart(3, '0');
-            const finalStickerId = `${prefix}${sequenceStr}`;
-            const targetRedirectionUrl = `https://alertoqr.in/register.html?id=${finalStickerId}`;
+        try {
+            // Re-fetch latest entries to ensure runtime safety boundaries
+            const { data, error } = await _supabase.from('registrations').select('sticker_id');
+            if (!error && data) {
+                globallyRegisteredIds = data.map(item => String(item.sticker_id).trim().toUpperCase());
+            }
 
-            const cardWrapper = document.createElement('div');
-            cardWrapper.className = 'sticker-card-container';
+            matrixContainer.innerHTML = ""; 
+            let totalRendered = 0;
 
-            const sticker = document.createElement('div');
-            sticker.className = 'smart-car-sticker';
-            sticker.innerHTML = `
-                <div class="sticker-header">⚠️ EMERGENCY CONTACT QR</div>
-                <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
-                <div class="sticker-qr-slot" id="matrix-qr-${finalStickerId}"></div>
-                <div class="sticker-footer-id">${finalStickerId}</div>
-                <div class="sticker-privacy-strip">🔒 Privacy Safe • Mobile Number Hidden</div>
-            `;
-            cardWrapper.appendChild(sticker);
+            for (let i = start; i <= end; i++) {
+                const sequenceStr = String(i).padStart(3, '0');
+                const finalStickerId = `${prefix}${sequenceStr}`;
+                
+                // 🛑 CRITICAL FILTER: If ID exists in Supabase rows array, skip rendering inside the workspace grid entirely
+                if (globallyRegisteredIds.includes(finalStickerId.toUpperCase())) {
+                    console.log(`Skipped existing ID to prevent duplication overrides: ${finalStickerId}`);
+                    continue; 
+                }
 
-            const downloadBtn = document.createElement('button');
-            downloadBtn.className = 'btn-mini-download';
-            downloadBtn.innerHTML = `<i class="fa-solid fa-file-pdf"></i> Download PDF Sticker`;
-            downloadBtn.onclick = () => { downloadSingleTargetPDF(finalStickerId, targetRedirectionUrl); };
-            cardWrapper.appendChild(downloadBtn);
-            
-            matrixContainer.appendChild(cardWrapper);
+                totalRendered++;
+                const targetRedirectionUrl = `https://alertoqr.in/register.html?id=${finalStickerId}`;
 
-            new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), {
-                text: targetRedirectionUrl,
-                width: 250, height: 250,
-                colorDark: "#000000", colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            
-            const qrImg = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('img');
-            if(qrImg) { qrImg.style.width = "115px"; qrImg.style.height = "115px"; }
-            const qrCanvas = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('canvas');
-            if(qrCanvas) { qrCanvas.style.width = "115px"; qrCanvas.style.height = "115px"; }
+                const cardWrapper = document.createElement('div');
+                cardWrapper.className = 'sticker-card-container';
+
+                const sticker = document.createElement('div');
+                sticker.className = 'smart-car-sticker';
+                sticker.innerHTML = `
+                    <div class="sticker-header">⚠️ EMERGENCY CONTACT QR</div>
+                    <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
+                    <div class="sticker-qr-slot" id="matrix-qr-${finalStickerId}"></div>
+                    <div class="sticker-footer-id">${finalStickerId}</div>
+                    <div class="sticker-privacy-strip">🔒 Privacy Safe • Mobile Number Hidden</div>
+                `;
+                cardWrapper.appendChild(sticker);
+
+                const downloadBtn = document.createElement('button');
+                downloadBtn.className = 'btn-mini-download';
+                downloadBtn.innerHTML = `<i class="fa-solid fa-file-pdf"></i> Download PDF Sticker`;
+                downloadBtn.onclick = () => { downloadSingleTargetPDF(finalStickerId, targetRedirectionUrl); };
+                cardWrapper.appendChild(downloadBtn);
+                
+                matrixContainer.appendChild(cardWrapper);
+
+                new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), {
+                    text: targetRedirectionUrl,
+                    width: 250, height: 250,
+                    colorDark: "#000000", colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                const qrImg = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('img');
+                if(qrImg) { qrImg.style.width = "115px"; qrImg.style.height = "115px"; }
+                const qrCanvas = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('canvas');
+                if(qrCanvas) { qrCanvas.style.width = "115px"; qrCanvas.style.height = "115px"; }
+            }
+
+            if (totalRendered === 0) {
+                matrixContainer.innerHTML = "<div style='color:#f59e0b; grid-column: 1/-1; font-weight:600; padding:10px;'>⚠️ All IDs in this target batch range are already registered in Customer Logs! Nothing to generate.</div>";
+            }
+
+        } catch (e) {
+            alert("Failed checking existing database codes configuration maps.");
+            matrixContainer.innerHTML = "Error processing safety validation schemas loops.";
         }
     }
 
@@ -431,6 +463,12 @@
                 .order('created_at', { ascending: false });
 
             if(error) throw error;
+            
+            // Map keys into unique validation arrays to double safeguard matrix UI generator runs
+            if(data) {
+                globallyRegisteredIds = data.map(item => String(item.sticker_id).trim().toUpperCase());
+            }
+
             if(!data || data.length === 0) {
                 targetTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding:20px;">No registered active records configured in data streams.</td></tr>`;
                 return;
@@ -453,7 +491,9 @@
                 }
 
                 // Interactive Dynamic Status Buttons Engine
-                const isCurrentActive = (row.status === 'Active' || row.status === 'Activated');
+                const normalizedStatus = String(row.status).trim().toLowerCase();
+                const isCurrentActive = (normalizedStatus === 'active' || normalizedStatus === 'activated');
+                
                 const statusButtonHTML = isCurrentActive 
                     ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
                     : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
@@ -488,7 +528,7 @@
             if (error) throw error;
             
             // Instantly refresh records locally upon successful transaction pipelines
-            fetchLiveDatabaseLogs();
+            await fetchLiveDatabaseLogs();
         } catch(e) { 
             alert("Database status compilation sync failure. Verify tables schema controls."); 
         }
