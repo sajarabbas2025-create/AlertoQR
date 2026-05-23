@@ -261,7 +261,6 @@
     window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
         
-        // Anti-cache handler rule
         if (!urlParams.has('v')) {
             urlParams.set('v', Date.now());
             window.location.search = urlParams.toString();
@@ -278,7 +277,6 @@
         document.getElementById('lbl-sticker-id').innerText = cleanStickerId;
 
         try {
-            // Verify sticker state from database ledger table
             const { data, error } = await _supabase
                 .from('registrations')
                 .select('status')
@@ -290,13 +288,11 @@
                 return;
             }
 
-            // If already active, route straight to helper channel profile dashboard
             if (data && data.status === 'Active') {
                 window.location.href = `helper.html?id=${cleanStickerId}`;
                 return;
             }
 
-            // Normal initialization state if record is Inactive
             document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
             document.getElementById('registration-view').style.setProperty('display', 'block', 'important');
 
@@ -305,7 +301,7 @@
         }
     });
 
-    // Form submission processing logic
+    // Pure Direct Table Update Logic (No Custom RPC Function Needed)
     document.getElementById('form-register').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -321,16 +317,19 @@
         btnSave.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing Activation...';
 
         try {
-            // STRICT SEQUENCE EXECUTION: Triggers the newly configured database RPC function architecture
-            const { data, error } = await _supabase.rpc('register_qrcode_sticker', {
-                p_sticker_id: cleanStickerId,
-                p_full_name: ownerName,
-                p_mobile_number: mobileNumber,
-                p_vehicle_number: vehicleNumber,
-                p_chassis_number: chassisNumber, 
-                p_secret_pin: secretPin,
-                p_alternate_number: alternateNumber || null  // Default parameter moved to last position
-            });
+            // Direct safe dynamic upsert query execution
+            const { error } = await _supabase
+                .from('registrations')
+                .upsert({
+                    sticker_id: cleanStickerId,
+                    owner_name: ownerName,
+                    mobile_number: mobileNumber,
+                    alternate_number: alternateNumber || null,
+                    vehicle_number: vehicleNumber,
+                    chassis_no: chassisNumber, 
+                    secret_pin: secretPin,
+                    status: 'Active'
+                }, { onConflict: 'sticker_id' });
 
             if (error) {
                 alert("Database execution error: " + error.message);
