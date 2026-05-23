@@ -225,8 +225,9 @@
         .status-active { background-color: #10b981; color: white; }
         .status-deactive { background-color: #64748b; color: white; }
         
-        .btn-action { padding: 6px 12px; border-radius: 4px; border: none; font-size: 12px; cursor: pointer; font-weight: 600; }
-        .btn-edit { background-color: #f59e0b; color: white; margin-right: 5px; }
+        .btn-action { padding: 6px 10px; border-radius: 4px; border: none; font-size: 11px; cursor: pointer; font-weight: 600; text-transform: uppercase; }
+        .btn-edit { background-color: #f59e0b; color: white; margin-right: 3px; }
+        .btn-reset { background-color: #3b82f6; color: white; margin-right: 3px; }
         .btn-delete { background-color: #ef4444; color: white; }
 
         /* Micro System Popups & Modals Style Architecture */
@@ -410,24 +411,16 @@
 
                 const cardWrapper = document.createElement('div');
                 cardWrapper.className = 'sticker-card-container';
-
-                const sticker = document.createElement('div');
-                sticker.className = 'smart-car-sticker';
-                sticker.innerHTML = `
-                    <div class="sticker-header">⚠️ EMERGENCY CONTACT QR</div>
-                    <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
-                    <div class="sticker-qr-slot" id="matrix-qr-${finalStickerId}"></div>
-                    <div class="sticker-footer-id">${finalStickerId}</div>
-                    <div class="sticker-privacy-strip">🔒 Privacy Safe • Mobile Number Hidden</div>
+                cardWrapper.innerHTML = `
+                    <div class="smart-car-sticker">
+                        <div class="sticker-header">⚠️ EMERGENCY CONTACT QR</div>
+                        <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
+                        <div class="sticker-qr-slot" id="matrix-qr-${finalStickerId}"></div>
+                        <div class="sticker-footer-id">${finalStickerId}</div>
+                        <div class="sticker-privacy-strip">🔒 Privacy Safe • Mobile Number Hidden</div>
+                    </div>
+                    <button class="btn-mini-download" onclick="downloadSingleTargetPDF('${finalStickerId}', '${targetRedirectionUrl}')"><i class="fa-solid fa-file-pdf"></i> Download PDF Sticker</button>
                 `;
-                cardWrapper.appendChild(sticker);
-
-                const downloadBtn = document.createElement('button');
-                downloadBtn.className = 'btn-mini-download';
-                downloadBtn.innerHTML = `<i class="fa-solid fa-file-pdf"></i> Download PDF Sticker`;
-                downloadBtn.onclick = () => { downloadSingleTargetPDF(finalStickerId, targetRedirectionUrl); };
-                cardWrapper.appendChild(downloadBtn);
-                
                 matrixContainer.appendChild(cardWrapper);
 
                 new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), {
@@ -437,10 +430,10 @@
                     correctLevel: QRCode.CorrectLevel.H
                 });
                 
-                const qrImg = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('img');
-                if(qrImg) { qrImg.style.width = "115px"; qrImg.style.height = "115px"; }
-                const qrCanvas = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('canvas');
-                if(qrCanvas) { qrCanvas.style.width = "115px"; qrCanvas.style.height = "115px"; }
+                setTimeout(() => {
+                    const img = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('img');
+                    if(img) { img.style.width = "115px"; img.style.height = "115px"; }
+                }, 50);
             }
 
             if (totalRendered === 0) {
@@ -464,7 +457,6 @@
 
             if(error) throw error;
             
-            // Map keys into unique validation arrays to double safeguard matrix UI generator runs
             if(data) {
                 globallyRegisteredIds = data.map(item => String(item.sticker_id).trim().toUpperCase());
             }
@@ -479,7 +471,6 @@
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 
-                // Formulate system computed expiry loops
                 let expiryString = "1 Year Active";
                 if(row.expiry_date) {
                     const expDate = new Date(row.expiry_date);
@@ -490,7 +481,6 @@
                     expiryString = `${String(regDate.getDate()).padStart(2, '0')}-${String(regDate.getMonth()+1).padStart(2, '0')}-${regDate.getFullYear()}`;
                 }
 
-                // Interactive Dynamic Status Buttons Engine
                 const normalizedStatus = String(row.status).trim().toLowerCase();
                 const isCurrentActive = (normalizedStatus === 'active' || normalizedStatus === 'activated');
                 
@@ -507,6 +497,7 @@
                     <td><strong style="color: #cbd5e1;">${expiryString}</strong></td>
                     <td>
                         <button class="btn-action btn-edit" onclick="openEditModal('${row.sticker_id}', '${row.full_name}', '${row.vehicle_number}', '${row.expiry_date}')">Edit</button>
+                        <button class="btn-action btn-reset" onclick="resetCustomerPIN('${row.sticker_id}')">Reset PIN</button>
                         <button class="btn-action btn-delete" onclick="deleteStickerRow('${row.sticker_id}')">Delete</button>
                     </td>
                 `;
@@ -517,7 +508,23 @@
         }
     }
 
-    // ⚡ SWITCH AND INTERCHANGE USER CONFIG STATUS MANUALLY (Active <=> Deactivated)
+    // ⚡ NEW FUNCTION: ADMIN SIDE PIN RESET (Set to Default '1234')
+    async function resetCustomerPIN(stickerId) {
+        if(!confirm(`Are you sure you want to reset the security PIN for ${stickerId} to default '1234'?`)) return;
+        try {
+            const { error } = await _supabase
+                .from('registrations')
+                .update({ mpin: '1234' }) 
+                .eq('sticker_id', stickerId);
+
+            if(error) throw error;
+            alert(`✅ Security PIN for ${stickerId} has been successfully reset to default: 1234`);
+        } catch(e) {
+            alert("Error updating PIN. Please ensure an 'mpin' column exists in your database table.");
+        }
+    }
+
+    // ⚡ SWITCH AND INTERCHANGE USER CONFIG STATUS MANUALLY
     async function toggleStickerStatus(id, targetStatus) {
         try {
             const { error } = await _supabase
@@ -526,11 +533,9 @@
                 .eq('sticker_id', id);
 
             if (error) throw error;
-            
-            // Instantly refresh records locally upon successful transaction pipelines
             await fetchLiveDatabaseLogs();
         } catch(e) { 
-            alert("Database status compilation sync failure. Verify tables schema controls."); 
+            alert("Database status compilation sync failure."); 
         }
     }
 
@@ -555,17 +560,13 @@
         setTimeout(() => {
             const img = holder.querySelector('img');
             if(img) { img.style.width = "115px"; img.style.height = "115px"; }
-            const cvs = holder.querySelector('canvas');
-            if(cvs) { cvs.style.width = "115px"; cvs.style.height = "115px"; }
         }, 120);
 
-        // Map Download actions trigger point safely
         document.getElementById('btn-modal-download-trigger').onclick = () => {
             downloadSingleTargetPDF(stickerId, targetUrl);
         };
     }
 
-    // ⚙️ BACKEND DATA MODALS MUTATIONS CONTROLS
     let activeEditId = null;
     function closeModal() {
         document.getElementById('editModal').style.display = 'none';
