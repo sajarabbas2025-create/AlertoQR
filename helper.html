@@ -9,7 +9,6 @@
     <title>AlertoQR Helper</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -21,8 +20,8 @@
         }
 
         body {
-            background-color: #ffffff;
-            color: #000000;
+            background-color: #f8fafc;
+            color: #0f172a;
             padding: 20px 16px;
             display: flex;
             justify-content: center;
@@ -31,23 +30,20 @@
         .container {
             width: 100%;
             max-width: 450px;
-            background-color: #ffffff;
             display: flex;
             flex-direction: column;
         }
 
-        /* Top Header Navigation Strip */
         .header-strip {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 4px 15px 4px;
             margin-bottom: 20px;
-            border-bottom: 1px solid #f1f5f9;
         }
 
         .header-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
             color: #000000;
         }
@@ -59,141 +55,174 @@
             letter-spacing: 0.5px;
         }
 
-        /* Profile Data Box View Card */
-        .owner-info-card {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 24px 20px;
-            margin-bottom: 20px;
+        .profile-card {
             background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            text-align: left;
         }
 
-        .label-v-owner {
+        .meta-label {
             font-size: 11px;
             text-transform: uppercase;
             color: #94a3b8;
             font-weight: 700;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .owner-name {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 800;
-            color: #000000;
-            margin-bottom: 12px;
-            letter-spacing: -0.5px;
+            color: #0f172a;
+            text-transform: uppercase;
+            margin-bottom: 14px;
         }
 
-        .vehicle-plate-badge {
+        .vehicle-badge {
+            display: inline-block;
             background-color: #000000;
             color: #ffffff;
             font-size: 16px;
             font-weight: 700;
             padding: 6px 14px;
             border-radius: 6px;
-            display: inline-block;
             letter-spacing: 0.5px;
         }
 
-        /* Call Action Elements Layout Framework */
-        .call-actions-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        /* Action Buttons Structure */
+        .action-container {
+            display: flex;
+            flex-direction: column;
             gap: 12px;
             margin-bottom: 25px;
         }
 
-        .btn-call-main {
-            background-color: #000000;
+        .action-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-call-owner {
+            flex: 1;
+            background-color: #ef4444; /* Matched to dark screenshot color profile */
             color: #ffffff;
-            border: 1px solid #000000;
-            border-radius: 8px;
-            padding: 14px 10px;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
+            border: 1px solid #ef4444;
+            padding: 16px 10px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            text-transform: uppercase;
         }
 
-        .btn-call-alt {
+        .btn-call-alternate {
+            flex: 1;
             background-color: #ffffff;
             color: #000000;
             border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 14px 10px;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
+            padding: 16px 10px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
         }
 
-        /* Quick Alerts 3x2 Grid Layout */
-        .section-divider-title {
+        /* WhatsApp Alert Feature Button Styling */
+        .btn-whatsapp-alert {
+            width: 100%;
+            background-color: #22c55e;
+            color: #ffffff;
+            border: 1px solid #22c55e;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-call-owner:active, .btn-call-alternate:active, .btn-whatsapp-alert:active {
+            opacity: 0.85;
+        }
+
+        .section-title {
             font-size: 12px;
             text-transform: uppercase;
-            color: #94a3b8;
+            color: #64748b;
             font-weight: 700;
             letter-spacing: 0.5px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             padding-left: 2px;
         }
 
         .alerts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px;
+            gap: 12px;
             margin-bottom: 25px;
         }
 
-        .grid-alert-card {
+        .grid-card {
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             padding: 20px 10px;
-            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            color: #000000;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .icon-img {
-            height: 32px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        /* Emergency Action Section Rows */
-        .emergency-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 5px;
+        }
+
+        .grid-card:active {
+            background-color: #f1f5f9;
+        }
+
+        .grid-card i {
+            font-size: 24px;
+        }
+
+        .grid-card span {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .emergency-row {
+            display: flex;
+            gap: 12px;
             margin-bottom: 30px;
         }
 
         .btn-emergency {
-            border-radius: 10px;
-            padding: 12px 10px;
-            font-size: 13px;
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
             font-weight: 600;
-            text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            cursor: pointer;
+            text-decoration: none;
         }
 
         .btn-police {
@@ -208,18 +237,19 @@
             border: 1px solid #dcfce7;
         }
 
-        /* Owner Login Edit Profile Button Wrapper */
+        /* Owner Profile Redirect Custom Navigation Field */
         .owner-login-container {
-            margin-top: 5px;
-            margin-bottom: 15px;
+            border: 1px dashed #3b82f6;
+            background-color: #eff6ff;
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            margin-top: 10px;
+            cursor: pointer;
         }
 
-        .btn-owner-login {
-            background-color: #f8fafc;
+        .owner-login-container a {
             color: #2563eb;
-            border: 1px dashed #cbd5e1;
-            border-radius: 10px;
-            padding: 14px 10px;
             font-size: 14px;
             font-weight: 700;
             text-decoration: none;
@@ -227,29 +257,22 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: background-color 0.2s;
         }
 
-        .btn-owner-login:hover {
-            background-color: #f1f5f9;
-        }
-
-        #loading-screen {
+        #loading-screen, #error-screen {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 100px 0;
+            padding: 120px 20px;
             color: #64748b;
             font-weight: 600;
+            text-align: center;
         }
 
         #error-screen {
-            display: none;
             color: #ef4444;
-            text-align: center;
-            padding: 60px 20px;
-            font-weight: 600;
+            display: none;
         }
     </style>
 </head>
@@ -259,77 +282,69 @@
 
     <div id="loading-screen">
         <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 28px; color: #000; margin-bottom: 16px;"></i>
-        <div>Verifying Vehicle Profile Live...</div>
+        <div>Fetching Guard Channels...</div>
     </div>
 
-    <div id="dashboard-view" style="display: none !important;">
+    <div id="helper-view" style="display: none;">
         
         <div class="header-strip">
             <span class="header-title">AlertoQR Helper</span>
             <span class="sticker-id-tag" id="lbl-sticker-id">ID: ----</span>
         </div>
 
-        <div class="owner-info-card">
-            <div class="label-v-owner">Vehicle Owner</div>
-            <div class="owner-name" id="lbl-owner-name">LOADING...</div>
-            <div class="vehicle-plate-badge" id="lbl-vehicle-number">--------</div>
+        <div class="profile-card">
+            <div class="meta-label">Vehicle Owner</div>
+            <div class="owner-name" id="lbl-owner-name">Loading...</div>
+            <div class="vehicle-badge" id="lbl-vehicle-number">--------</div>
         </div>
 
-        <div class="call-actions-row">
-            <a href="#" id="lnk-main-call" class="btn-call-main">
-                <i class="fa-solid fa-phone"></i> Call Owner
-            </a>
-            <a href="#" id="lnk-alt-call" class="btn-call-alt" style="display: none;">
-                <i class="fa-solid fa-phone-flip"></i> Call Alternate
-            </a>
+        <div class="action-container">
+            <div class="action-row">
+                <button class="btn-call-owner" id="btn-call-primary">
+                    <i class="fa-solid fa-phone"></i> Call Owner
+                </button>
+                <button class="btn-call-alternate" id="btn-call-backup">
+                    <i class="fa-solid fa-phone"></i> Call Alternate
+                </button>
+            </div>
+            
+            <button class="btn-whatsapp-alert" id="btn-whatsapp-action">
+                <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i> Send WhatsApp Alert
+            </button>
         </div>
 
-        <div class="section-divider-title">Quick Alerts</div>
-        
+        <div class="section-title">Quick Alerts</div>
         <div class="alerts-grid">
-            <a href="#" id="lnk-alert-parking" target="_blank" class="grid-alert-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" class="icon-img" alt="Wrong Parking">
+            <div class="grid-card" onclick="sendQuickAlert('Wrong Parking')">
+                <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
                 <span>Wrong Parking</span>
-            </a>
-
-            <a href="#" id="lnk-alert-tow" target="_blank" class="grid-alert-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/2330/2330453.png" class="icon-img" alt="Tow Alert">
+            </div>
+            <div class="grid-card" onclick="sendQuickAlert('Tow Alert')">
+                <i class="fa-solid fa-car" style="color: #eab308;"></i>
                 <span>Tow Alert</span>
-            </a>
-
-            <a href="#" id="lnk-alert-window" target="_blank" class="grid-alert-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/2921/2921319.png" class="icon-img" alt="Window or Light Open">
+            </div>
+            <div class="grid-card" onclick="sendQuickAlert('Window / Light Open')">
+                <i class="fa-solid fa-window-maximize" style="color: #3b82f6;"></i>
                 <span>Window / Light Open</span>
-            </a>
-
-            <a href="#" id="lnk-alert-photo" target="_blank" class="grid-alert-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" class="icon-img" alt="Share Photo">
+            </div>
+            <div class="grid-card" onclick="sendQuickAlert('Share Photo')">
+                <i class="fa-solid fa-camera" style="color: #64748b;"></i>
                 <span>Share Photo</span>
-            </a>
-
-            <a href="#" id="lnk-alert-location" target="_blank" class="grid-alert-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" class="icon-img" alt="Share Location">
-                <span>Share Location</span>
-            </a>
-
-            <a href="#" id="lnk-alert-voice" target="_blank" class="grid-alert-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" class="icon-img" alt="Share Voice Recording">
-                <span>Share Voice</span>
-            </a>
+            </div>
         </div>
 
-        <div class="section-divider-title">Emergency Links</div>
-        <div class="emergency-container">
+        <div class="section-title">Emergency Links</div>
+        <div class="emergency-row">
             <a href="tel:112" class="btn-emergency btn-police">
-                <i class="fa-solid fa-building-shield"></i> Call Police (112)
+                <i class="fa-solid fa-shield-halved"></i> Call Police (112)
             </a>
             <a href="tel:102" class="btn-emergency btn-ambulance">
-                <i class="fa-solid fa-truck-medical"></i> Ambulance (102)
+                <i class="fa-solid fa-kit-medical"></i> Ambulance (102)
             </a>
         </div>
 
-        <div class="owner-login-container">
-            <a href="#" id="lnk-owner-login" class="btn-owner-login">
+        <div class="owner-login-container" id="div-owner-login">
+            <a id="lnk-owner-edit" href="#">
                 <i class="fa-solid fa-user-gear"></i> Owner Login / Edit Profile
             </a>
         </div>
@@ -338,7 +353,7 @@
 
     <div id="error-screen">
         <i class="fa-solid fa-triangle-exclamation" style="font-size: 32px; margin-bottom: 12px;"></i>
-        <div id="error-message-text">Sticker setup configuration missing.</div>
+        <div id="error-message-text">Unable to locate registered asset parameters.</div>
     </div>
 
 </div>
@@ -348,94 +363,92 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+    let cleanStickerId = "";
+    let ownerMobile = "";
+    let alternateMobile = "";
+    let vehicleNo = "";
+
     window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
-        
-        if (!urlParams.has('v')) {
-            urlParams.set('v', Date.now());
-            window.location.search = urlParams.toString();
-            return;
-        }
-
         const stickerId = urlParams.get('id');
+
         if (!stickerId || stickerId.trim() === "") {
             showErrorState("Scan Error: Missing Sticker ID Parameter.");
             return;
         }
 
-        const cleanStickerId = stickerId.trim().toUpperCase();
+        cleanStickerId = stickerId.trim().toUpperCase();
         document.getElementById('lbl-sticker-id').innerText = `ID: ${cleanStickerId}`;
-
-        // Binding the Sticker ID parameter dynamically to the Edit Profile page url
-        document.getElementById('lnk-owner-login').href = `edit-profile.html?id=${cleanStickerId}`;
+        
+        // Maps dynamic redirection parameters directly into edit profile layout anchor link
+        document.getElementById('lnk-owner-edit').href = `edit-profile.html?id=${cleanStickerId}`;
 
         try {
-            // FIXED: Added alternate_number to the selection query array string
             const { data, error } = await _supabase
                 .from('registrations')
-                .select('mobile_number, alternate_number, vehicle_number, status, full_name')
+                .select('owner_name, vehicle_number, mobile_number, alternate_number, status')
                 .eq('sticker_id', cleanStickerId)
                 .maybeSingle();
 
             if (error) {
-                showErrorState("Database connection error.");
+                showErrorState("Database communication error.");
                 return;
             }
 
-            if (!data) {
-                window.location.href = `register.html?id=${cleanStickerId}`;
+            if (!data || data.status !== 'Active') {
+                showErrorState("This sticker is not yet registered or inactive.");
                 return;
             }
 
-            if (data.status === 'Active') {
-                document.getElementById('lbl-owner-name').innerText = data.full_name || "Vehicle Owner";
-                document.getElementById('lbl-vehicle-number').innerText = data.vehicle_number;
-                
-                document.getElementById('lnk-main-call').href = `tel:${data.mobile_number}`;
-                
-                // Logic checks to handle layout adjustments based on alternate number data
-                if (data.alternate_number && data.alternate_number.trim() !== "") {
-                    const altCallBtn = document.getElementById('lnk-alt-call');
-                    altCallBtn.href = `tel:${data.alternate_number}`;
-                    altCallBtn.style.display = 'flex'; // Visible display status change if present
-                } else {
-                    // Adjust grid framework styling to stretch the main button across 100% width if no alternate exists
-                    document.querySelector('.call-actions-row').style.gridTemplateColumns = '1fr';
-                }
-                
-                const txtParking = encodeURIComponent(`Urgent Alert: Your vehicle (${data.vehicle_number}) is wrongly parked. Please check immediately.`);
-                document.getElementById('lnk-alert-parking').href = `https://wa.me/91${data.mobile_number}?text=${txtParking}`;
-                
-                const txtTow = encodeURIComponent(`Urgent Alert: Your vehicle (${data.vehicle_number}) is about to be towed. Please reach out immediately.`);
-                document.getElementById('lnk-alert-tow').href = `https://wa.me/91${data.mobile_number}?text=${txtTow}`;
-                
-                const txtWindow = encodeURIComponent(`Alert: Your vehicle (${data.vehicle_number}) window is open or the cabin lights are left ON. Please check and secure it.`);
-                document.getElementById('lnk-alert-window').href = `https://wa.me/91${data.mobile_number}?text=${txtWindow}`;
-                
-                const txtPhoto = encodeURIComponent(`Hello, I want to send you a live photo status of your vehicle (${data.vehicle_number}). Please reply so I can share it.`);
-                document.getElementById('lnk-alert-photo').href = `https://wa.me/91${data.mobile_number}?text=${txtPhoto}`;
+            document.getElementById('lbl-owner-name').innerText = data.owner_name;
+            document.getElementById('lbl-vehicle-number').innerText = data.vehicle_number;
+            
+            ownerMobile = data.mobile_number;
+            alternateMobile = data.alternate_number || "";
+            vehicleNo = data.vehicle_number;
 
-                const txtLocation = encodeURIComponent(`Hello, I am near your vehicle (${data.vehicle_number}). Please tap here to share your location or connect with me.`);
-                document.getElementById('lnk-alert-location').href = `https://wa.me/91${data.mobile_number}?text=${txtLocation}`;
-
-                const txtVoice = encodeURIComponent(`Hello, I want to send you a voice details alert regarding your vehicle (${data.vehicle_number}). Please tap on the microphone icon in your chat window to receive my voice message.`);
-                document.getElementById('lnk-alert-voice').href = `https://wa.me/91${data.mobile_number}?text=${txtVoice}`;
-
-                document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
-                document.getElementById('dashboard-view').style.setProperty('display', 'block', 'important');
-            } else {
-                window.location.href = `register.html?id=${cleanStickerId}`;
+            // Conditional view rules if Alternate Number is not found in database
+            const btnBackup = document.getElementById('btn-call-backup');
+            if (!alternateMobile || alternateMobile.trim() === "") {
+                btnBackup.style.display = "none";
             }
+
+            document.getElementById('loading-screen').style.display = "none";
+            document.getElementById('helper-view').style.display = "block";
 
         } catch (err) {
-            showErrorState("System configuration failure.");
+            showErrorState("Fatal tracking initialisation failure.");
         }
     });
 
+    document.getElementById('btn-call-primary').addEventListener('click', () => {
+        if(ownerMobile) window.location.href = `tel:${ownerMobile}`;
+    });
+
+    document.getElementById('btn-call-backup').addEventListener('click', () => {
+        if(alternateMobile) window.location.href = `tel:${alternateMobile}`;
+    });
+
+    // Standard WhatsApp Alert Engine
+    document.getElementById('btn-whatsapp-action').addEventListener('click', () => {
+        if(ownerMobile) {
+            const textMsg = encodeURIComponent(`Hello, I am near your vehicle (${vehicleNo}). Please check your vehicle status via AlertoQR safety response channel.`);
+            window.location.href = `https://wa.me/91${ownerMobile}?text=${textMsg}`;
+        }
+    });
+
+    // Quick Grid Cards Alerts Dynamic Trigger
+    function sendQuickAlert(alertType) {
+        if(ownerMobile) {
+            const quickText = encodeURIComponent(`[AlertoQR ALERT] Attention! Your vehicle ${vehicleNo} has triggered a critical notice: "${alertType}". Please attend immediately.`);
+            window.location.href = `https://wa.me/91${ownerMobile}?text=${quickText}`;
+        }
+    }
+
     function showErrorState(msg) {
-        document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
+        document.getElementById('loading-screen').style.display = "none";
         document.getElementById('error-message-text').innerText = msg;
-        document.getElementById('error-screen').style.setProperty('display', 'block', 'important');
+        document.getElementById('error-screen').style.display = "flex";
     }
 </script>
 </body>
