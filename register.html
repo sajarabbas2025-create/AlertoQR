@@ -20,62 +20,70 @@
         }
 
         body {
-            background-color: #ffffff;
-            color: #000000;
+            background-color: #0f172a; /* Dark layout theme matched to screenshots */
+            color: #ffffff;
             padding: 20px 16px;
             display: flex;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .container {
             width: 100%;
             max-width: 450px;
-            background-color: #ffffff;
+            background-color: #1e293b;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             display: flex;
             flex-direction: column;
         }
 
-        .header-strip {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 4px 15px 4px;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #f1f5f9;
+        .header-section {
+            text-align: center;
+            margin-bottom: 24px;
         }
 
         .header-title {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 700;
-            color: #000000;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .sticker-badge-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 12px;
         }
 
         .sticker-id-tag {
+            background-color: #3b82f6;
+            color: #ffffff;
             font-size: 14px;
             font-weight: 700;
-            color: #64748b;
+            padding: 6px 16px;
+            border-radius: 20px;
             letter-spacing: 0.5px;
         }
 
-        .instruction-text {
-            font-size: 14px;
-            color: #475569;
-            margin-bottom: 25px;
-            line-height: 1.5;
-            padding: 0 4px;
-        }
-
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .form-group label {
             font-size: 12px;
             text-transform: uppercase;
-            color: #64748b;
+            color: #94a3b8;
             font-weight: 700;
             letter-spacing: 0.5px;
         }
@@ -89,7 +97,7 @@
         .input-wrapper i {
             position: absolute;
             left: 14px;
-            color: #94a3b8;
+            color: #64748b;
             font-size: 16px;
         }
 
@@ -97,38 +105,48 @@
             width: 100%;
             padding: 14px 14px 14px 42px;
             font-size: 15px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid #334155;
             border-radius: 8px;
-            color: #000000;
-            background-color: #ffffff;
+            color: #ffffff;
+            background-color: #0f172a;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         .form-control:focus {
-            border-color: #000000;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: #475569;
         }
 
         .btn-submit {
             width: 100%;
-            background-color: #000000;
+            background-color: #22c55e; /* Green activation button */
             color: #ffffff;
-            border: 1px solid #000000;
+            border: none;
             border-radius: 8px;
             padding: 16px;
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-top: 15px;
-            transition: opacity 0.2s;
+            margin-top: 10px;
+            transition: background-color 0.2s;
         }
 
         .btn-submit:active {
-            opacity: 0.8;
+            background-color: #16a34a;
+        }
+
+        .btn-submit:disabled {
+            background-color: #475569;
+            cursor: not-allowed;
         }
 
         #loading-screen {
@@ -136,16 +154,16 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 100px 0;
-            color: #64748b;
+            padding: 60px 0;
+            color: #94a3b8;
             font-weight: 600;
         }
 
         #error-screen {
             display: none;
-            color: #ef4444;
+            color: #f87171;
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             font-weight: 600;
         }
     </style>
@@ -155,32 +173,31 @@
 <div class="container">
 
     <div id="loading-screen">
-        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 28px; color: #000; margin-bottom: 16px;"></i>
-        <div>Initializing Setup Window...</div>
+        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 32px; color: #3b82f6; margin-bottom: 16px;"></i>
+        <div>Verifying Smart Sticker Status...</div>
     </div>
 
     <div id="registration-view" style="display: none !important;">
         
-        <div class="header-strip">
-            <span class="header-title">Activate Sticker</span>
-            <span class="sticker-id-tag" id="lbl-sticker-id">ID: ----</span>
+        <div class="header-section">
+            <h1 class="header-title">Activate Smart QR</h1>
+            <p class="header-subtitle">Fill details to link your vehicle safety sticker</p>
+            <div class="sticker-badge-wrapper">
+                <span class="sticker-id-tag" id="lbl-sticker-id">ID: ----</span>
+            </div>
         </div>
-
-        <p class="instruction-text">
-            Enter your vehicle and contact details below to link this smart safety QR sticker to your profile instantly.
-        </p>
 
         <form id="form-register">
             <div class="form-group">
-                <label for="txt-owner-name">Owner Full Name</label>
+                <label for="txt-owner-name">Owner Full Name *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-user"></i>
-                    <input type="text" id="txt-owner-name" class="form-control" placeholder="e.g. Ramesh Kumar" required>
+                    <input type="text" id="txt-owner-name" class="form-control" placeholder="e.g. Sajar Abbas" required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="txt-mobile">WhatsApp Mobile Number</label>
+                <label for="txt-mobile">WhatsApp Mobile Number *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-phone"></i>
                     <input type="tel" id="txt-mobile" class="form-control" placeholder="10 Digit Number" pattern="[0-9]{10}" title="Please enter valid 10 digit number" required>
@@ -188,23 +205,23 @@
             </div>
 
             <div class="form-group">
-                <label for="txt-alternate">Alternate Mobile Number <span style="color: #94a3b8; font-weight: normal; font-size: 11px;">(Optional)</span></label>
+                <label for="txt-alternate">Alternate Number <span style="color: #64748b; font-weight: normal;">(Optional)</span></label>
                 <div class="input-wrapper">
-                    <i class="fa-solid fa-mobile-screen-button"></i>
-                    <input type="tel" id="txt-alternate" class="form-control" placeholder="Backup Contact Number (10 Digits)" pattern="[0-9]{10}" title="Please enter valid 10 digit number">
+                    <i class="fa-solid fa-mobile-button"></i>
+                    <input type="tel" id="txt-alternate" class="form-control" placeholder="Backup Contact Number">
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="txt-vehicle">Vehicle Number</label>
+                <label for="txt-vehicle">Vehicle Number *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-car"></i>
-                    <input type="text" id="txt-vehicle" class="form-control" placeholder="e.g. UP80AB1234" style="text-transform: uppercase;" required>
+                    <input type="text" id="txt-vehicle" class="form-control" placeholder="e.g. UP32DD2420" style="text-transform: uppercase;" required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="txt-chassis">Chassis No. (Last 4 Digits)</label>
+                <label for="txt-chassis">Chassis No. (Last 4 Digits) *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-fingerprint"></i>
                     <input type="text" id="txt-chassis" class="form-control" placeholder="Forgot PIN ke waqt security ke liye" maxlength="4" required>
@@ -212,28 +229,29 @@
             </div>
 
             <div class="form-group">
-                <label for="txt-pin">Set Secret Security PIN</label>
+                <label for="txt-pin">Create 4-Digit Security PIN *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="txt-pin" class="form-control" placeholder="4 Digit Number PIN" pattern="[0-9]{4}" title="Please enter 4 digit numeric PIN" required>
+                    <input type="password" id="txt-pin" class="form-control" placeholder="4 Digit Password PIN" pattern="[0-9]{4}" title="Please enter 4 digit numeric PIN" required>
                 </div>
             </div>
 
             <button type="submit" id="btn-save-action" class="btn-submit">
-                <i class="fa-solid fa-circle-check"></i> Submit & Activate Sticker
+                <i class="fa-solid fa-circle-check"></i> Complete Activation
             </button>
         </form>
 
     </div>
 
     <div id="error-screen">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size: 32px; margin-bottom: 12px;"></i>
-        <div id="error-message-text">Sticker setup configuration missing.</div>
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 36px; margin-bottom: 16px;"></i>
+        <div id="error-message-text">Configuration mapping missing.</div>
     </div>
 
 </div>
 
 <script>
+    // Supabase Connection Settings
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
@@ -243,6 +261,7 @@
     window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
         
+        // Anti-cache handler rule
         if (!urlParams.has('v')) {
             urlParams.set('v', Date.now());
             window.location.search = urlParams.toString();
@@ -256,9 +275,10 @@
         }
 
         cleanStickerId = stickerId.trim().toUpperCase();
-        document.getElementById('lbl-sticker-id').innerText = `ID: ${cleanStickerId}`;
+        document.getElementById('lbl-sticker-id').innerText = cleanStickerId;
 
         try {
+            // Verify sticker state from database ledger table
             const { data, error } = await _supabase
                 .from('registrations')
                 .select('status')
@@ -266,15 +286,17 @@
                 .maybeSingle();
 
             if (error) {
-                showErrorState("Database connection error.");
+                showErrorState("Database connection failure. Please reload page.");
                 return;
             }
 
+            // If already active, route straight to helper channel profile dashboard
             if (data && data.status === 'Active') {
                 window.location.href = `helper.html?id=${cleanStickerId}`;
                 return;
             }
 
+            // Normal initialization state if record is Inactive
             document.getElementById('loading-screen').style.setProperty('display', 'none', 'important');
             document.getElementById('registration-view').style.setProperty('display', 'block', 'important');
 
@@ -283,6 +305,7 @@
         }
     });
 
+    // Form submission processing logic
     document.getElementById('form-register').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -295,23 +318,24 @@
         
         const btnSave = document.getElementById('btn-save-action');
         btnSave.disabled = true;
-        btnSave.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Activating Live...';
+        btnSave.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing Activation...';
 
         try {
+            // STRICT SEQUENCE EXECUTION: Triggers the newly configured database RPC function architecture
             const { data, error } = await _supabase.rpc('register_qrcode_sticker', {
                 p_sticker_id: cleanStickerId,
                 p_full_name: ownerName,
                 p_mobile_number: mobileNumber,
-                p_alternate_number: alternateNumber || null,
                 p_vehicle_number: vehicleNumber,
-                p_chassis_number: chassisNumber, // Maps seamlessly into server side function architecture
-                p_secret_pin: secretPin
+                p_chassis_number: chassisNumber, 
+                p_secret_pin: secretPin,
+                p_alternate_number: alternateNumber || null  // Default parameter moved to last position
             });
 
             if (error) {
-                alert("Registration failed: " + error.message);
+                alert("Database execution error: " + error.message);
                 btnSave.disabled = false;
-                btnSave.innerHTML = '<i class="fa-solid fa-circle-check"></i> Submit & Activate Sticker';
+                btnSave.innerHTML = '<i class="fa-solid fa-circle-check"></i> Complete Activation';
                 return;
             }
 
@@ -319,9 +343,9 @@
             window.location.href = `helper.html?id=${cleanStickerId}`;
 
         } catch (err) {
-            alert("Network connection error. Try again.");
+            alert("Network timeout error. Check data bandwidth.");
             btnSave.disabled = false;
-            btnSave.innerHTML = '<i class="fa-solid fa-circle-check"></i> Submit & Activate Sticker';
+            btnSave.innerHTML = '<i class="fa-solid fa-circle-check"></i> Complete Activation';
         }
     });
 
