@@ -20,7 +20,7 @@
         }
 
         body {
-            background-color: #0f172a; /* Dark layout theme matched to screenshots */
+            background-color: #0f172a;
             color: #ffffff;
             padding: 20px 16px;
             display: flex;
@@ -124,7 +124,7 @@
 
         .btn-submit {
             width: 100%;
-            background-color: #22c55e; /* Green activation button */
+            background-color: #22c55e;
             color: #ffffff;
             border: none;
             border-radius: 8px;
@@ -301,7 +301,7 @@
         }
     });
 
-    // Pure Direct Table Update Logic (No Custom RPC Function Needed)
+    // Pure Direct Table Update Logic Match to Your Exact Supabase Schema Layout
     document.getElementById('form-register').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -317,16 +317,16 @@
         btnSave.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing Activation...';
 
         try {
-            // Direct safe dynamic upsert query execution
+            // FIXED SCHEMA: Columns strictly aligned according to your dashboard screenshots
             const { error } = await _supabase
                 .from('registrations')
                 .upsert({
                     sticker_id: cleanStickerId,
-                    owner_name: ownerName,
+                    full_name: ownerName,
                     mobile_number: mobileNumber,
                     alternate_number: alternateNumber || null,
                     vehicle_number: vehicleNumber,
-                    chassis_no: chassisNumber, 
+                    chassis_last_4: chassisNumber, // Matches your exact DB column 'chassis_last_4'
                     secret_pin: secretPin,
                     status: 'Active'
                 }, { onConflict: 'sticker_id' });
