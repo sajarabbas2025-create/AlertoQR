@@ -192,7 +192,7 @@
                 <label for="txt-owner-name">Owner Full Name *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-user"></i>
-                    <input type="text" id="txt-owner-name" class="form-control" placeholder="e.g. Sajar Abbas" required>
+                    <input type="text" id="txt-owner-name" class="form-control" placeholder="Enter full name (e.g. John Doe)" required>
                 </div>
             </div>
 
@@ -216,7 +216,7 @@
                 <label for="txt-vehicle">Vehicle Number *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-car"></i>
-                    <input type="text" id="txt-vehicle" class="form-control" placeholder="e.g. UP32DD2420" style="text-transform: uppercase;" required>
+                    <input type="text" id="txt-vehicle" class="form-control" placeholder="e.g. UP16XX1234" style="text-transform: uppercase;" required>
                 </div>
             </div>
 
@@ -232,7 +232,7 @@
                 <label for="txt-pin">Create 4-Digit Security PIN *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="txt-pin" class="form-control" placeholder="4 Digit Password PIN" pattern="[0-9]{4}" title="Please enter 4 digit numeric PIN" required>
+                    <input type="text" id="txt-pin" class="form-control" placeholder="4 Digit Password PIN" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" title="Please enter 4 digit numeric PIN" required>
                 </div>
             </div>
 
@@ -251,7 +251,6 @@
 </div>
 
 <script>
-    // Supabase Connection Settings
     const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
@@ -301,7 +300,6 @@
         }
     });
 
-    // Pure Direct Table Update Logic Match to Your Exact Supabase Schema Layout
     document.getElementById('form-register').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -312,12 +310,16 @@
         const chassisNumber = document.getElementById('txt-chassis').value.trim();
         const secretPin = document.getElementById('txt-pin').value.trim();
         
+        if(secretPin.length !== 4) {
+            alert("Please input a proper 4-Digit Security PIN before saving.");
+            return;
+        }
+
         const btnSave = document.getElementById('btn-save-action');
         btnSave.disabled = true;
         btnSave.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing Activation...';
 
         try {
-            // FIXED SCHEMA: Columns strictly aligned according to your dashboard screenshots
             const { error } = await _supabase
                 .from('registrations')
                 .upsert({
@@ -326,7 +328,7 @@
                     mobile_number: mobileNumber,
                     alternate_number: alternateNumber || null,
                     vehicle_number: vehicleNumber,
-                    chassis_last_4: chassisNumber, // Matches your exact DB column 'chassis_last_4'
+                    chassis_last_4: chassisNumber, 
                     secret_pin: secretPin,
                     status: 'Active'
                 }, { onConflict: 'sticker_id' });
