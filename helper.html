@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Owner Dashboard & Profile Control - AlertoQR</title>
+    <title>Owner Dashboard - AlertoQR</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,103 +12,135 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
         body { background-color: #0b1329; color: #f8fafc; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
         
-        .dashboard-card { background-color: #1c2541; border: 1px solid #1e293b; border-radius: 16px; padding: 30px; width: 100%; max-width: 460px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
-        .header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
-        .header h2 { font-size: 22px; color: #ffffff; font-weight: 800; }
-        .sticker-badge { background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; color: #fbbf24; padding: 4px 12px; border-radius: 6px; font-weight: 800; font-size: 13px; display: inline-block; margin-top: 6px; }
+        /* Premium Dashboard Card Layout */
+        .dashboard-container { background-color: #1c2541; border: 1px solid #1e293b; border-radius: 20px; width: 100%; max-width: 420px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); overflow: hidden; }
         
-        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+        .orange-header { background-color: #ef4444; color: white; text-align: center; padding: 12px; font-weight: 800; font-size: 15px; letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        
+        .card-body { padding: 25px; text-align: center; }
+        
+        /* Premium Orange Edit Button */
+        .btn-orange-edit { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; width: 100%; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); text-transform: uppercase; }
+        .btn-orange-edit:hover { background: linear-gradient(135deg, #d97706, #b45309); }
+        
+        /* QR Code Display Framework */
+        .qr-display-box { background: #ffffff; border-radius: 14px; padding: 20px; margin: 0 auto 20px auto; width: 100%; max-width: 280px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 4px solid #334155; }
+        .qr-image { width: 100%; height: auto; aspect-ratio: 1/1; display: block; }
+        
+        .sticker-badge { background: #1e293b; color: #ffffff; font-weight: 900; font-size: 22px; padding: 8px 30px; border-radius: 8px; display: inline-block; letter-spacing: 1.5px; border: 1px solid #475569; margin-top: -10px; margin-bottom: 15px; }
+        
+        .privacy-strip { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 25px; }
+        
+        /* Download Sticker Button */
+        .btn-download { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
+        .btn-download:hover { background: linear-gradient(135deg, #1d4ed8, #1e40af); }
+        
+        /* Forms & Inputs Configuration */
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; text-align: left; }
         .form-group label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
-        .form-input { background-color: #0b1329; border: 1px solid #475569; border-radius: 7px; padding: 12px; color: #ffffff; font-size: 15px; outline: none; width: 100%; }
-        .form-input:focus { border-color: #2563eb; }
+        .form-input { background-color: #0b1329; border: 1px solid #475569; border-radius: 8px; padding: 13px; color: #ffffff; font-size: 15px; outline: none; width: 100%; }
+        .form-input:focus { border-color: #f59e0b; }
         
-        .btn { width: 100%; padding: 13px; border-radius: 7px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; border: none; margin-top: 10px; }
-        .btn-primary { background-color: #2563eb; color: white; }
-        .btn-success { background-color: #10b981; color: white; }
+        .btn-submit { background-color: #10b981; color: white; border: none; width: 100%; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; }
+        .btn-submit:hover { background-color: #059669; }
         
-        .link-forgot { color: #38bdf8; font-size: 13px; text-decoration: none; font-weight: 600; cursor: pointer; text-align: right; display: block; margin-top: -8px; margin-bottom: 15px; }
-        .link-forgot:hover { text-decoration: underline; }
-        
-        /* Modal Popup Architecture */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; padding: 15px; }
+        /* Modals & Toggles */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); align-items: center; justify-content: center; padding: 15px; }
         .modal-content { background: #1c2541; border: 1px solid #334155; color: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .modal-header { font-size: 18px; font-weight: 700; margin-bottom: 18px; text-align: center; border-bottom: 1px solid #334155; padding-bottom: 8px; color: #ffffff; }
-        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .link-forgot { color: #38bdf8; font-size: 13px; cursor: pointer; text-align: right; display: block; margin-top: 4px; margin-bottom: 15px; font-weight: 600; }
         
         .view-state { display: none; }
         .active-state { display: block; }
-        .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; text-align: center; }
     </style>
 </head>
 <body>
 
-<div class="dashboard-card">
-    <div class="header">
-        <h2>Owner Profile Control</h2>
-        <span class="sticker-badge" id="lbl-sticker-id">Loading ID...</span>
+<div class="dashboard-container">
+    <div class="orange-header">
+        <i class="fa-solid fa-triangle-exclamation"></i> Emergency Contact QR
     </div>
 
-    <div id="error-alert" class="alert-error" style="display:none;"></div>
-
-    <div id="panel-auth" class="view-state active-state">
-        <div class="form-group">
-            <label>Enter Security PIN</label>
-            <input type="password" id="auth-pin" class="form-input" placeholder="Profile edit karne ke liye 4-digit PIN dalein" maxlength="4" pattern="[0-9]*" inputmode="numeric">
-        </div>
-        <span class="link-forgot" onclick="openForgotModal()">Forgot Security PIN?</span>
-        <button class="btn btn-primary" onclick="verifyOwnerAccess()"><i class="fa-solid fa-unlock"></i> Unlock Profile Settings</button>
-    </div>
-
-    <div id="panel-edit" class="view-state">
-        <p style="color:#10b981; font-size:13px; font-weight:700; text-align:center; margin-bottom:15px;"><i class="fa-solid fa-lock-open"></i> Profile access unlocked successfully.</p>
+    <div class="card-body">
         
-        <div class="form-group">
-            <label>Owner Full Name</label>
-            <input type="text" id="edit-name" class="form-input" required>
+        <div id="panel-dashboard" class="view-state active-state">
+            <button class="btn-orange-edit" onclick="openAuthModal()">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Profile (MPIN Verify)
+            </button>
+            
+            <div class="qr-display-box">
+                <p style="color: #1e293b; font-size: 13px; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Scan To Alert Car Owner</p>
+                <img id="img-qr-code" class="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=Loading" alt="Sticker QR Code">
+            </div>
+            
+            <div><span class="sticker-badge" id="lbl-sticker-id">ALQR001</span></div>
+            
+            <div class="privacy-strip">
+                <i class="fa-solid fa-lock"></i> Privacy Safe • Mobile Number Hidden
+            </div>
+            
+            <button class="btn-download" onclick="triggerDownloadPDF()">
+                <i class="fa-solid fa-file-pdf"></i> Download PDF Sticker
+            </button>
         </div>
-        <div class="form-group">
-            <label>Mobile Number</label>
-            <input type="tel" id="edit-mobile" class="form-input" maxlength="10" required>
-        </div>
-        <div class="form-group">
-            <label>Vehicle Number</label>
-            <input type="text" id="edit-vehicle" class="form-input" style="text-transform: uppercase;" required>
-        </div>
-        <button class="btn btn-success" onclick="saveUpdatedProfile()"><i class="fa-solid fa-floppy-disk"></i> Save Profile Updates</button>
-    </div>
-</div>
 
-<div id="forgotModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header"><i class="fa-solid fa-shield-halved"></i> Secure PIN Reset</div>
-        <div id="modal-error" class="alert-error" style="display:none;"></div>
-        
-        <div id="forgot-step-1">
+        <div id="panel-edit-form" class="view-state">
+            <h3 style="color:#ffffff; margin-bottom:20px; text-align:left;"><i class="fa-solid fa-user-gear" style="color:#f59e0b;"></i> Update Profile Details</h3>
+            
             <div class="form-group">
-                <label>Registered Mobile Number</label>
-                <input type="tel" id="forgot-mobile" class="form-input" placeholder="10-digit number dalein" maxlength="10">
+                <label>Owner Full Name</label>
+                <input type="text" id="edit-name" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="tel" id="edit-mobile" class="form-input" maxlength="10" required>
             </div>
             <div class="form-group">
                 <label>Vehicle Number</label>
-                <input type="text" id="forgot-vehicle" class="form-input" placeholder="e.g. UP32DD2420" style="text-transform: uppercase;">
+                <input type="text" id="edit-vehicle" class="form-input" style="text-transform: uppercase;" required>
             </div>
-            <div class="form-group">
-                <label>Chassis / Engine No. (Last 4 Digits)</label>
-                <input type="text" id="forgot-chassis" class="form-input" placeholder="Aakhri 4 ank dalein" maxlength="4">
-            </div>
-            <div class="modal-actions">
-                <button class="btn" style="background:#475569; color:white;" onclick="closeForgotModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="verifyIdentityForPinReset()">Verify Identity</button>
+            
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn-submit" style="background:#475569;" onclick="closeEditPanel()"><i class="fa-solid fa-arrow-left"></i> Cancel</button>
+                <button class="btn-submit" onclick="saveProfileChanges()"><i class="fa-solid fa-floppy-disk"></i> Save Updates</button>
             </div>
         </div>
 
-        <div id="forgot-step-2" style="display:none;">
-            <p style="color:#10b981; font-size:13px; font-weight:700; text-align:center; margin-bottom:12px;">✅ Identity Verified! Set your new pin.</p>
+    </div>
+</div>
+
+<div id="authModal" class="modal">
+    <div class="modal-content" style="text-align: left;">
+        <h3 style="margin-bottom:15px; border-bottom:1px solid #334155; padding-bottom:8px; color:white;"><i class="fa-solid fa-shield-halved" style="color:#f59e0b;"></i> Security Access Lock</h3>
+        
+        <div id="modal-step-pin">
             <div class="form-group">
-                <label>Enter New 4-Digit PIN</label>
-                <input type="password" id="forgot-new-pin" class="form-input" placeholder="Naya secret PIN banayein" maxlength="4" pattern="[0-9]*" inputmode="numeric">
+                <label>Enter 4-Digit Security PIN</label>
+                <input type="password" id="auth-mpin" class="form-input" placeholder="4-ank ka secret PIN dalein" maxlength="4" pattern="[0-9]*" inputmode="numeric">
             </div>
-            <button class="btn btn-success" onclick="commitNewSecurityPin()">Update Security PIN</button>
+            <span class="link-forgot" onclick="switchToForgotFlow(true)">Forgot Security PIN?</span>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-submit" style="background:#475569;" onclick="closeAuthModal()">Cancel</button>
+                <button class="btn-submit" style="background:#2563eb;" onclick="verifyOwnerPin()">Unlock Panel</button>
+            </div>
+        </div>
+
+        <div id="modal-step-forgot" style="display:none;">
+            <p style="color:#fbbf24; font-size:12px; margin-bottom:12px;">Identity confirm karne ke liye registered details fill karein:</p>
+            <div class="form-group"><label>Registered Mobile</label><input type="tel" id="f-mobile" class="form-input" maxlength="10"></div>
+            <div class="form-group"><label>Vehicle Number</label><input type="text" id="f-vehicle" class="form-input" style="text-transform: uppercase;"></div>
+            <div class="form-group"><label>Chassis Last 4 Digits</label><input type="text" id="f-chassis" class="form-input" maxlength="4"></div>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="btn-submit" style="background:#475569;" onclick="switchToForgotFlow(false)">Back</button>
+                <button class="btn-submit" style="background:#2563eb;" onclick="validateIdentityForReset()">Verify Details</button>
+            </div>
+        </div>
+
+        <div id="modal-step-newpin" style="display:none;">
+            <div class="form-group">
+                <label>Create New 4-Digit PIN</label>
+                <input type="password" id="f-newpin" class="form-input" placeholder="Naya 4-ank ka PIN banayein" maxlength="4" pattern="[0-9]*" inputmode="numeric">
+            </div>
+            <button class="btn-submit" style="background:#10b981;" onclick="commitNewPinToDatabase()">Update & Authenticate</button>
         </div>
     </div>
 </div>
@@ -119,140 +151,110 @@
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     let STICKER_ID = "";
-    let SERVER_RECORD_OBJECT = null;
+    let LIVE_RECORD_DATA = null;
 
     window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
         STICKER_ID = urlParams.get('id');
 
         if(!STICKER_ID) {
-            showError("Invalid URL. Sticker Link ID parameter node missing.");
-            document.body.innerHTML = `<div class="alert-error" style='margin:auto;'>Error: Sticker ID missing in URL.</div>`;
+            alert("Sticker ID parameter link missing.");
             return;
         }
 
         STICKER_ID = STICKER_ID.trim().toUpperCase();
-        document.getElementById('lbl-sticker-id').innerText = `Sticker ID: ${STICKER_ID}`;
+        document.getElementById('lbl-sticker-id').innerText = STICKER_ID;
 
-        // Initial fetch to lock record maps
-        await syncServerData();
+        // Hydrate QR Image Element dynamically based on public scan link
+        const targetPublicUrl = `https://alertoqr.in/register.html?id=${STICKER_ID}`;
+        document.getElementById('img-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(targetPublicUrl)}`;
+
+        await fetchServerRecord();
     });
 
-    async function syncServerData() {
+    async function fetchServerRecord() {
         try {
             const { data, error } = await _supabase.from('registrations').select('*').eq('sticker_id', STICKER_ID).maybeSingle();
             if(error) throw error;
-            if(!data) {
-                showError("This sticker ID node is not registered on servers yet.");
-                return;
-            }
-            SERVER_RECORD_OBJECT = data;
-        } catch(e) { showError("Database connection pipeline sync timed out."); }
+            if(!data) { alert("This Sticker ID node is not active on servers."); return; }
+            LIVE_RECORD_DATA = data;
+        } catch(e) { console.error("Database connection fault."); }
     }
 
-    // 🔑 VERIFY SECURITY MPIN CODE
-    async function verifyOwnerAccess() {
-        hideError();
-        const enteredPin = document.getElementById('auth-pin').value.trim();
+    // Modal Visibility Triggers
+    function openAuthModal() { document.getElementById('authModal').style.display = "flex"; }
+    function closeAuthModal() { document.getElementById('authModal').style.display = "none"; }
+    
+    function switchToForgotFlow(showForgot) {
+        document.getElementById('modal-step-pin').style.display = showForgot ? "none" : "block";
+        document.getElementById('modal-step-forgot').style.display = showForgot ? "block" : "none";
+    }
 
-        if(!SERVER_RECORD_OBJECT) { await syncServerData(); }
-        if(!SERVER_RECORD_OBJECT) return;
+    // 🔑 VERIFY PIN
+    function verifyOwnerPin() {
+        const p = document.getElementById('auth-mpin').value.trim();
+        const securePin = LIVE_RECORD_DATA.mpin || "1234";
 
-        // Fallback default password logic is 1234 if newly generated or reset by admin
-        const accuratePin = SERVER_RECORD_OBJECT.mpin || "1234";
-
-        if(enteredPin === String(accuratePin).trim()) {
-            // Hydrate Edit Form
-            document.getElementById('edit-name').value = SERVER_RECORD_OBJECT.full_name || "";
-            document.getElementById('edit-mobile').value = SERVER_RECORD_OBJECT.mobile_number || "";
-            document.getElementById('edit-vehicle').value = SERVER_RECORD_OBJECT.vehicle_number || "";
+        if(p === String(securePin).trim()) {
+            closeAuthModal();
+            // Populate Input Boxes
+            document.getElementById('edit-name').value = LIVE_RECORD_DATA.full_name || "";
+            document.getElementById('edit-mobile').value = LIVE_RECORD_DATA.mobile_number || "";
+            document.getElementById('edit-vehicle').value = LIVE_RECORD_DATA.vehicle_number || "";
             
-            // Switch Panel Toggles
-            document.getElementById('panel-auth').style.display = "none";
-            document.getElementById('panel-edit').style.display = "block";
-        } else {
-            showError("❌ Invalid Security PIN! Please try again.");
-        }
+            // Switch Panel Viewports
+            document.getElementById('panel-dashboard').style.display = "none";
+            document.getElementById('panel-edit-form').style.display = "block";
+        } else { alert("❌ Invalid Security PIN! Try again."); }
     }
 
-    // 💾 COMMIT UPDATED PROFILE BACK TO SUPABASE
-    async function saveUpdatedProfile() {
-        hideError();
-        const updatedName = document.getElementById('edit-name').value.trim();
-        const updatedMobile = document.getElementById('edit-mobile').value.trim();
-        const updatedVehicle = document.getElementById('edit-vehicle').value.trim().toUpperCase();
+    function closeEditPanel() {
+        document.getElementById('panel-edit-form').style.display = "none";
+        document.getElementById('panel-dashboard').style.display = "block";
+    }
 
-        if(!updatedName || !updatedMobile || !updatedVehicle) { showError("All fields are mandatory."); return; }
+    // 💾 SAVE EDITED DETAILS
+    async function saveProfileChanges() {
+        const n = document.getElementById('edit-name').value.trim();
+        const m = document.getElementById('edit-mobile').value.trim();
+        const v = document.getElementById('edit-vehicle').value.trim().toUpperCase();
 
         try {
-            const { error } = await _supabase
-                .from('registrations')
-                .update({
-                    full_name: updatedName,
-                    mobile_number: updatedMobile,
-                    vehicle_number: updatedVehicle
-                })
-                .eq('sticker_id', STICKER_ID);
-
+            const { error } = await _supabase.from('registrations').update({ full_name: n, mobile_number: m, vehicle_number: v }).eq('sticker_id', STICKER_ID);
             if(error) throw error;
-            alert("✅ Profile changes saved successfully!");
-            location.reload(); // Reload dashboard safely
-        } catch(e) { showError(`Update failed: ${e.message}`); }
-    }
-
-    // 🔒 FORGOT PIN SUB-SYSTEM LOGIC ENGINES
-    function openForgotModal() {
-        document.getElementById('modal-error').style.display = "none";
-        document.getElementById('forgot-step-1').style.display = "block";
-        document.getElementById('forgot-step-2').style.display = "none";
-        document.getElementById('forgotModal').style.display = "flex";
-    }
-
-    function closeForgotModal() { document.getElementById('forgotModal').style.display = "none"; }
-
-    async function verifyIdentityForPinReset() {
-        const fMobile = document.getElementById('forgot-mobile').value.trim();
-        const fVehicle = document.getElementById('forgot-vehicle').value.trim().toUpperCase();
-        const fChassis = document.getElementById('forgot-chassis').value.trim();
-
-        if(!fMobile || !fVehicle || !fChassis) { showModalError("Please input all authentication values."); return; }
-        if(!SERVER_RECORD_OBJECT) { await syncServerData(); }
-
-        const dbMobile = String(SERVER_RECORD_OBJECT.mobile_number).trim();
-        const dbVehicle = String(SERVER_RECORD_OBJECT.vehicle_number).trim().toUpperCase();
-        const dbChassis = String(SERVER_RECORD_OBJECT.chassis_last_4).trim();
-
-        // 🛡️ BULLETPROOF IDENTITY VALIDATION MATRICES 
-        if(fMobile === dbMobile && fVehicle === dbVehicle && fChassis === dbChassis) {
-            document.getElementById('forgot-step-1').style.display = "none";
-            document.getElementById('forgot-step-2').style.display = "block";
-            document.getElementById('modal-error').style.display = "none";
-        } else {
-            showModalError("❌ Identity Match Mismatch! Check details or consult support.");
-        }
-    }
-
-    async function commitNewSecurityPin() {
-        const newPin = document.getElementById('forgot-new-pin').value.trim();
-        if(newPin.length < 4 || isNaN(newPin)) { showModalError("PIN must be exactly 4 numeric digits."); return; }
-
-        try {
-            const { error } = await _supabase
-                .from('registrations')
-                .update({ mpin: newPin })
-                .eq('sticker_id', STICKER_ID);
-
-            if(error) throw error;
-            alert("🎉 Security PIN updated successfully! Login using your new PIN.");
-            closeForgotModal();
+            alert("✅ Profile details updated successfully!");
             location.reload();
-        } catch(e) { showModalError("Failed to update database schema PIN."); }
+        } catch(e) { alert("Failed to modify rows."); }
     }
 
-    // ERRORS DESCRIPTOR SYSTEMS
-    function showError(t) { const e = document.getElementById('error-alert'); e.innerText = t; e.style.display = "block"; }
-    function hideError() { document.getElementById('error-alert').style.display = "none"; }
-    function showModalError(t) { const e = document.getElementById('modal-error'); e.innerText = t; e.style.display = "block"; }
+    // 🔒 FORGOT PIN VALIDATION NODE
+    function validateIdentityForReset() {
+        const mob = document.getElementById('f-mobile').value.trim();
+        const veh = document.getElementById('f-vehicle').value.trim().toUpperCase();
+        const cha = document.getElementById('f-chassis').value.trim();
+
+        if(mob === LIVE_RECORD_DATA.mobile_number && veh === LIVE_RECORD_DATA.vehicle_number && cha === LIVE_RECORD_DATA.chassis_last_4) {
+            document.getElementById('modal-step-forgot').style.display = "none";
+            document.getElementById('modal-step-newpin').style.display = "block";
+        } else { alert("❌ Security Identity Check Failed! Details incorrect."); }
+    }
+
+    async function commitNewPinToDatabase() {
+        const newPin = document.getElementById('f-newpin').value.trim();
+        if(newPin.length < 4) { alert("PIN must be exactly 4 digits."); return; }
+        try {
+            const { error } = await _supabase.from('registrations').update({ mpin: newPin }).eq('sticker_id', STICKER_ID);
+            if(error) throw error;
+            alert("🎉 Security PIN updated! Re-loading dashboard framework.");
+            location.reload();
+        } catch(e) { alert("Database update pipeline error."); }
+    }
+
+    // PDF Print Redirect
+    function triggerDownloadPDF() {
+        alert("Generating vector sheet layouts... Redirecting to printer engines.");
+        window.print();
+    }
 </script>
 </body>
 </html>
