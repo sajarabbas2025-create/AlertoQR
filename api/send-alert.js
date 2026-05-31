@@ -1,7 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const twilio = require('twilio');
 
-// Environment variables configuration
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const twilioSid = process.env.TWILIO_ACCOUNT_SID;
@@ -11,7 +10,6 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 const twilioClient = twilio(twilioSid, twilioAuthToken);
 
 module.exports = async (req, res) => {
-    // CORS headers handling for frontend requests
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -35,33 +33,40 @@ module.exports = async (req, res) => {
                 return res.status(404).json({ success: false, error: 'Sticker ID not found in database.' });
             }
 
-            const targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
+            let rawPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
 
-            if (!targetPhone) {
+            if (!rawPhone) {
                 return res.status(400).json({ success: false, error: 'Requested phone number is not registered.' });
             }
 
-            // 2. 📞 REVERSE OUTBOUND CALL PROTOCOL (Owner ke phone par direct ring bajegi)
+            // 🔥 PHONE FORMATTER: Agar number me +91 nahi laga hai, toh automatic jod dega
+            let targetPhone = rawPhone.toString().trim();
+            if (!targetPhone.startsWith('+')) {
+                if (targetPhone.startsWith('91') && targetPhone.length > 10) {
+                    targetPhone = '+' + targetPhone;
+                } else {
+                    targetPhone = '+91' + targetPhone;
+                }
+            }
+
+            // 2. 📞 CALL PROTOCOL
             if (mode === 'call' || mode === 'alternate') {
-                
-                // Twilio TwiML Voice configuration: Owner call uthate hi ye sunege
                 const twimlResponse = `
                     <Response>
-                        <Say voice="polly.Aditi">Alerto Q R Alert! Kisi helper ne aapki gadi ke paas se aapko contact karne ki koshish ki hai. Agar aap unse baat karna chahte hain, toh kripya apna phone katne ke baad gadi ke paas check karein.</Say>
+                        <Say voice="polly.Aditi">Alerto Q R Alert! Kisi helper ne aapki gadi ke paas se aapko contact karne ki koshish ki hai. Kripya turant check karein.</Say>
                     </Response>
                 `;
 
-                // Seedhe Vehicle Owner ko call trigger karna (Helper ke number ki zaroorat nahi hai)
                 const call = await twilioClient.calls.create({
                     twiml: twimlResponse,
-                    to: targetPhone, // Owner ka registered Indian Mobile number
-                    from: '+17816193111' // Aapka active Twilio US number
+                    to: targetPhone, // Formatted Indian Number (+91XXXX...)
+                    from: '+17816193111' 
                 });
 
                 return res.status(200).json({ success: true, mode: 'call', sid: call.sid });
             } 
             
-            // 3. QUICK ALERT SMS LOGIC (If fallback/buttons are used)
+            // 3. QUICK ALERT SMS LOGIC
             else {
                 const message = await twilioClient.messages.create({
                     body: `[AlertoQR] Emergency Alert! Aapki vehicle (${data.vehicle_number || 'Vehicle'}) par ek notification aaya hai: "${alertType}". Kripya turant check karein!`,
