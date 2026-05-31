@@ -130,13 +130,13 @@
         }
 
         .btn-owner {
-            background: #000000;
+            background: #1e293b;
             color: white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .btn-owner:hover {
-            background: #1e293b;
+            background: #0f172a;
         }
 
         .btn-alternate {
@@ -337,7 +337,7 @@
                 <span>Wrong Parking</span>
             </div>
             <div class="alert-card" onclick="triggerWhatsAppInboundAlert('Tow Alert')">
-                <i class="fa-solid fa-car-burst" style="color: #3b82f6;"></i>
+                <i class="fa-solid fa-car" style="color: #3b82f6;"></i>
                 <span>Tow Alert</span>
             </div>
             <div class="alert-card" onclick="triggerWhatsAppInboundAlert('Window / Light Open')">
@@ -385,7 +385,12 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
         const queryStrings = new URLSearchParams(window.location.search);
-        const urlAssetId = queryStrings.get('id');
+        let urlAssetId = queryStrings.get('id');
+
+        // Agar URL me 'id' na mile to 'ic' parameter bhi backup check karega
+        if (!urlAssetId) {
+            urlAssetId = queryStrings.get('ic');
+        }
 
         if (!urlAssetId) {
             deployErrorView('Invalid Parameters', 'Missing QR asset structural token logic mapping.');
@@ -428,7 +433,7 @@
         document.getElementById('error-view').style.display = 'block';
     }
 
-    // SYSTEM INTEGRITY VOICEMAIL MASK CALL ENGINE
+    // DIRECT TEL DIALING METHOD (Bina backend jhanjhat ke absolute connection)
     async function dispatchTwilioMaskedCall() {
         if (!primaryDestinationPhone) {
             alert("No standard destination line linked.");
@@ -437,37 +442,15 @@
 
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
-        consoleTicker.style.background = "#eff6ff";
-        consoleTicker.style.color = "#1e40af";
-        consoleTicker.style.borderColor = "#bfdbfe";
-        consoleTicker.innerText = "🔄 Establishing secure masked connection link via Twilio...";
+        consoleTicker.style.background = "#ecfdf5";
+        consoleTicker.style.color = "#065f46";
+        consoleTicker.style.borderColor = "#a7f3d0";
+        consoleTicker.innerText = "📞 Connecting call directly to owner...";
 
-        try {
-            const proxyResponse = await fetch('/api/make-call', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ownerPhone: primaryDestinationPhone })
-            });
-
-            const streamData = await proxyResponse.json();
-
-            if (streamData.success) {
-                consoleTicker.style.background = "#ecfdf5";
-                consoleTicker.style.color = "#065f46";
-                consoleTicker.style.borderColor = "#a7f3d0";
-                consoleTicker.innerText = "📞 Connected! Twilio is placing an outbound path patch right now.";
-            } else {
-                consoleTicker.style.background = "#fef2f2";
-                consoleTicker.style.color = "#991b1b";
-                consoleTicker.style.borderColor = "#fee2e2";
-                consoleTicker.innerText = "❌ Call Routing Halt: " + (streamData.error || "System block");
-            }
-        } catch (err) {
-            consoleTicker.style.background = "#fef2f2";
-            consoleTicker.style.color = "#991b1b";
-            consoleTicker.style.borderColor = "#fee2e2";
-            consoleTicker.innerText = "❌ Connection Refused. Please ensure Vercel environment variables are correct.";
-        }
+        // Bina kisi cloud backend error ke seedhe native dialer khol dega
+        setTimeout(() => {
+            window.location.href = `tel:${primaryDestinationPhone}`;
+        }, 400);
     }
 
     function dialAlternateFallbackRoute() {
