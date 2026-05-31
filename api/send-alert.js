@@ -1,7 +1,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const twilio = require('twilio');
 
-// Vercel Settings me se automatic environment variables uthayega
+// Environment variables configuration
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const twilioSid = process.env.TWILIO_ACCOUNT_SID;
@@ -11,7 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 const twilioClient = twilio(twilioSid, twilioAuthToken);
 
 module.exports = async (req, res) => {
-    // Cross-Origin Resource Sharing (CORS) handles for GitHub Pages/Frontend requests
+    // CORS headers handling for frontend requests
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -21,10 +21,10 @@ module.exports = async (req, res) => {
     }
 
     if (req.method === 'POST') {
-        const { stickerId, alertType, mode } = req.body;
+        const { stickerId, alertType, mode, helperPhone } = req.body;
 
         try {
-            // 1. Supabase ke 'registrations' table se data fetch karna
+            // 1. Supabase se details nikalna
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -41,21 +41,36 @@ module.exports = async (req, res) => {
                 return res.status(400).json({ success: false, error: 'Requested phone number is not registered.' });
             }
 
-            // 2. Agar user ne 'Call' click kiya hai toh Twilio Voice Call trigger hoga (Masked Call)
+            // 2. 👥 TRUE 2-WAY MASKING CALL LOGIC
             if (mode === 'call' || mode === 'alternate') {
+                
+                // Twilio TwiML Voice Engine Initialization:
+                // Ye helper ko pehle automated line bolega fir background me owner se connect kar dega
+                const twimlResponse = `
+                    <Response>
+                        <Say voice="alice">Connecting you securely to the vehicle owner. Please wait.</Say>
+                        <Dial callerId="+17816193111">
+                            ${targetPhone}
+                        </Dial>
+                    </Response>
+                `;
+
+                // Pehle Twilio Helper ke phone par call lagayega 
+                // (Kyunki browser se direct call client cost badhata hai, isliye twilio bridge call generate karega)
                 const call = await twilioClient.calls.create({
-                    twiml: `<Response><Say voice="alice">Hello, someone is trying to reach you regarding your vehicle ${data.vehicle_number || 'Registered Vehicle'}. Please check your vehicle.</Say></Response>`,
-                    to: targetPhone,
-                    from: '+17816193111' // Aapka Twilio number
+                    twiml: twimlResponse,
+                    to: helperPhone || targetPhone, // Agar helper ka number browser se nahi mila, toh safe side direct fallback alert call chali jayegi
+                    from: '+17816193111' // Aapka Twilio Number
                 });
+
                 return res.status(200).json({ success: true, mode: 'call', sid: call.sid });
             } 
             
-            // 3. Agar 'Quick Alert' click kiya hai toh SMS jayega
+            // 3. QUICK ALERT SMS LOGIC
             else {
                 const message = await twilioClient.messages.create({
-                    body: `[AlertoQR] Alert! Aapki gaadi (${data.vehicle_number || 'Vehicle'}) par ek alert aaya hai: "${alertType}". Kripya turant check karein.`,
-                    from: '+17816193111', // Aapka Twilio number
+                    body: `[AlertoQR] Emergency Alert! Aapki vehicle (${data.vehicle_number || 'Vehicle'}) par ek notification aaya hai: "${alertType}". Kripya turant check karein!`,
+                    from: '+17816193111',
                     to: targetPhone
                 });
                 return res.status(200).json({ success: true, mode: 'sms', sid: message.sid });
