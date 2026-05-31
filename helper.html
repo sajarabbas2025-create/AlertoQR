@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* Base Styling Engine Reset */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -29,7 +28,6 @@
             padding: 16px;
         }
 
-        /* Main Shell Container Layout */
         .helper-container {
             width: 100%;
             max-width: 480px;
@@ -40,7 +38,6 @@
             border: 1px solid #e2e8f0;
         }
         
-        /* Top Branding Header Layout */
         .header-section {
             display: flex;
             justify-content: space-between;
@@ -67,7 +64,6 @@
             border: 1px solid #e2e8f0;
         }
         
-        /* Dynamic Vehicle Identity Profile Plate Card */
         .owner-card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -107,7 +103,6 @@
             border: 1px solid #334155;
         }
         
-        /* Twin Telecommunication Trigger System Grid */
         .calling-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -149,7 +144,6 @@
             background: #f8fafc;
         }
 
-        /* Realtime Output Feedback Ticker Console */
         .status-ticker {
             margin-bottom: 20px;
             padding: 12px;
@@ -161,7 +155,6 @@
             border: 1px solid transparent;
         }
         
-        /* Grid Dashboard Section Layouts */
         .section-title {
             font-size: 12px;
             font-weight: 800;
@@ -209,7 +202,6 @@
             color: #334155;
         }
         
-        /* Emergency Static Routes System Grid */
         .emergency-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -241,7 +233,6 @@
             border: 1px solid #dcfce7;
         }
 
-        /* Embedded Dynamic Video Processing System Modal Overlay */
         .camera-overlay-shield {
             display: none;
             position: fixed;
@@ -273,7 +264,6 @@
             margin-bottom: 16px;
         }
 
-        /* State Control Shells */
         .state-shell-view {
             text-align: center;
             padding: 40px 10px;
@@ -320,10 +310,11 @@
         </div>
 
         <div class="calling-grid">
-            <button class="btn-call btn-owner" onclick="dispatchSecureAction('call')">
+            <!-- FIXED: No prompt, native masking dial shortcut path linked -->
+            <button class="btn-call btn-owner" onclick="triggerNativeMaskedCall('primary')">
                 <i class="fa-solid fa-phone"></i> Call Owner
             </button>
-            <button class="btn-call btn-alternate" onclick="dispatchSecureAction('alternate')">
+            <button class="btn-call btn-alternate" onclick="triggerNativeMaskedCall('alternate')">
                 <i class="fa-solid fa-phone"></i> Call Alternate
             </button>
         </div>
@@ -332,15 +323,15 @@
 
         <div class="section-title">Quick Alerts</div>
         <div class="alerts-grid">
-            <div class="alert-card" onclick="dispatchSecureAction('sms', 'Wrong Parking')">
+            <div class="alert-card" onclick="dispatchSecureSMS('Wrong Parking')">
                 <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
                 <span>Wrong Parking</span>
             </div>
-            <div class="alert-card" onclick="dispatchSecureAction('sms', 'Tow Alert')">
+            <div class="alert-card" onclick="dispatchSecureSMS('Tow Alert')">
                 <i class="fa-solid fa-car" style="color: #3b82f6;"></i>
                 <span>Tow Alert</span>
             </div>
-            <div class="alert-card" onclick="dispatchSecureAction('sms', 'Window / Light Open')">
+            <div class="alert-card" onclick="dispatchSecureSMS('Window / Light Open')">
                 <i class="fa-solid fa-file-lines" style="color: #64748b;"></i>
                 <span>Window / Light Open</span>
             </div>
@@ -378,8 +369,8 @@
     const databaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(databaseUrl, databaseKey);
 
-    // CRITICAL: Vercel par deployment ke baad apna live custom route URL yahan replace kijiye
-    const backendApiUrl = 'https://alerto-qr.vercel.app/api/send-alert'; 
+    // Vercel backend server alert module link
+    const backendApiUrl = 'https://alerto-qr-sajarabbas2025-creates-projects.vercel.app/api/send-alert'; 
 
     let urlAssetId = "";
     let localStreamRef = null;
@@ -425,27 +416,29 @@
         document.getElementById('error-view').style.display = 'block';
     }
 
-    // SECURE DISPATCH ENGINE (Twilio 2-Way Call Masking Configured)
-    async function dispatchSecureAction(mode, alertType = '') {
+    // FIXED: Helper se bina number maange seedhe Twilio proxy bridge dialer open karega
+    function triggerNativeMaskedCall(targetMode) {
+        const consoleTicker = document.getElementById('ticker-box');
+        consoleTicker.style.display = "block";
+        consoleTicker.style.background = "#ecfdf5";
+        consoleTicker.style.color = "#065f46";
+        consoleTicker.style.borderColor = "#a7f3d0";
+        consoleTicker.innerText = "📞 Connecting secure call bridge...";
+
+        setTimeout(() => {
+            // Seedhe aapka Twilio cloud proxy number dialer me load ho jayega
+            window.location.href = `tel:+17816193111`;
+        }, 300);
+    }
+
+    // SECURE SMS ENGINE 
+    async function dispatchSecureSMS(alertType) {
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
         consoleTicker.style.background = "#f1f5f9";
         consoleTicker.style.color = "#334155";
         consoleTicker.style.borderColor = "#cbd5e1";
-        consoleTicker.innerText = mode === 'sms' ? `📤 Sending "${alertType}" alert via SMS...` : "📞 Initiating secure call routing...";
-
-        let helperNumber = "";
-        // 2-Way Call Bridge banane ke liye helper ka contact lena zaroori hai
-        if (mode === 'call' || mode === 'alternate') {
-            helperNumber = prompt("Masked Call jodne ke liye apna phone number daalein (+91 ke sath, e.g. +919999xxxxxx):");
-            if (!helperNumber || helperNumber.trim() === "") {
-                consoleTicker.style.background = "#fef2f2";
-                consoleTicker.style.color = "#991b1b";
-                consoleTicker.style.borderColor = "#fca5a5";
-                consoleTicker.innerText = "❌ Call cancelled: Your phone number is required to route the bridge.";
-                return;
-            }
-        }
+        consoleTicker.innerText = `📤 Sending "${alertType}" alert via SMS...`;
 
         try {
             const response = await fetch(backendApiUrl, {
@@ -454,10 +447,14 @@
                 body: JSON.stringify({
                     stickerId: urlAssetId,
                     alertType: alertType,
-                    mode: mode,
-                    helperPhone: helperNumber.trim()
+                    mode: 'sms'
                 })
             });
+
+            // Status codes mapping validation check
+            if (!response.ok) {
+                throw new Error(`Server returned status ${response.status}`);
+            }
 
             const result = await response.json();
 
@@ -465,7 +462,7 @@
                 consoleTicker.style.background = "#ecfdf5";
                 consoleTicker.style.color = "#065f46";
                 consoleTicker.style.borderColor = "#a7f3d0";
-                consoleTicker.innerText = mode === 'sms' ? "✅ Alert SMS sent successfully!" : "✅ Secure Call bridge initiated! Pehle aapke phone par call aayegi, use uthayein.";
+                consoleTicker.innerText = "✅ Alert SMS sent successfully to owner!";
             } else {
                 throw new Error(result.error || 'Failed to process request');
             }
