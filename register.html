@@ -192,7 +192,7 @@
                 <label for="txt-owner-name">Owner Full Name *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-user"></i>
-                    <input type="text" id="txt-owner-name" class="form-control" placeholder="Enter full name (e.g. Sajar Abbas)" required>
+                    <input type="text" id="txt-owner-name" class="form-control" placeholder="Enter full name" required>
                 </div>
             </div>
 
@@ -244,7 +244,7 @@
     </div>
 
     <div id="error-screen">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size: 36px; margin-bottom: 16px;"></i>
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 36px; margin-images: 16px;"></i>
         <div id="error-message-text">Configuration mapping missing.</div>
     </div>
 
@@ -272,7 +272,7 @@
             return;
         }
 
-        cleanStickerId = stickerId.trim().toUpperCase();
+        cleanStickerId = stickerId.trim().toUpperCase().replace('@', ''); // Safer parse logic if @ included in string
         document.getElementById('lbl-sticker-id').innerText = cleanStickerId;
 
         try {
@@ -287,7 +287,6 @@
                 return;
             }
 
-            // Agar sticker already active hai to helper page par redirect ho jayega
             if (data && data.status === 'Active') {
                 window.location.href = `helper.html?id=${cleanStickerId}`;
                 return;
@@ -321,12 +320,12 @@
         btnSave.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing Activation...';
 
         try {
-            // FIXED: 'full_name' ko badalkar 'owner_name' kiya taki Helper Page ke data binding se match kare
+            // ALIGNED BACK TO 'full_name' TO MATCH DATABASE SCHEMAS CONSTRAINTS
             const { error } = await _supabase
                 .from('registrations')
                 .upsert({
                     sticker_id: cleanStickerId,
-                    owner_name: ownerName, 
+                    full_name: ownerName, 
                     mobile_number: mobileNumber,
                     alternate_number: alternateNumber || null,
                     vehicle_number: vehicleNumber,
