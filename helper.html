@@ -108,43 +108,32 @@
         
         .calling-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            grid-template-columns: 1fr;
             margin-bottom: 24px;
         }
 
         .btn-call {
-            padding: 14px;
+            padding: 16px;
             border-radius: 12px;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 700;
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             transition: all 0.2s;
         }
 
         .btn-owner {
-            background: #1e293b;
+            background: #25d366;
             color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
         }
 
         .btn-owner:hover {
-            background: #0f172a;
-        }
-
-        .btn-alternate {
-            background: #ffffff;
-            color: #0f172a;
-            border: 1px solid #e2e8f0;
-        }
-
-        .btn-alternate:hover {
-            background: #f8fafc;
+            background: #20ba56;
         }
 
         .status-ticker {
@@ -236,37 +225,6 @@
             border: 1px solid #dcfce7;
         }
 
-        .camera-overlay-shield {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(6px);
-            z-index: 99999;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .camera-box-body {
-            background: white;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        #video-preview {
-            width: 100%;
-            border-radius: 12px;
-            background: #000;
-            margin-bottom: 16px;
-        }
-
         .state-shell-view {
             text-align: center;
             padding: 40px 10px;
@@ -291,7 +249,7 @@
     
     <div id="loading-view" class="state-shell-view">
         <div class="spinner-engine"></div>
-        <p style="color: #64748b; font-size: 14px; font-weight: 500;">Syncing node matrices...</p>
+        <p style="color: #64748b; font-size: 14px; font-weight: 500;">Connecting secure network...</p>
     </div>
 
     <div id="error-view" class="state-shell-view" style="display: none;">
@@ -302,22 +260,19 @@
 
     <div id="dashboard-view" style="display: none;">
         <div class="header-section">
-            <div class="brand-name">AlertoQR Helper</div>
+            <div class="brand-name">AlertoQR</div>
             <div class="sticker-id-badge" id="dom-sticker-badge">ID: ----</div>
         </div>
 
         <div class="owner-card">
-            <div class="meta-label">Vehicle Owner</div>
+            <div class="meta-label">Vehicle QR Status Locked</div>
             <div class="owner-name" id="dom-owner-name">------</div>
             <div class="vehicle-number-plate" id="dom-plate-number">------</div>
         </div>
 
         <div class="calling-grid">
-            <button class="btn-call btn-owner" onclick="triggerNativeMaskedCall()">
-                <i class="fa-solid fa-phone"></i> Call Owner
-            </button>
-            <button class="btn-call btn-alternate" onclick="triggerNativeMaskedCall()">
-                <i class="fa-solid fa-phone"></i> Call Alternate
+            <button class="btn-call btn-owner" onclick="triggerSmartAlertBridge()">
+                <i class="fa-solid fa-bell"></i> Notify Owner Instantly
             </button>
         </div>
 
@@ -333,35 +288,24 @@
                 <i class="fa-solid fa-car" style="color: #3b82f6;"></i>
                 <span>Tow Alert</span>
             </div>
-            <div class="alert-card" onclick="dispatchSecureSMS('Window / Light Open')">
-                <i class="fa-solid fa-file-lines" style="color: #64748b;"></i>
-                <span>Window / Light Open</span>
+            <div class="alert-card" onclick="dispatchSecureSMS('Window Open')">
+                <i class="fa-solid fa-window-maximize" style="color: #64748b;"></i>
+                <span>Window Open</span>
             </div>
-            <div class="alert-card" onclick="openCameraPipeline()">
-                <i class="fa-solid fa-camera" style="color: #0f172a;"></i>
-                <span>Share Photo</span>
+            <div class="alert-card" onclick="dispatchSecureSMS('Fuel Leakage')">
+                <i class="fa-solid fa-gas-pump" style="color: #eab308;"></i>
+                <span>Fuel Leakage</span>
             </div>
         </div>
 
         <div class="section-title">Emergency Links</div>
         <div class="emergency-grid">
             <button class="btn-emergency btn-police" onclick="window.location.href='tel:112'">
-                <i class="fa-solid fa-building-shield"></i> Call Police (112)
+                <i class="fa-solid fa-building-shield"></i> Police (112)
             </button>
             <button class="btn-emergency btn-ambulance" onclick="window.location.href='tel:102'">
                 <i class="fa-solid fa-truck-medical"></i> Ambulance (102)
             </button>
-        </div>
-    </div>
-</div>
-
-<div id="camera-shield" class="camera-overlay-shield">
-    <div class="camera-box-body">
-        <h3 style="font-size: 15px; font-weight: 800; margin-bottom: 12px;">Capture Status Photo</h3>
-        <video id="video-preview" autoplay playsinline></video>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button class="btn-call btn-owner" style="padding: 10px 20px;" onclick="processPhotoSnapshot()">Snap</button>
-            <button class="btn-call btn-alternate" style="padding: 10px 20px;" onclick="closeCameraPipeline()">Cancel</button>
         </div>
     </div>
 </div>
@@ -374,7 +318,6 @@
     const backendApiUrl = 'https://alerto-qr-sajarabbas2025-creates-projects.vercel.app/api/send-alert'; 
 
     let urlAssetId = "";
-    let localStreamRef = null;
 
     window.addEventListener('DOMContentLoaded', async () => {
         const queryStrings = new URLSearchParams(window.location.search);
@@ -388,16 +331,14 @@
         urlAssetId = queryStrings.get('id') || queryStrings.get('ic');
 
         if (!urlAssetId) {
-            deployErrorView('Invalid Parameters', 'Missing QR asset structural token mapping.');
+            deployErrorView('Invalid Parameters', 'Missing QR asset token.');
             return;
         }
 
-        // Clean @ symbols if any present in raw data scans
         urlAssetId = urlAssetId.replace('@', '');
         document.getElementById('dom-sticker-badge').innerText = `ID: ${urlAssetId.toUpperCase()}`;
 
         try {
-            // FIXED: CHANGED BACK TO 'full_name' FOR STABLE DATA BINDING
             const { data, error } = await _supabase
                 .from('registrations')
                 .select('full_name, vehicle_number')
@@ -427,17 +368,8 @@
         document.getElementById('error-view').style.display = 'block';
     }
 
-    function triggerNativeMaskedCall() {
-        const consoleTicker = document.getElementById('ticker-box');
-        consoleTicker.style.display = "block";
-        consoleTicker.style.background = "#ecfdf5";
-        consoleTicker.style.color = "#065f46";
-        consoleTicker.style.borderColor = "#a7f3d0";
-        consoleTicker.innerText = "📞 Connecting secure call bridge...";
-
-        setTimeout(() => {
-            window.location.href = `tel:+17816193111`;
-        }, 200);
+    function triggerSmartAlertBridge() {
+        dispatchSecureSMS('Urgent Request: Someone near your vehicle needs you to contact them immediately.');
     }
 
     async function dispatchSecureSMS(alertType) {
@@ -446,7 +378,7 @@
         consoleTicker.style.background = "#f1f5f9";
         consoleTicker.style.color = "#334155";
         consoleTicker.style.borderColor = "#cbd5e1";
-        consoleTicker.innerText = `📤 Sending "${alertType}" alert via SMS...`;
+        consoleTicker.innerText = `📤 Dispatched alert protocol token...`;
 
         try {
             const response = await fetch(backendApiUrl, {
@@ -469,7 +401,7 @@
                 consoleTicker.style.background = "#ecfdf5";
                 consoleTicker.style.color = "#065f46";
                 consoleTicker.style.borderColor = "#a7f3d0";
-                consoleTicker.innerText = "✅ Alert SMS sent successfully to owner!";
+                consoleTicker.innerText = "✅ Secure alert ping successfully sent to owner's device!";
             } else {
                 throw new Error(result.error || 'Failed to process request');
             }
@@ -477,35 +409,8 @@
             consoleTicker.style.background = "#fef2f2";
             consoleTicker.style.color = "#991b1b";
             consoleTicker.style.borderColor = "#fca5a5";
-            consoleTicker.innerText = `❌ Error: ${error.message}`;
+            consoleTicker.innerText = `❌ Delivery issue: Check console parameters.`;
         }
-    }
-
-    async function openCameraPipeline() {
-        try {
-            localStreamRef = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-            document.getElementById('video-preview').srcObject = localStreamRef;
-            document.getElementById('camera-shield').style.display = 'flex';
-        } catch (e) {
-            alert("Camera device permissions denied.");
-        }
-    }
-
-    function closeCameraPipeline() {
-        if (localStreamRef) {
-            localStreamRef.getTracks().forEach(t => t.stop());
-        }
-        document.getElementById('camera-shield').style.display = 'none';
-    }
-
-    function processPhotoSnapshot() {
-        const videoElement = document.getElementById('video-preview');
-        const processingCanvas = document.createElement('canvas');
-        processingCanvas.width = videoElement.videoWidth;
-        processingCanvas.height = videoElement.videoHeight;
-        processingCanvas.getContext('2d').drawImage(videoElement, 0, 0, processingCanvas.width, processingCanvas.height);
-        closeCameraPipeline();
-        alert("Status frame processed and synced with local registers successfully!");
     }
 </script>
 </body>
