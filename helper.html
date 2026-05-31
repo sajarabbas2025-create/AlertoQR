@@ -374,12 +374,11 @@
 </div>
 
 <script>
-    // Anon key browser me reh sakti hai, data fetch karne ke liye (Secure logic built)
     const databaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const databaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(databaseUrl, databaseKey);
 
-    // CHANGE THIS: Jab aap Vercel par deploy karenge, toh backend ka live URL yahan paste karein
+    // CRITICAL: Vercel par deployment ke baad apna live custom route URL yahan replace kijiye
     const backendApiUrl = 'https://alerto-qr.vercel.app/api/send-alert'; 
 
     let urlAssetId = "";
@@ -408,7 +407,6 @@
                 return;
             }
 
-            // Frontend par number bilkul render nahi ho raha hai -> Dynamic privacy secure!
             document.getElementById('dom-owner-name').innerText = data.owner_name || "AUTHORIZED OWNER";
             document.getElementById('dom-plate-number').innerText = data.vehicle_number || "VEHICLE";
             
@@ -427,7 +425,7 @@
         document.getElementById('error-view').style.display = 'block';
     }
 
-    // SECURE DISPATCH ENGINE (Twilio / Supabase Secret Router)
+    // SECURE DISPATCH ENGINE (Twilio 2-Way Call Masking Configured)
     async function dispatchSecureAction(mode, alertType = '') {
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
@@ -436,6 +434,19 @@
         consoleTicker.style.borderColor = "#cbd5e1";
         consoleTicker.innerText = mode === 'sms' ? `📤 Sending "${alertType}" alert via SMS...` : "📞 Initiating secure call routing...";
 
+        let helperNumber = "";
+        // 2-Way Call Bridge banane ke liye helper ka contact lena zaroori hai
+        if (mode === 'call' || mode === 'alternate') {
+            helperNumber = prompt("Masked Call jodne ke liye apna phone number daalein (+91 ke sath, e.g. +919999xxxxxx):");
+            if (!helperNumber || helperNumber.trim() === "") {
+                consoleTicker.style.background = "#fef2f2";
+                consoleTicker.style.color = "#991b1b";
+                consoleTicker.style.borderColor = "#fca5a5";
+                consoleTicker.innerText = "❌ Call cancelled: Your phone number is required to route the bridge.";
+                return;
+            }
+        }
+
         try {
             const response = await fetch(backendApiUrl, {
                 method: 'POST',
@@ -443,7 +454,8 @@
                 body: JSON.stringify({
                     stickerId: urlAssetId,
                     alertType: alertType,
-                    mode: mode
+                    mode: mode,
+                    helperPhone: helperNumber.trim()
                 })
             });
 
@@ -453,7 +465,7 @@
                 consoleTicker.style.background = "#ecfdf5";
                 consoleTicker.style.color = "#065f46";
                 consoleTicker.style.borderColor = "#a7f3d0";
-                consoleTicker.innerText = mode === 'sms' ? "✅ Alert SMS sent successfully!" : "✅ Call placed successfully via proxy bridge!";
+                consoleTicker.innerText = mode === 'sms' ? "✅ Alert SMS sent successfully!" : "✅ Secure Call bridge initiated! Pehle aapke phone par call aayegi, use uthayein.";
             } else {
                 throw new Error(result.error || 'Failed to process request');
             }
