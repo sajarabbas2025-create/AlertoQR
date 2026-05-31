@@ -1,7 +1,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const twilio = require('twilio');
 
-// Environment variables configuration (Vercel Dashboard se settings automatically load hongi)
+// Environment variables configuration
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const twilioSid = process.env.TWILIO_ACCOUNT_SID;
@@ -11,7 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 const twilioClient = twilio(twilioSid, twilioAuthToken);
 
 module.exports = async (req, res) => {
-    // CORS headers handling for frontend requests (GitHub Pages connectivity)
+    // CORS headers handling for frontend requests
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
     }
 
     if (req.method === 'POST') {
-        const { stickerId, alertType, mode, helperPhone } = req.body;
+        const { stickerId, alertType, mode } = req.body;
 
         try {
             // 1. Supabase se details nikalna
@@ -41,31 +41,27 @@ module.exports = async (req, res) => {
                 return res.status(400).json({ success: false, error: 'Requested phone number is not registered.' });
             }
 
-            // 2. 👥 TRUE 2-WAY MASKING CALL LOGIC
+            // 2. 📞 REVERSE OUTBOUND CALL PROTOCOL (Owner ke phone par direct ring bajegi)
             if (mode === 'call' || mode === 'alternate') {
                 
-                // Twilio TwiML Voice Engine Initialization:
-                // Ye helper ko pehle automated line bolega fir background me owner se connect kar dega
+                // Twilio TwiML Voice configuration: Owner call uthate hi ye sunege
                 const twimlResponse = `
                     <Response>
-                        <Say voice="alice">Connecting you securely to the vehicle owner. Please wait.</Say>
-                        <Dial callerId="+17816193111">
-                            ${targetPhone}
-                        </Dial>
+                        <Say voice="polly.Aditi">Alerto Q R Alert! Kisi helper ne aapki gadi ke paas se aapko contact karne ki koshish ki hai. Agar aap unse baat karna chahte hain, toh kripya apna phone katne ke baad gadi ke paas check karein.</Say>
                     </Response>
                 `;
 
-                // Pehle Twilio Helper ke phone par call lagayega 
+                // Seedhe Vehicle Owner ko call trigger karna (Helper ke number ki zaroorat nahi hai)
                 const call = await twilioClient.calls.create({
                     twiml: twimlResponse,
-                    to: helperPhone || targetPhone, 
-                    from: '+17816193111' // Aapka Twilio Number
+                    to: targetPhone, // Owner ka registered Indian Mobile number
+                    from: '+17816193111' // Aapka active Twilio US number
                 });
 
                 return res.status(200).json({ success: true, mode: 'call', sid: call.sid });
             } 
             
-            // 3. QUICK ALERT SMS LOGIC
+            // 3. QUICK ALERT SMS LOGIC (If fallback/buttons are used)
             else {
                 const message = await twilioClient.messages.create({
                     body: `[AlertoQR] Emergency Alert! Aapki vehicle (${data.vehicle_number || 'Vehicle'}) par ek notification aaya hai: "${alertType}". Kripya turant check karein!`,
