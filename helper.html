@@ -10,309 +10,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* Base Styling Engine Reset */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background-color: #f8fafc;
-            color: #0f172a;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 16px;
-        }
-
-        /* Main Shell Container Layout */
-        .helper-container {
-            width: 100%;
-            max-width: 480px;
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-        }
-        
-        /* Top Branding Header Layout */
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 16px;
-        }
-
-        .brand-name {
-            font-size: 22px;
-            font-weight: 800;
-            color: #0f172a;
-            letter-spacing: -0.5px;
-        }
-
-        .sticker-id-badge {
-            background: #f1f5f9;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-        }
-        
-        /* Dynamic Vehicle Identity Profile Plate Card */
-        .owner-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.01);
-        }
-
-        .meta-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-
-        .owner-name {
-            font-size: 26px;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: -0.5px;
-        }
-
-        .vehicle-number-plate {
-            background: #000000;
-            color: #ffffff;
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 6px;
-            font-size: 18px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            border: 1px solid #334155;
-        }
-        
-        /* Twin Telecommunication Trigger System Grid */
-        .calling-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .btn-call {
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .btn-owner {
-            background: #1e293b;
-            color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .btn-owner:hover {
-            background: #0f172a;
-        }
-
-        .btn-alternate {
-            background: #ffffff;
-            color: #0f172a;
-            border: 1px solid #e2e8f0;
-        }
-
-        .btn-alternate:hover {
-            background: #f8fafc;
-        }
-
-        /* Realtime Output Feedback Ticker Console */
-        .status-ticker {
-            margin-bottom: 20px;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: center;
-            display: none;
-            border: 1px solid transparent;
-        }
-        
-        /* Grid Dashboard Section Layouts */
-        .section-title {
-            font-size: 12px;
-            font-weight: 800;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-
-        .alerts-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .alert-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 20px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .alert-card:hover {
-            border-color: #cbd5e1;
-            background: #f8fafc;
-            transform: translateY(-1px);
-        }
-
-        .alert-card i {
-            font-size: 26px;
-            display: block;
-        }
-
-        .alert-card span {
-            font-size: 13px;
-            font-weight: 700;
-            color: #334155;
-        }
-        
-        /* Emergency Static Routes System Grid */
-        .emergency-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .btn-emergency {
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-police {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fee2e2;
-        }
-
-        .btn-ambulance {
-            background: #f0fdf4;
-            color: #16a34a;
-            border: 1px solid #dcfce7;
-        }
-
-        /* Embedded Dynamic Video Processing System Modal Overlay */
-        .camera-overlay-shield {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(6px);
-            z-index: 99999;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .camera-box-body {
-            background: white;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        #video-preview {
-            width: 100%;
-            border-radius: 12px;
-            background: #000;
-            margin-bottom: 16px;
-        }
-
-        /* State Control Shells */
-        .state-shell-view {
-            text-align: center;
-            padding: 40px 10px;
-        }
-
-        .spinner-engine {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #f1f5f9;
-            border-top: 3px solid #000000;
-            border-radius: 50%;
-            margin: 0 auto 16px;
-            animation: spin 1s linear infinite;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #f8fafc; color: #0f172a; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 16px; }
+        .helper-container { width: 100%; max-width: 480px; background: #ffffff; border-radius: 24px; padding: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; }
+        .brand-name { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
+        .sticker-id-badge { background: #f1f5f9; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; color: #475569; border: 1px solid #e2e8f0; }
+        .owner-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .meta-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 6px; }
+        .owner-name { font-size: 26px; font-weight: 800; color: #0f172a; margin-bottom: 12px; text-transform: uppercase; }
+        .vehicle-number-plate { background: #000000; color: #ffffff; display: inline-block; padding: 6px 16px; border-radius: 6px; font-size: 18px; font-weight: 800; }
+        .calling-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .btn-call { padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+        .btn-owner { background: #1e293b; color: white; }
+        .btn-alternate { background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0; }
+        .status-ticker { margin-bottom: 20px; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 600; text-align: center; display: none; border: 1px solid #e2e8f0; }
+        .section-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; }
+        .alerts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .alert-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; }
+        .emergency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn-emergency { padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-police { background: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
+        .btn-ambulance { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
+        .camera-overlay-shield { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.75); z-index: 99999; justify-content: center; align-items: center; padding: 20px; }
+        .camera-box-body { background: white; border-radius: 20px; width: 100%; max-width: 400px; padding: 20px; text-align: center; }
+        #video-preview { width: 100%; border-radius: 12px; background: #000; margin-bottom: 16px; }
+        .state-shell-view { text-align: center; padding: 40px 10px; }
+        .spinner-engine { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top: 3px solid #000000; border-radius: 50%; margin: 0 auto 16px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <div class="helper-container">
-    
-    <div id="loading-view" class="state-shell-view">
-        <div class="spinner-engine"></div>
-        <p style="color: #64748b; font-size: 14px; font-weight: 500;">Syncing node matrices...</p>
-    </div>
-
-    <div id="error-view" class="state-shell-view" style="display: none;">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: #ef4444; margin-bottom: 12px;"></i>
-        <h3 id="error-heading" style="font-size: 16px; margin-bottom: 6px;">Network Fault</h3>
-        <p id="error-subtext" style="color: #64748b; font-size: 13px;"></p>
-    </div>
-
+    <div id="loading-view" class="state-shell-view"><div class="spinner-engine"></div><p>Syncing...</p></div>
     <div id="dashboard-view" style="display: none;">
         <div class="header-section">
             <div class="brand-name">AlertoQR Helper</div>
             <div class="sticker-id-badge" id="dom-sticker-badge">ID: ----</div>
         </div>
-
         <div class="owner-card">
             <div class="meta-label">Vehicle Owner</div>
             <div class="owner-name" id="dom-owner-name">------</div>
@@ -320,202 +56,78 @@
         </div>
 
         <div class="calling-grid">
-            <button class="btn-call btn-owner" onclick="async function dispatchTwilioMaskedCall() {
-    const consoleTicker = document.getElementById('ticker-box');
-    if (consoleTicker) {
-        consoleTicker.style.display = "block";
-        consoleTicker.innerText = "🔄 Connecting secure line...";
-    }
-
-    try {
-        const response = await fetch('/api/make-call', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ownerPhone: primaryDestinationPhone })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            if (consoleTicker) consoleTicker.innerText = "✅ Call connected via mask!";
-        } else {
-            throw new Error(data.error || "Server error");
-        }
-    } catch (err) {
-        if (consoleTicker) consoleTicker.innerText = "❌ Masking failed. Opening dialer...";
-        // Fallback to direct call
-        window.location.href = `tel:${primaryDestinationPhone}`;
-    }
-            <button class="btn-call" onclick="dispatchTwilioMaskedCall()">
-    <i class="fa-solid fa-phone"></i> Call Owner
+            <button class="btn-call btn-owner" onclick="dispatchTwilioMaskedCall()">
+                <i class="fa-solid fa-phone"></i> Call Owner
+            </button>
+            <button class="btn-call btn-alternate" onclick="dialAlternateFallbackRoute()">
+                <i class="fa-solid fa-phone"></i> Call Alt
             </button>
         </div>
-
         <div id="ticker-box" class="status-ticker"></div>
 
         <div class="section-title">Quick Alerts</div>
         <div class="alerts-grid">
-            <div class="alert-card" onclick="triggerWhatsAppInboundAlert('Wrong Parking')">
-                <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
-                <span>Wrong Parking</span>
-            </div>
-            <div class="alert-card" onclick="triggerWhatsAppInboundAlert('Tow Alert')">
-                <i class="fa-solid fa-car" style="color: #3b82f6;"></i>
-                <span>Tow Alert</span>
-            </div>
-            <div class="alert-card" onclick="triggerWhatsAppInboundAlert('Window / Light Open')">
-                <i class="fa-solid fa-file-lines" style="color: #64748b;"></i>
-                <span>Window / Light Open</span>
-            </div>
-            <div class="alert-card" onclick="openCameraPipeline()">
-                <i class="fa-solid fa-camera" style="color: #0f172a;"></i>
-                <span>Share Photo</span>
-            </div>
+            <div class="alert-card" onclick="triggerWhatsAppInboundAlert('Wrong Parking')"><span>Wrong Parking</span></div>
+            <div class="alert-card" onclick="openCameraPipeline()"><span>Share Photo</span></div>
         </div>
-
-        <div class="section-title">Emergency Links</div>
         <div class="emergency-grid">
-            <button class="btn-emergency btn-police" onclick="window.location.href='tel:112'">
-                <i class="fa-solid fa-building-shield"></i> Call Police (112)
-            </button>
-            <button class="btn-emergency btn-ambulance" onclick="window.location.href='tel:102'">
-                <i class="fa-solid fa-truck-medical"></i> Ambulance (102)
-            </button>
+            <button class="btn-emergency btn-police" onclick="window.location.href='tel:112'">Police</button>
+            <button class="btn-emergency btn-ambulance" onclick="window.location.href='tel:102'">Ambulance</button>
         </div>
     </div>
 </div>
 
 <div id="camera-shield" class="camera-overlay-shield">
     <div class="camera-box-body">
-        <h3 style="font-size: 15px; font-weight: 800; margin-bottom: 12px;">Capture Status Photo</h3>
+        <h3>Capture Status Photo</h3>
         <video id="video-preview" autoplay playsinline></video>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button class="btn-call btn-owner" style="padding: 10px 20px;" onclick="processPhotoSnapshot()">Snap</button>
-            <button class="btn-call btn-alternate" style="padding: 10px 20px;" onclick="closeCameraPipeline()">Cancel</button>
-        </div>
+        <button class="btn-call btn-owner" onclick="closeCameraPipeline()">Close</button>
     </div>
 </div>
 
 <script>
-    const databaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
-    const databaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
-    const _supabase = supabase.createClient(databaseUrl, databaseKey);
-
+    const _supabase = supabase.createClient('https://cefzsgchfdvtyfmcrsda.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs');
     let primaryDestinationPhone = "";
-    let alternateDestinationPhone = "";
-    let trackedVehiclePlate = "";
-    let localStreamRef = null;
+
+    async function dispatchTwilioMaskedCall() {
+        const ticker = document.getElementById('ticker-box');
+        ticker.style.display = "block";
+        ticker.innerText = "🔄 Connecting secure line...";
+        try {
+            const response = await fetch('/api/make-call', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ownerPhone: primaryDestinationPhone })
+            });
+            if (response.ok) { ticker.innerText = "✅ Call connected via mask!"; } 
+            else { throw new Error(); }
+        } catch (err) {
+            ticker.innerText = "❌ Masking failed. Opening dialer...";
+            window.location.href = `tel:${primaryDestinationPhone}`;
+        }
+    }
+
+    function dialAlternateFallbackRoute() { window.location.href = `tel:${primaryDestinationPhone}`; }
 
     window.addEventListener('DOMContentLoaded', async () => {
         const queryStrings = new URLSearchParams(window.location.search);
-        let urlAssetId = queryStrings.get('id');
-
-        // Agar URL me 'id' na mile to 'ic' parameter bhi backup check karega
-        if (!urlAssetId) {
-            urlAssetId = queryStrings.get('ic');
-        }
-
-        if (!urlAssetId) {
-            deployErrorView('Invalid Parameters', 'Missing QR asset structural token logic mapping.');
-            return;
-        }
-
-        document.getElementById('dom-sticker-badge').innerText = `ID: ${urlAssetId.toUpperCase()}`;
-
-        try {
-            const { data, error } = await _supabase
-                .from('registrations')
-                .select('*')
-                .eq('sticker_id', urlAssetId.trim().toUpperCase())
-                .single();
-
-            if (error || !data) {
-                deployErrorView('Record Vacant', 'No live active data allocations correspond to this QR tag key.');
-                return;
+        const urlAssetId = queryStrings.get('id') || queryStrings.get('ic');
+        if (urlAssetId) {
+            const { data } = await _supabase.from('registrations').select('*').eq('sticker_id', urlAssetId.toUpperCase()).single();
+            if (data) {
+                document.getElementById('dom-sticker-badge').innerText = `ID: ${data.sticker_id}`;
+                document.getElementById('dom-owner-name').innerText = data.owner_name;
+                document.getElementById('dom-plate-number').innerText = data.vehicle_number;
+                primaryDestinationPhone = data.mobile_number;
+                document.getElementById('loading-view').style.display = 'none';
+                document.getElementById('dashboard-view').style.display = 'block';
             }
-
-            document.getElementById('dom-owner-name').innerText = data.owner_name || "AUTHORIZED OWNER";
-            document.getElementById('dom-plate-number').innerText = data.vehicle_number || "VEHICLE";
-            
-            primaryDestinationPhone = data.mobile_number;
-            alternateDestinationPhone = data.alternate_number || "";
-            trackedVehiclePlate = data.vehicle_number || "Vehicle";
-
-            document.getElementById('loading-view').style.display = 'none';
-            document.getElementById('dashboard-view').style.display = 'block';
-
-        } catch (err) {
-            deployErrorView('Cluster Sync Error', 'Handshake communication timeout occurred.');
         }
     });
 
-    function deployErrorView(title, message) {
-        document.getElementById('loading-view').style.display = 'none';
-        document.getElementById('error-heading').innerText = title;
-        document.getElementById('error-subtext').innerText = message;
-        document.getElementById('error-view').style.display = 'block';
-    }
-
-    // DIRECT TEL DIALING METHOD (Bina backend jhanjhat ke absolute connection)
-    async function dispatchTwilioMaskedCall() {
-        if (!primaryDestinationPhone) {
-            alert("No standard destination line linked.");
-            return;
-        }
-
-        const consoleTicker = document.getElementById('ticker-box');
-        consoleTicker.style.display = "block";
-        consoleTicker.style.background = "#ecfdf5";
-        consoleTicker.style.color = "#065f46";
-        consoleTicker.style.borderColor = "#a7f3d0";
-        consoleTicker.innerText = "📞 Connecting call directly to owner...";
-
-        // Bina kisi cloud backend error ke seedhe native dialer khol dega
-        setTimeout(() => {
-            window.location.href = `tel:${primaryDestinationPhone}`;
-        }, 400);
-    }
-
-    function dialAlternateFallbackRoute() {
-        if(!alternateDestinationPhone) {
-            alert("No alternate secondary number registered.");
-            return;
-        }
-        window.location.href = `tel:${alternateDestinationPhone}`;
-    }
-
-    function triggerWhatsAppInboundAlert(alertType) {
-        let textPayload = `Hello, I am standing near your vehicle (${trackedVehiclePlate}). There is a ${alertType} notification regarding it. Please check as soon as possible. Sent via AlertoQR.`;
-        window.open(`https://wa.me/${primaryDestinationPhone}?text=${encodeURIComponent(textPayload)}`, '_blank');
-    }
-
-    // HARDWARE CAMERA IMPLEMENTATION ARRAY MODULES
-    async function openCameraPipeline() {
-        try {
-            localStreamRef = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-            document.getElementById('video-preview').srcObject = localStreamRef;
-            document.getElementById('camera-shield').style.display = 'flex';
-        } catch (e) {
-            alert("Camera device permissions denied.");
-        }
-    }
-
-    function closeCameraPipeline() {
-        if (localStreamRef) {
-            localStreamRef.getTracks().forEach(t => t.stop());
-        }
-        document.getElementById('camera-shield').style.display = 'none';
-    }
-
-    function processPhotoSnapshot() {
-        const videoElement = document.getElementById('video-preview');
-        const processingCanvas = document.createElement('canvas');
-        processingCanvas.width = videoElement.videoWidth;
-        processingCanvas.height = videoElement.videoHeight;
-        processingCanvas.getContext('2d').drawImage(videoElement, 0, 0, processingCanvas.width, processingCanvas.height);
-        closeCameraPipeline();
-        alert("Status frame processed and synced with local registers successfully!");
-    }
+    function triggerWhatsAppInboundAlert(type) { window.open(`https://wa.me/${primaryDestinationPhone}?text=${type}`, '_blank'); }
+    function openCameraPipeline() { document.getElementById('camera-shield').style.display = 'flex'; }
+    function closeCameraPipeline() { document.getElementById('camera-shield').style.display = 'none'; }
 </script>
 </body>
 </html>
