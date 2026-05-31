@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Smart Bulk QR Code Generator & Admin Panel (3.5")</title>
+    <title>AlertoQR - Admin Panel & Bulk Generator</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -236,7 +236,7 @@
         .modal-header { font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; width: 100%; }
 
-        /* 🖨️ ADVANCED BULK MEDIA SHEET RENDERING LAYOUT RULES */
+        /* Print advanced bulk styles */
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
             .admin-wrapper, .panel-card, .table-overflow, .modal, .btn-mini-download { display: none !important; }
@@ -308,7 +308,8 @@
                         <th>Owner Name</th>
                         <th>Vehicle Number</th>
                         <th>Mobile</th>
-                        <th>Alternate Mobile</th> <th>Status Control (Click to Toggle)</th>
+                        <th>Alternate Mobile</th> 
+                        <th>Status Control (Click to Toggle)</th>
                         <th>Calculated Expiry</th>
                         <th>Action Controls</th>
                     </tr>
@@ -370,7 +371,7 @@
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     let globallyRegisteredIds = [];
-    let cachedDatabaseRecords = []; // Stores row data locally to recall numbers instantly
+    let cachedDatabaseRecords = []; 
 
     window.addEventListener('DOMContentLoaded', () => {
         fetchLiveDatabaseLogs();
@@ -408,6 +409,7 @@
                 }
 
                 totalRendered++;
+                // FIXED: Aapke frontend routing schema ke hisab se query parameter '?id=' kiya gaya h
                 const targetRedirectionUrl = `https://alertoqr.in/register.html?id=${finalStickerId}`;
 
                 const cardWrapper = document.createElement('div');
@@ -459,7 +461,7 @@
             
             if(data) {
                 globallyRegisteredIds = data.map(item => String(item.sticker_id).trim().toUpperCase());
-                cachedDatabaseRecords = data; // Save dataset references dynamically
+                cachedDatabaseRecords = data; 
             }
 
             if(!data || data.length === 0) {
@@ -489,9 +491,10 @@
                     ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
                     : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
 
+                // FIXED: row.full_name ko row.owner_name se badla gaya h database mapping alignment ke liye
                 tr.innerHTML = `
                     <td><strong class="id-link" onclick="viewPremiumStickerPopup('${row.sticker_id}')">${row.sticker_id}</strong></td>
-                    <td>${row.full_name || 'N/A'}</td>
+                    <td>${row.owner_name || 'N/A'}</td>
                     <td><span class="vehicle-tag">${row.vehicle_number || 'N/A'}</span></td>
                     <td>${row.mobile_number || 'N/A'}</td>
                     <td>${row.alternate_number || '<span style="color:#64748b; font-style:italic;">—</span>'}</td>
@@ -513,15 +516,16 @@
     async function resetCustomerPIN(stickerId) {
         if(!confirm(`Are you sure you want to reset the security PIN for ${stickerId} to default '1234'?`)) return;
         try {
+            // FIXED: Column alignment 'mpin' ko badalkar 'secret_pin' kiya h
             const { error } = await _supabase
                 .from('registrations')
-                .update({ mpin: '1234' }) 
+                .update({ secret_pin: '1234' }) 
                 .eq('sticker_id', stickerId);
 
             if(error) throw error;
             alert(`✅ Security PIN for ${stickerId} has been successfully reset to default: 1234`);
         } catch(e) {
-            alert("Error updating PIN. Please ensure an 'mpin' column exists in your database table.");
+            alert("Error updating PIN. Please make sure the 'secret_pin' column matches perfectly.");
         }
     }
 
@@ -579,7 +583,8 @@
         if(!matchedRow) return;
 
         document.getElementById('mdl-title-id').innerText = stickerId;
-        document.getElementById('mdl-txt-name').value = (matchedRow.full_name && matchedRow.full_name !== 'null') ? matchedRow.full_name : "";
+        // FIXED: Data row fields ko matches kiya mapping schema se
+        document.getElementById('mdl-txt-name').value = (matchedRow.owner_name && matchedRow.owner_name !== 'null') ? matchedRow.owner_name : "";
         document.getElementById('mdl-txt-vehicle').value = (matchedRow.vehicle_number && matchedRow.vehicle_number !== 'null') ? matchedRow.vehicle_number : "";
         document.getElementById('mdl-txt-mobile').value = (matchedRow.mobile_number && matchedRow.mobile_number !== 'null') ? matchedRow.mobile_number : "";
         document.getElementById('mdl-txt-alternate').value = (matchedRow.alternate_number && matchedRow.alternate_number !== 'null') ? matchedRow.alternate_number : "";
@@ -600,10 +605,11 @@
         }
 
         try {
+            // FIXED: Column structures align keys 'full_name' -> 'owner_name'
             const { error } = await _supabase
                 .from('registrations')
                 .update({ 
-                    full_name: newName, 
+                    owner_name: newName, 
                     vehicle_number: newVehicle,
                     mobile_number: newMobile,
                     alternate_number: newAlternate ? newAlternate : null
@@ -675,11 +681,13 @@
             </head>
             <body>
                 <div class="smart-car-sticker">
-                    <div class="sticker-header">⚠️ EMERGENCY CONTACT QR</div>
-                    <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
-                    <div class="sticker-qr-slot" id="print-qr"></div>
-                    <div class="sticker-footer-id">${stickerId}</div>
-                    <div class="sticker-privacy-strip">🔒 Privacy Safe • Mobile Number Hidden</div>
+                    <div class="smart-car-sticker">
+                        <div class="sticker-header">⚠️ EMERGENCY CONTACT QR</div>
+                        <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
+                        <div class="sticker-qr-slot" id="print-qr"></div>
+                        <div class="sticker-footer-id">${stickerId}</div>
+                        <div class="sticker-privacy-strip">🔒 Privacy Safe • Mobile Number Hidden</div>
+                    </div>
                 </div>
                 <script>
                     new QRCode(document.getElementById('print-qr'), {
