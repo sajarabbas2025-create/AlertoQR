@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>AlertoQR Helper Portal</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -310,11 +313,10 @@
         </div>
 
         <div class="calling-grid">
-            <!-- FIXED: No prompt, native masking dial shortcut path linked -->
-            <button class="btn-call btn-owner" onclick="triggerNativeMaskedCall('primary')">
+            <button class="btn-call btn-owner" onclick="triggerNativeMaskedCall()">
                 <i class="fa-solid fa-phone"></i> Call Owner
             </button>
-            <button class="btn-call btn-alternate" onclick="triggerNativeMaskedCall('alternate')">
+            <button class="btn-call btn-alternate" onclick="triggerNativeMaskedCall()">
                 <i class="fa-solid fa-phone"></i> Call Alternate
             </button>
         </div>
@@ -369,7 +371,6 @@
     const databaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(databaseUrl, databaseKey);
 
-    // Vercel backend server alert module link
     const backendApiUrl = 'https://alerto-qr-sajarabbas2025-creates-projects.vercel.app/api/send-alert'; 
 
     let urlAssetId = "";
@@ -377,6 +378,14 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
         const queryStrings = new URLSearchParams(window.location.search);
+        
+        // CACHE-BUSTER ROUTE FOR LIVE USERS
+        if (!queryStrings.has('v')) {
+            queryStrings.set('v', Date.now());
+            window.location.search = queryStrings.toString();
+            return;
+        }
+
         urlAssetId = queryStrings.get('id') || queryStrings.get('ic');
 
         if (!urlAssetId) {
@@ -416,8 +425,8 @@
         document.getElementById('error-view').style.display = 'block';
     }
 
-    // FIXED: Helper se bina number maange seedhe Twilio proxy bridge dialer open karega
-    function triggerNativeMaskedCall(targetMode) {
+    // ABSOLUTE CLEAN FUNCTION - NO POPUPS/PROMPTS EXIST HERE
+    function triggerNativeMaskedCall() {
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
         consoleTicker.style.background = "#ecfdf5";
@@ -426,12 +435,10 @@
         consoleTicker.innerText = "📞 Connecting secure call bridge...";
 
         setTimeout(() => {
-            // Seedhe aapka Twilio cloud proxy number dialer me load ho jayega
             window.location.href = `tel:+17816193111`;
-        }, 300);
+        }, 200);
     }
 
-    // SECURE SMS ENGINE 
     async function dispatchSecureSMS(alertType) {
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
@@ -451,9 +458,8 @@
                 })
             });
 
-            // Status codes mapping validation check
             if (!response.ok) {
-                throw new Error(`Server returned status ${response.status}`);
+                throw new Error(`Server status ${response.status}`);
             }
 
             const result = await response.json();
@@ -474,7 +480,6 @@
         }
     }
 
-    // HARDWARE CAMERA IMPLEMENTATION ARRAY MODULES
     async function openCameraPipeline() {
         try {
             localStreamRef = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
