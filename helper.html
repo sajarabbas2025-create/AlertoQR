@@ -379,7 +379,6 @@
     window.addEventListener('DOMContentLoaded', async () => {
         const queryStrings = new URLSearchParams(window.location.search);
         
-        // CACHE-BUSTER ROUTE FOR LIVE USERS
         if (!queryStrings.has('v')) {
             queryStrings.set('v', Date.now());
             window.location.search = queryStrings.toString();
@@ -393,12 +392,15 @@
             return;
         }
 
+        // Clean @ symbols if any present in raw data scans
+        urlAssetId = urlAssetId.replace('@', '');
         document.getElementById('dom-sticker-badge').innerText = `ID: ${urlAssetId.toUpperCase()}`;
 
         try {
+            // FIXED: CHANGED BACK TO 'full_name' FOR STABLE DATA BINDING
             const { data, error } = await _supabase
                 .from('registrations')
-                .select('owner_name, vehicle_number')
+                .select('full_name, vehicle_number')
                 .eq('sticker_id', urlAssetId.trim().toUpperCase())
                 .single();
 
@@ -407,7 +409,7 @@
                 return;
             }
 
-            document.getElementById('dom-owner-name').innerText = data.owner_name || "AUTHORIZED OWNER";
+            document.getElementById('dom-owner-name').innerText = data.full_name || "AUTHORIZED OWNER";
             document.getElementById('dom-plate-number').innerText = data.vehicle_number || "VEHICLE";
             
             document.getElementById('loading-view').style.display = 'none';
@@ -425,7 +427,6 @@
         document.getElementById('error-view').style.display = 'block';
     }
 
-    // ABSOLUTE CLEAN FUNCTION - NO POPUPS/PROMPTS EXIST HERE
     function triggerNativeMaskedCall() {
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
