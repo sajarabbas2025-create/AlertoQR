@@ -2,203 +2,139 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Owner Assistance Portal - AlertoQR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Assistance Portal - AlertoQR</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --primary: #e11d48;
-            --primary-hover: #be123c;
-            --primary-light: #fff1f2;
-            --primary-border: #ffe4e6;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --bg-main: #f8fafc;
-            --card-bg: #ffffff;
-            --success: #10b981;
-            --warning: #f59e0b;
-        }
-
+        /* Core Reset & Micro Layout Configuration Engine */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            min-height: 100vh;
+            background-color: #f8fafc;
+            color: #0f172a;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            min-height: 100vh;
             padding: 16px;
-            background-image: radial-gradient(#e2e8f0 1.5px, transparent 1.5px);
-            background-size: 24px 24px;
+            overflow-x: hidden;
         }
 
-        .wrapper {
+        /* Master Structural View Shell Container */
+        .portal-wrapper {
             width: 100%;
             max-width: 480px;
-            perspective: 1000px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.04), 0 4px 12px -2px rgba(15, 23, 42, 0.02);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .main-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 32px 24px;
-            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.04);
+        /* Top Bar Segment Branding */
+        .brand-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .brand-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+
+        .node-badge {
+            background: #f1f5f9;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            letter-spacing: 0.5px;
+        }
+
+        /* Dynamic Ownership Profile Module Plate */
+        .profile-plate {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 24px;
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
         }
 
-        .main-card::before {
+        .profile-plate::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            height: 6px;
-            background: linear-gradient(90deg, #e11d48, #f43f5e, #fda4af);
+            width: 4px;
+            height: 100%;
+            background: #000000;
         }
 
-        /* Brand Header */
-        .brand-header {
-            text-align: center;
-            margin-bottom: 28px;
-        }
-
-        .brand-icon-wrapper {
-            width: 64px;
-            height: 64px;
-            background: var(--primary-light);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            border: 1px solid var(--primary-border);
-            position: relative;
-        }
-
-        .brand-icon-wrapper i {
-            color: var(--primary);
-            font-size: 28px;
-        }
-
-        .brand-header h1 {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text-main);
-            letter-spacing: -0.5px;
-            margin-bottom: 4px;
-        }
-
-        .brand-header p {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* Plate Styling */
-        .vehicle-plate-container {
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 16px;
-            text-align: center;
-            margin-bottom: 24px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 10px 20px -10px rgba(30, 41, 59, 0.3);
-            position: relative;
-            border: 3px solid #334155;
-        }
-
-        .plate-badge {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--primary);
-            color: white;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 2px 10px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .plate-number {
-            color: #f8fafc;
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-family: 'Plus Jakarta Sans', monospace;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        /* Options Grid / Instructions */
-        .info-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 28px;
-            text-align: left;
-        }
-
-        .info-item {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .info-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .info-icon {
-            width: 24px;
-            height: 24px;
-            background: #e2e8f0;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .label-text {
             font-size: 11px;
-            color: #475569;
-            flex-shrink: 0;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            margin-bottom: 6px;
+            display: block;
         }
 
-        .info-text h4 {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 2px;
+        .owner-identity {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: -0.25px;
         }
 
-        .info-text p {
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.4;
+        .license-plate-display {
+            background: #000000;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 1px solid #334155;
         }
 
-        /* Action Buttons */
-        .actions-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        /* Dual Action Core Telecom Trigger Configuration */
+        .communication-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 24px;
         }
 
-        .btn {
-            width: 100%;
+        .action-trigger {
             padding: 16px;
             border-radius: 14px;
             font-size: 15px;
@@ -209,298 +145,410 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease-index;
+            width: 100%;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 8px 20px -6px rgba(225, 29, 72, 0.4);
+        .trigger-primary {
+            background: #000000;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-primary:hover {
-            background: var(--primary-hover);
+        .trigger-primary:hover {
+            background: #1e293b;
             transform: translateY(-1px);
-            box-shadow: 0 12px 24px -6px rgba(225, 29, 72, 0.5);
         }
 
-        .btn-primary:active {
-            transform: translateY(1px);
+        .trigger-secondary {
+            background: #ffffff;
+            color: #0f172a;
+            border: 1.5px solid #e2e8f0;
         }
 
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
+        .trigger-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
         }
 
-        .btn-secondary:hover {
-            background: #e2e8f0;
-            color: #1e293b;
-        }
-
-        /* States Layout */
-        .state-view {
+        /* Realtime Activity Logging Terminal */
+        .live-console-ticker {
+            margin-bottom: 24px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.5;
             display: none;
-            text-align: center;
-            padding: 40px 10px;
+            animation: fadeIn 0.3s ease;
+            border: 1px solid transparent;
         }
 
-        .state-view.active {
+        /* Section Layout Management Matrix */
+        .grid-header-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .alert-system-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 26px;
+        }
+
+        .alert-node-card {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-node-card:hover {
+            border-color: #cbd5e1;
+            background: #fafafa;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.02);
+        }
+
+        .alert-node-card i {
+            font-size: 26px;
             display: block;
         }
 
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid var(--primary-light);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .state-icon {
-            font-size: 44px;
-            margin-bottom: 20px;
-        }
-        
-        .state-icon.error { color: #ef4444; }
-        .state-icon.warning { color: #f59e0b; }
-
-        .state-title {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .state-desc {
+        .alert-node-card span {
             font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.5;
+            font-weight: 700;
+            color: #334155;
+            line-height: 1.3;
         }
 
-        /* Footer Notes */
-        .privacy-banner {
-            margin-top: 24px;
+        /* Emergency Channel Grid Structure */
+        .emergency-hub-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .emergency-channel {
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 10px;
-            background: #f0fdf4;
-            border: 1px solid #dcfce7;
-            border-radius: 12px;
-            font-size: 12px;
-            color: #166534;
-            font-weight: 600;
+            transition: all 0.2s;
         }
 
-        /* Live Status Overlay Console */
-        .status-toast {
-            margin-top: 14px;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: center;
+        .channel-police {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fee2e2;
+        }
+        .channel-police:hover { background: #ffee0e0; }
+
+        .channel-medical {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #dcfce7;
+        }
+        .channel-medical:hover { background: #e8fcf0; }
+
+        /* Camera Core Image Capture Interface */
+        .photo-upload-shield {
             display: none;
-            animation: fadeIn 0.3s ease-out;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .camera-container-box {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        #video-feed {
+            width: 100%;
+            border-radius: 12px;
+            background: #000;
+            margin-bottom: 16px;
+            transform: scaleX(-1);
+        }
+
+        /* Loading / Error Shell States */
+        .state-isolation-wrapper {
+            text-align: center;
+            padding: 60px 20px;
+            width: 100%;
+        }
+
+        .loading-loader-spinner {
+            width: 44px;
+            height: 44px;
+            border: 3.5px solid #f1f5f9;
+            border-top: 3.5px solid #000000;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spinEngine 0.8s linear infinite;
+        }
+
+        @keyframes spinEngine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
+            from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <div id="view-loading" class="main-card state-view active">
-        <div class="spinner"></div>
-        <h3 class="state-title">Verifying Connection</h3>
-        <p class="state-desc">Accessing secure AlertoQR routing protocols. Please hold on...</p>
+<div class="portal-wrapper">
+    
+    <div id="shell-loading" class="state-isolation-wrapper">
+        <div class="loading-loader-spinner"></div>
+        <p style="color: #64748b; font-size: 14px; font-weight: 600; letter-spacing: -0.1px;">Initializing Encrypted Sync Pipeline...</p>
     </div>
 
-    <div id="view-error" class="main-card state-view">
-        <div id="error-icon" class="state-icon error"><i class="fa-solid fa-circle-xmark"></i></div>
-        <h3 id="error-title" class="state-title">Invalid Request Scope</h3>
-        <p id="error-desc" class="state-desc">The secure tag schema parameters could not be read or are unrecognized.</p>
-        <div style="margin-top: 24px;">
-            <button class="btn btn-secondary" onclick="window.location.reload()">Retry Operation</button>
+    <div id="shell-error" class="state-isolation-wrapper" style="display: none;">
+        <div style="background: #fef2f2; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; border: 1px solid #fee2e2;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 28px; color: #ef4444;"></i>
         </div>
+        <h3 id="error-title-node" style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Routing Error</h3>
+        <p id="error-desc-node" style="color: #64748b; font-size: 13px; line-height: 1.5; max-width: 280px; margin: 0 auto;"></p>
     </div>
 
-    <div id="view-portal" class="main-card" style="display: none;">
+    <div id="shell-dashboard" style="display: none;">
+        
         <div class="brand-header">
-            <div class="brand-icon-wrapper">
-                <i class="fa-solid fa-shield-halved"></i>
-            </div>
-            <h1>Smart Assistance Portal</h1>
-            <p>Secured Network Link Enabled</p>
+            <div class="brand-title">AlertoQR Helper</div>
+            <div class="node-badge" id="dom-badge-id">ID: ------</div>
         </div>
 
-        <div class="vehicle-plate-container">
-            <span class="plate-badge">Authorized Vehicle</span>
-            <div class="plate-number" id="lbl-vehicle-number">-- -- --</div>
+        <div class="profile-plate">
+            <span class="label-text">Vehicle Owner</span>
+            <div class="owner-identity" id="dom-owner-name">Loading Profile...</div>
+            <div class="license-plate-display" id="dom-plate-number">------</div>
         </div>
 
-        <div class="info-box">
-            <div class="info-item">
-                <div class="info-icon"><i class="fa-solid fa-user-secret"></i></div>
-                <div class="info-text">
-                    <h4>Privacy Architecture Active</h4>
-                    <p>Your connection routes through an absolute mask pipeline. Your cell number remains hidden.</p>
-                </div>
-            </div>
-            <div class="info-item">
-                <div class="info-icon"><i class="fa-solid fa-bolt"></i></div>
-                <div class="info-text">
-                    <h4>Immediate Vehicle Dispatch</h4>
-                    <p>Use this panel if the vehicle blocks access, is parked incorrectly, or has an emergency.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="actions-group">
-            <button class="btn btn-primary" onclick="triggerTwilioCallMasking()">
-                <i class="fa-solid fa-phone-volume"></i> Initiate Secure Call
+        <div class="communication-matrix">
+            <button class="action-trigger trigger-primary" onclick="executeSecureCloudCall()">
+                <i class="fa-solid fa-shield-halved"></i> Call Owner
             </button>
-            <button class="btn btn-secondary" onclick="openWhatsAppInboundAlert()">
-                <i class="fa-brands fa-whatsapp"></i> Send Free Digital Alert
+            <button class="action-trigger trigger-secondary" onclick="executeAlternateDialout()">
+                <i class="fa-solid fa-phone"></i> Call Alternate
             </button>
         </div>
 
-        <div id="live-status-toast" class="status-toast"></div>
+        <div id="live-ticker" class="live-console-ticker"></div>
 
-        <div class="privacy-banner">
-            <i class="fa-solid fa-user-shield"></i> Identity Cloaking: 100% Encrypted Connection
+        <div class="grid-header-title">
+            <i class="fa-solid fa-comment-medical"></i> Quick Broadcast Alerts
+        </div>
+        
+        <div class="alert-system-grid">
+            <div class="alert-node-card" onclick="dispatchInstantWhatsApp('Wrong Parking')">
+                <div style="background: #fff5f5; padding: 12px; border-radius: 12px;">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
+                </div>
+                <span>Wrong Parking</span>
+            </div>
+            
+            <div class="alert-node-card" onclick="dispatchInstantWhatsApp('Tow Alert')">
+                <div style="background: #eff6ff; padding: 12px; border-radius: 12px;">
+                    <i class="fa-solid fa-car-burst" style="color: #3b82f6;"></i>
+                </div>
+                <span>Tow Alert</span>
+            </div>
+            
+            <div class="alert-node-card" onclick="dispatchInstantWhatsApp('Window / Light Open')">
+                <div style="background: #f8fafc; padding: 12px; border-radius: 12px;">
+                    <i class="fa-solid fa-file-lines" style="color: #475569;"></i>
+                </div>
+                <span>Window / Light Open</span>
+            </div>
+            
+            <div class="alert-node-card" onclick="initializeCameraInterface()">
+                <div style="background: #f1f5f9; padding: 12px; border-radius: 12px;">
+                    <i class="fa-solid fa-camera" style="color: #0f172a;"></i>
+                </div>
+                <span>Share Photo</span>
+            </div>
+        </div>
+
+        <div class="grid-header-title">
+            <i class="fa-solid fa-heart-pulse"></i> Public Emergency Channels
+        </div>
+        
+        <div class="emergency-hub-grid">
+            <button class="emergency-channel channel-police" onclick="window.location.href='tel:112'">
+                <i class="fa-solid fa-building-shield"></i> Call Police (112)
+            </button>
+            <button class="emergency-channel channel-medical" onclick="window.location.href='tel:102'">
+                <i class="fa-solid fa-truck-medical"></i> Ambulance (102)
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div id="camera-shield" class="photo-upload-shield">
+    <div class="camera-container-box">
+        <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 14px;">Vehicle Asset Verification</h3>
+        <video id="video-feed" autoplay playsinline></video>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button class="action-trigger trigger-primary" style="padding: 12px;" onclick="captureAndProcessImage()">Snap Alert</button>
+            <button class="action-trigger trigger-secondary" style="padding: 12px; max-width: 100px;" onclick="killCameraModule()">Exit</button>
         </div>
     </div>
 </div>
 
 <script>
-    // Supabase Core Infrastructure Setup Configuration Mapping
-    const databaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
-    const databaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
-    const _supabaseEngine = supabase.createClient(databaseUrl, databaseAnonKey);
+    // System Cloud Integration Keys
+    const databaseEndpoint = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const databaseAnonymKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
+    
+    const clientPool = supabase.createClient(databaseEndpoint, databaseAnonymKey);
 
-    let resolvedDestinationPhone = "";
-    let resolvedVehicleIdentity = "";
+    // Active Core Session Registers
+    let activePrimaryRoute = "";
+    let activeAlternateRoute = "";
+    let activeVehicleIdentifier = "";
+    let activeMediaStream = null;
 
+    // Orchestrator State Entry point
     window.addEventListener('DOMContentLoaded', async () => {
-        const urlQueries = new URLSearchParams(window.location.search);
-        const derivedStickerId = urlQueries.get('id');
+        const queryParameters = new URLSearchParams(window.location.search);
+        const routeId = queryParameters.get('id');
 
-        if (!derivedStickerId) {
-            triggerTerminalState('error', 'Missing Scope ID', 'No digital asset routing tag detected. Please scan an authenticated AlertoQR asset card.');
+        if (!routeId) {
+            deploySystemFaultState('Matrix Routing Failure', 'The vehicle QR interface context token identifier is missing.');
             return;
         }
 
+        document.getElementById('dom-badge-id').innerText = `ID: ${routeId.toUpperCase()}`;
+
         try {
-            const { data: records, error } = await _supabaseEngine
+            const { data: registrationRecord, error: poolError } = await clientPool
                 .from('registrations')
                 .select('*')
-                .eq('sticker_id', derivedStickerId.trim().toUpperCase())
+                .eq('sticker_id', routeId.trim().toUpperCase())
                 .single();
 
-            if (error || !records) {
-                triggerTerminalState('warning', 'Sticker Unregistered', 'This smart asset sticker tag is not linked or has been deleted from our database.');
+            if (poolError || !registrationRecord) {
+                deploySystemFaultState('QR Sticker Inactive', 'This barcode identity sequence does not match any authenticated node records.');
                 return;
             }
 
-            if (records.status === 'Deactivated') {
-                triggerTerminalState('error', 'Sticker Suspended', 'This vehicle utility sticker tag has been suspended by the administrator.');
-                return;
-            }
-
-            // Data allocation mapper
-            resolvedVehicleIdentity = records.vehicle_number || "VEHICLE";
-            resolvedDestinationPhone = records.mobile_number;
-
-            document.getElementById('lbl-vehicle-number').innerText = resolvedVehicleIdentity;
+            // Data Hydration Mapping
+            document.getElementById('dom-owner-name').innerText = registrationRecord.owner_name || "AUTHENTICATED OWNER";
+            document.getElementById('dom-plate-number').innerText = registrationRecord.vehicle_number || "VEHICLE";
             
-            // Switch layouts seamlessly
-            document.getElementById('view-loading').classList.remove('active');
-            document.getElementById('view-portal').style.display = 'block';
+            activePrimaryRoute = registrationRecord.mobile_number;
+            activeAlternateRoute = registrationRecord.alternate_number || "";
+            activeVehicleIdentifier = registrationRecord.vehicle_number || "Vehicle";
 
-        } catch (fatalErr) {
-            triggerTerminalState('error', 'Infrastructure Error', 'Could not hook into the global cloud synchronization engine.');
+            // UI View Transition Switch
+            document.getElementById('shell-loading').style.display = 'none';
+            document.getElementById('shell-dashboard').style.display = 'block';
+
+        } catch (catastrophicException) {
+            deploySystemFaultState('Sync Cluster Exception', 'Cryptographic pipeline connection handshakes timed out.');
         }
     });
 
-    function triggerTerminalState(mode, title, description) {
-        document.getElementById('view-loading').classList.remove('active');
-        const errView = document.getElementById('view-error');
-        const iconWrapper = document.getElementById('error-icon');
-        
-        if(mode === 'warning') {
-            iconWrapper.className = "state-icon warning";
-            iconWrapper.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
-        } else {
-            iconWrapper.className = "state-icon error";
-            iconWrapper.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
-        }
-
-        document.getElementById('error-title').innerText = title;
-        document.getElementById('error-desc').innerText = description;
-        errView.classList.add('active');
+    function deploySystemFaultState(headline, description) {
+        document.getElementById('shell-loading').style.display = 'none';
+        document.getElementById('error-title-node').innerText = headline;
+        document.getElementById('error-desc-node').innerText = description;
+        document.getElementById('shell-error').style.display = 'block';
     }
 
-    // NAYA TWILIO AUTOMATED SERVERLESS CALL TRIGGER ROUTER
-    async function triggerTwilioCallMasking() {
-        if (!resolvedDestinationPhone) {
-            alert("No phone mapping configured for this node asset.");
+    // TELECOMMUNICATION CONTROLLER ENGINE
+    async function executeSecureCloudCall() {
+        if (!activePrimaryRoute) {
+            alert("No standard telecommunication route mapping exists for this asset.");
             return;
         }
 
-        const toast = document.getElementById('live-status-toast');
-        toast.style.display = "block";
-        toast.style.background = "#eff6ff";
-        toast.style.color = "#1e40af";
-        toast.style.border = "1px solid #bfdbfe";
-        toast.innerText = "🔄 Establishing secure proxy line via Twilio Cloud...";
+        const terminalTicker = document.getElementById('live-ticker');
+        terminalTicker.style.display = "block";
+        terminalTicker.style.background = "#eff6ff";
+        terminalTicker.style.color = "#1e40af";
+        terminalTicker.style.borderColor = "#bfdbfe";
+        terminalTicker.innerText = "Connecting secure identity proxy mask channel...";
 
         try {
-            // Hum Vercel Backend Ke serverless /api/make-call route ko access kar rahe hain
-            const response = await fetch('/api/make-call', {
+            // Relational target mapping aimed directly towards unified serverless proxy nodes
+            const cloudBridgeResponse = await fetch('/api/make-call', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ownerPhone: resolvedDestinationPhone })
+                body: JSON.stringify({ ownerPhone: activePrimaryRoute })
             });
 
-            const callMetadata = await response.json();
+            const signalPayload = await cloudBridgeResponse.json();
 
-            if (callMetadata.success) {
-                toast.style.background = "#ecfdf5";
-                toast.style.color = "#065f46";
-                toast.style.border = "1px solid #a7f3d0";
-                toast.innerText = "🚀 Line Connected! Twilio is calling your phone right now to mask your number...";
+            if (signalPayload.success) {
+                terminalTicker.style.background = "#ecfdf5";
+                terminalTicker.style.color = "#065f46";
+                terminalTicker.style.borderColor = "#a7f3d0";
+                terminalTicker.innerText = "📞 Masking Pipeline Allocated! Twilio server is patching your device connection natively.";
             } else {
-                toast.style.background = "#fef2f2";
-                toast.style.color = "#991b1b";
-                toast.style.border = "1px solid #fecaca";
-                toast.innerText = "❌ Call Failure: " + (callMetadata.error || "Internal mapping lock");
+                terminalTicker.style.background = "#fef2f2";
+                terminalTicker.style.color = "#991b1b";
+                terminalTicker.style.borderColor = "#fee2e2";
+                terminalTicker.innerText = "Server Error: " + (signalPayload.error || "Execution token denied.");
             }
-        } catch (networkErr) {
-            toast.style.background = "#fef2f2";
-            toast.style.color = "#991b1b";
-            toast.style.border = "1px solid #fecaca";
-            toast.innerText = "❌ Cloud Pipeline connection timeout error.";
+        } catch (networkException) {
+            terminalTicker.style.background = "#fef2f2";
+            terminalTicker.style.color = "#991b1b";
+            terminalTicker.style.borderColor = "#fee2e2";
+            terminalTicker.innerText = "Cloud Pipeline Connection Error (Timeout: Check Vercel root root directory placement).";
         }
     }
 
-    function openWhatsAppInboundAlert() {
-        // Fallback standard text alert pipeline system
-        const placeholderAlertMessage = `Hello, I am standing near your vehicle (${resolvedVehicleIdentity}). There is an urgent notification regarding it. Please check as soon as possible. Sent securely via AlertoQR.`;
-        window.open(`https://wa.me/${resolvedDestinationPhone}?text=${encodeURIComponent(placeholderAlertMessage)}`, '_blank');
+    function executeAlternateDialout() {
+        if (!activeAlternateRoute) {
+            alert("No secondary fallback target registry defined for this asset identity block.");
+            return;
+        }
+        window.location.href = `tel:${activeAlternateRoute}`;
     }
-</script>
-</body>
-</html>
+
+    // MESSAGING MATRIX SUBSYSTEM
+    function dispatchInstantWhatsApp(alertContextString) {
+        const structuralTemplateMessage = `Hello, I am standing near your vehicle (${activeVehicleIdentifier}). There is an urgent notification regarding [${alertContextString}]. Kindly verify your asset coordinates. Sent securely via Ale
