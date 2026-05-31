@@ -272,7 +272,7 @@
 
         <div class="calling-grid">
             <button class="btn-call btn-owner" onclick="triggerSmartAlertBridge()">
-                <i class="fa-solid fa-bell"></i> Notify Owner Instantly
+                <i class="fa-solid fa-phone"></i> Notify Owner Instantly
             </button>
         </div>
 
@@ -280,19 +280,19 @@
 
         <div class="section-title">Quick Alerts</div>
         <div class="alerts-grid">
-            <div class="alert-card" onclick="dispatchSecureSMS('Wrong Parking')">
+            <div class="alert-card" onclick="dispatchSecureSMS('Wrong Parking', 'sms')">
                 <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
                 <span>Wrong Parking</span>
             </div>
-            <div class="alert-card" onclick="dispatchSecureSMS('Tow Alert')">
+            <div class="alert-card" onclick="dispatchSecureSMS('Tow Alert', 'sms')">
                 <i class="fa-solid fa-car" style="color: #3b82f6;"></i>
                 <span>Tow Alert</span>
             </div>
-            <div class="alert-card" onclick="dispatchSecureSMS('Window Open')">
+            <div class="alert-card" onclick="dispatchSecureSMS('Window Open', 'sms')">
                 <i class="fa-solid fa-window-maximize" style="color: #64748b;"></i>
                 <span>Window Open</span>
             </div>
-            <div class="alert-card" onclick="dispatchSecureSMS('Fuel Leakage')">
+            <div class="alert-card" onclick="dispatchSecureSMS('Fuel Leakage', 'sms')">
                 <i class="fa-solid fa-gas-pump" style="color: #eab308;"></i>
                 <span>Fuel Leakage</span>
             </div>
@@ -369,10 +369,11 @@
     }
 
     function triggerSmartAlertBridge() {
-        dispatchSecureSMS('Urgent Request: Someone near your vehicle needs you to contact them immediately.');
+        // Yeh green button direct call triggering mode set karega
+        dispatchSecureSMS('Urgent Call Request', 'call');
     }
 
-    async function dispatchSecureSMS(alertType) {
+    async function dispatchSecureSMS(alertType, forcedMode = 'sms') {
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
         consoleTicker.style.background = "#f1f5f9";
@@ -387,7 +388,7 @@
                 body: JSON.stringify({
                     stickerId: urlAssetId,
                     alertType: alertType,
-                    mode: 'sms'
+                    mode: forcedMode
                 })
             });
 
@@ -401,7 +402,7 @@
                 consoleTicker.style.background = "#ecfdf5";
                 consoleTicker.style.color = "#065f46";
                 consoleTicker.style.borderColor = "#a7f3d0";
-                consoleTicker.innerText = "✅ Secure alert ping successfully sent to owner's device!";
+                consoleTicker.innerText = forcedMode === 'call' ? "✅ Initializing outbound phone call..." : "✅ Secure alert SMS successfully sent!";
             } else {
                 throw new Error(result.error || 'Failed to process request');
             }
@@ -409,6 +410,7 @@
             consoleTicker.style.background = "#fef2f2";
             consoleTicker.style.color = "#991b1b";
             consoleTicker.style.borderColor = "#fca5a5";
+            console.log("Error log details:", error);
             consoleTicker.innerText = `❌ Delivery issue: Check console parameters.`;
         }
     }
