@@ -320,7 +320,33 @@
         </div>
 
         <div class="calling-grid">
-            <button class="btn-call btn-owner" onclick="dispatchTwilioMaskedCall()">
+            <button class="btn-call btn-owner" onclick="async function dispatchTwilioMaskedCall() {
+    const consoleTicker = document.getElementById('ticker-box');
+    if (consoleTicker) {
+        consoleTicker.style.display = "block";
+        consoleTicker.innerText = "🔄 Connecting secure line...";
+    }
+
+    try {
+        const response = await fetch('/api/make-call', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ownerPhone: primaryDestinationPhone })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            if (consoleTicker) consoleTicker.innerText = "✅ Call connected via mask!";
+        } else {
+            throw new Error(data.error || "Server error");
+        }
+    } catch (err) {
+        if (consoleTicker) consoleTicker.innerText = "❌ Masking failed. Opening dialer...";
+        // Fallback to direct call
+        window.location.href = `tel:${primaryDestinationPhone}`;
+    }
+}()">
                 <i class="fa-solid fa-phone"></i> Call Owner
             </button>
             <button class="btn-call btn-alternate" onclick="dialAlternateFallbackRoute()">
