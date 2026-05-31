@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/make-call",
+      "destination": "/api/make-call.js"
+    }
+  ]
+}
