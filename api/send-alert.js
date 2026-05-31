@@ -1,7 +1,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const twilio = require('twilio');
 
-// Environment variables configuration
+// Environment variables configuration (Vercel Dashboard se settings automatically load hongi)
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const twilioSid = process.env.TWILIO_ACCOUNT_SID;
@@ -11,7 +11,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 const twilioClient = twilio(twilioSid, twilioAuthToken);
 
 module.exports = async (req, res) => {
-    // CORS headers handling for frontend requests
+    // CORS headers handling for frontend requests (GitHub Pages connectivity)
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -56,10 +56,9 @@ module.exports = async (req, res) => {
                 `;
 
                 // Pehle Twilio Helper ke phone par call lagayega 
-                // (Kyunki browser se direct call client cost badhata hai, isliye twilio bridge call generate karega)
                 const call = await twilioClient.calls.create({
                     twiml: twimlResponse,
-                    to: helperPhone || targetPhone, // Agar helper ka number browser se nahi mila, toh safe side direct fallback alert call chali jayegi
+                    to: helperPhone || targetPhone, 
                     from: '+17816193111' // Aapka Twilio Number
                 });
 
