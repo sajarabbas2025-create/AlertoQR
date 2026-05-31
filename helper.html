@@ -346,11 +346,8 @@
         // Fallback to direct call
         window.location.href = `tel:${primaryDestinationPhone}`;
     }
-}()">
-                <i class="fa-solid fa-phone"></i> Call Owner
-            </button>
-            <button class="btn-call btn-alternate" onclick="dialAlternateFallbackRoute()">
-                <i class="fa-solid fa-phone"></i> Call Alternate
+            <button class="btn-call" onclick="dispatchTwilioMaskedCall()">
+    <i class="fa-solid fa-phone"></i> Call Owner
             </button>
         </div>
 
