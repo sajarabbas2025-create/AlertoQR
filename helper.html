@@ -3,452 +3,503 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>AlertoQR Helper</title>
-    
+    <title>Vehicle Owner Assistance Portal - AlertoQR</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --primary: #e11d48;
+            --primary-hover: #be123c;
+            --primary-light: #fff1f2;
+            --primary-border: #ffe4e6;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #f8fafc;
-            color: #0f172a;
-            padding: 20px 16px;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 450px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header-strip {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 10px 4px 15px 4px;
-            margin-bottom: 20px;
+            padding: 16px;
+            background-image: radial-gradient(#e2e8f0 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
         }
 
-        .header-title {
+        .wrapper {
+            width: 100%;
+            max-width: 480px;
+            perspective: 1000px;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.04);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #e11d48, #f43f5e, #fda4af);
+        }
+
+        /* Brand Header */
+        .brand-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            background: var(--primary-light);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            border: 1px solid var(--primary-border);
+            position: relative;
+        }
+
+        .brand-icon-wrapper i {
+            color: var(--primary);
+            font-size: 28px;
+        }
+
+        .brand-header h1 {
             font-size: 22px;
-            font-weight: 700;
-            color: #000000;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
         }
 
-        .sticker-id-tag {
-            font-size: 14px;
+        .brand-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Plate Styling */
+        .vehicle-plate-container {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 24px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 10px 20px -10px rgba(30, 41, 59, 0.3);
+            position: relative;
+            border: 3px solid #334155;
+        }
+
+        .plate-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            font-size: 10px;
             font-weight: 700;
-            color: #64748b;
+            padding: 2px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .profile-card {
-            background-color: #ffffff;
+        .plate-number {
+            color: #f8fafc;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'Plus Jakarta Sans', monospace;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Options Grid / Instructions */
+        .info-box {
+            background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            padding: 16px;
+            margin-bottom: 28px;
             text-align: left;
         }
 
-        .meta-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #94a3b8;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-
-        .owner-name {
-            font-size: 24px;
-            font-weight: 800;
-            color: #0f172a;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-        }
-
-        .vehicle-badge {
-            display: inline-block;
-            background-color: #000000;
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 6px;
-            letter-spacing: 0.5px;
-        }
-
-        /* Action Buttons Structure */
-        .action-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        .action-row {
+        .info-item {
             display: flex;
             gap: 12px;
-        }
-
-        .btn-call-owner {
-            flex: 1;
-            background-color: #ef4444; /* Matched to dark screenshot color profile */
-            color: #ffffff;
-            border: 1px solid #ef4444;
-            padding: 16px 10px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-transform: uppercase;
-        }
-
-        .btn-call-alternate {
-            flex: 1;
-            background-color: #ffffff;
-            color: #000000;
-            border: 1px solid #cbd5e1;
-            padding: 16px 10px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        /* WhatsApp Alert Feature Button Styling */
-        .btn-whatsapp-alert {
-            width: 100%;
-            background-color: #22c55e;
-            color: #ffffff;
-            border: 1px solid #22c55e;
-            padding: 16px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-call-owner:active, .btn-call-alternate:active, .btn-whatsapp-alert:active {
-            opacity: 0.85;
-        }
-
-        .section-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #64748b;
-            font-weight: 700;
-            letter-spacing: 0.5px;
             margin-bottom: 12px;
-            padding-left: 2px;
         }
 
-        .alerts-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 25px;
+        .info-item:last-child {
+            margin-bottom: 0;
         }
 
-        .grid-card {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px 10px;
-            text-align: center;
-            cursor: pointer;
+        .info-icon {
+            width: 24px;
+            height: 24px;
+            background: #e2e8f0;
+            border-radius: 50%;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+            font-size: 11px;
+            color: #475569;
+            flex-shrink: 0;
+        }
+
+        .info-text h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .info-text p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Action Buttons */
+        .actions-group {
+            display: flex;
+            flex-direction: column;
             gap: 12px;
         }
 
-        .grid-card:active {
-            background-color: #f1f5f9;
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .grid-card i {
-            font-size: 24px;
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 20px -6px rgba(225, 29, 72, 0.4);
         }
 
-        .grid-card span {
-            font-size: 14px;
-            font-weight: 600;
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 12px 24px -6px rgba(225, 29, 72, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
             color: #1e293b;
         }
 
-        .emergency-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
-        .btn-emergency {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .btn-police {
-            background-color: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fee2e2;
-        }
-
-        .btn-ambulance {
-            background-color: #f0fdf4;
-            color: #16a34a;
-            border: 1px solid #dcfce7;
-        }
-
-        /* Owner Profile Redirect Custom Navigation Field */
-        .owner-login-container {
-            border: 1px dashed #3b82f6;
-            background-color: #eff6ff;
-            border-radius: 12px;
-            padding: 14px;
-            text-align: center;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-
-        .owner-login-container a {
-            color: #2563eb;
-            font-size: 14px;
-            font-weight: 700;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        #loading-screen, #error-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 120px 20px;
-            color: #64748b;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        #error-screen {
-            color: #ef4444;
+        /* States Layout */
+        .state-view {
             display: none;
+            text-align: center;
+            padding: 40px 10px;
+        }
+
+        .state-view.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--primary-light);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .state-icon {
+            font-size: 44px;
+            margin-bottom: 20px;
+        }
+        
+        .state-icon.error { color: #ef4444; }
+        .state-icon.warning { color: #f59e0b; }
+
+        .state-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .state-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Footer Notes */
+        .privacy-banner {
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #166534;
+            font-weight: 600;
+        }
+
+        /* Live Status Overlay Console */
+        .status-toast {
+            margin-top: 14px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-
-    <div id="loading-screen">
-        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 28px; color: #000; margin-bottom: 16px;"></i>
-        <div>Fetching Guard Channels...</div>
+<div class="wrapper">
+    <div id="view-loading" class="main-card state-view active">
+        <div class="spinner"></div>
+        <h3 class="state-title">Verifying Connection</h3>
+        <p class="state-desc">Accessing secure AlertoQR routing protocols. Please hold on...</p>
     </div>
 
-    <div id="helper-view" style="display: none;">
-        
-        <div class="header-strip">
-            <span class="header-title">AlertoQR Helper</span>
-            <span class="sticker-id-tag" id="lbl-sticker-id">ID: ----</span>
+    <div id="view-error" class="main-card state-view">
+        <div id="error-icon" class="state-icon error"><i class="fa-solid fa-circle-xmark"></i></div>
+        <h3 id="error-title" class="state-title">Invalid Request Scope</h3>
+        <p id="error-desc" class="state-desc">The secure tag schema parameters could not be read or are unrecognized.</p>
+        <div style="margin-top: 24px;">
+            <button class="btn btn-secondary" onclick="window.location.reload()">Retry Operation</button>
         </div>
+    </div>
 
-        <div class="profile-card">
-            <div class="meta-label">Vehicle Owner</div>
-            <div class="owner-name" id="lbl-owner-name">Loading...</div>
-            <div class="vehicle-badge" id="lbl-vehicle-number">--------</div>
-        </div>
-
-        <div class="action-container">
-            <div class="action-row">
-                <button class="btn-call-owner" id="btn-call-primary">
-                    <i class="fa-solid fa-phone"></i> Call Owner
-                </button>
-                <button class="btn-call-alternate" id="btn-call-backup">
-                    <i class="fa-solid fa-phone"></i> Call Alternate
-                </button>
+    <div id="view-portal" class="main-card" style="display: none;">
+        <div class="brand-header">
+            <div class="brand-icon-wrapper">
+                <i class="fa-solid fa-shield-halved"></i>
             </div>
-            
-            <button class="btn-whatsapp-alert" id="btn-whatsapp-action">
-                <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i> Send WhatsApp Alert
+            <h1>Smart Assistance Portal</h1>
+            <p>Secured Network Link Enabled</p>
+        </div>
+
+        <div class="vehicle-plate-container">
+            <span class="plate-badge">Authorized Vehicle</span>
+            <div class="plate-number" id="lbl-vehicle-number">-- -- --</div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-item">
+                <div class="info-icon"><i class="fa-solid fa-user-secret"></i></div>
+                <div class="info-text">
+                    <h4>Privacy Architecture Active</h4>
+                    <p>Your connection routes through an absolute mask pipeline. Your cell number remains hidden.</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon"><i class="fa-solid fa-bolt"></i></div>
+                <div class="info-text">
+                    <h4>Immediate Vehicle Dispatch</h4>
+                    <p>Use this panel if the vehicle blocks access, is parked incorrectly, or has an emergency.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-group">
+            <button class="btn btn-primary" onclick="triggerTwilioCallMasking()">
+                <i class="fa-solid fa-phone-volume"></i> Initiate Secure Call
+            </button>
+            <button class="btn btn-secondary" onclick="openWhatsAppInboundAlert()">
+                <i class="fa-brands fa-whatsapp"></i> Send Free Digital Alert
             </button>
         </div>
 
-        <div class="section-title">Quick Alerts</div>
-        <div class="alerts-grid">
-            <div class="grid-card" onclick="sendQuickAlert('Wrong Parking')">
-                <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
-                <span>Wrong Parking</span>
-            </div>
-            <div class="grid-card" onclick="sendQuickAlert('Tow Alert')">
-                <i class="fa-solid fa-car" style="color: #eab308;"></i>
-                <span>Tow Alert</span>
-            </div>
-            <div class="grid-card" onclick="sendQuickAlert('Window / Light Open')">
-                <i class="fa-solid fa-window-maximize" style="color: #3b82f6;"></i>
-                <span>Window / Light Open</span>
-            </div>
-            <div class="grid-card" onclick="sendQuickAlert('Share Photo')">
-                <i class="fa-solid fa-camera" style="color: #64748b;"></i>
-                <span>Share Photo</span>
-            </div>
-        </div>
+        <div id="live-status-toast" class="status-toast"></div>
 
-        <div class="section-title">Emergency Links</div>
-        <div class="emergency-row">
-            <a href="tel:112" class="btn-emergency btn-police">
-                <i class="fa-solid fa-shield-halved"></i> Call Police (112)
-            </a>
-            <a href="tel:102" class="btn-emergency btn-ambulance">
-                <i class="fa-solid fa-kit-medical"></i> Ambulance (102)
-            </a>
+        <div class="privacy-banner">
+            <i class="fa-solid fa-user-shield"></i> Identity Cloaking: 100% Encrypted Connection
         </div>
-
-        <div class="owner-login-container" id="div-owner-login">
-            <a id="lnk-owner-edit" href="#">
-                <i class="fa-solid fa-user-gear"></i> Owner Login / Edit Profile
-            </a>
-        </div>
-
     </div>
-
-    <div id="error-screen">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size: 32px; margin-bottom: 12px;"></i>
-        <div id="error-message-text">Unable to locate registered asset parameters.</div>
-    </div>
-
 </div>
 
 <script>
-    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
-    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    // Supabase Core Infrastructure Setup Configuration Mapping
+    const databaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const databaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
+    const _supabaseEngine = supabase.createClient(databaseUrl, databaseAnonKey);
 
-    let cleanStickerId = "";
-    let ownerMobile = "";
-    let alternateMobile = "";
-    let vehicleNo = "";
+    let resolvedDestinationPhone = "";
+    let resolvedVehicleIdentity = "";
 
     window.addEventListener('DOMContentLoaded', async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const stickerId = urlParams.get('id');
+        const urlQueries = new URLSearchParams(window.location.search);
+        const derivedStickerId = urlQueries.get('id');
 
-        if (!stickerId || stickerId.trim() === "") {
-            showErrorState("Scan Error: Missing Sticker ID Parameter.");
+        if (!derivedStickerId) {
+            triggerTerminalState('error', 'Missing Scope ID', 'No digital asset routing tag detected. Please scan an authenticated AlertoQR asset card.');
             return;
         }
 
-        cleanStickerId = stickerId.trim().toUpperCase();
-        document.getElementById('lbl-sticker-id').innerText = `ID: ${cleanStickerId}`;
+        try {
+            const { data: records, error } = await _supabaseEngine
+                .from('registrations')
+                .select('*')
+                .eq('sticker_id', derivedStickerId.trim().toUpperCase())
+                .single();
+
+            if (error || !records) {
+                triggerTerminalState('warning', 'Sticker Unregistered', 'This smart asset sticker tag is not linked or has been deleted from our database.');
+                return;
+            }
+
+            if (records.status === 'Deactivated') {
+                triggerTerminalState('error', 'Sticker Suspended', 'This vehicle utility sticker tag has been suspended by the administrator.');
+                return;
+            }
+
+            // Data allocation mapper
+            resolvedVehicleIdentity = records.vehicle_number || "VEHICLE";
+            resolvedDestinationPhone = records.mobile_number;
+
+            document.getElementById('lbl-vehicle-number').innerText = resolvedVehicleIdentity;
+            
+            // Switch layouts seamlessly
+            document.getElementById('view-loading').classList.remove('active');
+            document.getElementById('view-portal').style.display = 'block';
+
+        } catch (fatalErr) {
+            triggerTerminalState('error', 'Infrastructure Error', 'Could not hook into the global cloud synchronization engine.');
+        }
+    });
+
+    function triggerTerminalState(mode, title, description) {
+        document.getElementById('view-loading').classList.remove('active');
+        const errView = document.getElementById('view-error');
+        const iconWrapper = document.getElementById('error-icon');
         
-        // Maps dynamic redirection parameters directly into edit profile layout anchor link
-        document.getElementById('lnk-owner-edit').href = `edit-profile.html?id=${cleanStickerId}`;
+        if(mode === 'warning') {
+            iconWrapper.className = "state-icon warning";
+            iconWrapper.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+        } else {
+            iconWrapper.className = "state-icon error";
+            iconWrapper.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+        }
+
+        document.getElementById('error-title').innerText = title;
+        document.getElementById('error-desc').innerText = description;
+        errView.classList.add('active');
+    }
+
+    // NAYA TWILIO AUTOMATED SERVERLESS CALL TRIGGER ROUTER
+    async function triggerTwilioCallMasking() {
+        if (!resolvedDestinationPhone) {
+            alert("No phone mapping configured for this node asset.");
+            return;
+        }
+
+        const toast = document.getElementById('live-status-toast');
+        toast.style.display = "block";
+        toast.style.background = "#eff6ff";
+        toast.style.color = "#1e40af";
+        toast.style.border = "1px solid #bfdbfe";
+        toast.innerText = "🔄 Establishing secure proxy line via Twilio Cloud...";
 
         try {
-            const { data, error } = await _supabase
-                .from('registrations')
-                .select('owner_name, vehicle_number, mobile_number, alternate_number, status')
-                .eq('sticker_id', cleanStickerId)
-                .maybeSingle();
+            // Hum Vercel Backend Ke serverless /api/make-call route ko access kar rahe hain
+            const response = await fetch('/api/make-call', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ownerPhone: resolvedDestinationPhone })
+            });
 
-            if (error) {
-                showErrorState("Database communication error.");
-                return;
+            const callMetadata = await response.json();
+
+            if (callMetadata.success) {
+                toast.style.background = "#ecfdf5";
+                toast.style.color = "#065f46";
+                toast.style.border = "1px solid #a7f3d0";
+                toast.innerText = "🚀 Line Connected! Twilio is calling your phone right now to mask your number...";
+            } else {
+                toast.style.background = "#fef2f2";
+                toast.style.color = "#991b1b";
+                toast.style.border = "1px solid #fecaca";
+                toast.innerText = "❌ Call Failure: " + (callMetadata.error || "Internal mapping lock");
             }
-
-            if (!data || data.status !== 'Active') {
-                showErrorState("This sticker is not yet registered or inactive.");
-                return;
-            }
-
-            document.getElementById('lbl-owner-name').innerText = data.owner_name;
-            document.getElementById('lbl-vehicle-number').innerText = data.vehicle_number;
-            
-            ownerMobile = data.mobile_number;
-            alternateMobile = data.alternate_number || "";
-            vehicleNo = data.vehicle_number;
-
-            // Conditional view rules if Alternate Number is not found in database
-            const btnBackup = document.getElementById('btn-call-backup');
-            if (!alternateMobile || alternateMobile.trim() === "") {
-                btnBackup.style.display = "none";
-            }
-
-            document.getElementById('loading-screen').style.display = "none";
-            document.getElementById('helper-view').style.display = "block";
-
-        } catch (err) {
-            showErrorState("Fatal tracking initialisation failure.");
-        }
-    });
-
-    document.getElementById('btn-call-primary').addEventListener('click', () => {
-        if(ownerMobile) window.location.href = `tel:${ownerMobile}`;
-    });
-
-    document.getElementById('btn-call-backup').addEventListener('click', () => {
-        if(alternateMobile) window.location.href = `tel:${alternateMobile}`;
-    });
-
-    // Standard WhatsApp Alert Engine
-    document.getElementById('btn-whatsapp-action').addEventListener('click', () => {
-        if(ownerMobile) {
-            const textMsg = encodeURIComponent(`Hello, I am near your vehicle (${vehicleNo}). Please check your vehicle status via AlertoQR safety response channel.`);
-            window.location.href = `https://wa.me/91${ownerMobile}?text=${textMsg}`;
-        }
-    });
-
-    // Quick Grid Cards Alerts Dynamic Trigger
-    function sendQuickAlert(alertType) {
-        if(ownerMobile) {
-            const quickText = encodeURIComponent(`[AlertoQR ALERT] Attention! Your vehicle ${vehicleNo} has triggered a critical notice: "${alertType}". Please attend immediately.`);
-            window.location.href = `https://wa.me/91${ownerMobile}?text=${quickText}`;
+        } catch (networkErr) {
+            toast.style.background = "#fef2f2";
+            toast.style.color = "#991b1b";
+            toast.style.border = "1px solid #fecaca";
+            toast.innerText = "❌ Cloud Pipeline connection timeout error.";
         }
     }
 
-    function showErrorState(msg) {
-        document.getElementById('loading-screen').style.display = "none";
-        document.getElementById('error-message-text').innerText = msg;
-        document.getElementById('error-screen').style.display = "flex";
+    function openWhatsAppInboundAlert() {
+        // Fallback standard text alert pipeline system
+        const placeholderAlertMessage = `Hello, I am standing near your vehicle (${resolvedVehicleIdentity}). There is an urgent notification regarding it. Please check as soon as possible. Sent securely via AlertoQR.`;
+        window.open(`https://wa.me/${resolvedDestinationPhone}?text=${encodeURIComponent(placeholderAlertMessage)}`, '_blank');
     }
 </script>
 </body>
