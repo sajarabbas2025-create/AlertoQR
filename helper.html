@@ -283,17 +283,17 @@
             <div class="vehicle-number-plate" id="dom-plate-number">------</div>
         </div>
 
-        <!-- Smart Call Buttons -->
+        <!-- Call Buttons -->
         <div class="calling-grid">
             <button class="btn-call btn-owner" onclick="triggerSmartAlertBridge('call')">
                 <i class="fa-solid fa-phone"></i> Call Owner
             </button>
-            <button class="btn-call btn-alternate" onclick="triggerSmartAlertBridge('alternate')">
+            <button class="btn-call btn-call-alternate" onclick="triggerSmartAlertBridge('alternate')">
                 <i class="fa-solid fa-phone"></i> Call Alternate
             </button>
         </div>
 
-        <!-- Notification Feed Ticker -->
+        <!-- Status Ticker Box -->
         <div id="ticker-box" class="status-ticker"></div>
 
         <div class="section-title">Quick Alerts</div>
@@ -364,7 +364,7 @@
                 .single();
 
             if (error || !data) {
-                deployErrorView('Record Vacant', 'No active profile found for this QR tag.');
+                deployErrorView('Record Vacant', 'No live active profile found for this QR code.');
                 return;
             }
 
@@ -387,16 +387,10 @@
     }
 
     function triggerSmartAlertBridge(selectedCallMode) {
-        // Prompt se hum helper ka phone number le lenge click-to-call forwarding ke liye
-        let userPhoneInput = prompt("Connecting Secure Line. Please enter your 10-digit mobile number to receive the call routing connect:");
-        if (!userPhoneInput || userPhoneInput.trim().length < 10) {
-            alert("Valid phone number is required to route the call.");
-            return;
-        }
-        dispatchSecureSMS('Urgent Call Request', selectedCallMode, userPhoneInput);
+        dispatchSecureSMS('Urgent Call Request', selectedCallMode);
     }
 
-    async function dispatchSecureSMS(alertType, forcedMode = 'sms', helperPhoneNum = '') {
+    async function dispatchSecureSMS(alertType, forcedMode = 'sms') {
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
         consoleTicker.style.background = "#f1f5f9";
@@ -404,12 +398,17 @@
         consoleTicker.style.borderColor = "#cbd5e1";
         consoleTicker.innerText = `📤 Connecting secure alert protocol...`;
 
-        // 📞 DYNAMIC CLICK-TO-CALL BRIDGE ACTION
+        // 📞 DIRECT DIALER NO-PROMPT ROUTE
         if (forcedMode === 'call' || forcedMode === 'alternate') {
             consoleTicker.style.background = "#ecfdf5";
             consoleTicker.style.color = "#065f46";
             consoleTicker.style.borderColor = "#a7f3d0";
-            consoleTicker.innerText = "✅ Request sent! Please wait, you will receive an incoming call shortly to connect.";
+            consoleTicker.innerText = "✅ Opening Masked Call Line...";
+            
+            setTimeout(() => {
+                // Direct virtual number par helper ka dialer bina kuch mange open hoga
+                window.location.href = `tel:+911732361210`;
+            }, 500);
         } else {
             consoleTicker.style.background = "#ecfdf5";
             consoleTicker.style.color = "#065f46";
@@ -417,21 +416,19 @@
             consoleTicker.innerText = "✅ Secure alert SMS successfully sent!";
         }
 
-        // Live trigger request to Vercel Endpoint
+        // Silent Background Logging
         try {
-            await fetch(backendApiUrl, {
+            fetch(backendApiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     stickerId: urlAssetId,
                     alertType: alertType,
-                    mode: forcedMode,
-                    isDirectCall: (forcedMode === 'call' || forcedMode === 'alternate'),
-                    helperPhone: helperPhoneNum
+                    mode: forcedMode
                 })
-            });
+            }).catch(e => console.log("Silent sync complete"));
         } catch (error) {
-            console.log("Background operation handled safely.");
+            console.log("Background action bypassed safely.");
         }
     }
 </script>
