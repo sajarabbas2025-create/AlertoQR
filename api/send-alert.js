@@ -19,34 +19,40 @@ module.exports = async (req, res) => {
         return res.status(200).end();
     }
 
-    // 📞 HENCE DIGITAL IVR WEBHOOK HANDSHAKE (GET or POST)
-    // Jab unka telematics server call route karne aayega
-    const incomingStickerId = req.query.stickerId || req.body.stickerId || "ALQR1005"; // Default fallback testing ke liye
+    // 📞 HENCE DIGITAL IVR WEBHOOK HANDSHAKE
+    // Agar Bulk SMS Plans ka server call route karne ke liye GET ya bina alertType ke POST bhej raha hai
+    if (req.method === 'GET' || (req.method === 'POST' && !req.body.alertType)) {
+        // Unka server jis bhi query parameter me data bheje (stickerId, phone, did, extension), hum sab check kar rahe hain
+        const incomingStickerId = req.query.stickerId || req.body.stickerId || req.query.did || req.query.caller || "";
 
-    if (req.method === 'GET' || (req.body && !req.body.alertType)) {
-        try {
-            const { data, error } = await supabase
-                .from('registrations')
-                .select('mobile_number')
-                .eq('sticker_id', incomingStickerId.trim().toUpperCase())
-                .single();
+        if (incomingStickerId) {
+            try {
+                const { data, error } = await supabase
+                    .from('registrations')
+                    .select('mobile_number')
+                    .eq('sticker_id', incomingStickerId.trim().toUpperCase())
+                    .single();
 
-            if (!error && data && data.mobile_number) {
-                let cleanPhone = data.mobile_number.toString().replace(/[^0-9]/g, '');
-                if (cleanPhone.startsWith('91') && cleanPhone.length > 10) {
-                    cleanPhone = cleanPhone.substring(2);
+                if (!error && data && data.mobile_number) {
+                    let cleanPhone = data.mobile_number.toString().replace(/[^0-9]/g, '');
+                    if (cleanPhone.startsWith('91') && cleanPhone.length > 10) {
+                        cleanPhone = cleanPhone.substring(2);
+                    }
+                    // Unka exact required format: {"data":"7404900081"}
+                    return res.status(200).json({ data: cleanPhone });
                 }
-                // Unka exact required format: {"data":"NUMBER"}
-                return res.status(200).json({ data: cleanPhone });
+            } catch (e) {
+                console.log("IVR DB bypass exception");
             }
-        } catch (e) {
-            console.log("IVR dynamic fetch bypass");
         }
-        // Agar kuch na mile toh emergency backup alerto number response
-        return res.status(200).json({ data: "9254021578" });
+
+        // 🚨 BACKUP FALLBACK (Gaurav/Sajar Number Mapping)
+        // Agar system ko sticker ID match nahi milti, toh 'busy' bolne ke bajaye yeh direct aapke number par call connect karega.
+        // Aap niche "73275739" ya apna jo bhi primary number hai, wo badal sakte hain.
+        return res.status(200).json({ data: "73275739" }); 
     }
 
-    // 💬 FRONTEND APP PROTOCOL (POST)
+    // 💬 FRONTEND APP PROTOCOL (POST) - SMS Aur Dialer Button
     if (req.method === 'POST') {
         const { stickerId, alertType, mode } = req.body;
 
