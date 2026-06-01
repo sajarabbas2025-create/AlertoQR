@@ -12,13 +12,41 @@ const SENDER_ID = "BLKSM5";
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
 
+    // 📞 HENCE DIGITAL IVR WEBHOOK HANDSHAKE (GET or POST)
+    // Jab unka telematics server call route karne aayega
+    const incomingStickerId = req.query.stickerId || req.body.stickerId || "ALQR1005"; // Default fallback testing ke liye
+
+    if (req.method === 'GET' || (req.body && !req.body.alertType)) {
+        try {
+            const { data, error } = await supabase
+                .from('registrations')
+                .select('mobile_number')
+                .eq('sticker_id', incomingStickerId.trim().toUpperCase())
+                .single();
+
+            if (!error && data && data.mobile_number) {
+                let cleanPhone = data.mobile_number.toString().replace(/[^0-9]/g, '');
+                if (cleanPhone.startsWith('91') && cleanPhone.length > 10) {
+                    cleanPhone = cleanPhone.substring(2);
+                }
+                // Unka exact required format: {"data":"NUMBER"}
+                return res.status(200).json({ data: cleanPhone });
+            }
+        } catch (e) {
+            console.log("IVR dynamic fetch bypass");
+        }
+        // Agar kuch na mile toh emergency backup alerto number response
+        return res.status(200).json({ data: "9254021578" });
+    }
+
+    // 💬 FRONTEND APP PROTOCOL (POST)
     if (req.method === 'POST') {
         const { stickerId, alertType, mode } = req.body;
 
@@ -34,9 +62,8 @@ module.exports = async (req, res) => {
             }
 
             let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
-
             if (!targetPhone) {
-                return res.status(200).json({ success: false, error: 'Phone number not found.' });
+                return res.status(200).json({ success: false, error: 'Phone vacant.' });
             }
 
             let cleanPhone = targetPhone.toString().replace(/[^0-9]/g, '');
@@ -44,21 +71,12 @@ module.exports = async (req, res) => {
                 cleanPhone = cleanPhone.substring(2);
             }
 
-            // 1. CALL PROTOCOL
             if (mode === 'call' || mode === 'alternate') {
-                return res.status(200).json({ 
-                    success: true, 
-                    mode: 'call', 
-                    virtualNumber: '+911732361210' 
-                });
-            } 
-            
-            // 2. QUICK SMS PROTOCOL
-            else {
-                const smsMessage = `[AlertoQR] Emergency Alert! Aapki vehicle (${data.vehicle_number || 'Vehicle'}) par ek notification aaya hai: "${alertType}". Kripya turant check karein!`;
+                return res.status(200).json({ success: true, mode: 'call', virtualNumber: '+911732361210' });
+            } else {
+                const smsMessage = `[AlertoQR] Emergency Alert! Aapki vehicle (${data.vehicle_number || 'Vehicle'}) par ek notification aaya hai: "${alertType}". Kripya check karein!`;
                 const gatewayUrl = `https://bulksmsplans.com/api/send-sms`;
                 
-                // Background me SMS trigger hoga, hum check block nahi karenge
                 axios.get(gatewayUrl, {
                     params: {
                         api_id: API_ID,
@@ -69,16 +87,13 @@ module.exports = async (req, res) => {
                         number: cleanPhone,
                         message: smsMessage
                     }
-                }).catch(e => console.log("Gateway background bypass"));
+                }).catch(e => console.log("Gateway bypass"));
 
-                // Frontend ko instant success return karega bina wait kiye
                 return res.status(200).json({ success: true, mode: 'sms' });
             }
 
         } catch (err) {
             return res.status(200).json({ success: false, error: err.message });
         }
-    } else {
-        res.status(405).json({ error: 'Method not allowed' });
     }
 };
