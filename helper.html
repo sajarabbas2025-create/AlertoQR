@@ -10,9 +10,9 @@
     
     <!-- Supabase Core Dependency -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- FontAwesome Vector Graphics Icons -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Premium Typography Structure -->
+    <!-- Premium Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -257,20 +257,20 @@
 
 <div class="helper-container">
     
-    <!-- Loading Network Phase -->
+    <!-- Loading Screen -->
     <div id="loading-view" class="state-shell-view">
         <div class="spinner-engine"></div>
         <p style="color: #64748b; font-size: 14px; font-weight: 500;">Connecting secure network...</p>
     </div>
 
-    <!-- Error/Fault Phase -->
+    <!-- Error Screen -->
     <div id="error-view" class="state-shell-view" style="display: none;">
         <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: #ef4444; margin-bottom: 12px;"></i>
         <h3 id="error-heading" style="font-size: 16px; margin-bottom: 6px;">Network Fault</h3>
         <p id="error-subtext" style="color: #64748b; font-size: 13px;"></p>
     </div>
 
-    <!-- Main Live Profile UI -->
+    <!-- Main Dashboard -->
     <div id="dashboard-view" style="display: none;">
         <div class="header-section">
             <div class="brand-name">AlertoQR</div>
@@ -283,7 +283,7 @@
             <div class="vehicle-number-plate" id="dom-plate-number">------</div>
         </div>
 
-        <!-- Call Buttons Integration -->
+        <!-- Smart Call Buttons -->
         <div class="calling-grid">
             <button class="btn-call btn-owner" onclick="triggerSmartAlertBridge('call')">
                 <i class="fa-solid fa-phone"></i> Call Owner
@@ -293,7 +293,7 @@
             </button>
         </div>
 
-        <!-- Real-time Status Notification Feed Box -->
+        <!-- Notification Feed Ticker -->
         <div id="ticker-box" class="status-ticker"></div>
 
         <div class="section-title">Quick Alerts</div>
@@ -364,7 +364,7 @@
                 .single();
 
             if (error || !data) {
-                deployErrorView('Record Vacant', 'No live active data allocations correspond to this QR tag key.');
+                deployErrorView('Record Vacant', 'No active profile found for this QR tag.');
                 return;
             }
 
@@ -387,10 +387,16 @@
     }
 
     function triggerSmartAlertBridge(selectedCallMode) {
-        dispatchSecureSMS('Urgent Call Request', selectedCallMode);
+        // Prompt se hum helper ka phone number le lenge click-to-call forwarding ke liye
+        let userPhoneInput = prompt("Connecting Secure Line. Please enter your 10-digit mobile number to receive the call routing connect:");
+        if (!userPhoneInput || userPhoneInput.trim().length < 10) {
+            alert("Valid phone number is required to route the call.");
+            return;
+        }
+        dispatchSecureSMS('Urgent Call Request', selectedCallMode, userPhoneInput);
     }
 
-    async function dispatchSecureSMS(alertType, forcedMode = 'sms') {
+    async function dispatchSecureSMS(alertType, forcedMode = 'sms', helperPhoneNum = '') {
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
         consoleTicker.style.background = "#f1f5f9";
@@ -398,17 +404,12 @@
         consoleTicker.style.borderColor = "#cbd5e1";
         consoleTicker.innerText = `📤 Connecting secure alert protocol...`;
 
-        // 📞 IMMEDIATE CALL PROTOCOL BYPASS
+        // 📞 DYNAMIC CLICK-TO-CALL BRIDGE ACTION
         if (forcedMode === 'call' || forcedMode === 'alternate') {
             consoleTicker.style.background = "#ecfdf5";
             consoleTicker.style.color = "#065f46";
             consoleTicker.style.borderColor = "#a7f3d0";
-            consoleTicker.innerText = "✅ Opening Secure Masked Call Line...";
-            
-            setTimeout(() => {
-                // Dialer direct open hoga aapke virtual number par
-                window.location.href = `tel:+911732361210`;
-            }, 800);
+            consoleTicker.innerText = "✅ Request sent! Please wait, you will receive an incoming call shortly to connect.";
         } else {
             consoleTicker.style.background = "#ecfdf5";
             consoleTicker.style.color = "#065f46";
@@ -416,19 +417,21 @@
             consoleTicker.innerText = "✅ Secure alert SMS successfully sent!";
         }
 
-        // Silent Background Sync
+        // Live trigger request to Vercel Endpoint
         try {
-            fetch(backendApiUrl, {
+            await fetch(backendApiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     stickerId: urlAssetId,
                     alertType: alertType,
-                    mode: forcedMode
+                    mode: forcedMode,
+                    isDirectCall: (forcedMode === 'call' || forcedMode === 'alternate'),
+                    helperPhone: helperPhoneNum
                 })
-            }).catch(e => console.log("Background flow sync"));
+            });
         } catch (error) {
-            console.log("Silent fallback activated");
+            console.log("Background operation handled safely.");
         }
     }
 </script>
