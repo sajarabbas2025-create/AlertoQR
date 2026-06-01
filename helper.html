@@ -8,8 +8,11 @@
     <meta http-equiv="Expires" content="0">
     <title>AlertoQR Helper Portal</title>
     
+    <!-- Supabase Core Dependency -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- FontAwesome Vector Graphics Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Premium Typography Structure -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -108,14 +111,15 @@
         
         .calling-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             margin-bottom: 24px;
         }
 
         .btn-call {
             padding: 16px;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             border: none;
             cursor: pointer;
@@ -127,19 +131,25 @@
         }
 
         .btn-owner {
-            background: #25d366;
+            background: #000000;
             color: white;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        .btn-owner:hover {
-            background: #20ba56;
+        .btn-alternate {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-call:hover {
+            transform: translateY(-1px);
         }
 
         .status-ticker {
             margin-bottom: 20px;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 14px;
+            border-radius: 12px;
             font-size: 13px;
             font-weight: 600;
             text-align: center;
@@ -247,35 +257,43 @@
 
 <div class="helper-container">
     
+    <!-- Loading Network Phase -->
     <div id="loading-view" class="state-shell-view">
         <div class="spinner-engine"></div>
         <p style="color: #64748b; font-size: 14px; font-weight: 500;">Connecting secure network...</p>
     </div>
 
+    <!-- Error/Fault Phase -->
     <div id="error-view" class="state-shell-view" style="display: none;">
         <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: #ef4444; margin-bottom: 12px;"></i>
         <h3 id="error-heading" style="font-size: 16px; margin-bottom: 6px;">Network Fault</h3>
         <p id="error-subtext" style="color: #64748b; font-size: 13px;"></p>
     </div>
 
+    <!-- Main Live Profile UI -->
     <div id="dashboard-view" style="display: none;">
         <div class="header-section">
-            <div class="brand-name">AlertoQR</div>
+            <div class="brand-name">AlertoQR Helper</div>
             <div class="sticker-id-badge" id="dom-sticker-badge">ID: ----</div>
         </div>
 
         <div class="owner-card">
-            <div class="meta-label">Vehicle QR Status Locked</div>
+            <div class="meta-label">Vehicle Owner</div>
             <div class="owner-name" id="dom-owner-name">------</div>
             <div class="vehicle-number-plate" id="dom-plate-number">------</div>
         </div>
 
+        <!-- Call Buttons Integration (Primary & Alternate Mapping) -->
         <div class="calling-grid">
-            <button class="btn-call btn-owner" onclick="triggerSmartAlertBridge()">
-                <i class="fa-solid fa-phone"></i> Notify Owner Instantly
+            <button class="btn-call btn-owner" onclick="triggerSmartAlertBridge('call')">
+                <i class="fa-solid fa-phone"></i> Call Owner
+            </button>
+            <button class="btn-call btn-alternate" onclick="triggerSmartAlertBridge('alternate')">
+                <i class="fa-solid fa-phone"></i> Call Alternate
             </button>
         </div>
 
+        <!-- Real-time Status Notification Feed Box -->
         <div id="ticker-box" class="status-ticker"></div>
 
         <div class="section-title">Quick Alerts</div>
@@ -288,20 +306,20 @@
                 <i class="fa-solid fa-car" style="color: #3b82f6;"></i>
                 <span>Tow Alert</span>
             </div>
-            <div class="alert-card" onclick="dispatchSecureSMS('Window Open', 'sms')">
-                <i class="fa-solid fa-window-maximize" style="color: #64748b;"></i>
-                <span>Window Open</span>
+            <div class="alert-card" onclick="dispatchSecureSMS('Window / Light Open', 'sms')">
+                <i class="fa-solid fa-file-invoice" style="color: #000000;"></i>
+                <span>Window / Light Open</span>
             </div>
-            <div class="alert-card" onclick="dispatchSecureSMS('Fuel Leakage', 'sms')">
-                <i class="fa-solid fa-gas-pump" style="color: #eab308;"></i>
-                <span>Fuel Leakage</span>
+            <div class="alert-card" onclick="dispatchSecureSMS('Share Photo', 'sms')">
+                <i class="fa-solid fa-camera" style="color: #64748b;"></i>
+                <span>Share Photo</span>
             </div>
         </div>
 
         <div class="section-title">Emergency Links</div>
         <div class="emergency-grid">
             <button class="btn-emergency btn-police" onclick="window.location.href='tel:112'">
-                <i class="fa-solid fa-building-shield"></i> Police (112)
+                <i class="fa-solid fa-building-shield"></i> Call Police (112)
             </button>
             <button class="btn-emergency btn-ambulance" onclick="window.location.href='tel:102'">
                 <i class="fa-solid fa-truck-medical"></i> Ambulance (102)
@@ -311,10 +329,12 @@
 </div>
 
 <script>
+    // Supabase Cluster Credentials Setup
     const databaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const databaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(databaseUrl, databaseKey);
 
+    // Vercel Serverless Production Deployment Engine URL
     const backendApiUrl = 'https://alerto-qr-sajarabbas2025-creates-projects.vercel.app/api/send-alert'; 
 
     let urlAssetId = "";
@@ -322,6 +342,7 @@
     window.addEventListener('DOMContentLoaded', async () => {
         const queryStrings = new URLSearchParams(window.location.search);
         
+        // Cache Busting Protocol Mechanism
         if (!queryStrings.has('v')) {
             queryStrings.set('v', Date.now());
             window.location.search = queryStrings.toString();
@@ -339,6 +360,7 @@
         document.getElementById('dom-sticker-badge').innerText = `ID: ${urlAssetId.toUpperCase()}`;
 
         try {
+            // Handshake query fetch sequence from registrations schema table
             const { data, error } = await _supabase
                 .from('registrations')
                 .select('full_name, vehicle_number')
@@ -368,9 +390,9 @@
         document.getElementById('error-view').style.display = 'block';
     }
 
-    function triggerSmartAlertBridge() {
-        // Yeh green button direct call triggering mode set karega
-        dispatchSecureSMS('Urgent Call Request', 'call');
+    function triggerSmartAlertBridge(selectedCallMode) {
+        // Yeh function button press hone par routing target call ya alternate choose karega
+        dispatchSecureSMS('Urgent Call Request', selectedCallMode);
     }
 
     async function dispatchSecureSMS(alertType, forcedMode = 'sms') {
@@ -379,7 +401,7 @@
         consoleTicker.style.background = "#f1f5f9";
         consoleTicker.style.color = "#334155";
         consoleTicker.style.borderColor = "#cbd5e1";
-        consoleTicker.innerText = `📤 Dispatched alert protocol token...`;
+        consoleTicker.innerText = `📤 Connecting secure alert protocol...`;
 
         try {
             const response = await fetch(backendApiUrl, {
@@ -399,10 +421,22 @@
             const result = await response.json();
 
             if (result.success) {
-                consoleTicker.style.background = "#ecfdf5";
-                consoleTicker.style.color = "#065f46";
-                consoleTicker.style.borderColor = "#a7f3d0";
-                consoleTicker.innerText = forcedMode === 'call' ? "✅ Initializing outbound phone call..." : "✅ Secure alert SMS successfully sent!";
+                if (forcedMode === 'call' || forcedMode === 'alternate') {
+                    consoleTicker.style.background = "#ecfdf5";
+                    consoleTicker.style.color = "#065f46";
+                    consoleTicker.style.borderColor = "#a7f3d0";
+                    consoleTicker.innerText = "✅ Opening Secure Masked Call Line...";
+                    
+                    // 1 Second ke pause ke baad dialer me unka Indian virtual number direct launch ho jayega
+                    setTimeout(() => {
+                        window.location.href = `tel:${result.virtualNumber}`;
+                    }, 1000);
+                } else {
+                    consoleTicker.style.background = "#ecfdf5";
+                    consoleTicker.style.color = "#065f46";
+                    consoleTicker.style.borderColor = "#a7f3d0";
+                    consoleTicker.innerText = "✅ Secure alert SMS successfully sent!";
+                }
             } else {
                 throw new Error(result.error || 'Failed to process request');
             }
@@ -410,8 +444,8 @@
             consoleTicker.style.background = "#fef2f2";
             consoleTicker.style.color = "#991b1b";
             consoleTicker.style.borderColor = "#fca5a5";
-            console.log("Error log details:", error);
-            consoleTicker.innerText = `❌ Delivery issue: Check console parameters.`;
+            console.log("Error log routing details:", error);
+            consoleTicker.innerText = `❌ Delivery issue: Check server connectivity.`;
         }
     }
 </script>
