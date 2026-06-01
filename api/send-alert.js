@@ -19,9 +19,7 @@ module.exports = async (req, res) => {
     }
 
     // 📞 BULK SMS PLANS / HENCE DIGITAL IVR HANDSHAKE PROTOCOL
-    // Jab unka server call aage badhane ke liye hamare URL ko hit karega
     if (req.method === 'GET' || (req.method === 'POST' && !req.body.alertType)) {
-        // Unka system jo bhi query bhej raha ho, hum hamesha registered phone number plain text me denge
         const incomingStickerId = req.query.stickerId || req.body.stickerId || req.query.did || req.query.caller || "ALQR1005";
         
         try {
@@ -37,21 +35,20 @@ module.exports = async (req, res) => {
                     cleanPhone = cleanPhone.substring(2);
                 }
                 
-                // 🌟 CHANGER ROADBLOCK REMOVAL: DIRECT PLAIN TEXT RESPONSE
-                // Unhe koi json formatting nahi chahiye, direct text output chahiye
-                res.setHeader('Content-Type', 'text/plain');
-                return res.status(200).send(cleanPhone);
+                // 🌟 MATCHING THE EXACT REQUIREMENT: {"data":"10_DIGIT_NUMBER"}
+                res.setHeader('Content-Type', 'application/json');
+                return res.status(200).json({ data: cleanPhone });
             }
         } catch (e) {
-            console.log("IVR plain parsing catch active");
+            console.log("IVR parsing match exception");
         }
 
-        // Backup fallback agar number na mile toh default plain number return karega
-        res.setHeader('Content-Type', 'text/plain');
-        return res.status(200).send("9254021578");
+        // Exact fallback backup structure format
+        res.setHeader('Content-Type', 'application/json');
+        return res.status(200).json({ data: "9254021578" });
     }
 
-    // 💬 FRONTEND APP PROTOCOL (POST) - For SMS and Dialer Instant Trigger
+    // 💬 FRONTEND APP PROTOCOL (POST)
     if (req.method === 'POST') {
         const { stickerId, alertType, mode } = req.body;
 
