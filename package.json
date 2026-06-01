@@ -1,5 +1,17 @@
 {
+  "name": "alerto-qr",
+  "version": "1.0.0",
+  "description": "AlertoQR Secure Vehicle Notification System",
+  "main": "api/send-alert.js",
+  "scripts": {
+    "start": "node api/send-alert.js"
+  },
   "dependencies": {
-    "twilio": "^4.0.0"
-  }
+    "@supabase/supabase-js": "^2.39.0",
+    "axios": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "ISC"
 }
