@@ -1,15 +1,16 @@
 const { createClient } = require('@supabase/supabase-js');
-const axios = require('axios'); // Twilio ki jagah hum HTTP request use karenge
+const axios = require('axios');
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Vercel Environment Variables Se Database aur Gateway Connect Kiya
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Bulk SMS Plans Credentials (Directly Added for Stability)
-const API_ID = "API42znmxVL15079";
-const API_PASSWORD = "ND7oMLCE";
-const SENDER_ID = "BLKSM5"; // Aapka approved DLT Sender ID (Default: BLKSM5)
+// Naye Vercel Variables Jo Humne Abhi Add Kiye Hain
+const API_ID = process.env.BULK_SMS_API_ID;
+const API_PASSWORD = process.env.BULK_SMS_API_PASSWORD;
+const SENDER_ID = "BLKSM5"; 
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -24,7 +25,7 @@ module.exports = async (req, res) => {
         const { stickerId, alertType, mode } = req.body;
 
         try {
-            // 1. Supabase se details nikalna
+            // Supabase Query
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -41,15 +42,13 @@ module.exports = async (req, res) => {
                 return res.status(400).json({ success: false, error: 'Requested phone number is not registered.' });
             }
 
-            // Clean phone number (Ensure 10 digits for Indian Gateway)
             let cleanPhone = targetPhone.toString().replace(/[^0-9]/g, '');
             if (cleanPhone.startsWith('91') && cleanPhone.length > 10) {
                 cleanPhone = cleanPhone.substring(2);
             }
 
-            // 2. 📞 CALLING PROTOCOL (Redirecting to Virtual Number Line)
+            // 1. 📞 MASKED CALL MODE
             if (mode === 'call' || mode === 'alternate') {
-                // Background me alert trigger record karke helper ko line connect karega
                 return res.status(200).json({ 
                     success: true, 
                     mode: 'call', 
@@ -57,11 +56,9 @@ module.exports = async (req, res) => {
                 });
             } 
             
-            // 3. 💬 QUICK ALERT SMS LOGIC (Bulk SMS Plans API Integration)
+            // 2. 💬 BULK SMS PLANS QUICK ALERT SMS MODE
             else {
                 const smsMessage = `[AlertoQR] Emergency Alert! Aapki vehicle (${data.vehicle_number || 'Vehicle'}) par ek notification aaya hai: "${alertType}". Kripya turant check karein!`;
-                
-                // Bulk SMS Plans Gateway URL Generation
                 const gatewayUrl = `https://bulksmsplans.com/api/send-sms`;
                 
                 const response = await axios.get(gatewayUrl, {
