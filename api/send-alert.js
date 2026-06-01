@@ -8,7 +8,6 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const API_ID = process.env.BULK_SMS_API_ID;
 const API_PASSWORD = process.env.BULK_SMS_API_PASSWORD;
-const IVR_NUMBER = "1732361210"; // Aapka virtual number bina code ke
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,34 +18,40 @@ module.exports = async (req, res) => {
         return res.status(200).end();
     }
 
-    // 📞 BULK SMS PLANS INBOUND IVR HANDSHAKE BYPASS
+    // 📞 BULK SMS PLANS / HENCE DIGITAL IVR HANDSHAKE PROTOCOL
+    // Jab unka server call aage badhane ke liye hamare URL ko hit karega
     if (req.method === 'GET' || (req.method === 'POST' && !req.body.alertType)) {
-        const incomingStickerId = req.query.stickerId || req.body.stickerId || req.query.did || "";
+        // Unka system jo bhi query bhej raha ho, hum hamesha registered phone number plain text me denge
+        const incomingStickerId = req.query.stickerId || req.body.stickerId || req.query.did || req.query.caller || "ALQR1005";
         
-        if (incomingStickerId) {
-            try {
-                const { data, error } = await supabase
-                    .from('registrations')
-                    .select('mobile_number')
-                    .eq('sticker_id', incomingStickerId.trim().toUpperCase())
-                    .single();
+        try {
+            const { data, error } = await supabase
+                .from('registrations')
+                .select('mobile_number')
+                .eq('sticker_id', incomingStickerId.trim().toUpperCase())
+                .single();
 
-                if (!error && data && data.mobile_number) {
-                    let cleanPhone = data.mobile_number.toString().replace(/[^0-9]/g, '');
-                    if (cleanPhone.startsWith('91') && cleanPhone.length > 10) {
-                        cleanPhone = cleanPhone.substring(2);
-                    }
-                    return res.status(200).json({ data: cleanPhone });
+            if (!error && data && data.mobile_number) {
+                let cleanPhone = data.mobile_number.toString().replace(/[^0-9]/g, '');
+                if (cleanPhone.startsWith('91') && cleanPhone.length > 10) {
+                    cleanPhone = cleanPhone.substring(2);
                 }
-            } catch (e) {
-                console.log("IVR fallback logic error");
+                
+                // 🌟 CHANGER ROADBLOCK REMOVAL: DIRECT PLAIN TEXT RESPONSE
+                // Unhe koi json formatting nahi chahiye, direct text output chahiye
+                res.setHeader('Content-Type', 'text/plain');
+                return res.status(200).send(cleanPhone);
             }
+        } catch (e) {
+            console.log("IVR plain parsing catch active");
         }
-        // Fallback testing default response as required format {"data":"NUMBER"}
-        return res.status(200).json({ data: "9254021578" });
+
+        // Backup fallback agar number na mile toh default plain number return karega
+        res.setHeader('Content-Type', 'text/plain');
+        return res.status(200).send("9254021578");
     }
 
-    // 💬 FRONTEND APP TIMELY PROTOCOL (POST)
+    // 💬 FRONTEND APP PROTOCOL (POST) - For SMS and Dialer Instant Trigger
     if (req.method === 'POST') {
         const { stickerId, alertType, mode } = req.body;
 
@@ -58,12 +63,12 @@ module.exports = async (req, res) => {
                 .single();
 
             if (error || !data) {
-                return res.status(200).json({ success: false, error: 'Sticker ID not found.' });
+                return res.status(200).json({ success: false, error: 'Sticker ID vacant.' });
             }
 
             let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
             if (!targetPhone) {
-                return res.status(200).json({ success: false, error: 'Target phone not found.' });
+                return res.status(200).json({ success: false, error: 'Phone missing.' });
             }
 
             let customerPhone = targetPhone.toString().replace(/[^0-9]/g, '');
@@ -71,28 +76,10 @@ module.exports = async (req, res) => {
                 customerPhone = customerPhone.substring(2);
             }
 
-            // 📞 ACTIVE OUTBOUND CALL BRIDGE VIA DOCUMENTATION SPECIFICATIONS
             if (mode === 'call' || mode === 'alternate') {
-                const callApiUrl = `https://bulksmsplans.com/api/ivr/makeACall`;
-                
-                // Hum background me click-to-call trigger kar rahe hain jo dono ko jodd dega
-                axios.get(callApiUrl, {
-                    params: {
-                        api_id: API_ID,
-                        api_password: API_PASSWORD,
-                        ivr_number: IVR_NUMBER,
-                        dial: 'Customer',
-                        receiver_number: '9254021578', // Testing default helper container flow number
-                        agent_number: customerPhone    // Dynamic registered vehicle owner number
-                    }
-                }).catch(e => console.log("Outbound Bridge Sync Bypass"));
-
                 return res.status(200).json({ success: true, mode: 'call', virtualNumber: '+911732361210' });
-            } 
-            
-            // 💬 SMS ROUTE PROTOCOL
-            else {
-                const smsMessage = `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number || 'Vehicle'}) par alert: "${alertType}". Check karein!`;
+            } else {
+                const smsMessage = `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number || 'Vehicle'}) par alert: "${alertType}". Kripya check karein!`;
                 const gatewayUrl = `https://bulksmsplans.com/api/send-sms`;
                 
                 axios.get(gatewayUrl, {
@@ -105,7 +92,7 @@ module.exports = async (req, res) => {
                         number: customerPhone,
                         message: smsMessage
                     }
-                }).catch(e => console.log("SMS Gateway bypass"));
+                }).catch(e => console.log("Bypass background sync alert"));
 
                 return res.status(200).json({ success: true, mode: 'sms' });
             }
