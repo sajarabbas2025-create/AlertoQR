@@ -8,7 +8,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const API_ID = process.env.BULK_SMS_API_ID;
 const API_PASSWORD = process.env.BULK_SMS_API_PASSWORD;
-const SENDER_ID = "BLKSM5"; 
+const IVR_NUMBER = "1732361210"; // Aapka virtual number bina code ke
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -19,12 +19,10 @@ module.exports = async (req, res) => {
         return res.status(200).end();
     }
 
-    // 📞 HENCE DIGITAL IVR WEBHOOK HANDSHAKE
-    // Agar Bulk SMS Plans ka server call route karne ke liye GET ya bina alertType ke POST bhej raha hai
+    // 📞 BULK SMS PLANS INBOUND IVR HANDSHAKE BYPASS
     if (req.method === 'GET' || (req.method === 'POST' && !req.body.alertType)) {
-        // Unka server jis bhi query parameter me data bheje (stickerId, phone, did, extension), hum sab check kar rahe hain
-        const incomingStickerId = req.query.stickerId || req.body.stickerId || req.query.did || req.query.caller || "";
-
+        const incomingStickerId = req.query.stickerId || req.body.stickerId || req.query.did || "";
+        
         if (incomingStickerId) {
             try {
                 const { data, error } = await supabase
@@ -38,21 +36,17 @@ module.exports = async (req, res) => {
                     if (cleanPhone.startsWith('91') && cleanPhone.length > 10) {
                         cleanPhone = cleanPhone.substring(2);
                     }
-                    // Unka exact required format: {"data":"7404900081"}
                     return res.status(200).json({ data: cleanPhone });
                 }
             } catch (e) {
-                console.log("IVR DB bypass exception");
+                console.log("IVR fallback logic error");
             }
         }
-
-        // 🚨 BACKUP FALLBACK (Gaurav/Sajar Number Mapping)
-        // Agar system ko sticker ID match nahi milti, toh 'busy' bolne ke bajaye yeh direct aapke number par call connect karega.
-        // Aap niche "73275739" ya apna jo bhi primary number hai, wo badal sakte hain.
-        return res.status(200).json({ data: "73275739" }); 
+        // Fallback testing default response as required format {"data":"NUMBER"}
+        return res.status(200).json({ data: "9254021578" });
     }
 
-    // 💬 FRONTEND APP PROTOCOL (POST) - SMS Aur Dialer Button
+    // 💬 FRONTEND APP TIMELY PROTOCOL (POST)
     if (req.method === 'POST') {
         const { stickerId, alertType, mode } = req.body;
 
@@ -69,18 +63,36 @@ module.exports = async (req, res) => {
 
             let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
             if (!targetPhone) {
-                return res.status(200).json({ success: false, error: 'Phone vacant.' });
+                return res.status(200).json({ success: false, error: 'Target phone not found.' });
             }
 
-            let cleanPhone = targetPhone.toString().replace(/[^0-9]/g, '');
-            if (cleanPhone.startsWith('91') && cleanPhone.length > 10) {
-                cleanPhone = cleanPhone.substring(2);
+            let customerPhone = targetPhone.toString().replace(/[^0-9]/g, '');
+            if (customerPhone.startsWith('91') && customerPhone.length > 10) {
+                customerPhone = customerPhone.substring(2);
             }
 
+            // 📞 ACTIVE OUTBOUND CALL BRIDGE VIA DOCUMENTATION SPECIFICATIONS
             if (mode === 'call' || mode === 'alternate') {
+                const callApiUrl = `https://bulksmsplans.com/api/ivr/makeACall`;
+                
+                // Hum background me click-to-call trigger kar rahe hain jo dono ko jodd dega
+                axios.get(callApiUrl, {
+                    params: {
+                        api_id: API_ID,
+                        api_password: API_PASSWORD,
+                        ivr_number: IVR_NUMBER,
+                        dial: 'Customer',
+                        receiver_number: '9254021578', // Testing default helper container flow number
+                        agent_number: customerPhone    // Dynamic registered vehicle owner number
+                    }
+                }).catch(e => console.log("Outbound Bridge Sync Bypass"));
+
                 return res.status(200).json({ success: true, mode: 'call', virtualNumber: '+911732361210' });
-            } else {
-                const smsMessage = `[AlertoQR] Emergency Alert! Aapki vehicle (${data.vehicle_number || 'Vehicle'}) par ek notification aaya hai: "${alertType}". Kripya check karein!`;
+            } 
+            
+            // 💬 SMS ROUTE PROTOCOL
+            else {
+                const smsMessage = `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number || 'Vehicle'}) par alert: "${alertType}". Check karein!`;
                 const gatewayUrl = `https://bulksmsplans.com/api/send-sms`;
                 
                 axios.get(gatewayUrl, {
@@ -89,11 +101,11 @@ module.exports = async (req, res) => {
                         api_password: API_PASSWORD,
                         sms_type: 'Transactional',
                         sms_encoding: 'text',
-                        sender: SENDER_ID,
-                        number: cleanPhone,
+                        sender: 'BLKSM5',
+                        number: customerPhone,
                         message: smsMessage
                     }
-                }).catch(e => console.log("Gateway bypass"));
+                }).catch(e => console.log("SMS Gateway bypass"));
 
                 return res.status(200).json({ success: true, mode: 'sms' });
             }
