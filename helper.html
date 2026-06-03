@@ -401,21 +401,34 @@
                 })
             });
 
-            if (forcedMode === 'call' || forcedMode === 'alternate') {
-                consoleTicker.style.background = "#ecfdf5";
-                consoleTicker.style.color = "#065f46";
-                consoleTicker.style.borderColor = "#a7f3d0";
-                consoleTicker.innerText = "✅ Request Sent! SMSCountry is processing the masked call connection.";
+            const result = await response.json();
+
+            if (result.success) {
+                if (forcedMode === 'call' || forcedMode === 'alternate') {
+                    consoleTicker.style.background = "#ecfdf5";
+                    consoleTicker.style.color = "#065f46";
+                    consoleTicker.style.borderColor = "#a7f3d0";
+                    consoleTicker.innerText = "✅ Request Sent! SMSCountry is processing the masked call connection.";
+                } else {
+                    consoleTicker.style.background = "#ecfdf5";
+                    consoleTicker.style.color = "#065f46";
+                    consoleTicker.style.borderColor = "#a7f3d0";
+                    consoleTicker.innerText = "✅ Secure alert SMS successfully sent!";
+                }
             } else {
-                consoleTicker.style.background = "#ecfdf5";
-                consoleTicker.style.color = "#065f46";
-                consoleTicker.style.borderColor = "#a7f3d0";
-                consoleTicker.innerText = "✅ Secure alert SMS successfully sent!";
+                consoleTicker.style.background = "#fef2f2";
+                consoleTicker.style.color = "#991b1b";
+                consoleTicker.style.borderColor = "#fca5a5";
+                // Yahan agar backend se koi response fail hoga toh asli error message show hoga
+                consoleTicker.innerText = `⚠️ ${result.error || 'Connection Failed.'}`;
             }
             
         } catch (error) {
             console.log("API Trigger Error:", error);
-            consoleTicker.innerText = "⚠️ Connection issue, please try again.";
+            consoleTicker.style.background = "#fef2f2";
+            consoleTicker.style.color = "#991b1b";
+            consoleTicker.style.borderColor = "#fca5a5";
+            consoleTicker.innerText = "⚠️ Network issue, please try again.";
         }
     }
 </script>
