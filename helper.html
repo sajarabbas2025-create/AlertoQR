@@ -8,11 +8,8 @@
     <meta http-equiv="Expires" content="0">
     <title>AlertoQR Helper Portal</title>
     
-    <!-- Supabase Core Dependency -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Premium Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -257,20 +254,17 @@
 
 <div class="helper-container">
     
-    <!-- Loading Screen -->
     <div id="loading-view" class="state-shell-view">
         <div class="spinner-engine"></div>
         <p style="color: #64748b; font-size: 14px; font-weight: 500;">Connecting secure network...</p>
     </div>
 
-    <!-- Error Screen -->
     <div id="error-view" class="state-shell-view" style="display: none;">
         <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: #ef4444; margin-bottom: 12px;"></i>
         <h3 id="error-heading" style="font-size: 16px; margin-bottom: 6px;">Network Fault</h3>
         <p id="error-subtext" style="color: #64748b; font-size: 13px;"></p>
     </div>
 
-    <!-- Main Dashboard -->
     <div id="dashboard-view" style="display: none;">
         <div class="header-section">
             <div class="brand-name">AlertoQR</div>
@@ -283,17 +277,15 @@
             <div class="vehicle-number-plate" id="dom-plate-number">------</div>
         </div>
 
-        <!-- Call Buttons -->
         <div class="calling-grid">
             <button class="btn-call btn-owner" onclick="triggerSmartAlertBridge('call')">
                 <i class="fa-solid fa-phone"></i> Call Owner
             </button>
-            <button class="btn-call btn-call-alternate" onclick="triggerSmartAlertBridge('alternate')">
+            <button class="btn-call btn-alternate" onclick="triggerSmartAlertBridge('alternate')">
                 <i class="fa-solid fa-phone"></i> Call Alternate
             </button>
         </div>
 
-        <!-- Status Ticker Box -->
         <div id="ticker-box" class="status-ticker"></div>
 
         <div class="section-title">Quick Alerts</div>
@@ -398,27 +390,8 @@
         consoleTicker.style.borderColor = "#cbd5e1";
         consoleTicker.innerText = `📤 Connecting secure alert protocol...`;
 
-        // 📞 DIRECT DIALER NO-PROMPT ROUTE
-        if (forcedMode === 'call' || forcedMode === 'alternate') {
-            consoleTicker.style.background = "#ecfdf5";
-            consoleTicker.style.color = "#065f46";
-            consoleTicker.style.borderColor = "#a7f3d0";
-            consoleTicker.innerText = "✅ Opening Masked Call Line...";
-            
-            setTimeout(() => {
-                // Direct virtual number par helper ka dialer bina kuch mange open hoga
-                window.location.href = `tel:+911732361210`;
-            }, 500);
-        } else {
-            consoleTicker.style.background = "#ecfdf5";
-            consoleTicker.style.color = "#065f46";
-            consoleTicker.style.borderColor = "#a7f3d0";
-            consoleTicker.innerText = "✅ Secure alert SMS successfully sent!";
-        }
-
-        // Silent Background Logging
         try {
-            fetch(backendApiUrl, {
+            const response = await fetch(backendApiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -426,9 +399,23 @@
                     alertType: alertType,
                     mode: forcedMode
                 })
-            }).catch(e => console.log("Silent sync complete"));
+            });
+
+            if (forcedMode === 'call' || forcedMode === 'alternate') {
+                consoleTicker.style.background = "#ecfdf5";
+                consoleTicker.style.color = "#065f46";
+                consoleTicker.style.borderColor = "#a7f3d0";
+                consoleTicker.innerText = "✅ Request Sent! SMSCountry is processing the masked call connection.";
+            } else {
+                consoleTicker.style.background = "#ecfdf5";
+                consoleTicker.style.color = "#065f46";
+                consoleTicker.style.borderColor = "#a7f3d0";
+                consoleTicker.innerText = "✅ Secure alert SMS successfully sent!";
+            }
+            
         } catch (error) {
-            console.log("Background action bypassed safely.");
+            console.log("API Trigger Error:", error);
+            consoleTicker.innerText = "⚠️ Connection issue, please try again.";
         }
     }
 </script>
