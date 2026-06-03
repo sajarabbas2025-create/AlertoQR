@@ -11,10 +11,14 @@ const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
 
 module.exports = async (req, res) => {
-    // CORS Headers Settings
+    // FULL CORS BYPASS HEADERS FOR CUSTOM DOMAIN HANDSHAKE
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    );
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
@@ -24,7 +28,7 @@ module.exports = async (req, res) => {
         const { stickerId, alertType, mode } = req.body;
 
         try {
-            // 1. Supabase se registration record fetch karna
+            // 1. Supabase se record check karna
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -40,7 +44,6 @@ module.exports = async (req, res) => {
                 return res.status(200).json({ success: false, error: 'Owner phone missing in Database.' });
             }
 
-            // Vehicle Owner ka number saaf karke international format (91) banana
             let ownerPhoneClean = targetPhone.toString().replace(/[^0-9]/g, '');
             if (ownerPhoneClean.length === 10) {
                 ownerPhoneClean = `91${ownerPhoneClean}`;
@@ -52,13 +55,11 @@ module.exports = async (req, res) => {
             if (mode === 'call' || mode === 'alternate') {
                 const callApiUrl = `https://api.smscountry.com/v1/Accounts/Voice/Calls.json`;
                 
-                // Base64 Authorization Header Encryption
                 const authHeader = Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-                // SMSCountry Form-Data encoding format requirements
                 const params = new URLSearchParams();
-                params.append('From', '919703826178'); // Testing number (Dono number alag hona zaroori hai)
-                params.append('To', ownerPhoneClean);  // Vehicle owner number
+                params.append('From', '919703826178'); // Testing fallback node
+                params.append('To', ownerPhoneClean);  
                 params.append('Type', 'bridge');
 
                 try {
@@ -70,12 +71,10 @@ module.exports = async (req, res) => {
                     });
 
                     console.log("SMSCountry Success:", apiResponse.data);
-                    return res.status(200).json({ success: true, message: 'Call initiated successfully.' });
+                    return res.status(200).json({ success: true, message: 'Call initiated.' });
 
                 } catch (apiErr) {
-                    // Agar SMSCountry API error degi toh wo frontend pe dikhega
                     const errorData = apiErr.response ? JSON.stringify(apiErr.response.data) : apiErr.message;
-                    console.error("SMSCountry API Error details:", errorData);
                     return res.status(200).json({ success: false, error: `SMSCountry Error: ${errorData}` });
                 }
             } 
@@ -106,8 +105,7 @@ module.exports = async (req, res) => {
             }
 
         } catch (err) {
-            console.error("System Main Error:", err.message);
-            return res.status(200).json({ success: false, error: `Server Error: ${err.message}` });
+            return res.status(200).json({ success: false, error: `Server Exception: ${err.message}` });
         }
     }
 };
