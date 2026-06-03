@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
         const { stickerId, alertType, mode } = req.body;
 
         try {
-            // 1. Supabase Fetching Record
+            // 1. Supabase se details nikalna
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -45,14 +45,13 @@ module.exports = async (req, res) => {
                 ownerPhoneClean = `91${ownerPhoneClean}`;
             }
 
-            // 📞 ROUTE A: CALLING ENGINE (SMSCountry New Endpoint)
+            // 📞 ROUTE A: CALLING ENGINE (Sarah Ji's New REST Endpoint)
             if (mode === 'call' || mode === 'alternate') {
-                // FIXED: Sarah ji ke bataye gaye sahi REST URL par Auth Key laga di hai
                 const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
                 const authHeader = Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
                 const params = new URLSearchParams();
-                params.append('From', '919703826178'); // Testing Fallback Route Node
+                params.append('From', '919703826178'); // Testing Temporary Number
                 params.append('To', ownerPhoneClean);  
                 params.append('Type', 'bridge');
 
