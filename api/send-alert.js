@@ -6,12 +6,12 @@ const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGc
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// SMSCountry Correct API Credentials
+// SMSCountry REST API Target Credentials
 const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
 
 module.exports = async (req, res) => {
-    // CORS Cross-Origin Bypass Headers
+    // Full CORS Handshake Headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
         const { stickerId, alertType, mode } = req.body;
 
         try {
-            // 1. Supabase se details nikalna
+            // 1. Database se unique profile nikalna
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -32,12 +32,12 @@ module.exports = async (req, res) => {
                 .single();
 
             if (error || !data) {
-                return res.status(200).json({ success: false, error: 'Sticker ID not found in database.' });
+                return res.status(200).json({ success: false, error: 'Sticker ID profile records vacant.' });
             }
 
             let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
             if (!targetPhone) {
-                return res.status(200).json({ success: false, error: 'Vehicle owner phone number missing.' });
+                return res.status(200).json({ success: false, error: 'Vehicle owner number missing.' });
             }
 
             let ownerPhoneClean = targetPhone.toString().replace(/[^0-9]/g, '');
@@ -45,13 +45,14 @@ module.exports = async (req, res) => {
                 ownerPhoneClean = `91${ownerPhoneClean}`;
             }
 
-            // 📞 ROUTE A: CALLING ENGINE (Sarah Ji's New REST Endpoint)
+            // 📞 ROUTE 1: PHONE BRIDGE CALLING ENGINE (SMSCountry RestAPI v0.1)
             if (mode === 'call' || mode === 'alternate') {
+                // Sarah Ji's Verified Node Endpoint Structure
                 const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
                 const authHeader = Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
                 const params = new URLSearchParams();
-                params.append('From', '919703826178'); // Testing Temporary Number
+                params.append('From', '919703826178'); // Default test reference line nodes
                 params.append('To', ownerPhoneClean);  
                 params.append('Type', 'bridge');
 
@@ -62,14 +63,14 @@ module.exports = async (req, res) => {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
                     });
-                    return res.status(200).json({ success: true, message: 'Call Request Dispatched via SMSCountry RestAPI.', data: apiResponse.data });
+                    return res.status(200).json({ success: true, message: 'Bridge active.', data: apiResponse.data });
                 } catch (apiErr) {
                     const errorMsg = apiErr.response ? JSON.stringify(apiErr.response.data) : apiErr.message;
-                    return res.status(200).json({ success: false, error: `SMSCountry RestAPI Error: ${errorMsg}` });
+                    return res.status(200).json({ success: false, error: `SMSCountry REST Node Blocked: ${errorMsg}` });
                 }
             } 
             
-            // 💬 ROUTE B: SMS ENGINE (Bulk SMS Plans)
+            // 💬 ROUTE 2: TEXT SMS GATEWAY (Bulk SMS Plans Transactional)
             else {
                 const smsMessage = `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number || 'Vehicle'}) par alert: "${alertType}". Kripya check karein!`;
                 const gatewayUrl = `https://bulksmsplans.com/api/send-sms`;
@@ -95,7 +96,7 @@ module.exports = async (req, res) => {
             }
 
         } catch (err) {
-            return res.status(200).json({ success: false, error: `Server System Exception: ${err.message}` });
+            return res.status(200).json({ success: false, error: `Backend Exception: ${err.message}` });
         }
     }
 };
