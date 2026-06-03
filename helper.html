@@ -73,7 +73,6 @@
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.01);
         }
 
         .meta-label {
@@ -91,7 +90,6 @@
             color: #0f172a;
             margin-bottom: 12px;
             text-transform: uppercase;
-            letter-spacing: -0.5px;
         }
 
         .vehicle-number-plate {
@@ -103,7 +101,6 @@
             font-size: 18px;
             font-weight: 800;
             letter-spacing: 1px;
-            border: 1px solid #334155;
         }
         
         .calling-grid {
@@ -124,24 +121,10 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: all 0.2s;
         }
 
-        .btn-owner {
-            background: #000000;
-            color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-alternate {
-            background: #ffffff;
-            color: #000000;
-            border: 1px solid #cbd5e1;
-        }
-
-        .btn-call:hover {
-            transform: translateY(-1px);
-        }
+        .btn-owner { background: #000000; color: white; }
+        .btn-alternate { background: #ffffff; color: #000000; border: 1px solid #cbd5e1; }
 
         .status-ticker {
             margin-bottom: 20px;
@@ -159,7 +142,6 @@
             font-weight: 800;
             color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             margin-bottom: 12px;
         }
 
@@ -177,76 +159,22 @@
             padding: 20px 16px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 10px;
         }
 
-        .alert-card:hover {
-            border-color: #cbd5e1;
-            background: #f8fafc;
-            transform: translateY(-1px);
-        }
-
-        .alert-card i {
-            font-size: 26px;
-            display: block;
-        }
-
-        .alert-card span {
-            font-size: 13px;
-            font-weight: 700;
-            color: #334155;
-        }
+        .alert-card i { font-size: 26px; }
+        .alert-card span { font-size: 13px; font-weight: 700; color: #334155; }
         
-        .emergency-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
+        .emergency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn-emergency { padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-police { background: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
+        .btn-ambulance { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
 
-        .btn-emergency {
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-police {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fee2e2;
-        }
-
-        .btn-ambulance {
-            background: #f0fdf4;
-            color: #16a34a;
-            border: 1px solid #dcfce7;
-        }
-
-        .state-shell-view {
-            text-align: center;
-            padding: 40px 10px;
-        }
-
-        .spinner-engine {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #f1f5f9;
-            border-top: 3px solid #000000;
-            border-radius: 50%;
-            margin: 0 auto 16px;
-            animation: spin 1s linear infinite;
-        }
-
+        .state-shell-view { text-align: center; padding: 40px 10px; }
+        .spinner-engine { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top: 3px solid #000000; border-radius: 50%; margin: 0 auto 16px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -278,10 +206,10 @@
         </div>
 
         <div class="calling-grid">
-            <button class="btn-call btn-owner" onclick="triggerSmartAlertBridge('call')">
+            <button class="btn-call btn-owner" onclick="triggerSMSCountryAction('call')">
                 <i class="fa-solid fa-phone"></i> Call Owner
             </button>
-            <button class="btn-call btn-alternate" onclick="triggerSmartAlertBridge('alternate')">
+            <button class="btn-call btn-alternate" onclick="triggerSMSCountryAction('alternate')">
                 <i class="fa-solid fa-phone"></i> Call Alternate
             </button>
         </div>
@@ -290,19 +218,19 @@
 
         <div class="section-title">Quick Alerts</div>
         <div class="alerts-grid">
-            <div class="alert-card" onclick="dispatchSecureSMS('Wrong Parking', 'sms')">
+            <div class="alert-card" onclick="triggerSMSCountryAction('sms', 'Wrong Parking')">
                 <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
                 <span>Wrong Parking</span>
             </div>
-            <div class="alert-card" onclick="dispatchSecureSMS('Tow Alert', 'sms')">
+            <div class="alert-card" onclick="triggerSMSCountryAction('sms', 'Tow Alert')">
                 <i class="fa-solid fa-car" style="color: #3b82f6;"></i>
                 <span>Tow Alert</span>
             </div>
-            <div class="alert-card" onclick="dispatchSecureSMS('Window / Light Open', 'sms')">
+            <div class="alert-card" onclick="triggerSMSCountryAction('sms', 'Window Open')">
                 <i class="fa-solid fa-file-invoice" style="color: #000000;"></i>
-                <span>Window / Light Open</span>
+                <span>Window Open</span>
             </div>
-            <div class="alert-card" onclick="dispatchSecureSMS('Share Photo', 'sms')">
+            <div class="alert-card" onclick="triggerSMSCountryAction('sms', 'Share Photo')">
                 <i class="fa-solid fa-camera" style="color: #64748b;"></i>
                 <span>Share Photo</span>
             </div>
@@ -325,48 +253,45 @@
     const databaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(databaseUrl, databaseKey);
 
-    // Dynamic standard fallback relative endpoint path mapping
-    const backendApiUrl = '/api/send-alert'; 
+    // Pure SMSCountry Credentials
+    const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
+    const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
 
     let urlAssetId = "";
+    let globalOwnerData = null;
 
     window.addEventListener('DOMContentLoaded', async () => {
         const queryStrings = new URLSearchParams(window.location.search);
-        
         if (!queryStrings.has('v')) {
             queryStrings.set('v', Date.now());
             window.location.search = queryStrings.toString();
             return;
         }
-
         urlAssetId = queryStrings.get('id') || queryStrings.get('ic');
-
         if (!urlAssetId) {
             deployErrorView('Invalid Parameters', 'Missing QR asset token.');
             return;
         }
-
-        urlAssetId = urlAssetId.replace('@', '');
-        document.getElementById('dom-sticker-badge').innerText = `ID: ${urlAssetId.toUpperCase()}`;
+        urlAssetId = urlAssetId.replace('@', '').trim().toUpperCase();
+        document.getElementById('dom-sticker-badge').innerText = `ID: ${urlAssetId}`;
 
         try {
             const { data, error } = await _supabase
                 .from('registrations')
-                .select('full_name, vehicle_number')
-                .eq('sticker_id', urlAssetId.trim().toUpperCase())
+                .select('*')
+                .eq('sticker_id', urlAssetId)
                 .single();
 
             if (error || !data) {
-                deployErrorView('Record Vacant', 'No live active profile found for this QR code.');
+                deployErrorView('Record Vacant', 'No active profile found.');
                 return;
             }
-
+            
+            globalOwnerData = data;
             document.getElementById('dom-owner-name').innerText = data.full_name || "AUTHORIZED OWNER";
             document.getElementById('dom-plate-number').innerText = data.vehicle_number || "VEHICLE";
-            
             document.getElementById('loading-view').style.display = 'none';
             document.getElementById('dashboard-view').style.display = 'block';
-
         } catch (err) {
             deployErrorView('Cluster Sync Error', 'Handshake communication timeout occurred.');
         }
@@ -379,57 +304,96 @@
         document.getElementById('error-view').style.display = 'block';
     }
 
-    function triggerSmartAlertBridge(selectedCallMode) {
-        dispatchSecureSMS('Urgent Call Request', selectedCallMode);
-    }
-
-    async function dispatchSecureSMS(alertType, forcedMode = 'sms') {
+    async function triggerSMSCountryAction(mode, textMessageContext = '') {
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
         consoleTicker.style.background = "#f1f5f9";
         consoleTicker.style.color = "#334155";
         consoleTicker.style.borderColor = "#cbd5e1";
-        consoleTicker.innerText = `📤 Connecting secure alert protocol...`;
+        consoleTicker.innerText = `📤 Connecting SMSCountry secure gateway...`;
 
-        try {
-            const response = await fetch(backendApiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    stickerId: urlAssetId,
-                    alertType: alertType,
-                    mode: forcedMode
-                })
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                if (forcedMode === 'call' || forcedMode === 'alternate') {
-                    consoleTicker.style.background = "#ecfdf5";
-                    consoleTicker.style.color = "#065f46";
-                    consoleTicker.style.borderColor = "#a7f3d0";
-                    consoleTicker.innerText = "✅ Request Sent! SMSCountry is processing the masked call connection.";
-                } else {
-                    consoleTicker.style.background = "#ecfdf5";
-                    consoleTicker.style.color = "#065f46";
-                    consoleTicker.style.borderColor = "#a7f3d0";
-                    consoleTicker.innerText = "✅ Secure alert SMS successfully sent!";
-                }
-            } else {
-                consoleTicker.style.background = "#fef2f2";
-                consoleTicker.style.color = "#991b1b";
-                consoleTicker.style.borderColor = "#fca5a5";
-                consoleTicker.innerText = `⚠️ ${result.error || 'Connection Failed.'}`;
-            }
-            
-        } catch (error) {
-            console.log("API Trigger Error:", error);
-            consoleTicker.style.background = "#fef2f2";
-            consoleTicker.style.color = "#991b1b";
-            consoleTicker.style.borderColor = "#fca5a5";
-            consoleTicker.innerText = "⚠️ Network response error. Please verify backend deployment state.";
+        if (!globalOwnerData) {
+            consoleTicker.innerText = "⚠️ Error: Records not synced.";
+            return;
         }
+
+        let targetPhone = (mode === 'alternate') ? globalOwnerData.alternate_number : globalOwnerData.mobile_number;
+        if (!targetPhone) {
+            consoleTicker.innerText = "⚠️ Phone number missing in database.";
+            return;
+        }
+
+        let ownerPhoneClean = targetPhone.toString().replace(/[^0-9]/g, '');
+        if (ownerPhoneClean.length === 10) { ownerPhoneClean = `91${ownerPhoneClean}`; }
+
+        const baseAuthHeader = btoa(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`);
+
+        // 📞 CASE 1: MASKED CALL VIA SMSCOUNTRY BRIDGE
+        if (mode === 'call' || mode === 'alternate') {
+            const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
+            const params = new URLSearchParams();
+            params.append('From', '919703826178'); 
+            params.append('To', ownerPhoneClean);  
+            params.append('Type', 'bridge');
+
+            try {
+                const response = await fetch(callApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Basic ${baseAuthHeader}`,
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: params
+                });
+
+                if (response.ok) {
+                    setTickerSuccess("✅ Call Request Sent! SMSCountry is bridging the call.");
+                } else {
+                    const errText = await response.text();
+                    consoleTicker.innerText = `⚠️ SMSCountry Call Error: ${response.status} - ${errText}`;
+                }
+            } catch (err) {
+                consoleTicker.innerText = "⚠️ Browser CORS lock or balance limitation at SMSCountry Node.";
+            }
+        } 
+        // 💬 CASE 2: TEXT SMS VIA SMSCOUNTRY SENDER GATEWAY
+        else {
+            const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
+            const formattedMsg = `[AlertoQR] Emergency Alert! Vehicle (${globalOwnerData.vehicle_number || 'Vehicle'}) par alert: "${textMessageContext}". Kripya check karein!`;
+            
+            const params = new URLSearchParams();
+            params.append('Text', formattedMsg);
+            params.append('To', ownerPhoneClean);
+            params.append('SenderId', 'ALERTO'); // Aapka approved Sender ID yahan aayega
+
+            try {
+                const response = await fetch(smsApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Basic ${baseAuthHeader}`,
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: params
+                });
+
+                if (response.ok) {
+                    setTickerSuccess("✅ Secure Alert SMS successfully sent via SMSCountry!");
+                } else {
+                    const errText = await response.text();
+                    consoleTicker.innerText = `⚠️ SMSCountry SMS Error: ${response.status} - ${errText}`;
+                }
+            } catch (err) {
+                consoleTicker.innerText = "⚠️ Network issue or restrictions on direct SMS gateway request.";
+            }
+        }
+    }
+
+    function setTickerSuccess(msg) {
+        const consoleTicker = document.getElementById('ticker-box');
+        consoleTicker.style.background = "#ecfdf5";
+        consoleTicker.style.color = "#065f46";
+        consoleTicker.style.borderColor = "#a7f3d0";
+        consoleTicker.innerText = msg;
     }
 </script>
 </body>
