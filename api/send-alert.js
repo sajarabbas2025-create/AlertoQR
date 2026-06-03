@@ -6,7 +6,7 @@ const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// SMSCountry New Dynamic API Credentials
+// SMSCountry Dynamic API Credentials
 const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
 
@@ -20,10 +20,10 @@ module.exports = async (req, res) => {
     }
 
     if (req.method === 'POST') {
-        const { stickerId, alertType, mode, helperNumber } = req.body;
+        const { stickerId, alertType, mode } = req.body;
 
         try {
-            // 1. Supabase se Gaadi ke Owner ka data nikaalna
+            // 1. Supabase se registration record fetch karna
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -34,13 +34,12 @@ module.exports = async (req, res) => {
                 return res.status(200).json({ success: false, error: 'Sticker ID not found.' });
             }
 
-            // Mode ke hisaab se primary ya alternate number choose karna
             let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
             if (!targetPhone) {
                 return res.status(200).json({ success: false, error: 'Owner phone missing.' });
             }
 
-            // Owner ka number saaf karke aage '91' lagana (SMSCountry format)
+            // Number filter karke international '91' format generate karna SMSCountry ke liye
             let ownerPhoneClean = targetPhone.toString().replace(/[^0-9]/g, '');
             if (ownerPhoneClean.length === 10) {
                 ownerPhoneClean = `91${ownerPhoneClean}`;
@@ -48,49 +47,45 @@ module.exports = async (req, res) => {
                 ownerPhoneClean = ownerPhoneClean.substring(ownerPhoneClean.length - 12);
             }
 
-            // 📞 NEW SMSCOUNTRY BRIDGE/MASKED CALLING PROTOCOL
+            // 📞 SMSCOUNTRY BRIDGE CALL ROUTING
             if (mode === 'call' || mode === 'alternate') {
-                
-                // Balakrishna ji ke mutabik: System testing ke liye default virtual number se helper ko connect karega
-                // Agar helper ka phone dialer open ho raha hai, toh user network unke automatic node par heat karega
                 const callApiUrl = `https://api.smscountry.com/v1/Accounts/Voice/Calls.json`;
                 
-                // Base64 Authorization Header generation
+                // Header Encryption
                 const authHeader = Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-                // SMSCountry documentation ke mutabik JSON Payload setup
+                // JSON data bridge payload
                 const payload = {
-                    From: ownerPhoneClean, // Gadi ke owner ka number
-                    To: ownerPhoneClean,   // Testing state mein bridge route target verification
+                    From: ownerPhoneClean, 
+                    To: ownerPhoneClean,   
                     Type: "bridge"
                 };
 
-                // Background mein call dispatch trigger karna
                 axios.post(callApiUrl, payload, {
                     headers: {
                         'Authorization': `Basic ${authHeader}`,
                         'Content-Type': 'application/json'
                     }
                 })
-                .then(response => console.log("SMSCountry Call Bridge Active:", response.data))
+                .then(response => console.log("SMSCountry Call Routing Done:", response.data))
                 .catch(e => console.log("SMSCountry API Error:", e.response ? e.response.data : e.message));
 
-                return res.status(200).json({ success: true, message: 'SMSCountry Bridge Initiated.' });
+                return res.status(200).json({ success: true, message: 'SMSCountry Line Pinged.' });
             } 
             
-            // 💬 SMS PROTOCOL (Aapka purana stable code jo chal raha tha)
+            // 💬 SMS PROTOCOL (Stable)
             else {
                 const smsMessage = `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number || 'Vehicle'}) par alert: "${alertType}". Kripya check karein!`;
                 const gatewayUrl = `https://bulksmsplans.com/api/send-sms`;
                 
                 let smsTarget = ownerPhoneClean;
                 if (smsTarget.startsWith('91')) {
-                    smsTarget = smsTarget.substring(2); // Purane SMS vendor ko bina 91 ke chahiye tha
+                    smsTarget = smsTarget.substring(2); 
                 }
 
                 axios.get(gatewayUrl, {
                     params: {
-                        api_id: "API42znmxVL150879", // Aapki working keys barkrar hain SMS ke liye
+                        api_id: "API42znmxVL150879", 
                         api_password: "ND7oMLCE",
                         sms_type: 'Transactional',
                         sms_encoding: 'text',
@@ -98,7 +93,7 @@ module.exports = async (req, res) => {
                         number: smsTarget,
                         message: smsMessage
                     }
-                }).catch(e => console.log("SMS Error"));
+                }).catch(e => console.log("SMS System Error"));
 
                 return res.status(200).json({ success: true, mode: 'sms' });
             }
