@@ -6,7 +6,7 @@ const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGc
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// SMSCountry REST Credentials
+// SMSCountry API Target Credentials
 const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
 
@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
         const { stickerId, alertType, mode } = req.body;
 
         try {
-            // 1. Database checking
+            // 1. Fetch data from Supabase
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -31,29 +31,34 @@ module.exports = async (req, res) => {
                 .single();
 
             if (error || !data) {
-                return res.status(200).json({ success: false, error: 'Sticker ID profile not found.' });
+                return res.status(200).json({ success: false, error: 'Sticker ID record not found.' });
             }
 
             let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
             if (!targetPhone) {
-                return res.status(200).json({ success: false, error: 'Target phone number missing.' });
+                return res.status(200).json({ success: false, error: 'Phone number missing.' });
             }
 
-            // Clean number format
-            let ownerPhoneClean = targetPhone.toString().replace(/[^0-9]/g, '');
-            if (ownerPhoneClean.length === 10) {
-                ownerPhoneClean = `91${ownerPhoneClean}`;
+            // Clean data parameters
+            let rawPhone = targetPhone.toString().replace(/[^0-9]/g, '');
+            
+            if (rawPhone.startsWith('91') && rawPhone.length > 10) {
+                rawPhone = rawPhone.substring(2);
+            } else if (rawPhone.startsWith('0')) {
+                rawPhone = rawPhone.substring(1);
             }
 
-            // 📞 ROUTE A: CALLING ENGINE (SMSCountry Rest API standard JSON payload format)
+            // Formatting destination target string numbers
+            let finalToNumber = rawPhone; // Default 10-digit structure execution check
+
+            // 📞 ROUTE A: CALLING ENGINE (SMSCountry JSON Implementation)
             if (mode === 'call' || mode === 'alternate') {
                 const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
                 const authHeader = Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-                // SMSCountry REST API expects direct raw JSON payload body with exact alphanumeric casing
                 const jsonBodyData = {
                     "From": "919703826178", 
-                    "To": ownerPhoneClean,
+                    "To": finalToNumber, // Passing direct cleaned formatting reference
                     "Type": "bridge"
                 };
 
@@ -64,14 +69,14 @@ module.exports = async (req, res) => {
                             'Content-Type': 'application/json'
                         }
                     });
-                    return res.status(200).json({ success: true, message: 'Call Request Initiated.', data: apiResponse.data });
+                    return res.status(200).json({ success: true, message: 'Call Request Dispatched.', data: apiResponse.data });
                 } catch (apiErr) {
                     const errorMsg = apiErr.response ? JSON.stringify(apiErr.response.data) : apiErr.message;
                     return res.status(200).json({ success: false, error: `SMSCountry REST Node Error: ${errorMsg}` });
                 }
             } 
             
-            // 💬 ROUTE B: SMS ENGINE (SMSCountry Rest API standard SMS format)
+            // 💬 ROUTE B: SMS ENGINE (SMSCountry SMS Gateway)
             else {
                 const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
                 const formattedMsg = `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number || 'Vehicle'}) par alert: "${alertType}". Kripya check karein!`;
@@ -80,7 +85,7 @@ module.exports = async (req, res) => {
                 
                 const jsonSmsData = {
                     "Text": formattedMsg,
-                    "To": ownerPhoneClean,
+                    "To": finalToNumber,
                     "SenderId": "ALERTO"
                 };
 
@@ -99,7 +104,7 @@ module.exports = async (req, res) => {
             }
 
         } catch (err) {
-            return res.status(200).json({ success: false, error: `Server Master Crash: ${err.message}` });
+            return res.status(200).json({ success: false, error: `System Exception: ${err.message}` });
         }
     }
 };
