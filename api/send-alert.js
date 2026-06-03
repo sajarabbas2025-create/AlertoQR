@@ -32,12 +32,12 @@ module.exports = async (req, res) => {
                 .single();
 
             if (error || !data) {
-                return res.status(200).json({ success: false, error: 'Sticker ID not found.' });
+                return res.status(200).json({ success: false, error: 'Sticker ID not found in Supabase.' });
             }
 
             let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
             if (!targetPhone) {
-                return res.status(200).json({ success: false, error: 'Owner phone missing.' });
+                return res.status(200).json({ success: false, error: 'Owner phone missing in Database.' });
             }
 
             // Vehicle Owner ka number saaf karke international format (91) banana
@@ -55,27 +55,32 @@ module.exports = async (req, res) => {
                 // Base64 Authorization Header Encryption
                 const authHeader = Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-                // ⚠️ TESTING PAYLOAD: 'From' aur 'To' dono numbers alag hone zaroori hain
-                // Note: Jab automatic dedicated virtual number mil jayega, tab helper ka real number yahan dynamic aayega.
-                const payload = {
-                    From: "916387947607",   // 📞 Testing ke liye temporary doosra number (Jaise Balakrishna ji ka number ya apna koi doosra number)
-                    To: ownerPhoneClean,     // 🚗 Yeh gaadi ke owner ka real number rahega jo Supabase se aaya hai
-                    Type: "bridge"
-                };
+                // SMSCountry Form-Data encoding format requirements
+                const params = new URLSearchParams();
+                params.append('From', '919703826178'); // Testing number (Dono number alag hona zaroori hai)
+                params.append('To', ownerPhoneClean);  // Vehicle owner number
+                params.append('Type', 'bridge');
 
-                // SMSCountry API ko request bhejrahe hain
-                const apiResponse = await axios.post(callApiUrl, payload, {
-                    headers: {
-                        'Authorization': `Basic ${authHeader}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
+                try {
+                    const apiResponse = await axios.post(callApiUrl, params, {
+                        headers: {
+                            'Authorization': `Basic ${authHeader}`,
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    });
 
-                console.log("SMSCountry Success Response:", apiResponse.data);
-                return res.status(200).json({ success: true, message: 'SMSCountry Bridge Initiated Successfully.' });
+                    console.log("SMSCountry Success:", apiResponse.data);
+                    return res.status(200).json({ success: true, message: 'Call initiated successfully.' });
+
+                } catch (apiErr) {
+                    // Agar SMSCountry API error degi toh wo frontend pe dikhega
+                    const errorData = apiErr.response ? JSON.stringify(apiErr.response.data) : apiErr.message;
+                    console.error("SMSCountry API Error details:", errorData);
+                    return res.status(200).json({ success: false, error: `SMSCountry Error: ${errorData}` });
+                }
             } 
             
-            // 💬 SMS PROTOCOL (Purana working transactional SMS)
+            // 💬 SMS PROTOCOL (Stable)
             else {
                 const smsMessage = `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number || 'Vehicle'}) par alert: "${alertType}". Kripya check karein!`;
                 const gatewayUrl = `https://bulksmsplans.com/api/send-sms`;
@@ -101,9 +106,8 @@ module.exports = async (req, res) => {
             }
 
         } catch (err) {
-            console.error("Backend Main Error Log:", err.response ? err.response.data : err.message);
-            // Frontend ko clear message bhejenge agar backend pe fail hota hai
-            return res.status(500).json({ success: false, error: err.message });
+            console.error("System Main Error:", err.message);
+            return res.status(200).json({ success: false, error: `Server Error: ${err.message}` });
         }
     }
 };
