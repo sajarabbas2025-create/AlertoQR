@@ -6,12 +6,12 @@ const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGc
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// SMSCountry REST API Target Credentials
+// SMSCountry API Target Credentials (Sarah Ji Verified Structure)
 const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
 
 module.exports = async (req, res) => {
-    // Full CORS Handshake Headers
+    // CORS Node Handling
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
         const { stickerId, alertType, mode } = req.body;
 
         try {
-            // 1. Database se unique profile nikalna
+            // 1. Supabase Fetching Record
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -45,14 +45,13 @@ module.exports = async (req, res) => {
                 ownerPhoneClean = `91${ownerPhoneClean}`;
             }
 
-            // 📞 ROUTE 1: PHONE BRIDGE CALLING ENGINE (SMSCountry RestAPI v0.1)
+            // 📞 ROUTE 1: PHONE BRIDGE CALLING ENGINE (SMSCountry REST API v0.1)
             if (mode === 'call' || mode === 'alternate') {
-                // Sarah Ji's Verified Node Endpoint Structure
                 const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
                 const authHeader = Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
                 const params = new URLSearchParams();
-                params.append('From', '919703826178'); // Default test reference line nodes
+                params.append('From', '919703826178'); // Testing Fallback Reference Route Node
                 params.append('To', ownerPhoneClean);  
                 params.append('Type', 'bridge');
 
@@ -63,10 +62,10 @@ module.exports = async (req, res) => {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
                     });
-                    return res.status(200).json({ success: true, message: 'Bridge active.', data: apiResponse.data });
+                    return res.status(200).json({ success: true, message: 'Bridge call dispatched.', data: apiResponse.data });
                 } catch (apiErr) {
                     const errorMsg = apiErr.response ? JSON.stringify(apiErr.response.data) : apiErr.message;
-                    return res.status(200).json({ success: false, error: `SMSCountry REST Node Blocked: ${errorMsg}` });
+                    return res.status(200).json({ success: false, error: `SMSCountry REST Node Error: ${errorMsg}` });
                 }
             } 
             
@@ -96,7 +95,7 @@ module.exports = async (req, res) => {
             }
 
         } catch (err) {
-            return res.status(200).json({ success: false, error: `Backend Exception: ${err.message}` });
+            return res.status(200).json({ success: false, error: `Backend Master Exception: ${err.message}` });
         }
     }
 };
