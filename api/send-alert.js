@@ -11,6 +11,7 @@ const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
 
 module.exports = async (req, res) => {
+    // CORS Headers Settings
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -39,7 +40,7 @@ module.exports = async (req, res) => {
                 return res.status(200).json({ success: false, error: 'Owner phone missing.' });
             }
 
-            // Number filter karke international '91' format generate karna SMSCountry ke liye
+            // Vehicle Owner ka number saaf karke international format (91) banana
             let ownerPhoneClean = targetPhone.toString().replace(/[^0-9]/g, '');
             if (ownerPhoneClean.length === 10) {
                 ownerPhoneClean = `91${ownerPhoneClean}`;
@@ -51,29 +52,30 @@ module.exports = async (req, res) => {
             if (mode === 'call' || mode === 'alternate') {
                 const callApiUrl = `https://api.smscountry.com/v1/Accounts/Voice/Calls.json`;
                 
-                // Header Encryption
+                // Base64 Authorization Header Encryption
                 const authHeader = Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-                // JSON data bridge payload
+                // ⚠️ TESTING PAYLOAD: 'From' aur 'To' dono numbers alag hone zaroori hain
+                // Note: Jab automatic dedicated virtual number mil jayega, tab helper ka real number yahan dynamic aayega.
                 const payload = {
-                    From: ownerPhoneClean, 
-                    To: ownerPhoneClean,   
+                    From: "919703826178",   // 📞 Testing ke liye temporary doosra number (Jaise Balakrishna ji ka number ya apna koi doosra number)
+                    To: ownerPhoneClean,     // 🚗 Yeh gaadi ke owner ka real number rahega jo Supabase se aaya hai
                     Type: "bridge"
                 };
 
-                axios.post(callApiUrl, payload, {
+                // SMSCountry API ko request bhejrahe hain
+                const apiResponse = await axios.post(callApiUrl, payload, {
                     headers: {
                         'Authorization': `Basic ${authHeader}`,
                         'Content-Type': 'application/json'
                     }
-                })
-                .then(response => console.log("SMSCountry Call Routing Done:", response.data))
-                .catch(e => console.log("SMSCountry API Error:", e.response ? e.response.data : e.message));
+                });
 
-                return res.status(200).json({ success: true, message: 'SMSCountry Line Pinged.' });
+                console.log("SMSCountry Success Response:", apiResponse.data);
+                return res.status(200).json({ success: true, message: 'SMSCountry Bridge Initiated Successfully.' });
             } 
             
-            // 💬 SMS PROTOCOL (Stable)
+            // 💬 SMS PROTOCOL (Purana working transactional SMS)
             else {
                 const smsMessage = `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number || 'Vehicle'}) par alert: "${alertType}". Kripya check karein!`;
                 const gatewayUrl = `https://bulksmsplans.com/api/send-sms`;
@@ -83,7 +85,7 @@ module.exports = async (req, res) => {
                     smsTarget = smsTarget.substring(2); 
                 }
 
-                axios.get(gatewayUrl, {
+                await axios.get(gatewayUrl, {
                     params: {
                         api_id: "API42znmxVL150879", 
                         api_password: "ND7oMLCE",
@@ -93,13 +95,15 @@ module.exports = async (req, res) => {
                         number: smsTarget,
                         message: smsMessage
                     }
-                }).catch(e => console.log("SMS System Error"));
+                });
 
                 return res.status(200).json({ success: true, mode: 'sms' });
             }
 
         } catch (err) {
-            return res.status(200).json({ success: false, error: err.message });
+            console.error("Backend Main Error Log:", err.response ? err.response.data : err.message);
+            // Frontend ko clear message bhejenge agar backend pe fail hota hai
+            return res.status(500).json({ success: false, error: err.message });
         }
     }
 };
