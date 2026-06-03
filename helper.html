@@ -325,8 +325,8 @@
     const databaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(databaseUrl, databaseKey);
 
-    // FIXED: Using exact deployed backend URL to match Vercel node mapping
-    const backendApiUrl = 'https://alerto-qr-sajarabbas2025-creates-projects.vercel.app/api/send-alert'; 
+    // FIXED: Live Custom Production URL
+    const backendApiUrl = 'https://alertoqr.in/api/send-alert'; 
 
     let urlAssetId = "";
 
@@ -428,7 +428,7 @@
             consoleTicker.style.background = "#fef2f2";
             consoleTicker.style.color = "#991b1b";
             consoleTicker.style.borderColor = "#fca5a5";
-            consoleTicker.innerText = "⚠️ Network response error. Please verify backend state.";
+            consoleTicker.innerText = "⚠️ Network response error. Please verify backend deployment state.";
         }
     }
 </script>
