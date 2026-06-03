@@ -6,11 +6,12 @@ const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGc
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// SMSCountry API Credentials
+// SMSCountry Correct API Credentials
 const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
 
 module.exports = async (req, res) => {
+    // CORS Cross-Origin Bypass Headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -23,6 +24,7 @@ module.exports = async (req, res) => {
         const { stickerId, alertType, mode } = req.body;
 
         try {
+            // 1. Supabase Fetching Record
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -43,13 +45,14 @@ module.exports = async (req, res) => {
                 ownerPhoneClean = `91${ownerPhoneClean}`;
             }
 
-            // 📞 ROUTE A: CALLING ENGINE (SMSCountry)
+            // 📞 ROUTE A: CALLING ENGINE (SMSCountry New Endpoint)
             if (mode === 'call' || mode === 'alternate') {
-                const callApiUrl = `https://api.smscountry.com/v1/Accounts/Voice/Calls.json`;
+                // FIXED: Sarah ji ke bataye gaye sahi REST URL par Auth Key laga di hai
+                const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
                 const authHeader = Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
                 const params = new URLSearchParams();
-                params.append('From', '919703826178'); 
+                params.append('From', '919703826178'); // Testing Fallback Route Node
                 params.append('To', ownerPhoneClean);  
                 params.append('Type', 'bridge');
 
@@ -60,10 +63,10 @@ module.exports = async (req, res) => {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
                     });
-                    return res.status(200).json({ success: true, message: 'Call Request Dispatched Successfully.' });
+                    return res.status(200).json({ success: true, message: 'Call Request Dispatched via SMSCountry RestAPI.', data: apiResponse.data });
                 } catch (apiErr) {
                     const errorMsg = apiErr.response ? JSON.stringify(apiErr.response.data) : apiErr.message;
-                    return res.status(200).json({ success: false, error: `SMSCountry Node Blocked: ${errorMsg}` });
+                    return res.status(200).json({ success: false, error: `SMSCountry RestAPI Error: ${errorMsg}` });
                 }
             } 
             
