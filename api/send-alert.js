@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
 
         const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-        // 📞 ROUTE 1: SMART BRIDGE CALL
+        // 📞 ROUTE 1: SMART BRIDGE CALL (Helper ↔ Owner)
         if (mode === 'call' || mode === 'alternate') {
             if (!helperNumber) return res.status(200).json({ success: false, error: 'Helper number missing.' });
 
@@ -40,10 +40,13 @@ module.exports = async (req, res) => {
 
             const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
             
-            // 🛠️ FIX: Changed <Dial> to <dial> (Lowercase) 
+            // 🛠️ FIX: Original URLs added back as per SMSCountry API requirement
             const jsonBodyData = {
                 "Number": helperCleanNumber,    
                 "CallerId": "918634512424",
+                "RingUrl": "https://alertoqr.in/ring",
+                "AnswerUrl": "https://alertoqr.in/answer",
+                "HangupUrl": "https://alertoqr.in/hangup",
                 "HttpMethod": "POST",
                 "Xml": `<Response><play>Please wait, we are connecting your secure call.</play><dial>${ownerCleanNumber}</dial></Response>` 
             };
