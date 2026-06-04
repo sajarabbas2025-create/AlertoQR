@@ -4,6 +4,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://cefzsgchfdv
 const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs";
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// Aapki SMSCountry ki keys yahin code me daal di hain
 const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
 
@@ -30,7 +31,7 @@ module.exports = async (req, res) => {
 
         const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-        // 🚨 ROUTE 1: EMERGENCY SOS (Sirf Owner ko Automated Call aur Siren jayega)
+        // 🚨 ROUTE 1: EMERGENCY SOS (Direct Automated Call to Owner)
         if (alertType === 'EMERGENCY SOS') {
             const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
             
@@ -58,7 +59,7 @@ module.exports = async (req, res) => {
             }
         }
 
-        // 📞 ROUTE 2: SMART BRIDGE CALL (Purana Call Logic, in case kabhi use karna pade)
+        // 📞 ROUTE 2: SMART BRIDGE CALL
         else if (mode === 'call' || mode === 'alternate') {
             if (!helperNumber) return res.status(200).json({ success: false, error: 'Helper number missing.' });
 
@@ -92,7 +93,7 @@ module.exports = async (req, res) => {
             }
         } 
 
-        // 💬 ROUTE 3: SMS ALERTS (Baaki features jaise Wrong Parking, Tow Alert ke liye SMS)
+        // 💬 ROUTE 3: NORMAL SMS ALERTS (Wrong Parking, Tow, etc.)
         else {
             const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
             const jsonSmsData = { "Text": `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number}) par alert: "${alertType}".`, "To": ownerCleanNumber, "SenderId": "ALERTO" };
