@@ -3,97 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AlertoQR | Secure Connect</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>AlertoQR Helper Portal</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #f8fafc; color: #0f172a; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 16px; }
         .helper-container { width: 100%; max-width: 480px; background: #ffffff; border-radius: 24px; padding: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .brand-name { font-size: 22px; font-weight: 800; }
-        .owner-card { background: #000000; color: #ffffff; border-radius: 20px; padding: 24px; margin-bottom: 20px; text-align: center; }
-        .vehicle-plate { font-size: 28px; font-weight: 800; letter-spacing: 1px; margin-top: 5px; }
-        .btn-call { width: 100%; padding: 20px; border-radius: 16px; border: none; font-size: 16px; font-weight: 800; background: #22c55e; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(34,197,94,0.2); }
-        .section-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; }
-        .alerts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn-alert { padding: 14px; border: 1px solid #e2e8f0; border-radius: 14px; font-size: 13px; font-weight: 700; background: #fff; cursor: pointer; }
-        .ticker { margin-top: 20px; padding: 12px; border-radius: 10px; font-size: 12px; font-weight: 600; text-align: center; display: none; }
+        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; }
+        .brand-name { font-size: 22px; font-weight: 800; color: #0f172a; }
+        .owner-card { background: #000000; color: #ffffff; border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: center; }
+        .owner-name { font-size: 24px; font-weight: 800; color: #ffffff; margin-bottom: 8px; text-transform: uppercase; }
+        .vehicle-number-plate { background: #ffffff; color: #000000; display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+        .calling-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+        .btn-call { padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; background: #22c55e; color: white; }
+        .alerts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .alert-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px; text-align: center; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="helper-container">
-    <div class="header-section">
-        <div class="brand-name">AlertoQR</div>
-        <div id="status-badge" style="font-size: 12px; color: #94a3b8;">Syncing...</div>
+    <div id="dashboard-view">
+        <div class="header-section">
+            <div class="brand-name">AlertoQR</div>
+        </div>
+
+        <div class="owner-card">
+            <div class="owner-name" id="dom-owner-name">Loading...</div>
+            <div class="vehicle-number-plate" id="dom-plate-number">----</div>
+        </div>
+
+        <div class="calling-grid">
+            <button class="btn-call" onclick="initiateDirectCall()">
+                <i class="fa-solid fa-phone"></i> CALL OWNER NOW
+            </button>
+        </div>
+
+        <div class="alerts-grid">
+            <div class="alert-card" onclick="sendAlert('Wrong Parking')"><i class="fa-solid fa-triangle-exclamation"></i><br><span>Wrong Parking</span></div>
+            <div class="alert-card" onclick="sendAlert('Tow Alert')"><i class="fa-solid fa-car"></i><br><span>Tow Alert</span></div>
+        </div>
     </div>
-
-    <div class="owner-card">
-        <div id="dom-owner-name" style="font-size: 14px; opacity: 0.8;">Loading...</div>
-        <div class="vehicle-plate" id="dom-plate-number">----</div>
-    </div>
-
-    <button class="btn-call" onclick="initiateDirectCall()">
-        <i class="fa-solid fa-phone"></i> CALL OWNER NOW
-    </button>
-
-    <div class="section-title">Quick Actions</div>
-    <div class="alerts-grid">
-        <button class="btn-alert" onclick="sendAlert('Wrong Parking')">Wrong Parking</button>
-        <button class="btn-alert" onclick="sendAlert('Tow Alert')">Tow Alert</button>
-        <button class="btn-alert" onclick="sendAlert('Light On')">Light On</button>
-        <button class="btn-alert" onclick="sendAlert('Urgent Help')">Urgent Help</button>
-    </div>
-
-    <div id="ticker" class="ticker"></div>
 </div>
 
 <script>
-    const VIRTUAL_NUMBER = "918634512424";
+    const VIRTUAL_NUMBER = "918634512424"; // SMSCountry Virtual Number
     const _supabase = supabase.createClient('https://cefzsgchfdvtyfmcrsda.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs');
-    
-    let urlId = new URLSearchParams(window.location.search).get('id') || "";
+    let urlAssetId = new URLSearchParams(window.location.search).get('id') || "";
 
     window.onload = async () => {
-        if(!urlId) return;
-        const { data, error } = await _supabase.from('registrations').select('*').eq('sticker_id', urlId.toUpperCase()).single();
+        const { data } = await _supabase.from('registrations').select('*').eq('sticker_id', urlAssetId.toUpperCase()).single();
         if(data) {
-            document.getElementById('dom-owner-name').innerText = data.full_name || "VEHICLE OWNER";
-            document.getElementById('dom-plate-number').innerText = data.vehicle_number || "---";
-            document.getElementById('status-badge').innerText = "LIVE";
-        } else {
-            document.getElementById('dom-owner-name').innerText = "Profile Not Found";
+            document.getElementById('dom-owner-name').innerText = data.full_name;
+            document.getElementById('dom-plate-number').innerText = data.vehicle_number;
         }
     };
 
+    // DIRECT CALL FUNCTION (No Modal)
     function initiateDirectCall() {
-        document.getElementById('ticker').style.display = "block";
-        document.getElementById('ticker').innerText = "Connecting call...";
-        
-        // Signal backend
+        // Backend ko signal bhejo
         fetch('https://alerto-qr.vercel.app/api/prepare-call', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ stickerId: urlId })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ stickerId: urlAssetId })
         });
         
-        // Open dialer
+        // Dialpad kholo
         window.location.href = `tel:${VIRTUAL_NUMBER}`;
     }
 
     function sendAlert(msg) {
-        document.getElementById('ticker').style.display = "block";
-        document.getElementById('ticker').innerText = "Sending...";
         fetch('https://alerto-qr.vercel.app/api/send-alert', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ stickerId: urlId, alertType: msg, mode: 'sms' })
-        }).then(() => {
-            document.getElementById('ticker').innerText = "✅ Alert Sent!";
-            alert("Owner notified successfully!");
-        });
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ stickerId: urlAssetId, alertType: msg, mode: 'sms' })
+        }).then(() => alert("Notification sent!"));
     }
 </script>
 </body>
