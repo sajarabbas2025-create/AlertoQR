@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -206,10 +207,10 @@
         </div>
 
         <div class="calling-grid">
-            <button class="btn-call btn-owner" onclick="triggerSMSCountryAction('call')">
+            <button class="btn-call btn-owner" onclick="executeSecureVercelBridge('Urgent Call Request', 'call')">
                 <i class="fa-solid fa-phone"></i> Call Owner
             </button>
-            <button class="btn-call btn-alternate" onclick="triggerSMSCountryAction('alternate')">
+            <button class="btn-call btn-alternate" onclick="executeSecureVercelBridge('Urgent Call Request', 'alternate')">
                 <i class="fa-solid fa-phone"></i> Call Alternate
             </button>
         </div>
@@ -218,19 +219,19 @@
 
         <div class="section-title">Quick Alerts</div>
         <div class="alerts-grid">
-            <div class="alert-card" onclick="triggerSMSCountryAction('sms', 'Wrong Parking')">
+            <div class="alert-card" onclick="executeSecureVercelBridge('Wrong Parking', 'sms')">
                 <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
                 <span>Wrong Parking</span>
             </div>
-            <div class="alert-card" onclick="triggerSMSCountryAction('sms', 'Tow Alert')">
+            <div class="alert-card" onclick="executeSecureVercelBridge('Tow Alert', 'sms')">
                 <i class="fa-solid fa-car" style="color: #3b82f6;"></i>
                 <span>Tow Alert</span>
             </div>
-            <div class="alert-card" onclick="triggerSMSCountryAction('sms', 'Window Open')">
+            <div class="alert-card" onclick="executeSecureVercelBridge('Window Open', 'sms')">
                 <i class="fa-solid fa-file-invoice" style="color: #000000;"></i>
                 <span>Window Open</span>
             </div>
-            <div class="alert-card" onclick="triggerSMSCountryAction('sms', 'Share Photo')">
+            <div class="alert-card" onclick="executeSecureVercelBridge('Share Photo', 'sms')">
                 <i class="fa-solid fa-camera" style="color: #64748b;"></i>
                 <span>Share Photo</span>
             </div>
@@ -253,12 +254,7 @@
     const databaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(databaseUrl, databaseKey);
 
-    // Pure SMSCountry Credentials
-    const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
-    const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
-
     let urlAssetId = "";
-    let globalOwnerData = null;
 
     window.addEventListener('DOMContentLoaded', async () => {
         const queryStrings = new URLSearchParams(window.location.search);
@@ -287,7 +283,6 @@
                 return;
             }
             
-            globalOwnerData = data;
             document.getElementById('dom-owner-name').innerText = data.full_name || "AUTHORIZED OWNER";
             document.getElementById('dom-plate-number').innerText = data.vehicle_number || "VEHICLE";
             document.getElementById('loading-view').style.display = 'none';
@@ -304,96 +299,47 @@
         document.getElementById('error-view').style.display = 'block';
     }
 
-    async function triggerSMSCountryAction(mode, textMessageContext = '') {
+    async function executeSecureVercelBridge(alertType, mode) {
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
         consoleTicker.style.background = "#f1f5f9";
         consoleTicker.style.color = "#334155";
         consoleTicker.style.borderColor = "#cbd5e1";
-        consoleTicker.innerText = `📤 Connecting SMSCountry secure gateway...`;
+        consoleTicker.innerText = `📤 Connecting secure AlertoQR Vercel node...`;
 
-        if (!globalOwnerData) {
-            consoleTicker.innerText = "⚠️ Error: Records not synced.";
-            return;
-        }
+        try {
+            // Yeh seedha aapke Vercel backend dynamic API routing ko query bhejega
+            const response = await fetch('/api/send-alert', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    stickerId: urlAssetId,
+                    alertType: alertType,
+                    mode: mode
+                })
+            });
 
-        let targetPhone = (mode === 'alternate') ? globalOwnerData.alternate_number : globalOwnerData.mobile_number;
-        if (!targetPhone) {
-            consoleTicker.innerText = "⚠️ Phone number missing in database.";
-            return;
-        }
+            const resData = await response.json();
 
-        let ownerPhoneClean = targetPhone.toString().replace(/[^0-9]/g, '');
-        if (ownerPhoneClean.length === 10) { ownerPhoneClean = `91${ownerPhoneClean}`; }
-
-        const baseAuthHeader = btoa(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`);
-
-        // 📞 CASE 1: MASKED CALL VIA SMSCOUNTRY BRIDGE
-        if (mode === 'call' || mode === 'alternate') {
-            const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
-            const params = new URLSearchParams();
-            params.append('From', '919703826178'); 
-            params.append('To', ownerPhoneClean);  
-            params.append('Type', 'bridge');
-
-            try {
-                const response = await fetch(callApiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Basic ${baseAuthHeader}`,
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: params
-                });
-
-                if (response.ok) {
-                    setTickerSuccess("✅ Call Request Sent! SMSCountry is bridging the call.");
-                } else {
-                    const errText = await response.text();
-                    consoleTicker.innerText = `⚠️ SMSCountry Call Error: ${response.status} - ${errText}`;
-                }
-            } catch (err) {
-                consoleTicker.innerText = "⚠️ Browser CORS lock or balance limitation at SMSCountry Node.";
+            if (resData.success) {
+                consoleTicker.style.background = "#ecfdf5";
+                consoleTicker.style.color = "#065f46";
+                consoleTicker.style.borderColor = "#a7f3d0";
+                consoleTicker.innerText = (mode === 'sms') 
+                    ? "✅ Secure Alert SMS successfully sent!" 
+                    : "✅ Call Bridge initiated! Connecting your call.";
+            } else {
+                consoleTicker.style.background = "#fef2f2";
+                consoleTicker.style.color = "#991b1b";
+                consoleTicker.style.borderColor = "#fca5a5";
+                consoleTicker.innerText = `⚠️ Gateway Error: ${resData.error || 'Request Rejected.'}`;
             }
-        } 
-        // 💬 CASE 2: TEXT SMS VIA SMSCOUNTRY SENDER GATEWAY
-        else {
-            const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
-            const formattedMsg = `[AlertoQR] Emergency Alert! Vehicle (${globalOwnerData.vehicle_number || 'Vehicle'}) par alert: "${textMessageContext}". Kripya check karein!`;
-            
-            const params = new URLSearchParams();
-            params.append('Text', formattedMsg);
-            params.append('To', ownerPhoneClean);
-            params.append('SenderId', 'ALERTO'); // Aapka approved Sender ID yahan aayega
-
-            try {
-                const response = await fetch(smsApiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Basic ${baseAuthHeader}`,
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: params
-                });
-
-                if (response.ok) {
-                    setTickerSuccess("✅ Secure Alert SMS successfully sent via SMSCountry!");
-                } else {
-                    const errText = await response.text();
-                    consoleTicker.innerText = `⚠️ SMSCountry SMS Error: ${response.status} - ${errText}`;
-                }
-            } catch (err) {
-                consoleTicker.innerText = "⚠️ Network issue or restrictions on direct SMS gateway request.";
-            }
+        } catch (err) {
+            consoleTicker.style.background = "#fef2f2";
+            consoleTicker.style.color = "#991b1b";
+            consoleTicker.style.borderColor = "#fca5a5";
+            consoleTicker.innerText = `⚠️ Network fault. Please verify Vercel deployment logs.`;
         }
-    }
-
-    function setTickerSuccess(msg) {
-        const consoleTicker = document.getElementById('ticker-box');
-        consoleTicker.style.background = "#ecfdf5";
-        consoleTicker.style.color = "#065f46";
-        consoleTicker.style.borderColor = "#a7f3d0";
-        consoleTicker.innerText = msg;
     }
 </script>
 </body>
