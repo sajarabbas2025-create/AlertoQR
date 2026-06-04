@@ -6,7 +6,7 @@ const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGc
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// SMSCountry Clear Text Credentials 
+// SMSCountry Auth Credentials
 const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
 
@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
         const { stickerId, alertType, mode } = req.body;
 
         try {
-            // 1. Supabase se profile fetch karna
+            // 1. Supabase se active user details nikalna
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -39,35 +39,29 @@ module.exports = async (req, res) => {
                 return res.status(200).json({ success: false, error: 'Target phone number missing.' });
             }
 
-            // 🛠️ SMSCOUNTRY MANDATORY '91' FORMATTING
+            // Strict country code 91 cleaning
             let cleanNumber = targetPhone.toString().replace(/[^0-9]/g, '');
-            
-            // Suru ka 0 hatao agar hai toh
             if (cleanNumber.startsWith('0')) {
                 cleanNumber = cleanNumber.substring(1);
             }
-            
-            // Ensure strict 12-digit format with '91'
-            if (cleanNumber.startsWith('91') && cleanNumber.length === 12) {
-                // Already perfect format
-            } else {
-                if (cleanNumber.length === 10) {
-                    cleanNumber = `91${cleanNumber}`;
-                }
+            if (!cleanNumber.startsWith('91')) {
+                cleanNumber = `91${cleanNumber}`;
             }
 
-            // Basic Authentication header lock generator
             const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-            // 📞 ROUTE 1: BRIDGE CALL
+            // 📞 ROUTE 1: Live Call Engine (As per Sinthia's new email instructions)
             if (mode === 'call' || mode === 'alternate') {
                 const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
 
-                // Unke mail ke mutabik dono numbers strict '91' ke sath ja rahe hain
+                // Sinthia ji ke email ke mutabik exact payload body structure
                 const jsonBodyData = {
-                    "From": "919703826178", 
-                    "To": cleanNumber,
-                    "Type": "bridge"
+                    "Number": cleanNumber,                     // Vehicle owner's number with 91
+                    "CallerId": "918634512424",                // Aapki nayi dedicated Caller ID
+                    "RingUrl": "https://alertoqr.in/ring",     // Dummy/Testing endpoints
+                    "AnswerUrl": "https://alertoqr.in/answer", 
+                    "HangupUrl": "https://alertoqr.in/hangup", 
+                    "HttpMethod": "POST"
                 };
 
                 try {
@@ -77,14 +71,14 @@ module.exports = async (req, res) => {
                             'Content-Type': 'application/json'
                         }
                     });
-                    return res.status(200).json({ success: true, message: 'Call Request Initiated.', data: apiResponse.data });
+                    return res.status(200).json({ success: true, message: 'Call Request Dispatched.', data: apiResponse.data });
                 } catch (apiErr) {
                     const errorMsg = apiErr.response ? JSON.stringify(apiErr.response.data) : apiErr.message;
-                    return res.status(200).json({ success: false, error: `SMSCountry REST Error: ${errorMsg}` });
+                    return res.status(200).json({ success: false, error: `SMSCountry Call Node Error: ${errorMsg}` });
                 }
             } 
             
-            // 💬 ROUTE 2: SMS QUICK ALERTS
+            // 💬 ROUTE 2: SMS Quick Alerts (Same logic)
             else {
                 const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
                 const formattedMsg = `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number || 'Vehicle'}) par alert: "${alertType}". Kripya check karein!`;
@@ -110,7 +104,7 @@ module.exports = async (req, res) => {
             }
 
         } catch (err) {
-            return res.status(200).json({ success: false, error: `Server Master Crash: ${err.message}` });
+            return res.status(200).json({ success: false, error: `Server Node Core Crash: ${err.message}` });
         }
     }
 };
