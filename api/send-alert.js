@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
 
         const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-        // 📞 ROUTE 1: SMART BRIDGE CALL
+        // 📞 ROUTE 1: SMART BRIDGE CALL (Helper ↔ Owner)
         if (mode === 'call' || mode === 'alternate') {
             if (!helperNumber) return res.status(200).json({ success: false, error: 'Helper number missing.' });
 
@@ -40,12 +40,12 @@ module.exports = async (req, res) => {
 
             const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
             
-            // 🛠️ FIX: Added "Type": "bridge" here so the server knows to connect both numbers
+            // 🛠️ FIX: Sinthia ji ke bataye XML format mein <Dial> tag ka use kar rahe hain
             const jsonBodyData = {
-                "From": helperCleanNumber,
-                "To": ownerCleanNumber,
+                "Number": helperCleanNumber,    // Pehle Helper ko call jayegi
                 "CallerId": "918634512424",
-                "Type": "bridge"
+                "HttpMethod": "POST",
+                "Xml": `<Response><play>Please wait, we are connecting your secure call to the vehicle owner.</play><Dial>${ownerCleanNumber}</Dial></Response>` // Phir Owner ko milayegi
             };
 
             const response = await fetch(callApiUrl, {
