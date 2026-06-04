@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
         const { stickerId, alertType, mode } = req.body;
 
         try {
-            // 1. Supabase se active user details nikalna
+            // 1. Supabase se details nikalna
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -39,7 +39,7 @@ module.exports = async (req, res) => {
                 return res.status(200).json({ success: false, error: 'Target phone number missing.' });
             }
 
-            // Strict country code 91 cleaning
+            // Clean number standard with 91 formatting
             let cleanNumber = targetPhone.toString().replace(/[^0-9]/g, '');
             if (cleanNumber.startsWith('0')) {
                 cleanNumber = cleanNumber.substring(1);
@@ -50,18 +50,19 @@ module.exports = async (req, res) => {
 
             const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-            // 📞 ROUTE 1: Live Call Engine (As per Sinthia's new email instructions)
+            // 📞 ROUTE 1: LIVE CALL BRIDGE ENGINE
             if (mode === 'call' || mode === 'alternate') {
                 const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
 
-                // Sinthia ji ke email ke mutabik exact payload body structure
+                // Sinthia ji ke bataye mutabik exact body payload with mandatory 'Xml' string parameter
                 const jsonBodyData = {
-                    "Number": cleanNumber,                     // Vehicle owner's number with 91
-                    "CallerId": "918634512424",                // Aapki nayi dedicated Caller ID
-                    "RingUrl": "https://alertoqr.in/ring",     // Dummy/Testing endpoints
-                    "AnswerUrl": "https://alertoqr.in/answer", 
-                    "HangupUrl": "https://alertoqr.in/hangup", 
-                    "HttpMethod": "POST"
+                    "Number": cleanNumber,
+                    "CallerId": "918634512424",
+                    "RingUrl": "https://alertoqr.in/ring",
+                    "AnswerUrl": "https://alertoqr.in/answer",
+                    "HangupUrl": "https://alertoqr.in/hangup",
+                    "HttpMethod": "POST",
+                    "Xml": "<Response><play>Connecting your AlertoQR emergency call</play></Response>" // Mandatory parameter locked here
                 };
 
                 try {
@@ -78,7 +79,7 @@ module.exports = async (req, res) => {
                 }
             } 
             
-            // 💬 ROUTE 2: SMS Quick Alerts (Same logic)
+            // 💬 ROUTE 2: SMS QUICK ALERTS
             else {
                 const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
                 const formattedMsg = `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number || 'Vehicle'}) par alert: "${alertType}". Kripya check karein!`;
