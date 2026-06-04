@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
 
         const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-        // 📞 ROUTE 1: SMART BRIDGE CALL (Helper ↔ Owner)
+        // 📞 ROUTE 1: SMART BRIDGE CALL
         if (mode === 'call' || mode === 'alternate') {
             if (!helperNumber) return res.status(200).json({ success: false, error: 'Helper number missing.' });
 
@@ -40,12 +40,12 @@ module.exports = async (req, res) => {
 
             const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
             
-            // 🛠️ FIX: Sinthia ji ke bataye XML format mein <Dial> tag ka use kar rahe hain
+            // 🛠️ FIX: Changed <Dial> to <dial> (Lowercase) 
             const jsonBodyData = {
-                "Number": helperCleanNumber,    // Pehle Helper ko call jayegi
+                "Number": helperCleanNumber,    
                 "CallerId": "918634512424",
                 "HttpMethod": "POST",
-                "Xml": `<Response><play>Please wait, we are connecting your secure call to the vehicle owner.</play><Dial>${ownerCleanNumber}</Dial></Response>` // Phir Owner ko milayegi
+                "Xml": `<Response><play>Please wait, we are connecting your secure call.</play><dial>${ownerCleanNumber}</dial></Response>` 
             };
 
             const response = await fetch(callApiUrl, {
@@ -58,7 +58,7 @@ module.exports = async (req, res) => {
             if (response.ok && apiData.Success !== false) {
                 return res.status(200).json({ success: true, data: apiData });
             } else {
-                return res.status(200).json({ success: false, error: `SMSCountry Bridge Error: ${JSON.stringify(apiData)}` });
+                return res.status(200).json({ success: false, error: `SMSCountry Error: ${JSON.stringify(apiData)}` });
             }
         } 
         // 💬 ROUTE 2: SMS ALERTS
