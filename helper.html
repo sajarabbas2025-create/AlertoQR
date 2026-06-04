@@ -15,24 +15,22 @@
         body { background-color: #f8fafc; color: #0f172a; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 16px; }
         .helper-container { width: 100%; max-width: 480px; background: #ffffff; border-radius: 24px; padding: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
         .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; }
-        .brand-name { font-size: 22px; font-weight: 800; color: #0f172a; }
-        .sticker-id-badge { background: #f1f5f9; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; color: #475569; }
+        .brand-name { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
+        .sticker-id-badge { background: #f1f5f9; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; color: #475569; border: 1px solid #e2e8f0; }
         .owner-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 20px; }
-        .meta-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 6px; }
+        .meta-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
         .owner-name { font-size: 26px; font-weight: 800; color: #0f172a; margin-bottom: 12px; text-transform: uppercase; }
-        .vehicle-number-plate { background: #000000; color: #ffffff; display: inline-block; padding: 6px 16px; border-radius: 6px; font-size: 18px; font-weight: 800; }
-        
-        .calling-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .vehicle-number-plate { background: #000000; color: #ffffff; display: inline-block; padding: 6px 16px; border-radius: 6px; font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+        .calling-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
         .btn-call { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-owner { background: #000000; color: white; }
         .btn-alternate { background: #ffffff; color: #000000; border: 1px solid #cbd5e1; }
-        
+        .btn-sos { width: 100%; padding: 18px; border-radius: 12px; background: #dc2626; color: white; border: none; font-weight: 800; margin-bottom: 24px; cursor: pointer; }
         .section-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; }
         .alerts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .alert-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; }
-        
-        .btn-emergency { width: 100%; padding: 20px; border-radius: 14px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; background: #dc2626; color: white; margin-bottom: 12px; }
-        .emergency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .alert-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .alert-card i { font-size: 26px; }
+        .alert-card span { font-size: 13px; font-weight: 700; color: #334155; }
     </style>
 </head>
 <body>
@@ -59,14 +57,14 @@
             </button>
         </div>
 
-        <button class="btn-emergency" onclick="sendAlert('EMERGENCY_SOS')">
-            <i class="fa-solid fa-siren-on"></i> EMERGENCY SOS
-        </button>
+        <button class="btn-sos" onclick="sendAlert('EMERGENCY_SOS')">EMERGENCY SOS</button>
 
         <div class="section-title">Quick Alerts</div>
         <div class="alerts-grid">
-            <div class="alert-card" onclick="sendAlert('Wrong Parking')"><span>Wrong Parking</span></div>
-            <div class="alert-card" onclick="sendAlert('Tow Alert')"><span>Tow Alert</span></div>
+            <div class="alert-card" onclick="sendAlert('Wrong Parking')"><i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i><span>Wrong Parking</span></div>
+            <div class="alert-card" onclick="sendAlert('Tow Alert')"><i class="fa-solid fa-car" style="color: #3b82f6;"></i><span>Tow Alert</span></div>
+            <div class="alert-card" onclick="sendAlert('Window Open')"><i class="fa-solid fa-file-invoice" style="color: #000000;"></i><span>Window Open</span></div>
+            <div class="alert-card" onclick="sendAlert('Share Photo')"><i class="fa-solid fa-camera" style="color: #64748b;"></i><span>Share Photo</span></div>
         </div>
     </div>
 </div>
@@ -96,7 +94,7 @@
     }
 
     function sendAlert(msg) {
-        if(msg === 'EMERGENCY_SOS') alert("SOS Triggered! Siren & Family Alert Activated.");
+        if(msg === 'EMERGENCY_SOS') alert("SOS Triggered!");
         fetch('https://alerto-qr.vercel.app/api/send-alert', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
