@@ -15,7 +15,6 @@ module.exports = async (req, res) => {
     if (req.method === 'OPTIONS') return res.status(200).end();
 
     try {
-        // Naya parameter 'helperNumber' accept kar rahe hain
         const { stickerId, alertType, mode, helperNumber } = req.body;
         if (!stickerId) return res.status(200).json({ success: false, error: 'Sticker ID is missing' });
 
@@ -25,29 +24,28 @@ module.exports = async (req, res) => {
         let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
         if (!targetPhone) return res.status(200).json({ success: false, error: 'Phone missing.' });
 
-        // Owner Number Cleaning
         let ownerCleanNumber = targetPhone.toString().replace(/[^0-9]/g, '');
         if (ownerCleanNumber.startsWith('0')) ownerCleanNumber = ownerCleanNumber.substring(1);
         if (!ownerCleanNumber.startsWith('91')) ownerCleanNumber = `91${ownerCleanNumber}`;
 
         const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-        // 📞 ROUTE 1: SMART BRIDGE CALL (Helper ↔ Owner)
+        // 📞 ROUTE 1: SMART BRIDGE CALL
         if (mode === 'call' || mode === 'alternate') {
             if (!helperNumber) return res.status(200).json({ success: false, error: 'Helper number missing.' });
 
-            // Helper Number Cleaning
             let helperCleanNumber = helperNumber.toString().replace(/[^0-9]/g, '');
             if (helperCleanNumber.startsWith('0')) helperCleanNumber = helperCleanNumber.substring(1);
             if (!helperCleanNumber.startsWith('91')) helperCleanNumber = `91${helperCleanNumber}`;
 
             const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
             
-            // Bridge Payload (From Helper -> To Owner, with your Virtual Caller ID)
+            // 🛠️ FIX: Added "Type": "bridge" here so the server knows to connect both numbers
             const jsonBodyData = {
                 "From": helperCleanNumber,
                 "To": ownerCleanNumber,
-                "CallerId": "918634512424"
+                "CallerId": "918634512424",
+                "Type": "bridge"
             };
 
             const response = await fetch(callApiUrl, {
@@ -63,7 +61,7 @@ module.exports = async (req, res) => {
                 return res.status(200).json({ success: false, error: `SMSCountry Bridge Error: ${JSON.stringify(apiData)}` });
             }
         } 
-        // 💬 ROUTE 2: SMS ALERTS (Yeh waisa hi rahega)
+        // 💬 ROUTE 2: SMS ALERTS
         else {
             const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
             const jsonSmsData = { "Text": `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number}) par alert: "${alertType}".`, "To": ownerCleanNumber, "SenderId": "ALERTO" };
