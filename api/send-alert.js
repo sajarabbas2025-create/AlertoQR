@@ -6,7 +6,7 @@ const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGc
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// SMSCountry API Target Credentials
+// SMSCountry Clear Text Credentials 
 const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
 
@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
         const { stickerId, alertType, mode } = req.body;
 
         try {
-            // 1. Fetch data from Supabase
+            // 1. Supabase se profile fetch karna
             const { data, error } = await supabase
                 .from('registrations')
                 .select('*')
@@ -31,68 +31,74 @@ module.exports = async (req, res) => {
                 .single();
 
             if (error || !data) {
-                return res.status(200).json({ success: false, error: 'Sticker ID record not found.' });
+                return res.status(200).json({ success: false, error: 'Sticker ID profile not found.' });
             }
 
             let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
             if (!targetPhone) {
-                return res.status(200).json({ success: false, error: 'Phone number missing.' });
+                return res.status(200).json({ success: false, error: 'Target phone number missing.' });
             }
 
-            // Clean data parameters
-            let rawPhone = targetPhone.toString().replace(/[^0-9]/g, '');
+            // 🛠️ SMSCOUNTRY MANDATORY '91' FORMATTING
+            let cleanNumber = targetPhone.toString().replace(/[^0-9]/g, '');
             
-            if (rawPhone.startsWith('91') && rawPhone.length > 10) {
-                rawPhone = rawPhone.substring(2);
-            } else if (rawPhone.startsWith('0')) {
-                rawPhone = rawPhone.substring(1);
+            // Suru ka 0 hatao agar hai toh
+            if (cleanNumber.startsWith('0')) {
+                cleanNumber = cleanNumber.substring(1);
+            }
+            
+            // Ensure strict 12-digit format with '91'
+            if (cleanNumber.startsWith('91') && cleanNumber.length === 12) {
+                // Already perfect format
+            } else {
+                if (cleanNumber.length === 10) {
+                    cleanNumber = `91${cleanNumber}`;
+                }
             }
 
-            // Formatting destination target string numbers
-            let finalToNumber = rawPhone; // Default 10-digit structure execution check
+            // Basic Authentication header lock generator
+            const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-            // 📞 ROUTE A: CALLING ENGINE (SMSCountry JSON Implementation)
+            // 📞 ROUTE 1: BRIDGE CALL
             if (mode === 'call' || mode === 'alternate') {
                 const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
-                const authHeader = Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
+                // Unke mail ke mutabik dono numbers strict '91' ke sath ja rahe hain
                 const jsonBodyData = {
                     "From": "919703826178", 
-                    "To": finalToNumber, // Passing direct cleaned formatting reference
+                    "To": cleanNumber,
                     "Type": "bridge"
                 };
 
                 try {
                     const apiResponse = await axios.post(callApiUrl, jsonBodyData, {
                         headers: {
-                            'Authorization': `Basic ${authHeader}`,
+                            'Authorization': authHeader,
                             'Content-Type': 'application/json'
                         }
                     });
-                    return res.status(200).json({ success: true, message: 'Call Request Dispatched.', data: apiResponse.data });
+                    return res.status(200).json({ success: true, message: 'Call Request Initiated.', data: apiResponse.data });
                 } catch (apiErr) {
                     const errorMsg = apiErr.response ? JSON.stringify(apiErr.response.data) : apiErr.message;
-                    return res.status(200).json({ success: false, error: `SMSCountry REST Node Error: ${errorMsg}` });
+                    return res.status(200).json({ success: false, error: `SMSCountry REST Error: ${errorMsg}` });
                 }
             } 
             
-            // 💬 ROUTE B: SMS ENGINE (SMSCountry SMS Gateway)
+            // 💬 ROUTE 2: SMS QUICK ALERTS
             else {
                 const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
                 const formattedMsg = `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number || 'Vehicle'}) par alert: "${alertType}". Kripya check karein!`;
                 
-                const authHeader = Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
-                
                 const jsonSmsData = {
                     "Text": formattedMsg,
-                    "To": finalToNumber,
+                    "To": cleanNumber,
                     "SenderId": "ALERTO"
                 };
 
                 try {
                     await axios.post(smsApiUrl, jsonSmsData, {
                         headers: {
-                            'Authorization': `Basic ${authHeader}`,
+                            'Authorization': authHeader,
                             'Content-Type': 'application/json'
                         }
                     });
@@ -104,7 +110,7 @@ module.exports = async (req, res) => {
             }
 
         } catch (err) {
-            return res.status(200).json({ success: false, error: `System Exception: ${err.message}` });
+            return res.status(200).json({ success: false, error: `Server Master Crash: ${err.message}` });
         }
     }
 };
