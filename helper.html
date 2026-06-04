@@ -307,7 +307,8 @@
         consoleTicker.innerText = `📤 Connecting secure AlertoQR Vercel node...`;
 
         try {
-            const response = await fetch('/api/send-alert', {
+            // Yahan par Vercel ka absolute URL daal diya gaya hai taaki NGINX block na kare
+            const response = await fetch('https://alerto-qr.vercel.app/api/send-alert', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ stickerId: urlAssetId, alertType: alertType, mode: mode })
@@ -320,7 +321,7 @@
                     consoleTicker.style.background = "#ecfdf5";
                     consoleTicker.style.color = "#065f46";
                     consoleTicker.style.borderColor = "#a7f3d0";
-                    consoleTicker.innerText = (mode === 'sms') ? "✅ Alert SMS Sent!" : "✅ Call Bridge initiated!";
+                    consoleTicker.innerText = (mode === 'sms') ? "✅ Alert SMS Sent!" : "✅ Call Bridge initiated! Connecting your call.";
                 } else {
                     consoleTicker.style.background = "#fef2f2";
                     consoleTicker.style.color = "#991b1b";
