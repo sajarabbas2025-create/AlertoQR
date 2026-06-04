@@ -176,6 +176,30 @@
         .state-shell-view { text-align: center; padding: 40px 10px; }
         .spinner-engine { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top: 3px solid #000000; border-radius: 50%; margin: 0 auto 16px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* 🆕 SMART POPUP MODAL CSS */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: none; justify-content: center;
+            align-items: center; z-index: 1000; padding: 20px; backdrop-filter: blur(4px);
+        }
+        .modal-box {
+            background: white; padding: 24px; border-radius: 20px; width: 100%;
+            max-width: 350px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        .modal-icon { font-size: 32px; color: #10b981; margin-bottom: 12px; }
+        .modal-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
+        .modal-desc { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+        .modal-input {
+            width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #e2e8f0;
+            font-size: 16px; font-weight: 600; text-align: center; outline: none;
+            margin-bottom: 20px; letter-spacing: 1px;
+        }
+        .modal-input:focus { border-color: #000000; }
+        .modal-buttons { display: flex; gap: 10px; }
+        .btn-modal { flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; }
+        .btn-cancel { background: #f1f5f9; color: #475569; }
+        .btn-connect { background: #000000; color: white; }
     </style>
 </head>
 <body>
@@ -206,10 +230,10 @@
         </div>
 
         <div class="calling-grid">
-            <button class="btn-call btn-owner" onclick="executeSecureVercelBridge('Urgent Call Request', 'call')">
+            <button class="btn-call btn-owner" onclick="openCallModal('Urgent Call Request', 'call')">
                 <i class="fa-solid fa-phone"></i> Call Owner
             </button>
-            <button class="btn-call btn-alternate" onclick="executeSecureVercelBridge('Urgent Call Request', 'alternate')">
+            <button class="btn-call btn-alternate" onclick="openCallModal('Urgent Call Request', 'alternate')">
                 <i class="fa-solid fa-phone"></i> Call Alternate
             </button>
         </div>
@@ -218,19 +242,19 @@
 
         <div class="section-title">Quick Alerts</div>
         <div class="alerts-grid">
-            <div class="alert-card" onclick="executeSecureVercelBridge('Wrong Parking', 'sms')">
+            <div class="alert-card" onclick="executeSecureVercelBridge('Wrong Parking', 'sms', null)">
                 <i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i>
                 <span>Wrong Parking</span>
             </div>
-            <div class="alert-card" onclick="executeSecureVercelBridge('Tow Alert', 'sms')">
+            <div class="alert-card" onclick="executeSecureVercelBridge('Tow Alert', 'sms', null)">
                 <i class="fa-solid fa-car" style="color: #3b82f6;"></i>
                 <span>Tow Alert</span>
             </div>
-            <div class="alert-card" onclick="executeSecureVercelBridge('Window Open', 'sms')">
+            <div class="alert-card" onclick="executeSecureVercelBridge('Window Open', 'sms', null)">
                 <i class="fa-solid fa-file-invoice" style="color: #000000;"></i>
                 <span>Window Open</span>
             </div>
-            <div class="alert-card" onclick="executeSecureVercelBridge('Share Photo', 'sms')">
+            <div class="alert-card" onclick="executeSecureVercelBridge('Share Photo', 'sms', null)">
                 <i class="fa-solid fa-camera" style="color: #64748b;"></i>
                 <span>Share Photo</span>
             </div>
@@ -248,12 +272,27 @@
     </div>
 </div>
 
+<div id="call-modal" class="modal-overlay">
+    <div class="modal-box">
+        <i class="fa-solid fa-shield-halved modal-icon"></i>
+        <h3 class="modal-title">Secure Anonymous Call</h3>
+        <p class="modal-desc">Kripya apna mobile number darj karein. Hamara system aapko aur owner ko aapas mein jodh dega. Aapka number secure rahega.</p>
+        <input type="tel" id="helper-phone-input" class="modal-input" placeholder="Enter 10-digit Number" maxlength="10">
+        <div class="modal-buttons">
+            <button class="btn-modal btn-cancel" onclick="closeCallModal()">Cancel</button>
+            <button class="btn-modal btn-connect" onclick="submitCallModal()">Connect</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const databaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
     const databaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
     const _supabase = supabase.createClient(databaseUrl, databaseKey);
 
     let urlAssetId = "";
+    let activeCallType = "";
+    let activeCallMode = "";
 
     window.addEventListener('DOMContentLoaded', async () => {
         const queryStrings = new URLSearchParams(window.location.search);
@@ -271,16 +310,8 @@
         document.getElementById('dom-sticker-badge').innerText = `ID: ${urlAssetId}`;
 
         try {
-            const { data, error } = await _supabase
-                .from('registrations')
-                .select('*')
-                .eq('sticker_id', urlAssetId)
-                .single();
-
-            if (error || !data) {
-                deployErrorView('Record Vacant', 'No active profile found.');
-                return;
-            }
+            const { data, error } = await _supabase.from('registrations').select('*').eq('sticker_id', urlAssetId).single();
+            if (error || !data) { deployErrorView('Record Vacant', 'No active profile found.'); return; }
             
             document.getElementById('dom-owner-name').innerText = data.full_name || "AUTHORIZED OWNER";
             document.getElementById('dom-plate-number').innerText = data.vehicle_number || "VEHICLE";
@@ -298,7 +329,29 @@
         document.getElementById('error-view').style.display = 'block';
     }
 
-    async function executeSecureVercelBridge(alertType, mode) {
+    // Modal Control Functions
+    function openCallModal(alertType, mode) {
+        activeCallType = alertType;
+        activeCallMode = mode;
+        document.getElementById('helper-phone-input').value = "";
+        document.getElementById('call-modal').style.display = "flex";
+    }
+
+    function closeCallModal() {
+        document.getElementById('call-modal').style.display = "none";
+    }
+
+    function submitCallModal() {
+        const phoneValue = document.getElementById('helper-phone-input').value.trim();
+        if(phoneValue.length < 10) {
+            alert("Kripya sahi 10 digit ka number darj karein.");
+            return;
+        }
+        closeCallModal();
+        executeSecureVercelBridge(activeCallType, activeCallMode, phoneValue);
+    }
+
+    async function executeSecureVercelBridge(alertType, mode, helperPhone) {
         const consoleTicker = document.getElementById('ticker-box');
         consoleTicker.style.display = "block";
         consoleTicker.style.background = "#f1f5f9";
@@ -307,11 +360,12 @@
         consoleTicker.innerText = `📤 Connecting secure AlertoQR Vercel node...`;
 
         try {
-            // Yahan par Vercel ka absolute URL daal diya gaya hai taaki NGINX block na kare
+            // Frontend Vercel URL
             const response = await fetch('https://alerto-qr.vercel.app/api/send-alert', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ stickerId: urlAssetId, alertType: alertType, mode: mode })
+                // Naya parameter 'helperNumber' backend ko bhej rahe hain
+                body: JSON.stringify({ stickerId: urlAssetId, alertType: alertType, mode: mode, helperNumber: helperPhone })
             });
 
             const rawText = await response.text(); 
@@ -321,7 +375,7 @@
                     consoleTicker.style.background = "#ecfdf5";
                     consoleTicker.style.color = "#065f46";
                     consoleTicker.style.borderColor = "#a7f3d0";
-                    consoleTicker.innerText = (mode === 'sms') ? "✅ Alert SMS Sent!" : "✅ Call Bridge initiated! Connecting your call.";
+                    consoleTicker.innerText = (mode === 'sms') ? "✅ Alert SMS Sent!" : "✅ Secure Bridge Initiated! Kripya apne phone par aane wali call uthayein.";
                 } else {
                     consoleTicker.style.background = "#fef2f2";
                     consoleTicker.style.color = "#991b1b";
