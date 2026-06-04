@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -308,37 +307,34 @@
         consoleTicker.innerText = `📤 Connecting secure AlertoQR Vercel node...`;
 
         try {
-            // Yeh seedha aapke Vercel backend dynamic API routing ko query bhejega
             const response = await fetch('/api/send-alert', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    stickerId: urlAssetId,
-                    alertType: alertType,
-                    mode: mode
-                })
+                body: JSON.stringify({ stickerId: urlAssetId, alertType: alertType, mode: mode })
             });
 
-            const resData = await response.json();
-
-            if (resData.success) {
-                consoleTicker.style.background = "#ecfdf5";
-                consoleTicker.style.color = "#065f46";
-                consoleTicker.style.borderColor = "#a7f3d0";
-                consoleTicker.innerText = (mode === 'sms') 
-                    ? "✅ Secure Alert SMS successfully sent!" 
-                    : "✅ Call Bridge initiated! Connecting your call.";
-            } else {
+            const rawText = await response.text(); 
+            try {
+                const resData = JSON.parse(rawText);
+                if (resData.success) {
+                    consoleTicker.style.background = "#ecfdf5";
+                    consoleTicker.style.color = "#065f46";
+                    consoleTicker.style.borderColor = "#a7f3d0";
+                    consoleTicker.innerText = (mode === 'sms') ? "✅ Alert SMS Sent!" : "✅ Call Bridge initiated!";
+                } else {
+                    consoleTicker.style.background = "#fef2f2";
+                    consoleTicker.style.color = "#991b1b";
+                    consoleTicker.style.borderColor = "#fca5a5";
+                    consoleTicker.innerText = `⚠️ Gateway Error: ${resData.error}`;
+                }
+            } catch(jsonErr) {
                 consoleTicker.style.background = "#fef2f2";
                 consoleTicker.style.color = "#991b1b";
                 consoleTicker.style.borderColor = "#fca5a5";
-                consoleTicker.innerText = `⚠️ Gateway Error: ${resData.error || 'Request Rejected.'}`;
+                consoleTicker.innerText = `⚠️ Vercel Fail: ${rawText.substring(0, 80)}`;
             }
         } catch (err) {
-            consoleTicker.style.background = "#fef2f2";
-            consoleTicker.style.color = "#991b1b";
-            consoleTicker.style.borderColor = "#fca5a5";
-            consoleTicker.innerText = `⚠️ Network fault. Please verify Vercel deployment logs.`;
+            consoleTicker.innerText = `⚠️ Fetch Error: ${err.message}`;
         }
     }
 </script>
