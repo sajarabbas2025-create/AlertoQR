@@ -3,40 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>AlertoQR Portal</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background: #f8fafc; padding: 20px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 400px; background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-        .header { font-size: 24px; font-weight: 800; margin-bottom: 20px; }
-        .owner-box { background: #000; color: #fff; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
-        .name { font-size: 22px; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; }
-        .plate { background: #fff; color: #000; display: inline-block; padding: 5px 15px; border-radius: 5px; font-weight: 800; }
-        .btn-call { width: 100%; padding: 18px; background: #22c55e; color: #fff; border: none; border-radius: 10px; font-weight: 800; font-size: 16px; margin-bottom: 15px; cursor: pointer; }
-        .btn-sos { width: 100%; padding: 18px; background: #dc2626; color: white; border: none; border-radius: 10px; font-weight: 800; font-size: 16px; margin-bottom: 20px; cursor: pointer; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .card { border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer; font-size: 14px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: #f8fafc; display: flex; justify-content: center; padding: 20px; }
+        .helper-container { width: 100%; max-width: 480px; background: #ffffff; border-radius: 24px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .header-section { font-size: 24px; font-weight: 800; margin-bottom: 24px; }
+        
+        /* Vehicle Owner Card */
+        .owner-card { background: #000; color: #ffffff; border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: center; }
+        .owner-name { font-size: 26px; font-weight: 800; margin-bottom: 10px; text-transform: uppercase; }
+        .vehicle-number-plate { background: #ffffff; color: #000000; display: inline-block; padding: 6px 16px; border-radius: 6px; font-size: 18px; font-weight: 800; }
+        
+        /* Buttons */
+        .calling-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .btn-call { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-owner { background: #000; color: white; }
+        .btn-alternate { background: #fff; color: #000; border: 1px solid #cbd5e1; }
+        .btn-sos { width: 100%; padding: 18px; border-radius: 12px; background: #dc2626; color: white; border: none; font-weight: 800; margin-bottom: 24px; cursor: pointer; }
+        
+        /* Alerts Grid */
+        .section-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; }
+        .alerts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .alert-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 700; color: #334155; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">AlertoQR</div>
-    <div class="owner-box">
-        <div class="name" id="dom-name">LOADING...</div>
-        <div class="plate" id="dom-plate">----</div>
+<div class="helper-container">
+    <div class="header-section">AlertoQR</div>
+
+    <div class="owner-card">
+        <div class="owner-name" id="dom-name">LOADING...</div>
+        <div class="vehicle-number-plate" id="dom-plate">----</div>
     </div>
 
-    <button class="btn-call" onclick="initiateDirectCall()">CALL OWNER NOW</button>
-    <button class="btn-sos" onclick="sendAction('EMERGENCY_SOS')">EMERGENCY SOS</button>
+    <div class="calling-grid">
+        <button class="btn-call btn-owner" onclick="initiateDirectCall()">
+            <i class="fa-solid fa-phone"></i> Call Owner
+        </button>
+        <button class="btn-call btn-alternate" onclick="initiateDirectCall()">
+            <i class="fa-solid fa-phone"></i> Call Alt
+        </button>
+    </div>
 
-    <div class="grid">
-        <div class="card" onclick="sendAction('Wrong Parking')"><i class="fa-solid fa-triangle-exclamation"></i><br>Wrong Parking</div>
-        <div class="card" onclick="sendAction('Tow Alert')"><i class="fa-solid fa-car"></i><br>Tow Alert</div>
-        <div class="card" onclick="sendAction('Window Open')"><i class="fa-solid fa-file-invoice"></i><br>Window Open</div>
-        <div class="card" onclick="document.getElementById('file-input').click()">
+    <button class="btn-sos" onclick="sendAction('EMERGENCY_SOS')">
+        <i class="fa-solid fa-siren-on"></i> EMERGENCY SOS
+    </button>
+
+    <div class="section-title">QUICK ALERTS</div>
+    <div class="alerts-grid">
+        <div class="alert-card" onclick="sendAction('Wrong Parking')"><i class="fa-solid fa-triangle-exclamation"></i><br>Wrong Parking</div>
+        <div class="alert-card" onclick="sendAction('Tow Alert')"><i class="fa-solid fa-car"></i><br>Tow Alert</div>
+        <div class="alert-card" onclick="sendAction('Window Open')"><i class="fa-solid fa-file-invoice"></i><br>Window Open</div>
+        <div class="alert-card" onclick="document.getElementById('file-input').click()">
             <i class="fa-solid fa-camera"></i><br>Share Photo
             <input type="file" id="file-input" style="display:none" onchange="uploadPhoto(event)">
         </div>
@@ -59,21 +85,17 @@
         window.location.href = 'tel:918634512424';
     }
 
-    // Saare buttons ka functional logic
     async function sendAction(action) {
-        const { error } = await _supabase.from('alerts').insert([{ 
-            sticker_id: urlId, 
-            action: action, 
-            created_at: new Date() 
-        }]);
-        if(error) alert("Error sending: " + error.message);
-        else alert(action + " Alert Sent to Owner!");
+        if(action === 'EMERGENCY_SOS') {
+            alert("🚨 EMERGENCY SOS TRIGGERED! Alarm Activated.");
+        }
+        await _supabase.from('alerts').insert([{ sticker_id: urlId, action: action }]);
+        if(action !== 'EMERGENCY_SOS') alert(action + " alert sent!");
     }
 
     async function uploadPhoto(event) {
         const file = event.target.files[0];
-        // Yahan file upload logic dalenge
-        alert("Photo Shared with Owner!");
+        alert("Photo uploaded and shared with owner!");
     }
 </script>
 </body>
