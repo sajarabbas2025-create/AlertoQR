@@ -32,14 +32,13 @@ module.exports = async (req, res) => {
 
         if (mode === 'call' || mode === 'alternate') {
             const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
+            
+            // Yahan se dummy URL hata diye gaye hain aur aawaz wala XML tag lagaya gaya hai
             const jsonBodyData = {
                 "Number": cleanNumber,
                 "CallerId": "918634512424",
-                "RingUrl": "https://alertoqr.in/ring",
-                "AnswerUrl": "https://alertoqr.in/answer",
-                "HangupUrl": "https://alertoqr.in/hangup",
                 "HttpMethod": "POST",
-                "Xml": "<Response><play>Connecting your AlertoQR emergency call</play></Response>"
+                "Xml": "<Response><play>Hello. This is an emergency alert from Alerto QR. Someone is requesting you to check your vehicle immediately. Thank you.</play></Response>"
             };
 
             const response = await fetch(callApiUrl, {
