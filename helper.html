@@ -2,194 +2,142 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>AlertoQR Helper Portal</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #f8fafc; color: #0f172a; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 16px; }
-        .helper-container { width: 100%; max-width: 480px; background: #ffffff; border-radius: 24px; padding: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; }
-        .brand-name { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
-        .sticker-id-badge { background: #f1f5f9; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; color: #475569; border: 1px solid #e2e8f0; }
-        .owner-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 20px; }
-        .meta-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-        .owner-name { font-size: 26px; font-weight: 800; color: #0f172a; margin-bottom: 12px; text-transform: uppercase; }
-        .vehicle-number-plate { background: #000000; color: #ffffff; display: inline-block; padding: 6px 16px; border-radius: 6px; font-size: 18px; font-weight: 800; letter-spacing: 1px; }
-        
-        .calling-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-        .btn-call { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-owner { background: #000000; color: white; }
-        .btn-alternate { background: #ffffff; color: #000000; border: 1px solid #cbd5e1; }
-        
-        .btn-sos { width: 100%; padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; background: #dc2626; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px; box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2); }
-        
-        .status-ticker { margin-bottom: 20px; padding: 14px; border-radius: 12px; font-size: 13px; font-weight: 600; text-align: center; display: none; border: 1px solid transparent; }
-        .section-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; }
-        .alerts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .alert-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .alert-card i { font-size: 26px; }
-        .alert-card span { font-size: 13px; font-weight: 700; color: #334155; }
-        .emergency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn-emergency { padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-police { background: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
-        .btn-ambulance { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
-        .state-shell-view { text-align: center; padding: 40px 10px; }
-        .spinner-engine { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top: 3px solid #000000; border-radius: 50%; margin: 0 auto 16px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlertoQR - Vehicle Alert</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 text-center">
+        
+        <h1 class="text-2xl font-bold text-gray-800 mb-1">AlertoQR</h1>
+        <p class="text-gray-500 text-sm mb-5">Secure Vehicle Management</p>
 
-<div class="helper-container">
-    <div id="loading-view" class="state-shell-view"><div class="spinner-engine"></div><p style="color: #64748b; font-size: 14px; font-weight: 500;">Connecting secure network...</p></div>
-
-    <div id="dashboard-view" style="display: none;">
-        <div class="header-section">
-            <div class="brand-name">AlertoQR</div>
-            <div class="sticker-id-badge" id="dom-sticker-badge">ID: ----</div>
+        <div id="vehicle-id-display" class="bg-black text-white font-bold py-2 px-6 rounded-md mb-6 text-xl inline-block tracking-wider">
+            Loading...
         </div>
 
-        <div class="owner-card">
-            <div class="meta-label">Vehicle Owner</div>
-            <div class="owner-name" id="dom-owner-name">------</div>
-            <div class="vehicle-number-plate" id="dom-plate-number">------</div>
-        </div>
-
-        <div class="calling-grid">
-            <button class="btn-call btn-owner" onclick="initiateDirectCall()">
-                <i class="fa-solid fa-phone"></i> Call Owner
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <button onclick="initiateDirectCall('call')" class="bg-black text-white font-semibold py-3 rounded-lg hover:bg-gray-800 transition">
+                📞 Call Owner
             </button>
-            <button class="btn-call btn-alternate" onclick="initiateDirectCall()">
-                <i class="fa-solid fa-phone"></i> Call Alt
+            <button onclick="initiateDirectCall('alternate')" class="bg-gray-200 text-gray-800 font-semibold py-3 rounded-lg hover:bg-gray-300 transition">
+                📞 Call Alt
             </button>
         </div>
 
-        <button class="btn-sos" onclick="triggerSOS()">
-            <i class="fa-solid fa-triangle-exclamation"></i> EMERGENCY SOS
+        <button onclick="sendEmergencySOS()" class="w-full bg-red-800 text-white font-bold py-4 rounded-lg mb-8 hover:bg-red-900 transition flex justify-center items-center gap-2">
+            ⚠️ EMERGENCY SOS
         </button>
 
-        <div id="ticker-box" class="status-ticker"></div>
-
-        <div class="section-title">Quick Alerts</div>
-        <div class="alerts-grid">
-            <div class="alert-card" onclick="sendAlert('Wrong Parking')"><i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i><span>Wrong Parking</span></div>
-            <div class="alert-card" onclick="sendAlert('Tow Alert')"><i class="fa-solid fa-car" style="color: #3b82f6;"></i><span>Tow Alert</span></div>
-            <div class="alert-card" onclick="sendAlert('Window Open')"><i class="fa-solid fa-file-invoice" style="color: #000000;"></i><span>Window Open</span></div>
-            
-            <div class="alert-card" onclick="document.getElementById('photo-upload').click()">
-                <i class="fa-solid fa-camera" style="color: #64748b;"></i><span>Share Photo</span>
-                <input type="file" id="photo-upload" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoShare(event)">
-            </div>
-        </div>
-
-        <div class="section-title">Emergency Links</div>
-        <div class="emergency-grid">
-            <button class="btn-emergency btn-police" onclick="window.location.href='tel:112'"><i class="fa-solid fa-building-shield"></i> Police (112)</button>
-            <button class="btn-emergency btn-ambulance" onclick="window.location.href='tel:102'"><i class="fa-solid fa-truck-medical"></i> Ambulance (102)</button>
+        <h2 class="text-xs font-bold text-gray-400 text-left mb-3 uppercase tracking-wide">Quick Alerts</h2>
+        <div class="grid grid-cols-2 gap-3 mb-2">
+            <button onclick="sendNormalAlert('Wrong Parking')" class="border border-gray-200 rounded-lg py-4 flex flex-col items-center justify-center text-sm font-medium text-gray-600 hover:bg-gray-50 transition shadow-sm">
+                <span class="text-red-500 text-2xl mb-2">⚠️</span> Wrong Parking
+            </button>
+            <button onclick="sendNormalAlert('Tow Alert')" class="border border-gray-200 rounded-lg py-4 flex flex-col items-center justify-center text-sm font-medium text-gray-600 hover:bg-gray-50 transition shadow-sm">
+                <span class="text-blue-500 text-2xl mb-2">🚙</span> Tow Alert
+            </button>
+            <button onclick="sendNormalAlert('Window Open')" class="border border-gray-200 rounded-lg py-4 flex flex-col items-center justify-center text-sm font-medium text-gray-600 hover:bg-gray-50 transition shadow-sm">
+                <span class="text-gray-600 text-2xl mb-2">🪟</span> Window Open
+            </button>
+            <button onclick="sendNormalAlert('Light On')" class="border border-gray-200 rounded-lg py-4 flex flex-col items-center justify-center text-sm font-medium text-gray-600 hover:bg-gray-50 transition shadow-sm">
+                <span class="text-yellow-500 text-2xl mb-2">💡</span> Light On
+            </button>
         </div>
     </div>
-</div>
 
-<script>
-    const VIRTUAL_NUMBER = "+918634512424";
-    const _supabase = supabase.createClient('https://cefzsgchfdvtyfmcrsda.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs');
-    let urlAssetId = "";
+    <script>
+        // 1. URL se QR/Sticker ID nikalna (e.g., website.com/?id=UP80C08090)
+        const urlParams = new URLSearchParams(window.location.search);
+        // Default ID for testing agar URL me ID na ho
+        const urlAssetId = urlParams.get('id') || 'ALQR1003'; 
 
-    window.addEventListener('DOMContentLoaded', async () => {
-        const queryStrings = new URLSearchParams(window.location.search);
-        urlAssetId = (queryStrings.get('id') || queryStrings.get('ic') || "").replace('@', '').trim().toUpperCase();
-        document.getElementById('dom-sticker-badge').innerText = `ID: ${urlAssetId}`;
+        // Screen par ID dikhana
+        document.getElementById('vehicle-id-display').innerText = urlAssetId;
 
-        const { data } = await _supabase.from('registrations').select('*').eq('sticker_id', urlAssetId).single();
-        if (data) {
-            document.getElementById('dom-owner-name').innerText = data.full_name;
-            document.getElementById('dom-plate-number').innerText = data.vehicle_number;
-            document.getElementById('loading-view').style.display = 'none';
-            document.getElementById('dashboard-view').style.display = 'block';
-        }
-    });
+        // Aapke Vercel Backend ka URL
+        const VERCEL_API_URL = 'https://alerto-qr.vercel.app/api/send-alert';
 
-    function initiateDirectCall() {
-        window.location.href = `tel:${VIRTUAL_NUMBER}`;
-    }
-
-    // UPDATED SOS WITH ERROR HANDLING
-    async function triggerSOS() {
-        try {
-            await _supabase.from('alerts').insert([{ sticker_id: urlAssetId, action: 'EMERGENCY_SOS' }]);
+        // 📞 ROUTE 1: POPUP WALI SECURE CALL
+        async function initiateDirectCall(modeType) {
+            let helperNum = prompt("Secure call connect karne ke liye apna 10-digit mobile number darj karein:");
             
-            const response = await fetch('https://alerto-qr.vercel.app/api/send-alert', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ stickerId: urlAssetId, alertType: 'EMERGENCY SOS' })
-            });
-            
-            const result = await response.json();
-            if (result.success) {
-                alert("🚨 EMERGENCY SOS Call Placed to Owner!");
-            } else {
-                alert("Backend SOS Error: " + result.error);
+            if (!helperNum || helperNum.length < 10) {
+                alert("Call connect karne ke liye sahi number dena zaroori hai!");
+                return;
             }
-        } catch (err) {
-            alert("Network Error: Backend se connection nahi bana. " + err.message);
-        }
-    }
 
-    // UPDATED PHOTO SHARE WITH ERROR HANDLING
-    async function handlePhotoShare(event) {
-        if(event.target.files.length > 0) {
+            alert("Securing connection... Kuch hi seconds mein aapke phone par ek incoming call aayegi. Kripya use uthayein!");
+
             try {
-                await _supabase.from('alerts').insert([{ sticker_id: urlAssetId, action: 'PHOTO_SHARED' }]);
-                
-                const response = await fetch('https://alerto-qr.vercel.app/api/send-alert', {
+                const response = await fetch(VERCEL_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ stickerId: urlAssetId, alertType: 'Share Photo' })
+                    body: JSON.stringify({ 
+                        stickerId: urlAssetId, 
+                        alertType: 'Call Owner',
+                        mode: modeType, // 'call' ya 'alternate'
+                        helperNumber: helperNum 
+                    })
+                });
+                
+                const result = await response.json();
+                if (!result.success) {
+                    alert("Backend Error: " + result.error);
+                }
+            } catch (err) {
+                alert("Network Error: Server se connection nahi bana.");
+            }
+        }
+
+        // 🚨 ROUTE 2: EMERGENCY SOS (Bina Popup, direct owner ko automated call)
+        async function sendEmergencySOS() {
+            alert("Emergency call owner ko lag rahi hai. Kripya wait karein...");
+            try {
+                const response = await fetch(VERCEL_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        stickerId: urlAssetId, 
+                        alertType: 'EMERGENCY SOS',
+                        mode: 'call'
+                    })
                 });
                 
                 const result = await response.json();
                 if (result.success) {
-                    alert("📷 Photo shared & Alert sent!");
+                    alert("SOS Call Successfully Placed!");
                 } else {
-                    alert("Backend Photo Error: " + result.error);
+                    alert("SOS Error: " + result.error);
                 }
             } catch (err) {
-                alert("Network Error: " + err.message);
+                alert("Network Error: SOS fail ho gaya.");
             }
         }
-    }
 
-    // UPDATED ALERTS WITH ERROR HANDLING
-    async function sendAlert(msg) {
-        if (msg === 'Share Photo') return; 
-        
-        try {
-            await _supabase.from('alerts').insert([{ sticker_id: urlAssetId, action: msg }]);
-            
-            const response = await fetch('https://alerto-qr.vercel.app/api/send-alert', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ stickerId: urlAssetId, alertType: msg })
-            });
-            
-            const result = await response.json();
-            if (result.success) {
-                alert(msg + " Alert sent successfully!");
-            } else {
-                alert("Backend Error: " + result.error);
+        // 💬 ROUTE 3: NORMAL SMS ALERTS
+        async function sendNormalAlert(alertMessage) {
+            try {
+                const response = await fetch(VERCEL_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        stickerId: urlAssetId, 
+                        alertType: alertMessage,
+                        mode: 'sms'
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert(alertMessage + " ka alert SMS owner ko bhej diya gaya hai.");
+                } else {
+                    alert("SMS Error: " + result.error);
+                }
+            } catch (err) {
+                alert("Network Error: Alert bhejne mein problem aayi.");
             }
-        } catch (err) {
-            alert("Network Error: " + err.message);
         }
-    }
-</script>
+    </script>
 </body>
 </html>
