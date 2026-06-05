@@ -25,7 +25,6 @@ module.exports = async (req, res) => {
         let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
         if (!targetPhone) return res.status(200).json({ success: false, error: 'Phone missing.' });
 
-        // Number Cleanup
         let ownerCleanNumber = targetPhone.toString().replace(/[^0-9]/g, '');
         if (ownerCleanNumber.startsWith('0')) ownerCleanNumber = ownerCleanNumber.substring(1);
         if (!ownerCleanNumber.startsWith('91')) ownerCleanNumber = `91${ownerCleanNumber}`;
@@ -35,7 +34,6 @@ module.exports = async (req, res) => {
         // 🚨 ROUTE 1: EMERGENCY SOS
         if (alertType === 'EMERGENCY SOS') {
             const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
-            
             const jsonBodyData = {
                 "Number": ownerCleanNumber,    
                 "CallerId": VIRTUAL_NUMBER,
@@ -43,7 +41,6 @@ module.exports = async (req, res) => {
                 "AnswerUrl": "https://alertoqr.in/answer",
                 "HangupUrl": "https://alertoqr.in/hangup",
                 "HttpMethod": "POST",
-                // FIX: English text so the voice engine doesn't crash
                 "Xml": `<Response><Play>Emergency Alert. Please check your vehicle immediately.</Play></Response>` 
             };
 
@@ -52,12 +49,15 @@ module.exports = async (req, res) => {
                 headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
                 body: JSON.stringify(jsonBodyData)
             });
-            const apiData = await response.json();
             
-            if (response.ok && apiData.Success !== false) {
-                return res.status(200).json({ success: true, data: apiData, message: 'Automated SOS Call Placed' });
-            } else {
-                return res.status(200).json({ success: false, error: `SOS Call Error: ${JSON.stringify(apiData)}` });
+            // Naya Safety Code (Error Catch Karne Ke Liye)
+            const rawText = await response.text();
+            try {
+                const apiData = JSON.parse(rawText);
+                if (response.ok && apiData.Success !== false) return res.status(200).json({ success: true, message: 'SOS Done' });
+                else return res.status(200).json({ success: false, error: `SOS API Error: ${JSON.stringify(apiData)}` });
+            } catch (e) {
+                return res.status(200).json({ success: false, error: `SMSCountry sent HTML instead of Data: ${rawText.substring(0, 150)}` });
             }
         }
 
@@ -70,11 +70,10 @@ module.exports = async (req, res) => {
             if (!helperCleanNumber.startsWith('91')) helperCleanNumber = `91${helperCleanNumber}`;
 
             const groupCallApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Conference/`;
-            
             const jsonGroupData = {
                 "CallerId": VIRTUAL_NUMBER,
                 "Numbers": `${helperCleanNumber},${ownerCleanNumber}`, 
-                "WelcomeMessage": "Please wait, Alerto QR is connecting your secure call without sharing numbers.",
+                "WelcomeMessage": "Please wait, Alerto QR is connecting your secure call.",
                 "HttpMethod": "POST"
             };
 
@@ -83,21 +82,25 @@ module.exports = async (req, res) => {
                 headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
                 body: JSON.stringify(jsonGroupData)
             });
-            const apiData = await response.json();
             
-            if (response.ok && apiData.Success !== false) {
-                return res.status(200).json({ success: true, data: apiData, message: 'Group Masked Call Triggered' });
-            } else {
-                return res.status(200).json({ success: false, error: `Group Call Error: ${JSON.stringify(apiData)}` });
+            // Naya Safety Code
+            const rawText = await response.text();
+            try {
+                const apiData = JSON.parse(rawText);
+                if (response.ok && apiData.Success !== false) return res.status(200).json({ success: true });
+                else return res.status(200).json({ success: false, error: `Call API Error: ${JSON.stringify(apiData)}` });
+            } catch (e) {
+                // Ye hamein batayega ki SMSCountry ka link 404/Not Found de raha hai ya kuch aur
+                return res.status(200).json({ success: false, error: `SMSCountry Link Issue: ${rawText.substring(0, 150)}...` });
             }
         } 
 
-        // 💬 ROUTE 3: NORMAL SMS ALERTS (Wrong Parking, Tow, Window Open, etc.)
+        // 💬 ROUTE 3: NORMAL SMS
         else {
             const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
             const jsonSmsData = { 
-                "Text": `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number}) par alert: "${alertType}". Check portal: alertoqr.in`, 
-                "Number": ownerCleanNumber, // FIX: Changed "To" into "Number"
+                "Text": `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number}) par alert: "${alertType}".`, 
+                "Number": ownerCleanNumber, 
                 "SenderId": "ALERTO" 
             };
 
@@ -106,12 +109,17 @@ module.exports = async (req, res) => {
                 headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
                 body: JSON.stringify(jsonSmsData)
             });
-            const apiData = await response.json();
             
-            if (response.ok && apiData.Success !== false) return res.status(200).json({ success: true });
-            else return res.status(200).json({ success: false, error: `SMS Error: ${JSON.stringify(apiData)}` });
+            const rawText = await response.text();
+            try {
+                const apiData = JSON.parse(rawText);
+                if (response.ok && apiData.Success !== false) return res.status(200).json({ success: true });
+                else return res.status(200).json({ success: false, error: `SMS Error: ${JSON.stringify(apiData)}` });
+            } catch (e) {
+                return res.status(200).json({ success: false, error: `SMS API Issue: ${rawText.substring(0, 150)}` });
+            }
         }
     } catch (err) {
-        return res.status(200).json({ success: false, error: `Backend Crash: ${err.message}` });
+        return res.status(200).json({ success: false, error: `Backend Logic Crash: ${err.message}` });
     }
 };
