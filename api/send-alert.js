@@ -6,7 +6,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
-const VIRTUAL_NUMBER = "918634512424"; // Aapka registered Virtual Number (Caller ID)
+const VIRTUAL_NUMBER = "918634512424";
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,14 +25,14 @@ module.exports = async (req, res) => {
         let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
         if (!targetPhone) return res.status(200).json({ success: false, error: 'Phone missing.' });
 
-        // Owner ka number saaf (clean) karein
+        // Number Cleanup
         let ownerCleanNumber = targetPhone.toString().replace(/[^0-9]/g, '');
         if (ownerCleanNumber.startsWith('0')) ownerCleanNumber = ownerCleanNumber.substring(1);
         if (!ownerCleanNumber.startsWith('91')) ownerCleanNumber = `91${ownerCleanNumber}`;
 
         const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-        // 🚨 ROUTE 1: EMERGENCY SOS (Direct Automated Announcement/Call to Owner)
+        // 🚨 ROUTE 1: EMERGENCY SOS
         if (alertType === 'EMERGENCY SOS') {
             const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
             
@@ -43,7 +43,8 @@ module.exports = async (req, res) => {
                 "AnswerUrl": "https://alertoqr.in/answer",
                 "HangupUrl": "https://alertoqr.in/hangup",
                 "HttpMethod": "POST",
-                "Xml": `<Response><Play>Emergency Alert! Aapki gaadi ke paas emergency hai, kripya turant check karein.</Play></Response>` 
+                // FIX: English text so the voice engine doesn't crash
+                "Xml": `<Response><Play>Emergency Alert. Please check your vehicle immediately.</Play></Response>` 
             };
 
             const response = await fetch(callApiUrl, {
@@ -60,22 +61,20 @@ module.exports = async (req, res) => {
             }
         }
 
-        // 📞 ROUTE 2: NEW GROUP CALL API (Sinthia ke mail ke mutabiq Number Masking Call)
+        // 📞 ROUTE 2: GROUP CALL API
         else if (mode === 'call' || mode === 'alternate') {
             if (!helperNumber) return res.status(200).json({ success: false, error: 'Helper number missing.' });
 
-            // Helper ka number saaf (clean) karein
             let helperCleanNumber = helperNumber.toString().replace(/[^0-9]/g, '');
             if (helperCleanNumber.startsWith('0')) helperCleanNumber = helperCleanNumber.substring(1);
             if (!helperCleanNumber.startsWith('91')) helperCleanNumber = `91${helperCleanNumber}`;
 
-            // SMSCountry Group/Conference Call API Endpoint per documentation
             const groupCallApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Conference/`;
             
             const jsonGroupData = {
                 "CallerId": VIRTUAL_NUMBER,
-                "Numbers": `${helperCleanNumber},${ownerCleanNumber}`, // Dono numbers ko comma se separate karke ek sath call lagegi
-                "WelcomeMessage": "Please wait, AlertoQR is connecting your secure call without sharing numbers.",
+                "Numbers": `${helperCleanNumber},${ownerCleanNumber}`, 
+                "WelcomeMessage": "Please wait, Alerto QR is connecting your secure call without sharing numbers.",
                 "HttpMethod": "POST"
             };
 
@@ -98,7 +97,7 @@ module.exports = async (req, res) => {
             const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
             const jsonSmsData = { 
                 "Text": `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number}) par alert: "${alertType}". Check portal: alertoqr.in`, 
-                "To": ownerCleanNumber, 
+                "Number": ownerCleanNumber, // FIX: Changed "To" into "Number"
                 "SenderId": "ALERTO" 
             };
 
