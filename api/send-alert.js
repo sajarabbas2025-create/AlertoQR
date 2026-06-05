@@ -4,9 +4,9 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://cefzsgchfdv
 const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs";
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Aapki SMSCountry ki keys yahin code me daal di hain
 const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
 const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
+const VIRTUAL_NUMBER = "918634512424"; // Sinthia ke kehne par Caller ID ko explicitly set kiya hai
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
             
             const jsonBodyData = {
                 "Number": ownerCleanNumber,    
-                "CallerId": "918634512424",
+                "CallerId": VIRTUAL_NUMBER, // Mandatory per SMSCountry support
                 "RingUrl": "https://alertoqr.in/ring",
                 "AnswerUrl": "https://alertoqr.in/answer",
                 "HangupUrl": "https://alertoqr.in/hangup",
@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
             }
         }
 
-        // 📞 ROUTE 2: SMART BRIDGE CALL
+        // 📞 ROUTE 2: HELPER TO OWNER MASKED CALL (Group/Bridge Call)
         else if (mode === 'call' || mode === 'alternate') {
             if (!helperNumber) return res.status(200).json({ success: false, error: 'Helper number missing.' });
 
@@ -71,12 +71,12 @@ module.exports = async (req, res) => {
             
             const jsonBodyData = {
                 "Number": helperCleanNumber,    
-                "CallerId": "918634512424",
+                "CallerId": VIRTUAL_NUMBER, // Mandatory per SMSCountry support
                 "RingUrl": "https://alertoqr.in/ring",
                 "AnswerUrl": "https://alertoqr.in/answer",
                 "HangupUrl": "https://alertoqr.in/hangup",
                 "HttpMethod": "POST",
-                "Xml": `<Response><Play>Please wait, we are connecting your secure call.</Play><Dial>${ownerCleanNumber}</Dial></Response>` 
+                "Xml": `<Response><Play>Please wait, connecting your secure call.</Play><Dial callerId="${VIRTUAL_NUMBER}">${ownerCleanNumber}</Dial></Response>` 
             };
 
             const response = await fetch(callApiUrl, {
@@ -89,14 +89,18 @@ module.exports = async (req, res) => {
             if (response.ok && apiData.Success !== false) {
                 return res.status(200).json({ success: true, data: apiData });
             } else {
-                return res.status(200).json({ success: false, error: `SMSCountry Error: ${JSON.stringify(apiData)}` });
+                return res.status(200).json({ success: false, error: `Bridge Call Error: ${JSON.stringify(apiData)}` });
             }
         } 
 
         // 💬 ROUTE 3: NORMAL SMS ALERTS (Wrong Parking, Tow, etc.)
         else {
             const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
-            const jsonSmsData = { "Text": `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number}) par alert: "${alertType}".`, "To": ownerCleanNumber, "SenderId": "ALERTO" };
+            const jsonSmsData = { 
+                "Text": `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number}) par alert: "${alertType}".`, 
+                "To": ownerCleanNumber, 
+                "SenderId": "ALERTO" 
+            };
 
             const response = await fetch(smsApiUrl, {
                 method: 'POST',
