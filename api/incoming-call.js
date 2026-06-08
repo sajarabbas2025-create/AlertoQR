@@ -43,8 +43,8 @@ export default async function handler(req, res) {
 
     // Hamari temporary gaadiyon ki list
     const vehicleDatabase = {
-      "1001": "+919876543210", // Owner 1
-      "2540": "+918765432109"  // Owner 2
+      "1001": "+916388522427", // Owner 1
+      "2540": "+919218084924"  // Owner 2
     };
 
     if (vehicleDatabase[vehiclePin]) {
