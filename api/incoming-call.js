@@ -1,64 +1,78 @@
 export default async function handler(req, res) {
-  // CORS setup taaki API block na ho
+  // CORS Headers taaki API block na ho
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-
+  
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
 
   try {
-    // 1. Aane wale data ko capture karna (GET ya POST format mein)
+    // 1. Incoming data nikalna (GET ya POST)
     const incomingData = req.method === 'POST' ? req.body : req.query;
     
-    // 2. Vercel Logs mein data print karna (Debugging ke liye sabse zaroori)
-    console.log("=== INCOMING CALL DATA FROM SMSCOUNTRY ===");
+    console.log("=== SMSCOUNTRY LIVE PING ===");
     console.log(JSON.stringify(incomingData, null, 2));
 
-    // 3. Caller ID aur DTMF (PIN) ko variables mein nikalna
-    // (In keys ka naam hum logs check karne ke baad exact set karenge)
-    const helperNumber = incomingData.caller_id || incomingData.From || incomingData.mobile || incomingData.number; 
-    const vehiclePin = incomingData.dtmf || incomingData.Digits || incomingData.pin || incomingData.data;
+    // 2. Check karna ki kya SMSCountry ne humein DTMF (Digits) bheja hai
+    // SMSCountry key ka naam 'digits', 'Digits', ya 'keys' rakhta hai
+    const vehiclePin = incomingData.digits || incomingData.Digits || incomingData.keys || incomingData.dtmf;
 
-    console.log(`Call Is Number Se Aayi Hai: ${helperNumber}`);
-    console.log(`Helper Ne Ye PIN (DTMF) Dabaya Hai: ${vehiclePin}`);
+    // Response header ko XML set karna kyunki SMSCountry XML samajhta hai
+    res.setHeader('Content-Type', 'text/xml');
 
-    // 4. Temporary Database (Vehicle PIN ko Owner ke Number se match karna)
-    // Asli project mein aap ise apne Supabase ya kisi aur DB se fetch karenge
-    const vehicleDatabase = {
-      "1001": "+919876543210", // Demo Owner 1 ka number
-      "2540": "+918765432109"  // Demo Owner 2 ka number
-    };
-
-    let responseData = {};
-
-    // 5. Call Routing Logic
-    if (vehiclePin && vehicleDatabase[vehiclePin]) {
-      const ownerNumber = vehicleDatabase[vehiclePin];
-      console.log(`PIN Match Ho Gaya! Call Forward Hogi: ${ownerNumber} Par`);
-
-      // SMSCountry ko successful response dena
-      responseData = {
-        success: true,
-        action: "forward_call",
-        bridge_to: ownerNumber, 
-        message: "Code verified, routing call to vehicle owner."
-      };
-    } else {
-      console.log("Sahi DTMF PIN nahi mila ya call missed thi.");
-      responseData = {
-        success: false,
-        message: "No valid PIN received or direct missed call."
-      };
+    // STEP A: Agar user ne abhi tak PIN nahi dabaya hai (Call bilkul abhi aayi hai)
+    // Toh hum SMSCountry ko XML bhejenge ki 4-digit PIN capture karo
+    if (!vehiclePin) {
+      console.log("Nayi call aayi hai, DTMF/PIN capture karne ka XML bhej raha hu...");
+      
+      const gatherXml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <GetKeys numDigits="4" timeout="10" method="POST">
+        <Speak>Please enter your four digit vehicle code.</Speak>
+    </GetKeys>
+</Response>`;
+      
+      return res.status(200).send(gatherXml);
     }
 
-    // 6. Response wapas SMSCountry ko bhej dena
-    return res.status(200).json(responseData);
+    // STEP B: Agar helper ke phone ne 4-digit PIN (jaise 1001) bhej diya hai
+    console.log(`System ko PIN mil gaya: ${vehiclePin}`);
+
+    // Hamari temporary gaadiyon ki list
+    const vehicleDatabase = {
+      "1001": "+919876543210", // Owner 1
+      "2540": "+918765432109"  // Owner 2
+    };
+
+    if (vehicleDatabase[vehiclePin]) {
+      const ownerNumber = vehicleDatabase[vehiclePin];
+      console.log(`PIN Match ho gaya! Call forward ho rahi hai: ${ownerNumber}`);
+
+      // SMSCountry ko Call Forward (Dial/Bridge) karne ka XML dena
+      const forwardXml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Dial>${ownerNumber}</Dial>
+</Response>`;
+      
+      return res.status(200).send(forwardXml);
+    } else {
+      console.log("Galat PIN mila, call cut karne ka XML bhej raha hu.");
+      
+      const rejectXml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Speak>Invalid vehicle code. Goodbye.</Speak>
+    <Hangup/>
+</Response>`;
+      
+      return res.status(200).send(rejectXml);
+    }
 
   } catch (error) {
     console.error("Webhook Error:", error);
-    return res.status(500).json({ success: false, error: "Internal Server Error" });
+    res.setHeader('Content-Type', 'text/xml');
+    return res.status(500).send(`<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>`);
   }
 }
