@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   try {
     const { stickerId, helperNumber } = req.body;
     
-    // 1. Fetch Owner from Supabase
+    // 1. Supabase se Owner ka number fetch karein
     const { data, error } = await supabase.from('registrations')
       .select('mobile_number').eq('sticker_id', stickerId.trim().toUpperCase()).single();
     
@@ -20,18 +20,21 @@ export default async function handler(req, res) {
        return res.status(200).json({ success: false, error: "Database mein sticker nahi mila." });
     }
 
-    // 2. Prepare Data
-    const format = (num) => '91' + num.toString().replace(/[^0-9]/g, '').slice(-10);
-    
+    // 2. Number Formatting (+91 format)
+    const format = (num) => '+91' + num.toString().replace(/[^0-9]/g, '').slice(-10);
+    const helper = format(helperNumber);
+    const owner = format(data.mobile_number);
+
+    // 3. SMSCountry Ka Asli Bridge Payload Structure
     const payload = {
-        "From": "918634512424",
-        "To": format(helperNumber),
-        "Dial": format(data.mobile_number)
+        "PrimaryNumber": helper,         // Pehle Helper ko call jayegi
+        "SecondaryNumber": owner,       // Phir Owner connect hoga
+        "CallerId": "+918634512424"     // Aapka Virtual Number (+ ke saath)
     };
 
     const auth = Buffer.from("M5rIudGBrmiO4pdjCuoz:XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53").toString('base64');
     
-    // 3. API Call
+    // 4. API Call
     const response = await fetch("https://restapi.smscountry.com/v0.1/Accounts/M5rIudGBrmiO4pdjCuoz/Calls/", {
         method: 'POST',
         headers: { 
@@ -43,11 +46,9 @@ export default async function handler(req, res) {
 
     const result = await response.json();
     
-    // 4. ERROR HANDLING (Yahi asli wajah batayega)
     if (response.ok) {
         return res.status(200).json({ success: true, message: result });
     } else {
-        // Yahan 'undefined' nahi, asli error text milega
         return res.status(200).json({ success: false, error: JSON.stringify(result) });
     }
 
