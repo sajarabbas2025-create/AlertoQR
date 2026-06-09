@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, message: "PIN aur Helper ka number dono zaruri hain." });
     }
 
-    // Database - Aapka number '1001' PIN par set hai
+    // Database - Aapka number '1001' par set hai
     const vehicleDatabase = {
       "1001": "6388522427", 
       "2540": "8765432109"
@@ -28,31 +28,31 @@ export default async function handler(req, res) {
       return res.status(404).json({ success: false, message: "Galat QR Code." });
     }
 
-    // SMSCountry ko numbers country code (91) ke sath chahiye hote hain
-    let formattedHelper = helperNumber.length === 10 ? `91${helperNumber}` : helperNumber;
-    let formattedOwner = ownerNumber.length === 10 ? `91${ownerNumber}` : ownerNumber;
+    // SMSCountry ko numbers bina '+' ke 12-digit format (91...) mein chahiye
+    let formattedHelper = helperNumber.length === 10 ? `91${helperNumber}` : helperNumber.replace('+', '');
+    let formattedOwner = ownerNumber.length === 10 ? `91${ownerNumber}` : ownerNumber.replace('+', '');
 
     // ==========================================
     // SMSCOUNTRY CREDENTIALS (YAHAN APNI KEY & TOKEN DALEIN)
     // ==========================================
     const authKey = "YAHAN_APNI_SMSCOUNTRY_AUTH_KEY_DALEIN"; 
     const authToken = "YAHAN_APNI_SMSCOUNTRY_AUTH_TOKEN_DALEIN"; 
-    const callerId = "918634512424"; // SMSCountry se mila naya Virtual Number
+    const callerId = "918634512424"; // Krishna ji se mila naya Caller ID
 
-    // Base64 Encoding for Security Authorization
+    // Base64 Encoding - Jo documentation mein manga hai (Automatic ho jayega)
     const encodedAuth = Buffer.from(`${authKey}:${authToken}`).toString('base64');
 
-    // SMSCountry Outbound Call Endpoint URL
-    const smsCountryUrl = `https://api.smscountry.com/v0.1/Accounts/${authKey}/Calls`;
+    // **Sarah ji ke mail ke mutabik EXACT LIVE URL**
+    const smsCountryUrl = `https://restapi.smscountry.com/v0.1/Accounts/${authKey}/Calls/`;
 
-    // API Payload Data
+    // Bridge Call Payload (Helper aur Owner ko jodna)
     const payload = {
-      From: formattedHelper,   // Helper ka number
-      To: formattedOwner,      // Owner ka number (Aapka number)
-      CallerId: callerId       // SMSCountry Caller ID
+      From: formattedHelper,   // Pehle call isko jayegi
+      To: formattedOwner,      // Phir call aapko connect hogi
+      CallerId: callerId       // Aapka Virtual Number display hoga
     };
 
-    console.log(`Firing SMSCountry Call...`);
+    console.log(`Firing SMSCountry Bridge Call to: ${smsCountryUrl}`);
 
     // Call Fire! (Secure POST Request)
     const apiResponse = await fetch(smsCountryUrl, {
@@ -65,11 +65,12 @@ export default async function handler(req, res) {
     });
 
     const resultText = await apiResponse.text();
-    console.log("SMSCountry Response: ", resultText);
+    console.log("SMSCountry Live Response: ", resultText);
 
     return res.status(200).json({
       success: true,
-      message: "Call command sent via SMSCountry successfully."
+      message: "Call command sent via SMSCountry successfully.",
+      telecomResponse: resultText
     });
 
   } catch (error) {
