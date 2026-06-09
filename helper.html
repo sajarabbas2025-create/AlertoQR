@@ -29,21 +29,12 @@
         .divider { height: 1px; background: #f1f5f9; margin-bottom: 24px; width: 100%; }
         
         /* Owner Card */
-        .owner-card { border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+        .owner-card { border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 24px; }
         .label { font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .owner-name { font-size: 24px; font-weight: 800; margin: 4px 0 12px 0; color: #1e293b; }
         .plate { background: #000; color: #fff; display: inline-block; padding: 6px 16px; border-radius: 6px; font-weight: 700; font-size: 14px; letter-spacing: 1px; }
         
-        /* Hidden Input for Backend */
-        #vehiclePin { display: none; }
-
-        /* Sleek Input for Helper Number */
-        .input-wrapper { margin-bottom: 16px; }
-        .number-input { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 15px; font-weight: 600; box-sizing: border-box; text-align: center; color: #1e293b; outline: none; transition: all 0.3s ease; }
-        .number-input:focus { border-color: #000; box-shadow: 0 0 0 2px rgba(0,0,0,0.1); }
-        .number-input::placeholder { color: #94a3b8; font-weight: 500; }
-        
-        /* Action Buttons */
+        /* Action Buttons (Main Page) */
         .action-row { display: flex; gap: 12px; margin-bottom: 16px; }
         .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; border: none; transition: transform 0.1s; }
         .btn:active { transform: scale(0.98); }
@@ -51,9 +42,6 @@
         .btn-white { background: #fff; color: #000; border: 1px solid #e2e8f0; }
         .btn-red { background: #dc2626; color: #fff; width: 100%; margin-bottom: 32px; }
         
-        /* Status Message */
-        #statusMessage { text-align: center; font-size: 13px; font-weight: 600; margin-top: -20px; margin-bottom: 20px; display: none; }
-
         /* Quick Alerts Grid */
         .section-title { font-size: 12px; font-weight: 700; color: #94a3b8; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;}
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -68,6 +56,41 @@
         .icon-gray { fill: #475569; }
         .icon-white { fill: #ffffff; }
         .icon-black { fill: #000000; }
+
+        /* --- MODAL (POPUP) STYLES --- */
+        .modal-overlay {
+            display: none; /* Default hidden */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 1000; justify-content: center; align-items: center;
+            padding: 20px; box-sizing: border-box; backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background: #fff; width: 100%; max-width: 340px;
+            border-radius: 20px; padding: 24px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            animation: popIn 0.3s ease-out;
+        }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .modal-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 8px; }
+        .modal-desc { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+        .modal-input {
+            width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 12px;
+            font-size: 16px; font-weight: 600; text-align: center; margin-bottom: 16px;
+            box-sizing: border-box; outline: none; transition: border-color 0.2s;
+        }
+        .modal-input:focus { border-color: #0f172a; }
+        .modal-btn {
+            width: 100%; padding: 14px; background: #000; color: #fff;
+            border: none; border-radius: 12px; font-size: 15px; font-weight: 700;
+            cursor: pointer; margin-bottom: 12px;
+        }
+        .modal-btn-cancel {
+            width: 100%; padding: 10px; background: transparent; color: #64748b;
+            border: none; font-size: 14px; font-weight: 600; cursor: pointer;
+        }
+        #modalMessage { font-size: 14px; font-weight: 600; display: none; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -85,20 +108,12 @@
         <div class="plate">UP80C08090</div>
     </div>
 
-    <input type="text" id="vehiclePin" value="1001">
-
-    <div class="input-wrapper">
-        <input type="tel" id="helperNumber" class="number-input" placeholder="Enter Your Number to Connect" maxlength="10">
-    </div>
-
-    <div id="statusMessage"></div>
-
     <div class="action-row">
-        <button class="btn btn-black" onclick="callOwner()">
+        <button class="btn btn-black" onclick="openModal('Owner')">
             <svg class="icon icon-white" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
             Call Owner
         </button>
-        <button class="btn btn-white">
+        <button class="btn btn-white" onclick="openModal('Alt')">
             <svg class="icon icon-black" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
             Call Alt
         </button>
@@ -130,25 +145,68 @@
     </div>
 </div>
 
+<div id="callModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 class="modal-title" id="modalTitle">Connect Call</h3>
+        <p class="modal-desc">Your number will remain private and secure.</p>
+        
+        <input type="hidden" id="vehiclePin" value="1001">
+        
+        <input type="tel" id="helperNumber" class="modal-input" placeholder="Enter your mobile number" maxlength="10">
+        
+        <button class="modal-btn" id="submitBtn" onclick="submitCall()">Connect Now</button>
+        
+        <button class="modal-btn-cancel" id="cancelBtn" onclick="closeModal()">Cancel</button>
+        
+        <div id="modalMessage"></div>
+    </div>
+</div>
+
 <script>
-    async function callOwner() {
+    // Popup Kholne ka function
+    function openModal(callType) {
+        document.getElementById('callModal').style.display = 'flex';
+        document.getElementById('modalMessage').style.display = 'none';
+        document.getElementById('helperNumber').value = '';
+        document.getElementById('helperNumber').style.display = 'block';
+        document.getElementById('submitBtn').style.display = 'block';
+        document.getElementById('cancelBtn').innerText = 'Cancel';
+        
+        if(callType === 'Owner') {
+            document.getElementById('modalTitle').innerText = 'Call Vehicle Owner';
+        } else {
+            document.getElementById('modalTitle').innerText = 'Call Alternate Number';
+        }
+    }
+
+    // Popup Band karne ka function
+    function closeModal() {
+        document.getElementById('callModal').style.display = 'none';
+    }
+
+    // Call Submit karne ka function
+    async function submitCall() {
         const helperNumber = document.getElementById('helperNumber').value;
         const vehiclePin = document.getElementById('vehiclePin').value;
-        const statusMsg = document.getElementById('statusMessage');
+        const msgBox = document.getElementById('modalMessage');
+        const submitBtn = document.getElementById('submitBtn');
+        const helperInput = document.getElementById('helperNumber');
 
-        statusMsg.style.display = 'block';
+        msgBox.style.display = 'block';
 
         if(helperNumber.length !== 10) {
-            statusMsg.style.color = "#dc2626"; // Red
-            statusMsg.innerText = "Please enter a valid 10-digit number.";
+            msgBox.style.color = "#dc2626"; // Red
+            msgBox.innerText = "Please enter a valid 10-digit number.";
             return;
         }
 
-        statusMsg.style.color = "#3b82f6"; // Blue
-        statusMsg.innerText = "Connecting... Please wait.";
+        msgBox.style.color = "#3b82f6"; // Blue
+        msgBox.innerText = "Connecting... Please wait.";
+        submitBtn.disabled = true;
 
         try {
-            const response = await fetch('/api/send-alert', {
+            // YAHAN AAPKA VERCEL LINK PEHLE SE DAAL DIYA HAI
+            const response = await fetch('https://alerto-qr.vercel.app/api/send-alert', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ vehiclePin, helperNumber })
@@ -157,15 +215,22 @@
             const data = await response.json();
             
             if(data.success) {
-                statusMsg.style.color = "#059669"; // Green
-                statusMsg.innerText = "Connecting! You will receive a call shortly.";
+                // Success hone par dabba aur button hide ho jayega aur final message aayega
+                helperInput.style.display = 'none';
+                submitBtn.style.display = 'none';
+                document.getElementById('cancelBtn').innerText = 'Close';
+                
+                msgBox.style.color = "#059669"; // Green
+                msgBox.innerText = "You will receive a call shortly. Please pick it up!";
             } else {
-                statusMsg.style.color = "#dc2626"; // Red
-                statusMsg.innerText = "Error: " + data.message;
+                msgBox.style.color = "#dc2626"; // Red
+                msgBox.innerText = "Error: " + data.message;
+                submitBtn.disabled = false;
             }
         } catch (error) {
-            statusMsg.style.color = "#dc2626"; // Red
-            statusMsg.innerText = "Server error. Please try again.";
+            msgBox.style.color = "#dc2626"; // Red
+            msgBox.innerText = "Server error. Please try again later.";
+            submitBtn.disabled = false;
         }
     }
 </script>
