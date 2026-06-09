@@ -3,141 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR - Vehicle Alert</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 text-center">
+    <title>AlertoQR - Helper</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f1f4f9; 
+            margin: 0; 
+            padding: 20px 10px; 
+            display: flex; 
+            justify-content: center;
+        }
+        .app-container { 
+            background: #ffffff; 
+            width: 100%; 
+            max-width: 400px; 
+            border-radius: 24px; 
+            padding: 24px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05); 
+        }
         
-        <h1 class="text-2xl font-bold text-gray-800 mb-1">AlertoQR</h1>
-        <p class="text-gray-500 text-sm mb-5">Secure Vehicle Management</p>
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .logo { font-size: 22px; font-weight: 800; color: #0f172a; margin: 0; }
+        .badge { background: #f8fafc; color: #64748b; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; border: 1px solid #e2e8f0; }
+        .divider { height: 1px; background: #f1f5f9; margin-bottom: 24px; width: 100%; }
+        
+        /* Owner Card */
+        .owner-card { border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+        .label { font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .owner-name { font-size: 24px; font-weight: 800; margin: 4px 0 12px 0; color: #1e293b; }
+        .plate { background: #000; color: #fff; display: inline-block; padding: 6px 16px; border-radius: 6px; font-weight: 700; font-size: 14px; letter-spacing: 1px; }
+        
+        /* Hidden Input for Backend */
+        #vehiclePin { display: none; }
 
-        <div id="vehicle-id-display" class="bg-black text-white font-bold py-2 px-6 rounded-md mb-6 text-xl inline-block tracking-wider">
-            Loading...
-        </div>
+        /* Sleek Input for Helper Number */
+        .input-wrapper { margin-bottom: 16px; }
+        .number-input { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 15px; font-weight: 600; box-sizing: border-box; text-align: center; color: #1e293b; outline: none; transition: all 0.3s ease; }
+        .number-input:focus { border-color: #000; box-shadow: 0 0 0 2px rgba(0,0,0,0.1); }
+        .number-input::placeholder { color: #94a3b8; font-weight: 500; }
+        
+        /* Action Buttons */
+        .action-row { display: flex; gap: 12px; margin-bottom: 16px; }
+        .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; border: none; transition: transform 0.1s; }
+        .btn:active { transform: scale(0.98); }
+        .btn-black { background: #000; color: #fff; }
+        .btn-white { background: #fff; color: #000; border: 1px solid #e2e8f0; }
+        .btn-red { background: #dc2626; color: #fff; width: 100%; margin-bottom: 32px; }
+        
+        /* Status Message */
+        #statusMessage { text-align: center; font-size: 13px; font-weight: 600; margin-top: -20px; margin-bottom: 20px; display: none; }
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <button onclick="initiateDirectCall('call')" class="bg-black text-white font-semibold py-3 rounded-lg hover:bg-gray-800 transition">
-                📞 Call Owner
-            </button>
-            <button onclick="initiateDirectCall('alternate')" class="bg-gray-200 text-gray-800 font-semibold py-3 rounded-lg hover:bg-gray-300 transition">
-                📞 Call Alt
-            </button>
-        </div>
+        /* Quick Alerts Grid */
+        .section-title { font-size: 12px; font-weight: 700; color: #94a3b8; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-item { border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; background: #fff; transition: background 0.2s; }
+        .grid-item:active { background: #f8fafc; }
+        .grid-text { font-size: 13px; font-weight: 700; color: #475569; }
+        
+        /* Icons */
+        .icon { width: 24px; height: 24px; }
+        .icon-red { fill: #dc2626; }
+        .icon-blue { fill: #3b82f6; }
+        .icon-gray { fill: #475569; }
+        .icon-white { fill: #ffffff; }
+        .icon-black { fill: #000000; }
+    </style>
+</head>
+<body>
 
-        <button onclick="sendEmergencySOS()" class="w-full bg-red-800 text-white font-bold py-4 rounded-lg mb-8 hover:bg-red-900 transition flex justify-center items-center gap-2">
-            ⚠️ EMERGENCY SOS
-        </button>
+<div class="app-container">
+    <div class="header">
+        <h1 class="logo">AlertoQR</h1>
+        <div class="badge">ID: ALQR1003</div>
+    </div>
+    <div class="divider"></div>
 
-        <h2 class="text-xs font-bold text-gray-400 text-left mb-3 uppercase tracking-wide">Quick Alerts</h2>
-        <div class="grid grid-cols-2 gap-3 mb-2">
-            <button onclick="sendNormalAlert('Wrong Parking')" class="border border-gray-200 rounded-lg py-4 flex flex-col items-center justify-center text-sm font-medium text-gray-600 hover:bg-gray-50 transition shadow-sm">
-                <span class="text-red-500 text-2xl mb-2">⚠️</span> Wrong Parking
-            </button>
-            <button onclick="sendNormalAlert('Tow Alert')" class="border border-gray-200 rounded-lg py-4 flex flex-col items-center justify-center text-sm font-medium text-gray-600 hover:bg-gray-50 transition shadow-sm">
-                <span class="text-blue-500 text-2xl mb-2">🚙</span> Tow Alert
-            </button>
-            <button onclick="sendNormalAlert('Window Open')" class="border border-gray-200 rounded-lg py-4 flex flex-col items-center justify-center text-sm font-medium text-gray-600 hover:bg-gray-50 transition shadow-sm">
-                <span class="text-gray-600 text-2xl mb-2">🪟</span> Window Open
-            </button>
-            <button onclick="sendNormalAlert('Light On')" class="border border-gray-200 rounded-lg py-4 flex flex-col items-center justify-center text-sm font-medium text-gray-600 hover:bg-gray-50 transition shadow-sm">
-                <span class="text-yellow-500 text-2xl mb-2">💡</span> Light On
-            </button>
-        </div>
+    <div class="owner-card">
+        <div class="label">Vehicle Owner</div>
+        <div class="owner-name">GAURAV</div>
+        <div class="plate">UP80C08090</div>
     </div>
 
-    <script>
-        // 1. URL se QR/Sticker ID nikalna (e.g., website.com/?id=UP80C08090)
-        const urlParams = new URLSearchParams(window.location.search);
-        // Default ID for testing agar URL me ID na ho
-        const urlAssetId = urlParams.get('id') || 'ALQR1003'; 
+    <input type="text" id="vehiclePin" value="1001">
 
-        // Screen par ID dikhana
-        document.getElementById('vehicle-id-display').innerText = urlAssetId;
+    <div class="input-wrapper">
+        <input type="tel" id="helperNumber" class="number-input" placeholder="Enter Your Number to Connect" maxlength="10">
+    </div>
 
-        // Aapke Vercel Backend ka URL
-        const VERCEL_API_URL = 'https://alerto-qr.vercel.app/api/send-alert';
+    <div id="statusMessage"></div>
 
-        // 📞 ROUTE 1: POPUP WALI SECURE CALL
-        async function initiateDirectCall(modeType) {
-            let helperNum = prompt("Secure call connect karne ke liye apna 10-digit mobile number darj karein:");
+    <div class="action-row">
+        <button class="btn btn-black" onclick="callOwner()">
+            <svg class="icon icon-white" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+            Call Owner
+        </button>
+        <button class="btn btn-white">
+            <svg class="icon icon-black" viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+            Call Alt
+        </button>
+    </div>
+
+    <button class="btn btn-red">
+        <svg class="icon icon-white" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+        EMERGENCY SOS
+    </button>
+
+    <div class="section-title">Quick Alerts</div>
+    <div class="grid">
+        <div class="grid-item">
+            <svg class="icon icon-red" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+            <span class="grid-text">Wrong Parking</span>
+        </div>
+        <div class="grid-item">
+            <svg class="icon icon-blue" viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+            <span class="grid-text">Tow Alert</span>
+        </div>
+        <div class="grid-item">
+            <svg class="icon icon-gray" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 15h10v2H7z"/></svg>
+            <span class="grid-text">Window Open</span>
+        </div>
+        <div class="grid-item">
+            <svg class="icon icon-gray" viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3z"/></svg>
+            <span class="grid-text">Share Photo</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function callOwner() {
+        const helperNumber = document.getElementById('helperNumber').value;
+        const vehiclePin = document.getElementById('vehiclePin').value;
+        const statusMsg = document.getElementById('statusMessage');
+
+        statusMsg.style.display = 'block';
+
+        if(helperNumber.length !== 10) {
+            statusMsg.style.color = "#dc2626"; // Red
+            statusMsg.innerText = "Please enter a valid 10-digit number.";
+            return;
+        }
+
+        statusMsg.style.color = "#3b82f6"; // Blue
+        statusMsg.innerText = "Connecting... Please wait.";
+
+        try {
+            const response = await fetch('/api/send-alert', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ vehiclePin, helperNumber })
+            });
+
+            const data = await response.json();
             
-            if (!helperNum || helperNum.length < 10) {
-                alert("Call connect karne ke liye sahi number dena zaroori hai!");
-                return;
+            if(data.success) {
+                statusMsg.style.color = "#059669"; // Green
+                statusMsg.innerText = "Connecting! You will receive a call shortly.";
+            } else {
+                statusMsg.style.color = "#dc2626"; // Red
+                statusMsg.innerText = "Error: " + data.message;
             }
-
-            alert("Securing connection... Kuch hi seconds mein aapke phone par ek incoming call aayegi. Kripya use uthayein!");
-
-            try {
-                const response = await fetch(VERCEL_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        stickerId: urlAssetId, 
-                        alertType: 'Call Owner',
-                        mode: modeType, // 'call' ya 'alternate'
-                        helperNumber: helperNum 
-                    })
-                });
-                
-                const result = await response.json();
-                if (!result.success) {
-                    alert("Backend Error: " + result.error);
-                }
-            } catch (err) {
-                alert("Network Error: Server se connection nahi bana.");
-            }
+        } catch (error) {
+            statusMsg.style.color = "#dc2626"; // Red
+            statusMsg.innerText = "Server error. Please try again.";
         }
+    }
+</script>
 
-        // 🚨 ROUTE 2: EMERGENCY SOS (Bina Popup, direct owner ko automated call)
-        async function sendEmergencySOS() {
-            alert("Emergency call owner ko lag rahi hai. Kripya wait karein...");
-            try {
-                const response = await fetch(VERCEL_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        stickerId: urlAssetId, 
-                        alertType: 'EMERGENCY SOS',
-                        mode: 'call'
-                    })
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    alert("SOS Call Successfully Placed!");
-                } else {
-                    alert("SOS Error: " + result.error);
-                }
-            } catch (err) {
-                alert("Network Error: SOS fail ho gaya.");
-            }
-        }
-
-        // 💬 ROUTE 3: NORMAL SMS ALERTS
-        async function sendNormalAlert(alertMessage) {
-            try {
-                const response = await fetch(VERCEL_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        stickerId: urlAssetId, 
-                        alertType: alertMessage,
-                        mode: 'sms'
-                    })
-                });
-                
-                const result = await response.json();
-                if (result.success) {
-                    alert(alertMessage + " ka alert SMS owner ko bhej diya gaya hai.");
-                } else {
-                    alert("SMS Error: " + result.error);
-                }
-            } catch (err) {
-                alert("Network Error: Alert bhejne mein problem aayi.");
-            }
-        }
-    </script>
 </body>
 </html>
