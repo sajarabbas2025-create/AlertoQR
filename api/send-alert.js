@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, message: "PIN aur Helper ka number dono zaruri hain." });
     }
 
-    // Temporary Database - Aapka number yahan set kar diya hai
+    // Aapka asli number yahan set hai
     const vehicleDatabase = {
       "1001": "6388522427", 
       "2540": "8765432109"
@@ -37,13 +37,15 @@ export default async function handler(req, res) {
     const apiPassword = "ND7oMLCE";
     const ivrNumber = "7971900123"; 
 
-    // Asli URL Document ke hisaab se
-    const bulkSmsApiUrl = `https://bulksmsplans.com/api/ivr/makeACall?api_id=${apiId}&api_password=${apiPassword}&ivr_number=${ivrNumber}&dial=${formattedHelper}&receiver_number=${formattedOwner}`;
+    // Error ke hisaab se sahi variables (agent_number aur receiver_number)
+    const bulkSmsApiUrl = `https://bulksmsplans.com/api/ivr/makeACall?api_id=${apiId}&api_password=${apiPassword}&ivr_number=${ivrNumber}&agent_number=${formattedOwner}&receiver_number=${formattedHelper}`;
     
     console.log(`Firing Call to telecom: ${bulkSmsApiUrl}`);
 
-    // Call Fire!
-    const apiResponse = await fetch(bulkSmsApiUrl);
+    // Call Fire! (POST method ke sath, jaise document mein chahiye)
+    const apiResponse = await fetch(bulkSmsApiUrl, {
+        method: 'POST'
+    });
     const resultText = await apiResponse.text();
     console.log("API Response: ", resultText);
 
