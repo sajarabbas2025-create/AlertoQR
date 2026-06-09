@@ -30,9 +30,9 @@ export default async function handler(req, res) {
     if (helperCleanNumber.startsWith('0')) helperCleanNumber = helperCleanNumber.substring(1);
     if (!helperCleanNumber.startsWith('91')) helperCleanNumber = `91${helperCleanNumber}`;
 
-    // 3. SMSCountry Credentials
-    const SMSCOUNTRY_AUTH_KEY = "VjML4PrM2o7xqOELaQuD";
-    const SMSCOUNTRY_AUTH_TOKEN = "W3DUky5OlRoevogUDqkwLps8rkHNqwWy0QalAVJl";
+    // 3. SMSCountry Active Credentials (Sahi wali keys)
+    const SMSCOUNTRY_AUTH_KEY = "M5rIudGBrmiO4pdjCuoz";
+    const SMSCOUNTRY_AUTH_TOKEN = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53";
     const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
     const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
