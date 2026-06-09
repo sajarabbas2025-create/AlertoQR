@@ -46,15 +46,15 @@ export default async function handler(req, res) {
     const smsCountryUrl = `https://restapi.smscountry.com/v0.1/Accounts/${authKey}/Calls/`;
 
     // ==========================================
-    // SMSCOUNTRY OFFICIAL BRIDGE CALL PARAMETERS
+    // SMSCOUNTRY OFFICIAL GROUP CALL PARAMETERS
     // ==========================================
+    // "Number" parameter ke andar dono numbers comma se jud kar jayenge
     const payload = {
-      PrimaryNumber: formattedHelper,   // Pehle is number par ghanti bajegi
-      SecondaryNumber: formattedOwner,  // Uthane par is number se connect hoga
+      Number: `${formattedHelper},${formattedOwner}`,  
       CallerId: callerId
     };
 
-    console.log(`Firing SMSCountry Bridge Call...`);
+    console.log(`Firing SMSCountry Group Call...`);
 
     // Call Fire!
     const apiResponse = await fetch(smsCountryUrl, {
