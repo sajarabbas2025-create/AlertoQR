@@ -33,13 +33,13 @@ export default async function handler(req, res) {
     let formattedOwner = ownerNumber.length === 10 ? `91${ownerNumber}` : ownerNumber.replace('+', '');
 
     // ==========================================
-    // SMSCOUNTRY CREDENTIALS (YAHAN APNI KEY & TOKEN DALEIN)
+    // SMSCOUNTRY CREDENTIALS (NEW KEYS APPLIED)
     // ==========================================
-    const authKey = "YAHAN_APNI_SMSCOUNTRY_AUTH_KEY_DALEIN"; 
-    const authToken = "YAHAN_APNI_SMSCOUNTRY_AUTH_TOKEN_DALEIN"; 
+    const authKey = "M5rIudGBrmiO4pdjCuoz"; 
+    const authToken = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53"; 
     const callerId = "918634512424"; // Krishna ji se mila naya Caller ID
 
-    // Base64 Encoding - Jo documentation mein manga hai (Automatic ho jayega)
+    // Base64 Encoding - Jo documentation mein manga hai (Automatic)
     const encodedAuth = Buffer.from(`${authKey}:${authToken}`).toString('base64');
 
     // **Sarah ji ke mail ke mutabik EXACT LIVE URL**
