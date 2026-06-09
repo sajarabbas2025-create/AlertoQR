@@ -1,52 +1,86 @@
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+const { createClient } = require('@supabase/supabase-js');
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://cefzsgchfdvtyfmcrsda.supabase.co";
+const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs";
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-  try {
-    const { vehiclePin, helperNumber } = req.body;
-    const ownerNumber = "6388522427"; // Aapka number
+const SMSCOUNTRY_AUTH_KEY = "M5rIudGBrmiO4pdjCuoz";
+const SMSCOUNTRY_AUTH_TOKEN = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53
+";
 
-    const formatForAPI = (num) => {
-        let clean = num.toString().replace(/\D/g, '');
-        return clean.length === 10 ? '91' + clean : clean;
-    };
+module.exports = async (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    const authKey = "M5rIudGBrmiO4pdjCuoz"; 
-    const authToken = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53"; 
-    
-    // SMSCountry API URL
-    const smsCountryUrl = `https://restapi.smscountry.com/v0.1/Accounts/${authKey}/Calls/`;
+    if (req.method === 'OPTIONS') return res.status(200).end();
 
-    // FORM DATA (Yeh unka favorite format hai)
-    const params = new URLSearchParams();
-    params.append('From', '+918634512424'); // Caller ID
-    params.append('To', '+' + formatForAPI(helperNumber)); // Helper
-    params.append('AnswerUrl', `https://alerto-qr.vercel.app/api/webhook?owner=${formatForAPI(ownerNumber)}`);
+    try {
+        const { stickerId, alertType, mode, helperNumber } = req.body;
+        if (!stickerId) return res.status(200).json({ success: false, error: 'Sticker ID is missing' });
 
-    const encodedAuth = Buffer.from(`${authKey}:${authToken}`).toString('base64');
+        const { data, error } = await supabase.from('registrations').select('*').eq('sticker_id', stickerId.trim().toUpperCase()).single();
+        if (error || !data) return res.status(200).json({ success: false, error: 'Profile not found.' });
 
-    const apiResponse = await fetch(smsCountryUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${encodedAuth}`
-      },
-      body: params.toString()
-    });
+        let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
+        if (!targetPhone) return res.status(200).json({ success: false, error: 'Phone missing.' });
 
-    const resultText = await apiResponse.text();
-    
-    if (!apiResponse.ok) {
-        return res.status(200).json({ success: false, message: "SMSCountry Error: " + resultText });
+        let ownerCleanNumber = targetPhone.toString().replace(/[^0-9]/g, '');
+        if (ownerCleanNumber.startsWith('0')) ownerCleanNumber = ownerCleanNumber.substring(1);
+        if (!ownerCleanNumber.startsWith('91')) ownerCleanNumber = `91${ownerCleanNumber}`;
+
+        const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
+
+        // 📞 ROUTE 1: SMART BRIDGE CALL
+        if (mode === 'call' || mode === 'alternate') {
+            if (!helperNumber) return res.status(200).json({ success: false, error: 'Helper number missing.' });
+
+            let helperCleanNumber = helperNumber.toString().replace(/[^0-9]/g, '');
+            if (helperCleanNumber.startsWith('0')) helperCleanNumber = helperCleanNumber.substring(1);
+            if (!helperCleanNumber.startsWith('91')) helperCleanNumber = `91${helperCleanNumber}`;
+
+            const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
+            
+            // 🛠️ FIX: Capitalized <Play> and <Dial>, and added mandatory URLs 
+            const jsonBodyData = {
+                "Number": helperCleanNumber,    
+                "CallerId": "918634512424",
+                "RingUrl": "https://alertoqr.in/ring",
+                "AnswerUrl": "https://alertoqr.in/answer",
+                "HangupUrl": "https://alertoqr.in/hangup",
+                "HttpMethod": "POST",
+                "Xml": `<Response><Play>Please wait, we are connecting your secure call.</Play><Dial>${ownerCleanNumber}</Dial></Response>` 
+            };
+
+            const response = await fetch(callApiUrl, {
+                method: 'POST',
+                headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+                body: JSON.stringify(jsonBodyData)
+            });
+            const apiData = await response.json();
+            
+            if (response.ok && apiData.Success !== false) {
+                return res.status(200).json({ success: true, data: apiData });
+            } else {
+                return res.status(200).json({ success: false, error: `SMSCountry Error: ${JSON.stringify(apiData)}` });
+            }
+        } 
+        // 💬 ROUTE 2: SMS ALERTS
+        else {
+            const smsApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/SMSes/`;
+            const jsonSmsData = { "Text": `[AlertoQR] Emergency Alert! Vehicle (${data.vehicle_number}) par alert: "${alertType}".`, "To": ownerCleanNumber, "SenderId": "ALERTO" };
+
+            const response = await fetch(smsApiUrl, {
+                method: 'POST',
+                headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+                body: JSON.stringify(jsonSmsData)
+            });
+            const apiData = await response.json();
+            
+            if (response.ok && apiData.Success !== false) return res.status(200).json({ success: true });
+            else return res.status(200).json({ success: false, error: `SMS Error: ${JSON.stringify(apiData)}` });
+        }
+    } catch (err) {
+        return res.status(200).json({ success: false, error: `Backend Crash: ${err.message}` });
     }
-
-    return res.status(200).json({ success: true, message: "Call initiated!" });
-
-  } catch (error) {
-    return res.status(500).json({ success: false, error: error.message });
-  }
-}
+};
