@@ -12,27 +12,26 @@ export default async function handler(req, res) {
   try {
     const { stickerId, helperNumber } = req.body;
     
-    // 1. Data Fetch
+    // 1. Fetch Owner from Supabase
     const { data, error } = await supabase.from('registrations')
       .select('mobile_number').eq('sticker_id', stickerId.trim().toUpperCase()).single();
     
-    if (error || !data) throw new Error("Profile nahi mili.");
+    if (error || !data) {
+       return res.status(200).json({ success: false, error: "Database mein sticker nahi mila." });
+    }
 
-    // 2. Number Formatting (91 prefix)
+    // 2. Prepare Data
     const format = (num) => '91' + num.toString().replace(/[^0-9]/g, '').slice(-10);
-    const helper = format(helperNumber);
-    const owner = format(data.mobile_number);
-
-    // 3. Payload (Yeh structure SMSCountry ka official Bridge format hai)
+    
     const payload = {
         "From": "918634512424",
-        "To": helper,
-        "Dial": owner
+        "To": format(helperNumber),
+        "Dial": format(data.mobile_number)
     };
 
     const auth = Buffer.from("M5rIudGBrmiO4pdjCuoz:XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53").toString('base64');
     
-    // 4. API Call
+    // 3. API Call
     const response = await fetch("https://restapi.smscountry.com/v0.1/Accounts/M5rIudGBrmiO4pdjCuoz/Calls/", {
         method: 'POST',
         headers: { 
@@ -43,7 +42,14 @@ export default async function handler(req, res) {
     });
 
     const result = await response.json();
-    return res.status(200).json({ success: response.ok, data: result });
+    
+    // 4. ERROR HANDLING (Yahi asli wajah batayega)
+    if (response.ok) {
+        return res.status(200).json({ success: true, message: result });
+    } else {
+        // Yahan 'undefined' nahi, asli error text milega
+        return res.status(200).json({ success: false, error: JSON.stringify(result) });
+    }
 
   } catch (err) {
     return res.status(200).json({ success: false, error: err.message });
