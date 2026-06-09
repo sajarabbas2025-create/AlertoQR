@@ -18,29 +18,35 @@ export default async function handler(req, res) {
 
     // Temporary Database
     const vehicleDatabase = {
-      "1001": "+916388522427", // SAJAR BHAI, YAHAN APNA ASLI 10-DIGIT NUMBER DAALNA MAT BHOOLIYEGA!
-      "2540": "+918765432109"
+      "1001": "9876543210", // <-- SAJAR BHAI, YAHAN APNA ASLI 10-DIGIT NUMBER DAALNA MAT BHOOLIYEGA (Bina +91 ke)
+      "2540": "8765432109"
     };
 
-    const ownerNumber = vehicleDatabase[vehiclePin];
+    let ownerNumber = vehicleDatabase[vehiclePin];
 
     if (!ownerNumber) {
       return res.status(404).json({ success: false, message: "Galat QR Code." });
     }
 
-    // Aapke BulkSMSPlans API details (Screenshot se)
+    // Telecom API ko numbers '91' ke sath chahiye hote hain
+    let formattedHelper = helperNumber.length === 10 ? `91${helperNumber}` : helperNumber;
+    let formattedOwner = ownerNumber.length === 10 ? `91${ownerNumber}` : ownerNumber;
+
+    // Aapke BulkSMSPlans API details
     const apiId = "API42znmxVL150879";
     const apiPassword = "ND7oMLCE";
+    const ivrNumber = "7971900123"; // Aapka naya Virtual Number
 
-    // Click-to-Call ka Standard API URL
-    const bulkSmsApiUrl = `https://bulksmsplans.com/api/voice_call?api_id=${apiId}&api_password=${apiPassword}&caller=${helperNumber}&receiver=${ownerNumber}`;
+    // Asli URL Document ke hisaab se
+    const bulkSmsApiUrl = `https://bulksmsplans.com/api/ivr/makeACall?api_id=${apiId}&api_password=${apiPassword}&ivr_number=${ivrNumber}&dial=${formattedHelper}&receiver_number=${formattedOwner}`;
     
     console.log(`Firing Call to telecom: ${bulkSmsApiUrl}`);
 
-    // === AB HUM ASLI CALL FIRE KAR RAHE HAIN ===
+    // Call Fire!
     const apiResponse = await fetch(bulkSmsApiUrl);
-    
-    // Website ko Success bhejna taaki green message aa jaye
+    const resultText = await apiResponse.text();
+    console.log("API Response: ", resultText);
+
     return res.status(200).json({
       success: true,
       message: "Call command sent successfully."
