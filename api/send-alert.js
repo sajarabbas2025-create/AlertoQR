@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
     // Temporary Database
     const vehicleDatabase = {
-      "1001": "+919876543210", // SAJAR BHAI, YAHAN APNA ASLI 10-DIGIT NUMBER DAALNA MAT BHOOLIYEGA!
+      "1001": "+916388522427", // SAJAR BHAI, YAHAN APNA ASLI 10-DIGIT NUMBER DAALNA MAT BHOOLIYEGA!
       "2540": "+918765432109"
     };
 
