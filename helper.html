@@ -13,7 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* AAPKA ORIGINAL CSS BILKUL WAISA HI HAI */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: #f8fafc; color: #0f172a; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 16px; }
         .helper-container { width: 100%; max-width: 480px; background: #ffffff; border-radius: 24px; padding: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
@@ -41,9 +40,6 @@
         .state-shell-view { text-align: center; padding: 40px 10px; }
         .spinner-engine { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top: 3px solid #000000; border-radius: 50%; margin: 0 auto 16px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* SIRF YE EK NAYI CLASS ADD KI HAI SOS BUTTON KE LIYE */
-        .btn-sos { width: 100%; padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 800; background: #dc2626; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px; box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2); }
     </style>
 </head>
 <body>
@@ -72,10 +68,6 @@
             </button>
         </div>
 
-        <button class="btn-sos" onclick="triggerSOS()">
-            <i class="fa-solid fa-triangle-exclamation"></i> EMERGENCY SOS
-        </button>
-
         <div id="ticker-box" class="status-ticker"></div>
 
         <div class="section-title">Quick Alerts</div>
@@ -83,11 +75,7 @@
             <div class="alert-card" onclick="sendAlert('Wrong Parking')"><i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i><span>Wrong Parking</span></div>
             <div class="alert-card" onclick="sendAlert('Tow Alert')"><i class="fa-solid fa-car" style="color: #3b82f6;"></i><span>Tow Alert</span></div>
             <div class="alert-card" onclick="sendAlert('Window Open')"><i class="fa-solid fa-file-invoice" style="color: #000000;"></i><span>Window Open</span></div>
-            
-            <div class="alert-card" onclick="document.getElementById('photo-upload').click()">
-                <i class="fa-solid fa-camera" style="color: #64748b;"></i><span>Share Photo</span>
-                <input type="file" id="photo-upload" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoShare(event)">
-            </div>
+            <div class="alert-card" onclick="sendAlert('Share Photo')"><i class="fa-solid fa-camera" style="color: #64748b;"></i><span>Share Photo</span></div>
         </div>
 
         <div class="section-title">Emergency Links</div>
@@ -117,59 +105,24 @@
         }
     });
 
-    // DIRECT DIALER LOGIC: Ab ye helper ka number nahi mangega, seedha dialer khulega
+    // DIRECT DIALER LOGIC: No modal, just dialer
     function initiateDirectCall() {
+        // Signal backend for tracking
+        fetch('https://alerto-qr.vercel.app/api/prepare-call', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ stickerId: urlAssetId })
+        });
+        // Open native dialer
         window.location.href = `tel:${VIRTUAL_NUMBER}`;
     }
 
-    // SOS BUTTON LOGIC: Database me entry bhejega owner alert ke liye
-    async function triggerSOS() {
-        alert("🚨 EMERGENCY SOS triggered! Alerting owner...");
-        
-        // Supabase mein insert (Owner dashboard mein siren bajane ke liye)
-        await _supabase.from('alerts').insert([{ sticker_id: urlAssetId, action: 'EMERGENCY_SOS' }]);
-        
-        // Vercel SMS API call (Aapka original function)
-        fetch('https://alerto-qr.vercel.app/api/send-alert', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ stickerId: urlAssetId, alertType: 'EMERGENCY SOS', mode: 'sms' })
-        });
-    }
-
-    // SHARE PHOTO LOGIC: Photo click hone ke baad owner ko alert
-    async function handlePhotoShare(event) {
-        if(event.target.files.length > 0) {
-            alert("📷 Photo selected! Alerting owner...");
-            
-            // Supabase mein insert 
-            await _supabase.from('alerts').insert([{ sticker_id: urlAssetId, action: 'PHOTO_SHARED' }]);
-            
-            // Vercel SMS API call
-            fetch('https://alerto-qr.vercel.app/api/send-alert', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ stickerId: urlAssetId, alertType: 'Share Photo', mode: 'sms' })
-            });
-        }
-    }
-
-    // NORMAL ALERTS (Aapka purana function modified with Supabase integration)
-    async function sendAlert(msg) {
-        // Only trigger for normal alerts, NOT photo share (wo ab handlePhotoShare me hai)
-        if (msg === 'Share Photo') return; 
-        
-        alert(msg + " Notification sent!");
-        
-        // Supabase Alert for Realtime pop-up
-        await _supabase.from('alerts').insert([{ sticker_id: urlAssetId, action: msg }]);
-        
-        // Vercel API
+    function sendAlert(msg) {
         fetch('https://alerto-qr.vercel.app/api/send-alert', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ stickerId: urlAssetId, alertType: msg, mode: 'sms' })
-        });
+        }).then(() => alert("Notification sent!"));
     }
 </script>
 </body>
