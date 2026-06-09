@@ -1,42 +1,57 @@
-async function executeSecureVercelBridge(alertType, mode, helperPhone) {
-    const consoleTicker = document.getElementById('ticker-box');
-    consoleTicker.style.display = "block";
-    consoleTicker.innerText = "Connecting secure call...";
+const { createClient } = require('@supabase/supabase-js');
 
-    // SMSCountry API Credentials
-    const authKey = "M5rIudGBrmiO4pdjCuoz";
-    const authToken = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53";
-    const authHeader = 'Basic ' + btoa(`${authKey}:${authToken}`);
-    
-    // Aapka Virtual Number
-    const callerId = "+918634512424";
-    
-    // Owner ka number (Ise Supabase se fetch kiya hai)
-    // Aapka DB structure ke hisaab se:
-    const targetPhone = "6388522427"; // Asli number
-    
-    const payload = {
-        "Number": `+91${helperPhone},+91${targetPhone}`,
-        "CallerId": callerId
-    };
+// Ensure you have these as Environment Variables in Vercel Dashboard
+const supabase = createClient(
+  process.env.SUPABASE_URL || "https://cefzsgchfdvtyfmcrsda.supabase.co", 
+  process.env.SUPABASE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // Aapki key
+);
 
-    try {
-        const response = await fetch(`https://restapi.smscountry.com/v0.1/Accounts/${authKey}/Calls/`, {
-            method: 'POST',
-            headers: { 
-                'Authorization': authHeader, 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify(payload)
-        });
+export default async function handler(req, res) {
+  // 1. Mandatory CORS Headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-        if (response.ok) {
-            consoleTicker.innerText = "✅ Call Initiated Successfully!";
-        } else {
-            const err = await response.json();
-            consoleTicker.innerText = "⚠️ Gateway Error: " + (err.Message || "Failed");
-        }
-    } catch (err) {
-        consoleTicker.innerText = "⚠️ Fetch Error: " + err.message;
-    }
+  // 2. Handle Preflight Request
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { stickerId, mode, helperNumber } = req.body;
+    
+    // Database Logic
+    const { data, error } = await supabase.from('registrations')
+        .select('*').eq('sticker_id', stickerId.trim().toUpperCase()).single();
+    
+    if (error || !data) return res.status(200).json({ success: false, error: 'Profile not found.' });
+
+    let targetPhone = (mode === 'alternate') ? data.alternate_number : data.mobile_number;
+    
+    // SMSCountry API
+    const auth = Buffer.from("M5rIudGBrmiO4pdjCuoz:XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53").toString('base64');
+    
+    const response = await fetch(`https://restapi.smscountry.com/v0.1/Accounts/M5rIudGBrmiO4pdjCuoz/Calls/`, {
+        method: 'POST',
+        headers: { 
+            'Authorization': 'Basic ' + auth, 
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({
+            "PrimaryNumber": "91" + helperNumber.slice(-10),
+            "SecondaryNumber": "91" + targetPhone.toString().slice(-10),
+            "CallerId": "918634512424"
+        })
+    });
+
+    const apiData = await response.json();
+    return res.status(200).json({ success: response.ok, data: apiData });
+
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
 }
