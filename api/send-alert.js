@@ -12,22 +12,22 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
     const { stickerId, helperNumber } = req.body;
-    if (!stickerId || !helperNumber) throw new Error("Missing parameters");
-
-    // Supabase Fetch
+    
+    // 1. Supabase Check
     const { data, error } = await supabase.from('registrations')
       .select('mobile_number').eq('sticker_id', stickerId.trim().toUpperCase()).single();
     
-    if (error || !data) throw new Error("Profile not found");
+    if (error || !data) {
+      return res.status(200).json({ success: false, error: "Profile nahi mili." });
+    }
 
-    // Call API
+    // 2. SMSCountry Request
     const auth = Buffer.from("M5rIudGBrmiO4pdjCuoz:XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53").toString('base64');
     
-    const response = await fetch(`https://restapi.smscountry.com/v0.1/Accounts/M5rIudGBrmiO4pdjCuoz/Calls/`, {
+    const response = await fetch("https://restapi.smscountry.com/v0.1/Accounts/M5rIudGBrmiO4pdjCuoz/Calls/", {
         method: 'POST',
         headers: { 'Authorization': 'Basic ' + auth, 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -38,11 +38,11 @@ export default async function handler(req, res) {
     });
 
     const result = await response.json();
-    // Yahan hum asli response bhejenge
-    return res.status(200).json({ success: response.ok, data: result });
+    
+    // 3. Success Return
+    return res.status(200).json({ success: true, message: "Call initiated", apiResponse: result });
 
   } catch (err) {
-    // Ab 'undefined' ki jagah asli error msg aayega
     return res.status(200).json({ success: false, error: err.message });
   }
 }
