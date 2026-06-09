@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, message: "PIN aur Helper ka number dono zaruri hain." });
     }
 
-    // Aapka asli number (Owner)
+    // Database - Aapka number '1001' PIN par set hai
     const vehicleDatabase = {
       "1001": "6388522427", 
       "2540": "8765432109"
@@ -28,28 +28,28 @@ export default async function handler(req, res) {
       return res.status(404).json({ success: false, message: "Galat QR Code." });
     }
 
-    // SMSCountry usually requires numbers with country code (91)
+    // SMSCountry ko numbers country code (91) ke sath chahiye hote hain
     let formattedHelper = helperNumber.length === 10 ? `91${helperNumber}` : helperNumber;
     let formattedOwner = ownerNumber.length === 10 ? `91${ownerNumber}` : ownerNumber;
 
     // ==========================================
-    // SMSCOUNTRY CREDENTIALS (YAHAN UPDATE KAREIN)
+    // SMSCOUNTRY CREDENTIALS (YAHAN APNI KEY & TOKEN DALEIN)
     // ==========================================
-    const authKey = "YAHAN_SMSCOUNTRY_KI_AUTH_KEY_DALEIN"; 
-    const authToken = "YAHAN_SMSCOUNTRY_KA_AUTH_TOKEN_DALEIN"; 
-    const callerId = "YAHAN_SMSCOUNTRY_KA_VIRTUAL_NUMBER_DALEIN"; // e.g., "9180XXXXXXX"
+    const authKey = "YAHAN_APNI_SMSCOUNTRY_AUTH_KEY_DALEIN"; 
+    const authToken = "YAHAN_APNI_SMSCOUNTRY_AUTH_TOKEN_DALEIN"; 
+    const callerId = "918634512424"; // SMSCountry se mila naya Virtual Number
 
-    // Base64 Encoding for Basic Authorization
+    // Base64 Encoding for Security Authorization
     const encodedAuth = Buffer.from(`${authKey}:${authToken}`).toString('base64');
 
-    // SMSCountry Outbound Call API Endpoint
+    // SMSCountry Outbound Call Endpoint URL
     const smsCountryUrl = `https://api.smscountry.com/v0.1/Accounts/${authKey}/Calls`;
 
-    // API Payload (Data)
+    // API Payload Data
     const payload = {
-      From: formattedHelper,   // Helper ka number (Pehli call isko jayegi)
-      To: formattedOwner,      // Owner ka number (Dusri call isko jayegi)
-      CallerId: callerId       // Aapka SMSCountry wala Virtual Number
+      From: formattedHelper,   // Helper ka number
+      To: formattedOwner,      // Owner ka number (Aapka number)
+      CallerId: callerId       // SMSCountry Caller ID
     };
 
     console.log(`Firing SMSCountry Call...`);
