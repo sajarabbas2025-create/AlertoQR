@@ -16,9 +16,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, message: "PIN aur Helper ka number dono zaruri hain." });
     }
 
-    // Temporary Database
+    // Temporary Database - Aapka number yahan set kar diya hai
     const vehicleDatabase = {
-      "1001": "9876543210", // <-- SAJAR BHAI, YAHAN APNA ASLI 10-DIGIT NUMBER DAALNA MAT BHOOLIYEGA (Bina +91 ke)
+      "1001": "6388522427", 
       "2540": "8765432109"
     };
 
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     // Aapke BulkSMSPlans API details
     const apiId = "API42znmxVL150879";
     const apiPassword = "ND7oMLCE";
-    const ivrNumber = "7971900123"; // Aapka naya Virtual Number
+    const ivrNumber = "7971900123"; 
 
     // Asli URL Document ke hisaab se
     const bulkSmsApiUrl = `https://bulksmsplans.com/api/ivr/makeACall?api_id=${apiId}&api_password=${apiPassword}&ivr_number=${ivrNumber}&dial=${formattedHelper}&receiver_number=${formattedOwner}`;
