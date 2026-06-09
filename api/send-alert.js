@@ -28,13 +28,11 @@ export default async function handler(req, res) {
       return res.status(404).json({ success: false, message: "Galat QR Code." });
     }
 
-    // ==========================================
-    // NAYA NUMBER FORMATTER (Jo automatic '+' lagayega)
-    // ==========================================
+    // SMSCountry standard international format with '+'
     const formatNumber = (num) => {
-        let cleanNum = num.toString().replace(/\D/g, ''); // Sirf numbers rakhega
+        let cleanNum = num.toString().replace(/\D/g, '');
         if (cleanNum.length === 10) cleanNum = '91' + cleanNum;
-        return '+' + cleanNum; // '+' zaroori hai
+        return '+' + cleanNum;
     };
 
     let formattedHelper = formatNumber(helperNumber);
@@ -42,18 +40,23 @@ export default async function handler(req, res) {
 
     const authKey = "M5rIudGBrmiO4pdjCuoz"; 
     const authToken = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53"; 
-    const callerId = "+918634512424"; // Yahan bhi '+' laga diya gaya hai
+    const callerId = "+918634512424"; 
 
     const encodedAuth = Buffer.from(`${authKey}:${authToken}`).toString('base64');
     const smsCountryUrl = `https://restapi.smscountry.com/v0.1/Accounts/${authKey}/Calls/`;
 
+    // ==========================================
+    // SMSCOUNTRY OFFICIAL BRIDGE CALL PARAMETERS
+    // ==========================================
     const payload = {
-      From: formattedHelper,   
-      To: formattedOwner,      
-      CallerId: callerId       
+      PrimaryNumber: formattedHelper,   // Pehle is number par ghanti bajegi
+      SecondaryNumber: formattedOwner,  // Uthane par is number se connect hoga
+      CallerId: callerId
     };
 
-    // Call Fire! 
+    console.log(`Firing SMSCountry Bridge Call...`);
+
+    // Call Fire!
     const apiResponse = await fetch(smsCountryUrl, {
       method: 'POST',
       headers: {
