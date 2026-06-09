@@ -16,6 +16,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, message: "PIN aur Helper ka number dono zaruri hain." });
     }
 
+    // Owner Data
     const vehicleDatabase = {
       "1001": "6388522427", 
       "2540": "8765432109"
@@ -27,13 +28,21 @@ export default async function handler(req, res) {
       return res.status(404).json({ success: false, message: "Galat QR Code." });
     }
 
-    // Number formatting
-    let formattedHelper = helperNumber.length === 10 ? `91${helperNumber}` : helperNumber.replace('+', '');
-    let formattedOwner = ownerNumber.length === 10 ? `91${ownerNumber}` : ownerNumber.replace('+', '');
+    // ==========================================
+    // NAYA NUMBER FORMATTER (Jo automatic '+' lagayega)
+    // ==========================================
+    const formatNumber = (num) => {
+        let cleanNum = num.toString().replace(/\D/g, ''); // Sirf numbers rakhega
+        if (cleanNum.length === 10) cleanNum = '91' + cleanNum;
+        return '+' + cleanNum; // '+' zaroori hai
+    };
+
+    let formattedHelper = formatNumber(helperNumber);
+    let formattedOwner = formatNumber(ownerNumber);
 
     const authKey = "M5rIudGBrmiO4pdjCuoz"; 
     const authToken = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53"; 
-    const callerId = "918634512424"; 
+    const callerId = "+918634512424"; // Yahan bhi '+' laga diya gaya hai
 
     const encodedAuth = Buffer.from(`${authKey}:${authToken}`).toString('base64');
     const smsCountryUrl = `https://restapi.smscountry.com/v0.1/Accounts/${authKey}/Calls/`;
@@ -56,9 +65,7 @@ export default async function handler(req, res) {
 
     const resultText = await apiResponse.text();
     
-    // ==========================================
-    // NAYA ERROR CATCHER (Yeh screen par asli error dikhayega)
-    // ==========================================
+    // Error Catcher
     if (!apiResponse.ok) {
         return res.status(200).json({
             success: false,
