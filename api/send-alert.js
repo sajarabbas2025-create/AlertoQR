@@ -1,11 +1,10 @@
 export default async function handler(req, res) {
-  // CORS Security Headers (Ye darwaza kholenge)
+  // CORS Security Headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // YAHI LINE MISSING THI
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  // Browser ki checking request (Preflight) ko pass karna
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -19,7 +18,7 @@ export default async function handler(req, res) {
 
     // Temporary Database
     const vehicleDatabase = {
-      "1001": "+919876543210", // Yahan apna asli number daal lijiye testing ke liye
+      "1001": "+919876543210", // SAJAR BHAI, YAHAN APNA ASLI 10-DIGIT NUMBER DAALNA MAT BHOOLIYEGA!
       "2540": "+918765432109"
     };
 
@@ -29,13 +28,19 @@ export default async function handler(req, res) {
       return res.status(404).json({ success: false, message: "Galat QR Code." });
     }
 
-    // BulkSMSPlans API details
-    const apiKey = "YOUR_API_KEY_HERE"; 
-    const bulkSmsApiUrl = `https://www.bulksmsplans.com/api/voice_call?api_key=${apiKey}&caller=${helperNumber}&receiver=${ownerNumber}`;
-    
-    console.log(`Calling API: ${bulkSmsApiUrl}`);
+    // Aapke BulkSMSPlans API details (Screenshot se)
+    const apiId = "API42znmxVL150879";
+    const apiPassword = "ND7oMLCE";
 
-    // Website ko Success bhejna
+    // Click-to-Call ka Standard API URL
+    const bulkSmsApiUrl = `https://bulksmsplans.com/api/voice_call?api_id=${apiId}&api_password=${apiPassword}&caller=${helperNumber}&receiver=${ownerNumber}`;
+    
+    console.log(`Firing Call to telecom: ${bulkSmsApiUrl}`);
+
+    // === AB HUM ASLI CALL FIRE KAR RAHE HAIN ===
+    const apiResponse = await fetch(bulkSmsApiUrl);
+    
+    // Website ko Success bhejna taaki green message aa jaye
     return res.status(200).json({
       success: true,
       message: "Call command sent successfully."
