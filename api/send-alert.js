@@ -30,20 +30,20 @@ export default async function handler(req, res) {
     if (helperCleanNumber.startsWith('0')) helperCleanNumber = helperCleanNumber.substring(1);
     if (!helperCleanNumber.startsWith('91')) helperCleanNumber = `91${helperCleanNumber}`;
 
-    // 3. SMSCountry Active Credentials (Sahi wali keys)
+    // 3. SMSCountry Active Credentials
     const SMSCOUNTRY_AUTH_KEY = "M5rIudGBrmiO4pdjCuoz";
     const SMSCOUNTRY_AUTH_TOKEN = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53";
     const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
     const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
     
-    // 4. The Magic XML Payload
+    // 4. The Magic XML Payload (With Fixed URLs)
     const jsonBodyData = {
         "Number": helperCleanNumber,    
         "CallerId": "918634512424",
-        "RingUrl": "https://alertoqr.in/ring",
-        "AnswerUrl": "https://alertoqr.in/answer",
-        "HangupUrl": "https://alertoqr.in/hangup",
+        "RingUrl": "https://restapi.smscountry.com/v0.1/Accounts/M5rIudGBrmiO4pdjCuoz/Calls/",
+        "AnswerUrl": "https://restapi.smscountry.com/v0.1/Accounts/M5rIudGBrmiO4pdjCuoz/Calls/",
+        "HangupUrl": "https://restapi.smscountry.com/v0.1/Accounts/M5rIudGBrmiO4pdjCuoz/Calls/",
         "HttpMethod": "POST",
         "Xml": `<Response><Play>Please wait, we are connecting your secure call.</Play><Dial>${ownerCleanNumber}</Dial></Response>` 
     };
