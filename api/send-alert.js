@@ -37,15 +37,11 @@ export default async function handler(req, res) {
 
     const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
     
-    // 4. The Magic XML Payload (With Fixed URLs)
+    // 4. Clean XML Payload (URLs Removed, Using Say instead of Play)
     const jsonBodyData = {
         "Number": helperCleanNumber,    
         "CallerId": "918634512424",
-        "RingUrl": "https://restapi.smscountry.com/v0.1/Accounts/M5rIudGBrmiO4pdjCuoz/Calls/",
-        "AnswerUrl": "https://restapi.smscountry.com/v0.1/Accounts/M5rIudGBrmiO4pdjCuoz/Calls/",
-        "HangupUrl": "https://restapi.smscountry.com/v0.1/Accounts/M5rIudGBrmiO4pdjCuoz/Calls/",
-        "HttpMethod": "POST",
-        "Xml": `<Response><Play>Please wait, we are connecting your secure call.</Play><Dial>${ownerCleanNumber}</Dial></Response>` 
+        "Xml": `<Response><Say>Please wait, we are connecting your secure call.</Say><Dial>${ownerCleanNumber}</Dial></Response>` 
     };
 
     // 5. Trigger the Call
