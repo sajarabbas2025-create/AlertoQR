@@ -21,14 +21,14 @@ export default async function handler(req, res) {
     
     if (error || !data) return res.status(200).json({ success: false, error: 'Profile not found.' });
 
-    // 2. Clean and Format Numbers (12 digits with 91)
-    let ownerCleanNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
-    if (ownerCleanNumber.startsWith('0')) ownerCleanNumber = ownerCleanNumber.substring(1);
-    if (!ownerCleanNumber.startsWith('91')) ownerCleanNumber = `91${ownerCleanNumber}`;
-
+    // 2. Clean and Format Numbers
     let helperCleanNumber = helperNumber.toString().replace(/[^0-9]/g, '');
     if (helperCleanNumber.startsWith('0')) helperCleanNumber = helperCleanNumber.substring(1);
     if (!helperCleanNumber.startsWith('91')) helperCleanNumber = `91${helperCleanNumber}`;
+
+    // Owner number ko strictly 10 digits nikal kar 91 lagayenge XML ke andar
+    let ownerCleanNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
+    const strictly10DigitOwner = ownerCleanNumber.slice(-10);
 
     // 3. SMSCountry Active Credentials
     const SMSCOUNTRY_AUTH_KEY = "M5rIudGBrmiO4pdjCuoz";
@@ -37,15 +37,15 @@ export default async function handler(req, res) {
 
     const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
     
-    // 4. PERFECT PAYLOAD: Aapka purana working XML wapis laga diya (<Play> tag ke sath)
+    // 4. PERFECT PAYLOAD: Direct Dial without Play tag to avoid timeout, valid URLs added
     const jsonBodyData = {
         "Number": helperCleanNumber,    
         "CallerId": "918634512424",
-        "RingUrl": "https://alertoqr.in/ring",
-        "AnswerUrl": "https://alertoqr.in/answer",
-        "HangupUrl": "https://alertoqr.in/hangup",
+        "RingUrl": "https://alertoqr.in/",
+        "AnswerUrl": "https://alertoqr.in/",
+        "HangupUrl": "https://alertoqr.in/",
         "HttpMethod": "POST",
-        "Xml": `<Response><Play>Please wait, we are connecting your secure call.</Play><Dial>${ownerCleanNumber}</Dial></Response>` 
+        "Xml": `<Response><Dial callerId="918634512424">91${strictly10DigitOwner}</Dial></Response>` 
     };
 
     // 5. Trigger the Call
