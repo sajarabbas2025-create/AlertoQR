@@ -37,7 +37,7 @@ export default async function handler(req, res) {
 
     const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
     
-    // 4. PERFECT PAYLOAD: Dummy URLs wapis lagaye hain validation pass karne ke liye + <Say> tag
+    // 4. PERFECT PAYLOAD: Aapka purana working XML wapis laga diya (<Play> tag ke sath)
     const jsonBodyData = {
         "Number": helperCleanNumber,    
         "CallerId": "918634512424",
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
         "AnswerUrl": "https://alertoqr.in/answer",
         "HangupUrl": "https://alertoqr.in/hangup",
         "HttpMethod": "POST",
-        "Xml": `<Response><Say>Please wait, we are connecting your secure call.</Say><Dial>${ownerCleanNumber}</Dial></Response>` 
+        "Xml": `<Response><Play>Please wait, we are connecting your secure call.</Play><Dial>${ownerCleanNumber}</Dial></Response>` 
     };
 
     // 5. Trigger the Call
