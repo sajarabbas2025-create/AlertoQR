@@ -21,26 +21,39 @@ export default async function handler(req, res) {
     
     if (error || !data) return res.status(200).json({ success: false, error: 'Profile not found.' });
 
-    // 2. Clean and Format Numbers (+91 format for Group Call)
-    const format = (num) => '+91' + num.toString().replace(/[^0-9]/g, '').slice(-10);
-    const helperCleanNumber = format(helperNumber);
-    const ownerCleanNumber = format(data.mobile_number);
+    // 2. Format Numbers as strictly required by SMSCountry Group Call Docs (91XXXXXXXXXX)
+    let helperCleanNumber = helperNumber.toString().replace(/[^0-9]/g, '');
+    if (helperCleanNumber.startsWith('0')) helperCleanNumber = helperCleanNumber.substring(1);
+    if (!helperCleanNumber.startsWith('91')) helperCleanNumber = `91${helperCleanNumber}`;
+
+    let ownerCleanNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
+    if (ownerCleanNumber.startsWith('0')) ownerCleanNumber = ownerCleanNumber.substring(1);
+    if (!ownerCleanNumber.startsWith('91')) ownerCleanNumber = `91${ownerCleanNumber}`;
 
     // 3. SMSCountry Active Credentials
     const SMSCOUNTRY_AUTH_KEY = "M5rIudGBrmiO4pdjCuoz";
     const SMSCOUNTRY_AUTH_TOKEN = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53";
     const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-    const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
+    // 4. NAYA API URL: "GroupCalls"
+    const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/GroupCalls/`;
     
-    // 4. GROUP CALL PAYLOAD (No XML, Direct Numbers)
+    // 5. NAYA PAYLOAD: Documentation wale screenshot ke hisaab se
     const jsonBodyData = {
-        "PrimaryNumber": helperCleanNumber,    
-        "SecondaryNumber": ownerCleanNumber,
-        "CallerId": "+918634512424"
+        "Name": `Alert_${stickerId.trim()}`,
+        "Participants": [
+            {
+                "Name": "Helper",
+                "Number": helperCleanNumber
+            },
+            {
+                "Name": "Owner",
+                "Number": ownerCleanNumber
+            }
+        ]
     };
 
-    // 5. Trigger the Call
+    // 6. Trigger the Call
     const response = await fetch(callApiUrl, {
         method: 'POST',
         headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
@@ -49,7 +62,7 @@ export default async function handler(req, res) {
     
     const apiData = await response.json();
     
-    // 6. Return Result
+    // 7. Return Result
     if (response.ok && apiData.Success !== false) {
         return res.status(200).json({ success: true, message: apiData });
     } else {
