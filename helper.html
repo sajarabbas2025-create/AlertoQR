@@ -69,8 +69,8 @@
 
     <script>
         // ============== CONFIGURATION ==============
-        // Sajar Bhai, YAHAN APNA VERCEL URL DAALNA MAT BHOOLIYEGA!
-        const BACKEND_URL = 'https://YOUR-VERCEL-PROJECT-URL.vercel.app'; 
+        // Sajar Bhai, yahan maine aapka correct Vercel URL daal diya hai!
+        const BACKEND_URL = 'https://alerto-qr.vercel.app'; 
         // ===========================================
 
         // 1. Get ID from URL & Show it
@@ -78,7 +78,7 @@
         const stickerId = urlParams.get('id') || 'ALQR1001'; 
         document.getElementById('displayId').innerText = 'ID: ' + stickerId;
 
-        // (Yahan aapka Supabase se naam fetch karne wala purana code aayega agar aapne lagaya hua tha, abhi ke liye placeholders hain)
+        // Owner Info Fetch placeholder
         document.getElementById('ownerName').innerText = "Protected Owner";
         document.getElementById('vehicleNo').innerText = "Verified User";
 
