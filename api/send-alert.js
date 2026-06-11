@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     
     if (error || !data) return res.status(200).json({ success: false, error: 'Profile not found.' });
 
-    // 2. Format Numbers as strictly required by SMSCountry Group Call Docs (91XXXXXXXXXX)
+    // 2. Format Numbers (+91XXXXXXXXXX)
     let helperCleanNumber = helperNumber.toString().replace(/[^0-9]/g, '');
     if (helperCleanNumber.startsWith('0')) helperCleanNumber = helperCleanNumber.substring(1);
     if (!helperCleanNumber.startsWith('91')) helperCleanNumber = `91${helperCleanNumber}`;
@@ -30,17 +30,17 @@ export default async function handler(req, res) {
     if (ownerCleanNumber.startsWith('0')) ownerCleanNumber = ownerCleanNumber.substring(1);
     if (!ownerCleanNumber.startsWith('91')) ownerCleanNumber = `91${ownerCleanNumber}`;
 
-    // 3. SMSCountry Active Credentials
+    // 3. Credentials
     const SMSCOUNTRY_AUTH_KEY = "M5rIudGBrmiO4pdjCuoz";
     const SMSCOUNTRY_AUTH_TOKEN = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53";
     const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-    // 4. NAYA API URL: "GroupCalls"
     const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/GroupCalls/`;
     
-    // 5. NAYA PAYLOAD: Documentation wale screenshot ke hisaab se
+    // 4. FIXED PAYLOAD: Added AnswerUrl as demanded by their error message
     const jsonBodyData = {
         "Name": `Alert_${stickerId.trim()}`,
+        "AnswerUrl": "https://alertoqr.in/",
         "Participants": [
             {
                 "Name": "Helper",
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
         ]
     };
 
-    // 6. Trigger the Call
+    // 5. Trigger the Call
     const response = await fetch(callApiUrl, {
         method: 'POST',
         headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
@@ -62,7 +62,7 @@ export default async function handler(req, res) {
     
     const apiData = await response.json();
     
-    // 7. Return Result
+    // 6. Return Result
     if (response.ok && apiData.Success !== false) {
         return res.status(200).json({ success: true, message: apiData });
     } else {
