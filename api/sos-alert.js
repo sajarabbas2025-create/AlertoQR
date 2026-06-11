@@ -30,18 +30,17 @@ export default async function handler(req, res) {
     const SMSCOUNTRY_AUTH_TOKEN = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53";
     const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-    // 4. Standard Call API (Kyunki isme Bridge/Group nahi, sirf Owner ko computer aawaz sunani hai)
+    // 4. Standard Call API
     const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
     
-    // 5. THE SOS PAYLOAD (<Say> tag computer aawaz ke liye)
+    // 5. THE SOS PAYLOAD (Ab yeh nayi XML file se aawaz uthayega)
     const jsonBodyData = {
         "Number": ownerCleanNumber,    
         "CallerId": "918634512424",
-        "RingUrl": "https://alertoqr.in/",
-        "AnswerUrl": "https://alertoqr.in/",
-        "HangupUrl": "https://alertoqr.in/",
-        "HttpMethod": "POST",
-        "Xml": "<Response><Say>Emergency Alert! Alerto Q R user, aapki gaadi ke paas ek emergency report hui hai. Kripya turant apni gaadi ke paas pahuchein.</Say></Response>" 
+        "RingUrl": "https://alerto-qr.vercel.app/api/sos-xml",
+        "AnswerUrl": "https://alerto-qr.vercel.app/api/sos-xml",
+        "HangupUrl": "https://alerto-qr.vercel.app/api/sos-xml",
+        "HttpMethod": "GET"
     };
 
     // 6. Trigger the Call
