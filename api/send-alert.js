@@ -21,14 +21,10 @@ export default async function handler(req, res) {
     
     if (error || !data) return res.status(200).json({ success: false, error: 'Profile not found.' });
 
-    // 2. Clean and Format Numbers
-    let helperCleanNumber = helperNumber.toString().replace(/[^0-9]/g, '');
-    if (helperCleanNumber.startsWith('0')) helperCleanNumber = helperCleanNumber.substring(1);
-    if (!helperCleanNumber.startsWith('91')) helperCleanNumber = `91${helperCleanNumber}`;
-
-    // Owner number ko strictly 10 digits nikal kar 91 lagayenge XML ke andar
-    let ownerCleanNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
-    const strictly10DigitOwner = ownerCleanNumber.slice(-10);
+    // 2. Clean and Format Numbers (+91 format for Group Call)
+    const format = (num) => '+91' + num.toString().replace(/[^0-9]/g, '').slice(-10);
+    const helperCleanNumber = format(helperNumber);
+    const ownerCleanNumber = format(data.mobile_number);
 
     // 3. SMSCountry Active Credentials
     const SMSCOUNTRY_AUTH_KEY = "M5rIudGBrmiO4pdjCuoz";
@@ -37,15 +33,11 @@ export default async function handler(req, res) {
 
     const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
     
-    // 4. PERFECT PAYLOAD: Direct Dial without Play tag to avoid timeout, valid URLs added
+    // 4. GROUP CALL PAYLOAD (No XML, Direct Numbers)
     const jsonBodyData = {
-        "Number": helperCleanNumber,    
-        "CallerId": "918634512424",
-        "RingUrl": "https://alertoqr.in/",
-        "AnswerUrl": "https://alertoqr.in/",
-        "HangupUrl": "https://alertoqr.in/",
-        "HttpMethod": "POST",
-        "Xml": `<Response><Dial callerId="918634512424">91${strictly10DigitOwner}</Dial></Response>` 
+        "PrimaryNumber": helperCleanNumber,    
+        "SecondaryNumber": ownerCleanNumber,
+        "CallerId": "+918634512424"
     };
 
     // 5. Trigger the Call
