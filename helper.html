@@ -14,12 +14,17 @@
         .btn-call { flex: 1; background: black; color: white; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
         .btn-alt { flex: 1; background: white; color: black; border: 1px solid #ccc; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         
-        /* Updated Quick Alerts Grid (3 Rows, 2 Columns = Bhara Bhara Look) */
+        /* Quick Alerts Grid (Sirf 4 buttons ke liye) */
         .quick-alerts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; margin-top: 10px; }
         .q-btn { background: white; border: 1px solid #eee; border-radius: 10px; padding: 15px; text-align: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 13px; font-weight: bold; color: #555; }
-        .q-btn.emergency { border-color: #ffcccc; background-color: #fff5f5; color: #d32f2f; } /* Police/Ambulance ke liye thoda alag color */
         
-        .sos-btn { background: #ff3b30; color: white; padding: 15px; border-radius: 8px; border: none; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; font-size: 16px;}
+        /* Main SOS Button */
+        .sos-btn { background: #ff3b30; color: white; padding: 15px; border-radius: 8px; border: none; font-weight: bold; width: 100%; cursor: pointer; margin-bottom: 15px; font-size: 16px; box-shadow: 0 4px 6px rgba(255, 59, 48, 0.3);}
+        
+        /* Chote Police & Ambulance Buttons */
+        .police-ambulance-group { display: flex; gap: 10px; }
+        .pa-btn { flex: 1; background: #fff5f5; color: #d32f2f; border: 1px solid #ffcccc; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        
         .input-group { margin-bottom: 15px; display: none; } 
         .input-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; font-size: 16px;}
         #statusMsg { text-align: center; font-weight: bold; margin-top: 10px; margin-bottom: 10px; display: none; padding: 12px; border-radius: 8px; font-size: 14px;}
@@ -56,18 +61,18 @@
         <div class="quick-alerts">
             <div class="q-btn" onclick="sendQuickAlert('Wrong Parking')"><span style="font-size: 24px; display:block; margin-bottom:5px;">⚠️</span>Wrong Parking</div>
             <div class="q-btn" onclick="sendQuickAlert('Tow Alert')"><span style="font-size: 24px; display:block; margin-bottom:5px;">🚓</span>Tow Alert</div>
-            
             <div class="q-btn" onclick="sendQuickAlert('Door/Window & Light ON')"><span style="font-size: 24px; display:block; margin-bottom:5px;">🚨</span>Door/Window<br>& Light ON</div>
-            
             <div class="q-btn" onclick="triggerPhotoUpload()"><span style="font-size: 24px; display:block; margin-bottom:5px;">📸</span>Share Photo</div>
-            
-            <div class="q-btn emergency" onclick="window.location.href='tel:112'"><span style="font-size: 24px; display:block; margin-bottom:5px;">👮‍♂️</span>Call Police</div>
-            <div class="q-btn emergency" onclick="window.location.href='tel:108'"><span style="font-size: 24px; display:block; margin-bottom:5px;">🚑</span>Ambulance</div>
         </div>
 
         <input type="file" accept="image/*" capture="environment" id="cameraInput" class="photo-upload" onchange="handlePhotoUpload(event)">
 
         <button class="sos-btn" id="sosBtn" onclick="triggerSOS()">🚨 EMERGENCY SOS</button>
+
+        <div class="police-ambulance-group">
+            <button class="pa-btn" onclick="window.location.href='tel:112'"><span style="font-size: 16px;">👮‍♂️</span> Call Police</button>
+            <button class="pa-btn" onclick="window.location.href='tel:108'"><span style="font-size: 16px;">🚑</span> Ambulance</button>
+        </div>
     </div>
 
     <script>
@@ -77,14 +82,9 @@
         const stickerId = urlParams.get('id') || 'ALQR1001'; 
         document.getElementById('displayId').innerText = 'ID: ' + stickerId;
 
-        // ==========================================
-        // SAJAR BHAI: YAHAN APNA PURANA CODE PASTE KAREIN
-        // Jo code data fetch karke Owner ka naam aur Gaadi ka number dikhata tha,
-        // wo yahan aayega. Abhi testing ke liye maine default daal diya hai.
-        // ==========================================
-        
-        document.getElementById('ownerName').innerText = "Sajar Abbas"; // Aapka fetch logic yahan aayega
-        document.getElementById('vehicleNo').innerText = "UP32DD2420"; // Aapka fetch logic yahan aayega
+        // Aapka fetch logic yahan aayega
+        document.getElementById('ownerName').innerText = "Sajar Abbas"; 
+        document.getElementById('vehicleNo').innerText = "UP32DD2420"; 
 
         function showStatus(msg, isError = false) {
             const statusDiv = document.getElementById('statusMsg');
