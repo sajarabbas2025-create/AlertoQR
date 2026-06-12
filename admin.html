@@ -69,8 +69,7 @@
         .sticker-header {
             background-color: #ef4444 !important; color: #ffffff !important;
             width: 105%; margin-top: -2px; text-align: center; font-weight: 900;
-            font-size: 18px; /* Bada Font */
-            padding: 8px 0; letter-spacing: 0.5px; text-transform: uppercase;
+            font-size: 18px; padding: 8px 0; letter-spacing: 0.5px; text-transform: uppercase;
             border-bottom: 2px solid #b91c1c !important;
         }
 
@@ -122,7 +121,9 @@
         /* Print Styles */
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
-            .admin-wrapper, .panel-card, .table-overflow, .modal, .btn-mini-download { display: none !important; }
+            .admin-wrapper > *:not(.panel-card:first-child) { display: none !important; }
+            .panel-header, .config-grid, .action-row-buttons, .table-overflow, .modal, .btn-mini-download { display: none !important; }
+            .panel-card { border: none !important; background: white !important; box-shadow: none !important; padding: 0 !important; }
             #bulk-render-matrix { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 35px !important; padding: 20px !important; border: none !important; background: white !important; }
             .smart-car-sticker { width: 3.5in !important; height: 3.5in !important; border: 5px solid #000000 !important; page-break-inside: avoid !important; box-shadow: none !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .sticker-header { background-color: #ef4444 !important; border-bottom: 2px solid #b91c1c !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 20px !important; }
@@ -136,7 +137,6 @@
 <body>
 
 <div class="admin-wrapper">
-
     <div class="panel-card">
         <div class="panel-header"><i class="fa-solid fa-qrcode"></i> Smart Bulk QR Code Generator</div>
         <div class="config-grid">
@@ -146,11 +146,11 @@
             </div>
             <div class="input-block">
                 <label>Start No.</label>
-                <input type="number" id="txt-start" class="form-input" value="1">
+                <input type="number" id="txt-start" class="form-input" value="1001">
             </div>
             <div class="input-block">
                 <label>End No.</label>
-                <input type="number" id="txt-end" class="form-input" value="10">
+                <input type="number" id="txt-end" class="form-input" value="1005">
             </div>
         </div>
         <div class="action-row-buttons">
@@ -169,19 +169,19 @@
                         <th>Sticker ID</th>
                         <th>Owner Name</th>
                         <th>Vehicle Number</th>
-                        <th>Chassis (Last 4)</th> <th>Security PIN</th>     <th>Mobile</th>
+                        <th>Chassis (Last 4)</th> 
+                        <th>Security PIN</th>     
+                        <th>Mobile</th>
                         <th>Status Control</th>
-                        <th>Expiry</th>
                         <th>Action Controls</th>
                     </tr>
                 </thead>
                 <tbody id="table-data-rows">
-                    <tr><td colspan="9" style="text-align:center; padding:30px;">Loading data streams from server...</td></tr>
+                    <tr><td colspan="8" style="text-align:center; padding:30px;">Loading data streams from server...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
-
 </div>
 
 <div id="editModal" class="modal">
@@ -236,35 +236,41 @@
         fetchLiveDatabaseLogs();
     });
 
-    // HD MATRIX GENERATOR
+    // 1. GENERATE HD MATRIX LOGIC
     async function generateHDMatrix() {
         const prefix = document.getElementById('txt-prefix').value.trim().toUpperCase();
         const start = parseInt(document.getElementById('txt-start').value);
         const end = parseInt(document.getElementById('txt-end').value);
         const matrixContainer = document.getElementById('bulk-render-matrix');
-        matrixContainer.innerHTML = "<div style='color:#94a3b8; grid-column: 1/-1;'><i class='fa-solid fa-spinner fa-spin'></i> Loading...</div>"; 
+        
+        matrixContainer.innerHTML = "<div style='color:#94a3b8; grid-column: 1/-1;'><i class='fa-solid fa-spinner fa-spin'></i> Building Stickers... Please wait.</div>"; 
 
         if(!prefix || isNaN(start) || isNaN(end) || start > end) {
-            alert("Configuration settings mismatch."); 
-            matrixContainer.innerHTML = "Click 'Generate' to view sheets.";
+            alert("Please check your Prefix, Start No, and End No."); 
+            matrixContainer.innerHTML = "Click 'Generate' to structure smart sticker layout view sheets.";
             return;
         }
 
         try {
+            // Fetch existing IDs to avoid generating already registered ones
             const { data, error } = await _supabase.from('registrations').select('sticker_id');
-            if (!error && data) globallyRegisteredIds = data.map(item => String(item.sticker_id).trim().toUpperCase());
+            if (!error && data) {
+                globallyRegisteredIds = data.map(item => String(item.sticker_id).trim().toUpperCase());
+            }
 
             matrixContainer.innerHTML = ""; 
             let totalRendered = 0;
 
             for (let i = start; i <= end; i++) {
-                const sequenceStr = String(i).padStart(3, '0');
+                // Ensure padding logic is correct. If i=1, it becomes 001. If i=1001, it stays 1001.
+                const sequenceStr = i.toString().padStart(3, '0');
                 const finalStickerId = `${prefix}${sequenceStr}`;
                 
+                // Skip if already registered
                 if (globallyRegisteredIds.includes(finalStickerId.toUpperCase())) continue; 
 
                 totalRendered++;
-                const targetRedirectionUrl = `https://alertoqr.in/register.html?id=${finalStickerId}`;
+                const targetRedirectionUrl = `https://alertoqr.in/helper.html?id=${finalStickerId}`;
 
                 const cardWrapper = document.createElement('div');
                 cardWrapper.className = 'sticker-card-container';
@@ -292,15 +298,19 @@
                 }, 50);
             }
 
-            if (totalRendered === 0) matrixContainer.innerHTML = "<div style='color:#f59e0b; grid-column: 1/-1;'>⚠️ All IDs registered.</div>";
-        } catch (e) { matrixContainer.innerHTML = "Error processing."; }
+            if (totalRendered === 0) {
+                matrixContainer.innerHTML = "<div style='color:#f59e0b; grid-column: 1/-1;'>⚠️ All IDs in this range are already registered.</div>";
+            }
+        } catch (e) { 
+            matrixContainer.innerHTML = "<div style='color:red; grid-column: 1/-1;'>Error processing generator.</div>"; 
+        }
     }
 
-    // DATABASE LOGS (ADDED CHASSIS AND PIN)
+    // 2. FETCH DATABASE RECORDS
     async function fetchLiveDatabaseLogs() {
         const targetTableBody = document.getElementById('table-data-rows');
         try {
-            const { data, error } = await _supabase.from('registrations').select('*').order('created_at', { ascending: false });
+            const { data, error } = await _supabase.from('registrations').select('*');
             if(error) throw error;
             
             if(data) {
@@ -309,31 +319,32 @@
             }
 
             if(!data || data.length === 0) {
-                targetTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding:20px;">No registered active records.</td></tr>`;
+                targetTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding:20px;">No registered active records.</td></tr>`;
                 return;
             }
 
             targetTableBody.innerHTML = "";
-            data.forEach(row => {
+            
+            // Sort data so newest is on top (using ID or created_at if exists)
+            data.reverse().forEach(row => {
                 const tr = document.createElement('tr');
-                let expiryString = "1 Year Active";
-                if(row.expiry_date) {
-                    const expDate = new Date(row.expiry_date);
-                    expiryString = `${String(expDate.getDate()).padStart(2, '0')}-${String(expDate.getMonth()+1).padStart(2, '0')}-${expDate.getFullYear()}`;
-                }
-
-                const isCurrentActive = (String(row.status).trim().toLowerCase() === 'active' || String(row.status).trim().toLowerCase() === 'activated');
+                const isCurrentActive = (String(row.status || '').trim().toLowerCase() === 'active' || String(row.status || '').trim().toLowerCase() === 'activated');
+                
                 const statusButtonHTML = isCurrentActive 
                     ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
                     : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
 
+                // Handling missing chassis or pin gracefully
+                let displayChassis = row.chassis_no ? String(row.chassis_no).slice(-4) : 'N/A';
+                
                 tr.innerHTML = `
                     <td><strong class="id-link" onclick="viewPremiumStickerPopup('${row.sticker_id}')">${row.sticker_id}</strong></td>
                     <td>${row.full_name || row.owner_name || 'N/A'}</td>
                     <td><span class="vehicle-tag">${row.vehicle_number || 'N/A'}</span></td>
-                    <td><strong style="color:#fcd34d;">${row.chassis_no || 'N/A'}</strong></td> <td><span class="pin-tag">${row.secret_pin || 'N/A'}</span></td> <td>${row.mobile_number || 'N/A'}</td>
+                    <td><strong style="color:#fcd34d;">${displayChassis}</strong></td> 
+                    <td><span class="pin-tag">${row.secret_pin || 'N/A'}</span></td> 
+                    <td>${row.mobile_number || 'N/A'}</td>
                     <td>${statusButtonHTML}</td>
-                    <td><strong style="color: #cbd5e1;">${expiryString}</strong></td>
                     <td>
                         <button class="btn-action btn-edit" onclick="openEditModal('${row.sticker_id}')">Edit</button>
                         <button class="btn-action btn-reset" onclick="resetCustomerPIN('${row.sticker_id}')">Reset PIN</button>
@@ -342,10 +353,12 @@
                 `;
                 targetTableBody.appendChild(tr);
             });
-        } catch (err) { targetTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color:#ef4444;">Tracking lost.</td></tr>`; }
+        } catch (err) { 
+            targetTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color:#ef4444;">Connection Error. Check Database Rules.</td></tr>`; 
+        }
     }
 
-    // MODAL & HD PNG DOWNLOAD LOGIC
+    // 3. SINGLE STICKER POPUP
     function viewPremiumStickerPopup(stickerId) {
         const targetUrl = `https://alertoqr.in/helper.html?id=${stickerId}`;
         document.getElementById('qr-mdl-id').innerText = stickerId;
@@ -369,15 +382,13 @@
         };
     }
 
-    // NAYA LOGIC: HTML2CANVAS SE HIGH QUALITY PNG DOWNLOAD
+    // 4. HD PNG DOWNLOADER (HTML2CANVAS)
     function downloadSingleTargetPNG(stickerId, redirectionUrl) {
-        // Ek chupa hua box banayenge HD render ke liye
         const container = document.createElement('div');
         container.style.position = 'fixed';
         container.style.left = '-9999px';
         container.style.top = '0';
         
-        // Inline styles ke sath design takki canvas ekdum perfect bane
         container.innerHTML = `
             <div id="render-target-${stickerId}" style="width: 400px; height: 400px; background: #ffffff; border: 8px solid #000000; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 15px; box-sizing: border-box; font-family: Arial, sans-serif;">
                 <div style="background-color: #ef4444; color: #ffffff; width: 108%; text-align: center; font-weight: 900; font-size: 26px; padding: 12px 0; text-transform: uppercase; margin-top: -5px; border-bottom: 3px solid #b91c1c;">🚨 CONTACT OWNER</div>
@@ -393,13 +404,11 @@
             text: redirectionUrl, width: 250, height: 250, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
         });
 
-        // Thoda wait karke capture karenge taaki QR image load ho jaye
         setTimeout(() => {
             const target = document.getElementById(`render-target-${stickerId}`);
-            // Scale: 3 ka matlab 3-guna (3x) High-Definition quality!
             html2canvas(target, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `${stickerId}_Smart_Sticker.png`;
+                link.download = `${stickerId}_AlertoQR.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 document.body.removeChild(container);
@@ -407,8 +416,12 @@
         }, 500);
     }
 
-    // UTILITIES
-    function closeModal() { document.getElementById('editModal').style.display = 'none'; document.getElementById('qrModal').style.display = 'none'; }
+    // 5. UTILITIES & ACTIONS
+    function closeModal() { 
+        document.getElementById('editModal').style.display = 'none'; 
+        document.getElementById('qrModal').style.display = 'none'; 
+    }
+    
     let activeEditId = null;
     function openEditModal(stickerId) {
         activeEditId = stickerId;
@@ -424,16 +437,36 @@
     async function saveEdit() {
         if(!activeEditId) return;
         try {
-            await _supabase.from('registrations').update({ owner_name: document.getElementById('mdl-txt-name').value, full_name: document.getElementById('mdl-txt-name').value, vehicle_number: document.getElementById('mdl-txt-vehicle').value, mobile_number: document.getElementById('mdl-txt-mobile').value }).eq('sticker_id', activeEditId);
-            closeModal(); fetchLiveDatabaseLogs();
+            await _supabase.from('registrations').update({ 
+                owner_name: document.getElementById('mdl-txt-name').value, 
+                full_name: document.getElementById('mdl-txt-name').value, 
+                vehicle_number: document.getElementById('mdl-txt-vehicle').value, 
+                mobile_number: document.getElementById('mdl-txt-mobile').value 
+            }).eq('sticker_id', activeEditId);
+            closeModal(); 
+            fetchLiveDatabaseLogs();
         } catch (err) { alert("Error updating"); }
     }
     
     async function resetCustomerPIN(id) {
-        if(confirm(`Reset PIN for ${id} to '1234'?`)) {
+        if(confirm(`Kya aap sach mein ${id} ka PIN '1234' par reset karna chahte hain?`)) {
             await _supabase.from('registrations').update({ secret_pin: '1234' }).eq('sticker_id', id);
             fetchLiveDatabaseLogs();
         }
     }
     
-    async function toggleStickerStatus(id, stat) { await _supabase.from('registrations').update({ status: stat }).eq('sticker_id', id); fetchLiveDatabaseLogs(); }
+    async function toggleStickerStatus(id, stat) { 
+        await _supabase.from('registrations').update({ status: stat }).eq('sticker_id', id); 
+        fetchLiveDatabaseLogs(); 
+    }
+
+    // YEH FUNCTION MISSING THA (Row Delete karne ke liye)
+    async function deleteStickerRow(id) {
+        if(confirm(`Warning: Kya aap sach mein ${id} ka record database se DELETE karna chahte hain?`)) {
+            await _supabase.from('registrations').delete().eq('sticker_id', id);
+            fetchLiveDatabaseLogs();
+        }
+    }
+</script>
+</body>
+</html>
