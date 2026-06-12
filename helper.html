@@ -9,39 +9,45 @@
         body { background-color: #f8f9fa; margin: 0; display: flex; justify-content: center; padding: 20px; }
         .app-container { background: white; width: 100%; max-width: 400px; border-radius: 20px; padding: 25px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         
-        /* Header */
+        /* Header Section */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .logo { font-size: 24px; font-weight: 800; color: #000; }
         .badge { background: #f0f0f0; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; color: #333; }
         
-        /* Owner Card */
-        .owner-card { border: 1px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
-        .label { font-size: 11px; color: #888; font-weight: bold; margin-bottom: 5px; }
+        /* Vehicle Owner Card */
+        .owner-card { border: 1px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: left; }
+        .label { font-size: 11px; color: #888; font-weight: bold; margin-bottom: 5px; letter-spacing: 0.5px; }
         .owner-name { font-size: 20px; font-weight: bold; color: #222; margin-bottom: 10px; }
         .plate { background: #000; color: #fff; display: inline-block; padding: 6px 15px; border-radius: 6px; font-weight: bold; font-size: 14px; letter-spacing: 1px; }
         
-        /* Action Row */
+        /* Call Buttons Row */
         .action-row { display: flex; gap: 10px; margin-bottom: 20px; }
         .btn { flex: 1; text-align: center; padding: 12px 5px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; border: none; }
         .btn-black { background: #000; color: #fff; }
         .btn-outline { background: #fff; color: #000; border: 1px solid #ddd; }
         
-        /* Grid Menu */
-        .section-title { font-size: 12px; color: #888; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
+        /* Quick Alerts Grid Menu */
+        .section-title { font-size: 12px; color: #888; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; text-align: left; letter-spacing: 0.5px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .grid-item { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 15px 5px; text-align: center; text-decoration: none; color: #333; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .grid-icon { font-size: 24px; }
+        .grid-item { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 18px 5px; text-align: center; text-decoration: none; color: #333; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .grid-icon { font-size: 26px; }
         
-        /* Emergency & Police */
-        .btn-sos { background: #ff3b30; color: white; width: 100%; padding: 15px; font-size: 16px; margin-bottom: 15px; }
+        /* Emergency Button & Emergency Row */
+        .btn-sos { background: #ff3b30; color: white; width: 100%; padding: 15px; font-size: 16px; margin-bottom: 15px; border-radius: 10px; justify-content: center; }
         .btn-light-red { background: #fff5f5; color: #ff3b30; border: 1px solid #ffd1d1; }
         
-        #loading-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: white; display: flex; justify-content: center; align-items: center; z-index: 10; font-weight: bold; color: #555; }
+        /* Full Page Loading Screen */
+        #loading-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; font-weight: bold; color: #333; font-size: 16px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #000; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="loading-overlay">Gaadi ka data load ho raha hai...</div>
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loading-text">Gaadi ka data load ho raha hai...</div>
+</div>
 
 <div class="app-container">
     <div class="header">
@@ -51,37 +57,37 @@
 
     <div class="owner-card">
         <div class="label">VEHICLE OWNER</div>
-        <div class="owner-name" id="display-name">Loading...</div>
+        <div class="owner-name" id="display-name">Loading Owner...</div>
         <div class="plate" id="display-plate">-------</div>
     </div>
 
     <div class="action-row">
-        <a id="btn-call" class="btn btn-black">📞 Call Owner</a>
-        <a class="btn btn-outline" onclick="alert('Alternate number is not available yet.')">📞 Call Alternate</a>
+        <a id="btn-call" href="#" class="btn btn-black">📞 Call Owner</a>
+        <a class="btn btn-outline" onclick="alert('Alternate number available nahi hai.')">📞 Call Alternate</a>
     </div>
 
     <div class="section-title">QUICK ALERTS</div>
     
     <div class="grid">
-        <a id="btn-wrong-parking" class="grid-item">
+        <a id="btn-wrong-parking" href="#" class="grid-item">
             <span class="grid-icon">⚠️</span>
             <span>Wrong Parking</span>
         </a>
-        <a id="btn-tow" class="grid-item">
+        <a id="btn-tow" href="#" class="grid-item">
             <span class="grid-icon">🚓</span>
             <span>Tow Alert</span>
         </a>
-        <a id="btn-door" class="grid-item">
+        <a id="btn-door" href="#" class="grid-item">
             <span class="grid-icon">🚨</span>
             <span>Door/Window<br>& Light ON</span>
         </a>
-        <a id="btn-photo" class="grid-item">
+        <a id="btn-photo" href="#" class="grid-item">
             <span class="grid-icon">📸</span>
             <span>Share Photo</span>
         </a>
     </div>
 
-    <a id="btn-sos" class="btn btn-sos">🚨 EMERGENCY SOS</a>
+    <a id="btn-sos" href="#" class="btn btn-sos">🚨 EMERGENCY SOS</a>
 
     <div class="action-row">
         <a href="tel:112" class="btn btn-light-red">👮‍♂️ Call Police</a>
@@ -90,12 +96,14 @@
 </div>
 
 <script>
+    // URL Parameters se Sticker ID extract karna (?id=ALQR1005)
     const urlParams = new URLSearchParams(window.location.search);
     const stickerId = urlParams.get('id');
 
     window.onload = () => {
         if (!stickerId) {
-            document.getElementById('loading-overlay').innerText = "Invalid QR Code!";
+            document.getElementById('loading-text').innerText = "Invalid QR Code: Sticker ID missing hai!";
+            document.querySelector('.spinner').style.display = 'none';
         } else {
             document.getElementById('display-id').innerText = `ID: ${stickerId.toUpperCase()}`;
             fetchOwnerData();
@@ -104,7 +112,8 @@
 
     async function fetchOwnerData() {
         try {
-            const response = await fetch('/api/sos-alert', {
+            // Absolute Vercel API Endpoint use kar rahe hain connection issue fix karne ke liye
+            const response = await fetch('https://alerto-qr.vercel.app/api/sos-alert', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ stickerId: stickerId })
@@ -113,41 +122,44 @@
             const result = await response.json();
             
             if (result.success && result.mobileNumber) {
+                // Loading Overlay hide karna jab data load ho jaye
                 document.getElementById('loading-overlay').style.display = 'none';
                 
-                // UI Update
+                // Card Details Update karna
                 document.getElementById('display-name').innerText = result.ownerName;
                 document.getElementById('display-plate').innerText = result.vehicleNumber;
                 
                 const num = result.mobileNumber;
 
-                // Call Owner
+                // 1. Direct Call Link Setup
                 document.getElementById('btn-call').href = `tel:+${num}`;
                 
-                // WhatsApp & SMS Links setup
+                // WhatsApp & SMS Base URLs setup
                 const waBase = `https://wa.me/${num}?text=`;
                 const smsBase = `sms:+${num}?body=`;
 
-                // Share Photo (Direct WhatsApp)
+                // 2. Share Photo - Direct WhatsApp Action
                 document.getElementById('btn-photo').href = waBase + encodeURIComponent("Emergency! Main aapki gaadi ke paas hu, aapko photo bhej raha hu.");
                 
-                // Wrong Parking (Direct WhatsApp/SMS)
-                document.getElementById('btn-wrong-parking').href = waBase + encodeURIComponent("Alert! Aapki gaadi galat jagah park hai, kripya ise hatayein.");
+                // 3. Wrong Parking Alert Action
+                document.getElementById('btn-wrong-parking').href = waBase + encodeURIComponent("Alert! Aapki gaadi galat jagah park hai, kripya ise jald se jald hatayein.");
                 
-                // Tow Alert
-                document.getElementById('btn-tow').href = waBase + encodeURIComponent("Alert! Aapki gaadi Tow hone wali hai, jaldi aaiye.");
+                // 4. Tow Alert Action
+                document.getElementById('btn-tow').href = waBase + encodeURIComponent("Alert! Aapki gaadi Tow hone wali hai, kripya jaldi aaiye.");
                 
-                // Door/Light
-                document.getElementById('btn-door').href = waBase + encodeURIComponent("Alert! Aapki gaadi ka darwaza khula hai ya light ON rah gayi hai.");
+                // 5. Door/Light ON Action
+                document.getElementById('btn-door').href = waBase + encodeURIComponent("Alert! Aapki gaadi ka darwaza khula hai ya light ON reh gayi hai. Kripya check karein.");
                 
-                // Emergency SOS (Direct Call or SMS)
-                document.getElementById('btn-sos').href = smsBase + encodeURIComponent("🚨 EMERGENCY! Gaadi ke paas emergency hai, turant sampark karein.");
+                // 6. Emergency SOS Action (Direct Message Trigger)
+                document.getElementById('btn-sos').href = smsBase + encodeURIComponent("🚨 EMERGENCY! Aapki gaadi ke paas badi emergency hai, turant yahan pahunchein.");
 
             } else {
-                document.getElementById('loading-overlay').innerText = `Error: ${result.error}`;
+                document.getElementById('loading-text').innerText = `Error: ${result.error || "Gaadi ka record nahi mila."}`;
+                document.querySelector('.spinner').style.display = 'none';
             }
         } catch (err) {
-            document.getElementById('loading-overlay').innerText = "Network issue. Please refresh.";
+            document.getElementById('loading-text').innerText = "Network issue. Please refresh the page.";
+            document.querySelector('.spinner').style.display = 'none';
         }
     }
 </script>
