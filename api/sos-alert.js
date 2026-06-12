@@ -11,24 +11,23 @@ export default async function handler(req, res) {
 
   try {
     const { stickerId } = req.body;
-    
-    if (!stickerId) return res.status(200).json({ success: false, error: 'Sticker ID missing hai' });
+    if (!stickerId) return res.status(200).json({ success: false, error: 'ID missing' });
 
-    // Supabase se data nikalna
+    // Ab hum naam aur vehicle number bhi nikal rahe hain
     const { data, error } = await supabase.from('registrations')
-      .select('mobile_number').eq('sticker_id', stickerId.trim().toUpperCase()).single();
+      .select('mobile_number, full_name, vehicle_number').eq('sticker_id', stickerId.trim().toUpperCase()).single();
     
     if (error || !data) return res.status(200).json({ success: false, error: 'Vehicle profile nahi mili' });
 
-    // Number ko clean aur format karna (Call aur WhatsApp ke liye)
     let ownerNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
     if (ownerNumber.startsWith('0')) ownerNumber = ownerNumber.substring(1);
     if (ownerNumber.length === 10) ownerNumber = `91${ownerNumber}`;
 
-    // Frontend ko direct number bhej dena
     return res.status(200).json({ 
         success: true, 
-        mobileNumber: ownerNumber
+        mobileNumber: ownerNumber,
+        ownerName: data.full_name || 'Vehicle Owner',
+        vehicleNumber: data.vehicle_number || 'N/A'
     });
 
   } catch (err) {
