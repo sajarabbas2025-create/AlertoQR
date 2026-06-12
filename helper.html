@@ -50,113 +50,41 @@
             padding-bottom: 16px;
         }
 
-        .brand-name {
-            font-size: 22px;
-            font-weight: 800;
-            color: #0f172a;
-            letter-spacing: -0.5px;
-        }
+        .brand-name { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
 
         .sticker-id-badge {
-            background: #f1f5f9;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #475569;
-            border: 1px solid #e2e8f0;
+            background: #f1f5f9; padding: 6px 12px; border-radius: 8px; font-size: 13px;
+            font-weight: 700; color: #475569; border: 1px solid #e2e8f0;
         }
         
         .owner-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
+            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px;
+            padding: 20px; margin-bottom: 20px;
         }
 
-        .meta-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-
-        .owner-name {
-            font-size: 26px;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .vehicle-number-plate {
-            background: #000000;
-            color: #ffffff;
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 6px;
-            font-size: 18px;
-            font-weight: 800;
-            letter-spacing: 1px;
-        }
+        .meta-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 6px; }
+        .owner-name { font-size: 26px; font-weight: 800; color: #0f172a; margin-bottom: 12px; text-transform: uppercase; }
+        .vehicle-number-plate { background: #000000; color: #ffffff; display: inline-block; padding: 6px 16px; border-radius: 6px; font-size: 18px; font-weight: 800; letter-spacing: 1px; }
         
-        .calling-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .btn-call {
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
+        .calling-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .btn-call { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-owner { background: #000000; color: white; }
         .btn-alternate { background: #ffffff; color: #000000; border: 1px solid #cbd5e1; }
 
-        .section-title {
-            font-size: 12px;
-            font-weight: 800;
-            color: #94a3b8;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
+        .section-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; }
 
-        .alerts-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .alert-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 20px 16px;
-            text-align: center;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
+        .alerts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .alert-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .alert-card i { font-size: 26px; }
         .alert-card span { font-size: 13px; font-weight: 700; color: #334155; }
         
+        /* Bada SOS Button CSS */
+        .btn-sos-heavy {
+            background: #ff3b30; color: white; width: 100%; padding: 16px; border-radius: 12px;
+            font-size: 16px; font-weight: 800; border: none; cursor: pointer; margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(255, 59, 48, 0.3); display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+
         .emergency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .btn-emergency { padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-police { background: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
@@ -224,13 +152,16 @@
             </div>
         </div>
 
-        <div class="section-title">Emergency Links</div>
+        <button id="btn-sos-action" class="btn-sos-heavy">
+            🚨 EMERGENCY SOS
+        </button>
+
         <div class="emergency-grid">
             <button class="btn-emergency btn-police" onclick="window.location.href='tel:112'">
-                <i class="fa-solid fa-building-shield"></i> Call Police (112)
+                <i class="fa-solid fa-building-shield"></i> Call Police
             </button>
-            <button class="btn-emergency btn-ambulance" onclick="window.location.href='tel:102'">
-                <i class="fa-solid fa-truck-medical"></i> Ambulance (102)
+            <button class="btn-emergency btn-ambulance" onclick="window.location.href='tel:108'">
+                <i class="fa-solid fa-truck-medical"></i> Ambulance
             </button>
         </div>
     </div>
@@ -242,6 +173,7 @@
     const _supabase = supabase.createClient(databaseUrl, databaseKey);
 
     let urlAssetId = "";
+    let globalOwnerMobile = "";
 
     window.addEventListener('DOMContentLoaded', async () => {
         const queryStrings = new URLSearchParams(window.location.search);
@@ -262,7 +194,6 @@
         document.getElementById('dom-sticker-badge').innerText = `ID: ${urlAssetId}`;
 
         try {
-            // Direct Supabase Data Fetch
             const { data, error } = await _supabase.from('registrations').select('*').eq('sticker_id', urlAssetId).single();
             
             if (error || !data) { 
@@ -273,16 +204,17 @@
             document.getElementById('dom-owner-name').innerText = data.full_name || "AUTHORIZED OWNER";
             document.getElementById('dom-plate-number').innerText = data.vehicle_number || "VEHICLE";
 
-            // Mobile Number Cleanup & Direct Links Setup
             let mobileNum = data.mobile_number ? data.mobile_number.toString().replace(/[^0-9]/g, '') : "";
             if(mobileNum.startsWith('0')) mobileNum = mobileNum.substring(1);
             if(mobileNum.length === 10) mobileNum = "91" + mobileNum;
 
             if (mobileNum) {
-                // Set Direct Call
+                globalOwnerMobile = mobileNum; // GPS function ke liye save kar liya
+                
+                // Normal Call
                 document.getElementById('btn-call-owner').onclick = () => window.location.href = `tel:+${mobileNum}`;
                 
-                // Set Direct WhatsApp Actions
+                // Direct WhatsApp Actions
                 const waBase = `https://wa.me/${mobileNum}?text=`;
                 document.getElementById('card-parking').onclick = () => window.location.href = waBase + encodeURIComponent("Alert! Aapki gaadi galat jagah park hai, kripya ise hatayein.");
                 document.getElementById('card-tow').onclick = () => window.location.href = waBase + encodeURIComponent("Alert! Aapki gaadi Tow hone wali hai, jaldi aaiye.");
@@ -293,12 +225,55 @@
                 return;
             }
 
-            // Show Dashboard
             document.getElementById('loading-view').style.display = 'none';
             document.getElementById('dashboard-view').style.display = 'block';
             
         } catch (err) {
             deployErrorView('Cluster Sync Error', 'Server connection timeout.');
+        }
+    });
+
+    // --- LIVE GPS LOCATION SOS LOGIC ---
+    document.getElementById('btn-sos-action').addEventListener('click', function() {
+        if (!globalOwnerMobile) return;
+
+        const btn = this;
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> GPS Location nikal raha hai...';
+        btn.style.opacity = '0.8';
+
+        // GPS nikalne ka code
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // Location mil gayi!
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+                    
+                    const sosMessage = `🚨 *EMERGENCY SOS!* 🚨\nAapki gaadi ke paas ek badi emergency hai. Main gaadi ke paas khada hu, kripya turant is location par pahunchein:\n📍 Map Link: ${mapUrl}`;
+                    
+                    window.location.href = `https://wa.me/${globalOwnerMobile}?text=${encodeURIComponent(sosMessage)}`;
+                    
+                    // Reset button
+                    setTimeout(() => { btn.innerHTML = originalHtml; btn.style.opacity = '1'; }, 2000);
+                },
+                function(error) {
+                    // Agar helper ne location allow nahi ki ya error aa gaya
+                    const fallbackMsg = `🚨 *EMERGENCY SOS!* 🚨\nAapki gaadi ke paas ek badi emergency hai, kripya turant check karein! (Location link fail)`;
+                    window.location.href = `https://wa.me/${globalOwnerMobile}?text=${encodeURIComponent(fallbackMsg)}`;
+                    
+                    // Reset button
+                    setTimeout(() => { btn.innerHTML = originalHtml; btn.style.opacity = '1'; }, 2000);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        } else {
+            // Agar phone mein GPS support hi nahi hai
+            const fallbackMsg = `🚨 *EMERGENCY SOS!* 🚨\nAapki gaadi ke paas ek badi emergency hai, kripya turant check karein!`;
+            window.location.href = `https://wa.me/${globalOwnerMobile}?text=${encodeURIComponent(fallbackMsg)}`;
+            btn.innerHTML = originalHtml;
+            btn.style.opacity = '1';
         }
     });
 
