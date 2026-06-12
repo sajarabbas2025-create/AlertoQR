@@ -14,26 +14,22 @@ export default async function handler(req, res) {
     
     if (!stickerId) return res.status(200).json({ success: false, error: 'Sticker ID is missing' });
 
-    // 1. Fetch Owner Profile
     const { data, error } = await supabase.from('registrations')
       .select('mobile_number').eq('sticker_id', stickerId.trim().toUpperCase()).single();
     
     if (error || !data) return res.status(200).json({ success: false, error: 'Profile not found.' });
 
-    // 2. Format Owner Number (+91)
     let ownerCleanNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
     if (ownerCleanNumber.startsWith('0')) ownerCleanNumber = ownerCleanNumber.substring(1);
     if (!ownerCleanNumber.startsWith('91')) ownerCleanNumber = `91${ownerCleanNumber}`;
 
-    // 3. SMSCountry Credentials
     const SMSCOUNTRY_AUTH_KEY = "M5rIudGBrmiO4pdjCuoz";
     const SMSCOUNTRY_AUTH_TOKEN = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53";
     const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
 
-    // 4. Standard Call API
     const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
     
-    // 5. THE SOS PAYLOAD (Ab yeh nayi XML file se aawaz uthayega)
+    // YAHAN NAYA XML WALA LINK UPDATE KIYA GAYA HAI
     const jsonBodyData = {
         "Number": ownerCleanNumber,    
         "CallerId": "918634512424",
@@ -43,7 +39,6 @@ export default async function handler(req, res) {
         "HttpMethod": "GET"
     };
 
-    // 6. Trigger the Call
     const response = await fetch(callApiUrl, {
         method: 'POST',
         headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
