@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>AlertoQR - Admin Panel & Bulk Generator</title>
+    <title>AlertoQR - Admin Panel</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -14,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #0b1329; color: #f8fafc; padding: 40px 20px; }
         .admin-wrapper { max-width: 1450px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
 
@@ -33,7 +30,7 @@
 
         #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
 
-        /* PREMIUM STICKER DESIGN (On Screen) */
+        /* Premium Sticker */
         .smart-car-sticker {
             background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%) !important; color: #000000 !important;
             width: 270px; border: 6px solid #0f172a !important; border-radius: 20px;
@@ -52,10 +49,8 @@
         .sticker-privacy-strip { width: 90%; text-align: center; font-size: 10px; font-weight: 800; color: #166534 !important; background-color: #dcfce7 !important; padding: 6px 0; border-radius: 6px; border: 1px solid #bbf7d0; }
 
         .sticker-card-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .btn-mini-download { background-color: #1e293b; color: #ffffff; border: none; padding: 9px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center; transition: 0.2s; }
-        .btn-mini-download:hover { background-color: #10b981; }
+        .btn-mini-download { background-color: #1e293b; color: #ffffff; border: none; padding: 9px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center; }
 
-        /* Table Styling */
         .table-overflow { overflow-x: auto; margin-top: 15px; }
         .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
         .data-table th { background-color: #0b1329; color: #94a3b8; padding: 14px; font-weight: 700; border-bottom: 2px solid #334155; white-space: nowrap; }
@@ -74,7 +69,6 @@
         .btn-reset { background-color: #3b82f6; color: white; margin-right: 3px; }
         .btn-delete { background-color: #ef4444; color: white; }
 
-        /* Modals */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); align-items: center; justify-content: center; }
         .modal-content { background: white; color: black; padding: 25px; border-radius: 12px; width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-header { font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
@@ -99,18 +93,9 @@
     <div class="panel-card">
         <div class="panel-header"><i class="fa-solid fa-qrcode"></i> Smart Bulk QR Code Generator</div>
         <div class="config-grid">
-            <div class="input-block">
-                <label>Series Code (Prefix)</label>
-                <input type="text" id="txt-prefix" class="form-input" value="ALQR">
-            </div>
-            <div class="input-block">
-                <label>Start No.</label>
-                <input type="number" id="txt-start" class="form-input" value="1001">
-            </div>
-            <div class="input-block">
-                <label>End No.</label>
-                <input type="number" id="txt-end" class="form-input" value="1005">
-            </div>
+            <div class="input-block"><label>Series Code (Prefix)</label><input type="text" id="txt-prefix" class="form-input" value="ALQR"></div>
+            <div class="input-block"><label>Start No.</label><input type="number" id="txt-start" class="form-input" value="1001"></div>
+            <div class="input-block"><label>End No.</label><input type="number" id="txt-end" class="form-input" value="1005"></div>
         </div>
         <div class="action-row-buttons">
             <button class="btn btn-generate" onclick="generateHDMatrix()"><i class="fa-solid fa-gear"></i> Generate Smart Stickers</button>
@@ -125,14 +110,8 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Sticker ID</th>
-                        <th>Owner Name</th>
-                        <th>Vehicle Number</th>
-                        <th>Chassis (L-4)</th> 
-                        <th>Sec. PIN</th>     
-                        <th>Mobile</th>
-                        <th>Alt Mobile</th> <th>Status Control</th>
-                        <th>Action Controls</th>
+                        <th>Sticker ID</th><th>Owner Name</th><th>Vehicle Number</th><th>Chassis (L-4)</th> 
+                        <th>Sec. PIN</th><th>Mobile</th><th>Alt Mobile</th><th>Status Control</th><th>Action Controls</th>
                     </tr>
                 </thead>
                 <tbody id="table-data-rows">
@@ -146,23 +125,15 @@
 <div id="editModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">Edit Registration: <span id="mdl-title-id"></span></div>
-        
-        <label class="edit-label">OWNER NAME</label>
-        <input type="text" id="mdl-txt-name" class="edit-input">
-        
-        <label class="edit-label">VEHICLE NUMBER</label>
-        <input type="text" id="mdl-txt-vehicle" class="edit-input" style="text-transform:uppercase;">
+        <label class="edit-label">OWNER NAME</label><input type="text" id="mdl-txt-name" class="edit-input">
+        <label class="edit-label">VEHICLE NUMBER</label><input type="text" id="mdl-txt-vehicle" class="edit-input" style="text-transform:uppercase;">
         
         <div style="display: flex; gap: 10px;">
-            <div style="flex: 1;">
-                <label class="edit-label">PRIMARY MOBILE</label>
-                <input type="tel" id="mdl-txt-mobile" maxlength="10" class="edit-input">
-            </div>
-            <div style="flex: 1;">
-                <label class="edit-label">ALTERNATE MOBILE</label>
-                <input type="tel" id="mdl-txt-alt" maxlength="10" class="edit-input" placeholder="Optional">
-            </div>
+            <div style="flex: 1;"><label class="edit-label">CHASSIS (LAST 4)</label><input type="text" id="mdl-txt-chassis" maxlength="4" class="edit-input"></div>
+            <div style="flex: 1;"><label class="edit-label">PRIMARY MOBILE</label><input type="tel" id="mdl-txt-mobile" maxlength="10" class="edit-input"></div>
         </div>
+        
+        <label class="edit-label">ALTERNATE MOBILE</label><input type="tel" id="mdl-txt-alt" maxlength="10" class="edit-input" placeholder="Optional">
 
         <div class="modal-actions">
             <button class="btn" style="background:#64748b; color:white; padding:10px 18px;" onclick="closeModal()">Cancel</button>
@@ -181,7 +152,7 @@
             <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
             <div class="sticker-qr-slot" id="modal-qr-holder"></div>
             <div class="sticker-footer-id" id="modal-sticker-id-badge">ALQR000</div>
-            <div class="sticker-privacy-strip">✓ Privacy Safe • Number Hidden</div>
+            <div class="sticker-privacy-strip">✓ Instant Emergency Alert System</div>
         </div>
 
         <div class="modal-actions" style="flex-direction:column; gap:10px; margin-top:18px;">
@@ -201,31 +172,21 @@
     let globallyRegisteredIds = [];
     let cachedDatabaseRecords = []; 
 
-    window.addEventListener('DOMContentLoaded', () => {
-        fetchLiveDatabaseLogs();
-    });
+    window.addEventListener('DOMContentLoaded', () => { fetchLiveDatabaseLogs(); });
 
-    // 1. GENERATE HD MATRIX LOGIC
     async function generateHDMatrix() {
         const prefix = document.getElementById('txt-prefix').value.trim().toUpperCase();
         const start = parseInt(document.getElementById('txt-start').value);
         const end = parseInt(document.getElementById('txt-end').value);
         const matrixContainer = document.getElementById('bulk-render-matrix');
-        
-        matrixContainer.innerHTML = "<div style='color:#94a3b8; grid-column: 1/-1;'><i class='fa-solid fa-spinner fa-spin'></i> Building Stickers... Please wait.</div>"; 
+        matrixContainer.innerHTML = "<div style='color:#94a3b8; grid-column: 1/-1;'><i class='fa-solid fa-spinner fa-spin'></i> Building Stickers...</div>"; 
 
-        if(!prefix || isNaN(start) || isNaN(end) || start > end) {
-            alert("Please check your Prefix, Start No, and End No."); 
-            matrixContainer.innerHTML = "Click 'Generate' to structure smart sticker layout view sheets.";
-            return;
-        }
+        if(!prefix || isNaN(start) || isNaN(end) || start > end) return;
 
         try {
             const { data, error } = await _supabase.from('registrations').select('sticker_id');
             if (!error && data) globallyRegisteredIds = data.map(item => String(item.sticker_id).trim().toUpperCase());
-
-            matrixContainer.innerHTML = ""; 
-            let totalRendered = 0;
+            matrixContainer.innerHTML = ""; let totalRendered = 0;
 
             for (let i = start; i <= end; i++) {
                 const sequenceStr = i.toString().padStart(3, '0');
@@ -234,7 +195,6 @@
 
                 totalRendered++;
                 const targetRedirectionUrl = `https://alertoqr.in/helper.html?id=${finalStickerId}`;
-
                 const cardWrapper = document.createElement('div');
                 cardWrapper.className = 'sticker-card-container';
                 cardWrapper.innerHTML = `
@@ -244,55 +204,32 @@
                         <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
                         <div class="sticker-qr-slot" id="matrix-qr-${finalStickerId}"></div>
                         <div class="sticker-footer-id">${finalStickerId}</div>
-                        <div class="sticker-privacy-strip">✓ Privacy Safe • Number Hidden</div>
+                        <div class="sticker-privacy-strip">✓ Instant Emergency Alert System</div>
                     </div>
                     <button class="btn-mini-download" onclick="downloadSingleTargetPNG('${finalStickerId}', '${targetRedirectionUrl}')">
                         <i class="fa-solid fa-image"></i> Download HD Image
                     </button>
                 `;
                 matrixContainer.appendChild(cardWrapper);
-
-                new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), {
-                    text: targetRedirectionUrl, width: 250, height: 250, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
-                });
-                
-                setTimeout(() => {
-                    const img = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('img');
-                    if(img) { img.style.width = "120px"; img.style.height = "120px"; }
-                }, 50);
+                new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), { text: targetRedirectionUrl, width: 250, height: 250, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+                setTimeout(() => { const img = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('img'); if(img) { img.style.width = "120px"; img.style.height = "120px"; } }, 50);
             }
-
-            if (totalRendered === 0) {
-                matrixContainer.innerHTML = "<div style='color:#f59e0b; grid-column: 1/-1;'>⚠️ All IDs in this range are already registered.</div>";
-            }
-        } catch (e) { 
-            matrixContainer.innerHTML = "<div style='color:red; grid-column: 1/-1;'>Error processing generator.</div>"; 
-        }
+            if (totalRendered === 0) matrixContainer.innerHTML = "<div style='color:#f59e0b; grid-column: 1/-1;'>⚠️ All IDs in this range are already registered.</div>";
+        } catch (e) { matrixContainer.innerHTML = "<div style='color:red; grid-column: 1/-1;'>Error processing generator.</div>"; }
     }
 
-    // 2. FETCH DATABASE RECORDS
     async function fetchLiveDatabaseLogs() {
         const targetTableBody = document.getElementById('table-data-rows');
         try {
             const { data, error } = await _supabase.from('registrations').select('*');
             if(error) throw error;
-            
-            if(data) {
-                globallyRegisteredIds = data.map(item => String(item.sticker_id).trim().toUpperCase());
-                cachedDatabaseRecords = data; 
-            }
-
-            if(!data || data.length === 0) {
-                targetTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding:20px;">No registered active records.</td></tr>`;
-                return;
-            }
+            if(data) { globallyRegisteredIds = data.map(item => String(item.sticker_id).trim().toUpperCase()); cachedDatabaseRecords = data; }
+            if(!data || data.length === 0) { targetTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding:20px;">No registered active records.</td></tr>`; return; }
 
             targetTableBody.innerHTML = "";
-            
             data.reverse().forEach(row => {
                 const tr = document.createElement('tr');
                 const isCurrentActive = (String(row.status || '').trim().toLowerCase() === 'active' || String(row.status || '').trim().toLowerCase() === 'activated');
-                
                 const statusButtonHTML = isCurrentActive 
                     ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
                     : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
@@ -306,7 +243,8 @@
                     <td><strong style="color:#fcd34d;">${displayChassis}</strong></td> 
                     <td><span class="pin-tag">${row.secret_pin || 'N/A'}</span></td> 
                     <td>${row.mobile_number || 'N/A'}</td>
-                    <td>${row.alternate_number || 'N/A'}</td> <td>${statusButtonHTML}</td>
+                    <td>${row.alternate_number || 'N/A'}</td>
+                    <td>${statusButtonHTML}</td>
                     <td>
                         <button class="btn-action btn-edit" onclick="openEditModal('${row.sticker_id}')">Edit</button>
                         <button class="btn-action btn-reset" onclick="resetCustomerPIN('${row.sticker_id}')">Reset PIN</button>
@@ -315,43 +253,23 @@
                 `;
                 targetTableBody.appendChild(tr);
             });
-        } catch (err) { 
-            targetTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color:#ef4444;">Connection Error. Check Database Rules.</td></tr>`; 
-        }
+        } catch (err) {}
     }
 
-    // 3. SINGLE STICKER POPUP
     function viewPremiumStickerPopup(stickerId) {
         const targetUrl = `https://alertoqr.in/helper.html?id=${stickerId}`;
         document.getElementById('qr-mdl-id').innerText = stickerId;
         document.getElementById('modal-sticker-id-badge').innerText = stickerId;
-        
         const holder = document.getElementById('modal-qr-holder');
-        holder.innerHTML = ""; 
-        document.getElementById('qrModal').style.display = 'flex';
-        
-        new QRCode(holder, {
-            text: targetUrl, width: 250, height: 250, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
-        });
-
-        setTimeout(() => {
-            const img = holder.querySelector('img');
-            if(img) { img.style.width = "120px"; img.style.height = "120px"; }
-        }, 120);
-
-        document.getElementById('btn-modal-download-trigger').onclick = () => {
-            downloadSingleTargetPNG(stickerId, targetUrl);
-        };
+        holder.innerHTML = ""; document.getElementById('qrModal').style.display = 'flex';
+        new QRCode(holder, { text: targetUrl, width: 250, height: 250, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+        setTimeout(() => { const img = holder.querySelector('img'); if(img) { img.style.width = "120px"; img.style.height = "120px"; } }, 120);
+        document.getElementById('btn-modal-download-trigger').onclick = () => { downloadSingleTargetPNG(stickerId, targetUrl); };
     }
 
-    // 4. FIX 5: HD PNG DOWNLOADER (HTML2CANVAS) Height fix
     function downloadSingleTargetPNG(stickerId, redirectionUrl) {
         const container = document.createElement('div');
-        container.style.position = 'fixed';
-        container.style.left = '-9999px';
-        container.style.top = '0';
-        
-        // Height hata di gayi hai (height: auto), taaki content cut na ho. Padding add ki hai.
+        container.style.position = 'fixed'; container.style.left = '-9999px'; container.style.top = '0';
         container.innerHTML = `
             <div id="render-target-${stickerId}" style="width: 420px; background: #ffffff; border: 8px solid #0f172a; border-radius: 24px; display: flex; flex-direction: column; align-items: center; padding: 0 0 20px 0; box-sizing: border-box; font-family: Arial, sans-serif; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
                 <div style="background-color: #ef4444; color: #ffffff; width: 100%; text-align: center; font-weight: 900; font-size: 28px; padding: 16px 0; text-transform: uppercase; border-bottom: 4px solid #b91c1c; letter-spacing: 1px;">🚨 CONTACT OWNER</div>
@@ -359,32 +277,20 @@
                 <div style="font-size: 17px; font-weight: 800; color: #1e293b; margin-top: 15px;">🔒 SCAN TO ALERT CAR OWNER</div>
                 <div id="print-qr-${stickerId}" style="margin: 15px 0; display:flex; justify-content:center; background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;"></div>
                 <div style="font-size: 26px; font-weight: 900; color: #0f172a; background: #f1f5f9; padding: 8px 30px; border-radius: 10px; border: 2px dashed #94a3b8; letter-spacing: 3px; margin-bottom: 15px;">${stickerId}</div>
-                <div style="width: 90%; text-align: center; font-size: 13px; font-weight: 800; color: #166534; background-color: #dcfce7; padding: 8px 0; border-radius: 8px; border: 1px solid #bbf7d0;">✓ Privacy Safe • Number Hidden</div>
+                <div style="width: 90%; text-align: center; font-size: 13px; font-weight: 800; color: #166534; background-color: #dcfce7; padding: 8px 0; border-radius: 8px; border: 1px solid #bbf7d0;">✓ Instant Emergency Alert System</div>
             </div>
         `;
         document.body.appendChild(container);
-
-        new QRCode(document.getElementById(`print-qr-${stickerId}`), {
-            text: redirectionUrl, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
-        });
-
+        new QRCode(document.getElementById(`print-qr-${stickerId}`), { text: redirectionUrl, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
         setTimeout(() => {
             const target = document.getElementById(`render-target-${stickerId}`);
             html2canvas(target, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `${stickerId}_AlertoQR.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                document.body.removeChild(container);
+                const link = document.createElement('a'); link.download = `${stickerId}_AlertoQR.png`; link.href = canvas.toDataURL('image/png'); link.click(); document.body.removeChild(container);
             });
         }, 600);
     }
 
-    // 5. UTILITIES & ACTIONS
-    function closeModal() { 
-        document.getElementById('editModal').style.display = 'none'; 
-        document.getElementById('qrModal').style.display = 'none'; 
-    }
+    function closeModal() { document.getElementById('editModal').style.display = 'none'; document.getElementById('qrModal').style.display = 'none'; }
     
     let activeEditId = null;
     function openEditModal(stickerId) {
@@ -394,8 +300,9 @@
         document.getElementById('mdl-title-id').innerText = stickerId;
         document.getElementById('mdl-txt-name').value = matchedRow.owner_name || matchedRow.full_name || "";
         document.getElementById('mdl-txt-vehicle').value = matchedRow.vehicle_number || "";
+        document.getElementById('mdl-txt-chassis').value = matchedRow.chassis_no || ""; // Chassis Edit Link
         document.getElementById('mdl-txt-mobile').value = matchedRow.mobile_number || "";
-        document.getElementById('mdl-txt-alt').value = matchedRow.alternate_number || ""; // FIX 2
+        document.getElementById('mdl-txt-alt').value = matchedRow.alternate_number || "";
         document.getElementById('editModal').style.display = 'flex';
     }
     
@@ -406,40 +313,27 @@
                 owner_name: document.getElementById('mdl-txt-name').value, 
                 full_name: document.getElementById('mdl-txt-name').value, 
                 vehicle_number: document.getElementById('mdl-txt-vehicle').value, 
+                chassis_no: document.getElementById('mdl-txt-chassis').value, // Chassis Save
                 mobile_number: document.getElementById('mdl-txt-mobile').value,
-                alternate_number: document.getElementById('mdl-txt-alt').value // FIX 2
+                alternate_number: document.getElementById('mdl-txt-alt').value
             }).eq('sticker_id', activeEditId);
-            closeModal(); 
-            fetchLiveDatabaseLogs();
+            closeModal(); fetchLiveDatabaseLogs();
         } catch (err) { alert("Error updating"); }
     }
     
-    // FIX 3: Reset PIN Confirm aur Success Alert
     async function resetCustomerPIN(id) {
         if(confirm(`Kya aap sach mein ${id} ka PIN '1234' par reset karna chahte hain?`)) {
             try {
                 const { error } = await _supabase.from('registrations').update({ secret_pin: '1234' }).eq('sticker_id', id);
                 if(error) throw error;
-                
-                alert(`Success! ${id} ka naya PIN '1234' set ho gaya hai.`); // Success Alert Added
+                alert(`Success! ${id} ka naya PIN '1234' set ho gaya hai.`);
                 fetchLiveDatabaseLogs();
-            } catch(err) {
-                alert("Error: PIN Reset nahi ho paya. Please try again.");
-            }
+            } catch(err) { alert("Error: PIN Reset nahi ho paya. Please try again."); }
         }
     }
     
-    async function toggleStickerStatus(id, stat) { 
-        await _supabase.from('registrations').update({ status: stat }).eq('sticker_id', id); 
-        fetchLiveDatabaseLogs(); 
-    }
-
-    async function deleteStickerRow(id) {
-        if(confirm(`Warning: Kya aap sach mein ${id} ka record database se DELETE karna chahte hain?`)) {
-            await _supabase.from('registrations').delete().eq('sticker_id', id);
-            fetchLiveDatabaseLogs();
-        }
-    }
+    async function toggleStickerStatus(id, stat) { await _supabase.from('registrations').update({ status: stat }).eq('sticker_id', id); fetchLiveDatabaseLogs(); }
+    async function deleteStickerRow(id) { if(confirm(`Warning: Kya aap sach mein ${id} ka record database se DELETE karna chahte hain?`)) { await _supabase.from('registrations').delete().eq('sticker_id', id); fetchLiveDatabaseLogs(); } }
 </script>
 </body>
 </html>
