@@ -12,48 +12,26 @@ export default async function handler(req, res) {
   try {
     const { stickerId } = req.body;
     
-    if (!stickerId) return res.status(200).json({ success: false, error: 'Sticker ID is missing' });
+    if (!stickerId) return res.status(200).json({ success: false, error: 'Sticker ID missing hai' });
 
+    // Supabase se data nikalna
     const { data, error } = await supabase.from('registrations')
       .select('mobile_number').eq('sticker_id', stickerId.trim().toUpperCase()).single();
     
-    if (error || !data) return res.status(200).json({ success: false, error: 'Profile not found.' });
+    if (error || !data) return res.status(200).json({ success: false, error: 'Vehicle profile nahi mili' });
 
-    let ownerCleanNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
-    if (ownerCleanNumber.startsWith('0')) ownerCleanNumber = ownerCleanNumber.substring(1);
-    if (!ownerCleanNumber.startsWith('91')) ownerCleanNumber = `91${ownerCleanNumber}`;
+    // Number ko clean aur format karna (Call aur WhatsApp ke liye)
+    let ownerNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
+    if (ownerNumber.startsWith('0')) ownerNumber = ownerNumber.substring(1);
+    if (ownerNumber.length === 10) ownerNumber = `91${ownerNumber}`;
 
-    const SMSCOUNTRY_AUTH_KEY = "M5rIudGBrmiO4pdjCuoz";
-    const SMSCOUNTRY_AUTH_TOKEN = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53";
-    const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
-
-    const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/Calls/`;
-    
-    // YAHAN NAYA XML WALA LINK UPDATE KIYA GAYA HAI
-    const jsonBodyData = {
-        "Number": ownerCleanNumber,    
-        "CallerId": "918634512424",
-        "RingUrl": "https://alerto-qr.vercel.app/api/sos-xml",
-        "AnswerUrl": "https://alerto-qr.vercel.app/api/sos-xml",
-        "HangupUrl": "https://alerto-qr.vercel.app/api/sos-xml",
-        "HttpMethod": "GET"
-    };
-
-    const response = await fetch(callApiUrl, {
-        method: 'POST',
-        headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-        body: JSON.stringify(jsonBodyData)
+    // Frontend ko direct number bhej dena
+    return res.status(200).json({ 
+        success: true, 
+        mobileNumber: ownerNumber
     });
-    
-    const apiData = await response.json();
-    
-    if (response.ok && apiData.Success !== false) {
-        return res.status(200).json({ success: true, message: 'SOS Triggered' });
-    } else {
-        return res.status(200).json({ success: false, error: `SOS Error: ${JSON.stringify(apiData)}` });
-    }
 
   } catch (err) {
-    return res.status(200).json({ success: false, error: `Backend Crash: ${err.message}` });
+    return res.status(200).json({ success: false, error: `Server Error: ${err.message}` });
   }
 }
