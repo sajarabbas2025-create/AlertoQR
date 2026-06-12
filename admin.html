@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR - Admin Panel</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>AlertoQR - Admin Panel & Bulk Generator</title>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -11,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
         body { background-color: #0b1329; color: #f8fafc; padding: 40px 20px; }
         .admin-wrapper { max-width: 1450px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
 
@@ -24,33 +27,32 @@
         .form-input { background-color: #0b1329; border: 1px solid #475569; border-radius: 6px; padding: 12px; color: #ffffff; font-size: 14px; outline: none; }
 
         .action-row-buttons { display: flex; gap: 15px; margin-bottom: 20px; }
-        .btn { padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; border: none; }
+        .btn { padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; border: none; transition: 0.2s;}
+        .btn:hover { opacity: 0.9; }
         .btn-generate { background-color: #2563eb; color: white; }
         .btn-print { background-color: #10b981; color: white; }
 
-        #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
+        #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
 
-        /* Premium Sticker */
+        /* Official Sticker Design */
         .smart-car-sticker {
-            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%) !important; color: #000000 !important;
-            width: 270px; border: 6px solid #0f172a !important; border-radius: 20px;
-            display: flex; flex-direction: column; align-items: center; padding: 0 0 15px 0; 
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); overflow: hidden;
+            background-color: #111827 !important; 
+            width: 240px; border: 2px solid #374151 !important; border-radius: 16px;
+            display: flex; flex-direction: column; align-items: center; 
+            padding: 20px 10px 15px 10px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); 
+            overflow: hidden; text-align: center;
         }
-        .sticker-header {
-            background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%) !important; color: #ffffff !important;
-            width: 100%; text-align: center; font-weight: 900; font-size: 20px; padding: 12px 0; 
-            letter-spacing: 1px; text-transform: uppercase; border-bottom: 3px solid #b91c1c !important;
-        }
-        .caution-bar { background: #f59e0b; color: #000; font-size: 9px; font-weight: 900; letter-spacing: 1.5px; padding: 3px 0; text-align: center; width: 100%; text-transform: uppercase; margin-bottom: 8px; }
-        .sticker-sub-tag { font-size: 12px; font-weight: 800; color: #1e293b !important; margin: 5px 0; }
-        .sticker-qr-slot { margin: 8px 0; background: white; padding: 8px; border-radius: 10px; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .sticker-footer-id { font-size: 18px; font-weight: 900; color: #0f172a !important; letter-spacing: 2px; background: #e2e8f0 !important; padding: 6px 20px; border-radius: 8px; border: 2px dashed #94a3b8; margin-bottom: 10px; }
-        .sticker-privacy-strip { width: 90%; text-align: center; font-size: 10px; font-weight: 800; color: #166534 !important; background-color: #dcfce7 !important; padding: 6px 0; border-radius: 6px; border: 1px solid #bbf7d0; }
+        .sticker-top-text { color: #fbbf24 !important; font-size: 10px; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; }
+        .sticker-main-text { color: #ffffff !important; font-size: 18px; font-weight: 900; line-height: 1.2; margin-bottom: 15px; letter-spacing: 0.5px; }
+        .sticker-qr-slot { background: #ffffff; padding: 8px; border-radius: 8px; border: 2px solid #fbbf24; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; width: 140px; height: 140px; }
+        .sticker-footer-id { color: #ffffff !important; font-size: 15px; font-weight: 800; letter-spacing: 2px; margin-bottom: 5px; }
+        .sticker-privacy-strip { color: #9ca3af !important; font-size: 9px; font-weight: 600; letter-spacing: 0.5px; }
 
         .sticker-card-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .btn-mini-download { background-color: #1e293b; color: #ffffff; border: none; padding: 9px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center; }
+        .btn-mini-download { background-color: #1e293b; color: #ffffff; border: none; padding: 9px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center; transition: 0.2s; }
+        .btn-mini-download:hover { background-color: #10b981; }
 
+        /* Table Styling */
         .table-overflow { overflow-x: auto; margin-top: 15px; }
         .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
         .data-table th { background-color: #0b1329; color: #94a3b8; padding: 14px; font-weight: 700; border-bottom: 2px solid #334155; white-space: nowrap; }
@@ -69,6 +71,7 @@
         .btn-reset { background-color: #3b82f6; color: white; margin-right: 3px; }
         .btn-delete { background-color: #ef4444; color: white; }
 
+        /* Modals */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); align-items: center; justify-content: center; }
         .modal-content { background: white; color: black; padding: 25px; border-radius: 12px; width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-header { font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
@@ -82,8 +85,8 @@
             .admin-wrapper > *:not(.panel-card:first-child) { display: none !important; }
             .panel-header, .config-grid, .action-row-buttons, .table-overflow, .modal, .btn-mini-download { display: none !important; }
             .panel-card { border: none !important; background: white !important; box-shadow: none !important; padding: 0 !important; }
-            #bulk-render-matrix { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 35px !important; padding: 20px !important; border: none !important; background: white !important; }
-            .smart-car-sticker { width: 3.5in !important; height: 3.5in !important; border: 5px solid #000000 !important; page-break-inside: avoid !important; box-shadow: none !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            #bulk-render-matrix { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important; padding: 20px !important; border: none !important; background: white !important; }
+            .smart-car-sticker { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; page-break-inside: avoid !important; box-shadow: none !important; border: 2px solid #000 !important; }
         }
     </style>
 </head>
@@ -143,16 +146,15 @@
 </div>
 
 <div id="qrModal" class="modal">
-    <div class="modal-content" style="width: 340px; display:flex; flex-direction:column; align-items:center; background: #1c2541; border: 1px solid #334155;">
-        <div class="modal-header" style="margin-bottom:15px; color:white; border-bottom:1px solid #334155; width:100%; padding-bottom:8px;">Sticker View: <span id="qr-mdl-id"></span></div>
+    <div class="modal-content" style="width: 320px; display:flex; flex-direction:column; align-items:center; background: #1c2541; border: 1px solid #334155;">
+        <div class="modal-header" style="margin-bottom:15px; color:white; border-bottom:1px solid #334155; width:100%; padding-bottom:8px;">Sticker View</div>
         
         <div class="smart-car-sticker" id="modal-sticker-embed">
-            <div class="sticker-header">🚨 CONTACT OWNER</div>
-            <div class="caution-bar">VEHICLE EMERGENCY RESPONSE</div>
-            <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
+            <div class="sticker-top-text">AlertoQR Verified</div>
+            <div class="sticker-main-text">SCAN TO<br>CONTACT OWNER</div>
             <div class="sticker-qr-slot" id="modal-qr-holder"></div>
             <div class="sticker-footer-id" id="modal-sticker-id-badge">ALQR000</div>
-            <div class="sticker-privacy-strip">✓ Instant Emergency Alert System</div>
+            <div class="sticker-privacy-strip">- www.alertoqr.in -</div>
         </div>
 
         <div class="modal-actions" style="flex-direction:column; gap:10px; margin-top:18px;">
@@ -197,22 +199,24 @@
                 const targetRedirectionUrl = `https://alertoqr.in/helper.html?id=${finalStickerId}`;
                 const cardWrapper = document.createElement('div');
                 cardWrapper.className = 'sticker-card-container';
+                
                 cardWrapper.innerHTML = `
                     <div class="smart-car-sticker">
-                        <div class="sticker-header">🚨 CONTACT OWNER</div>
-                        <div class="caution-bar">VEHICLE EMERGENCY RESPONSE</div>
-                        <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
+                        <div class="sticker-top-text">AlertoQR Verified</div>
+                        <div class="sticker-main-text">SCAN TO<br>CONTACT OWNER</div>
                         <div class="sticker-qr-slot" id="matrix-qr-${finalStickerId}"></div>
                         <div class="sticker-footer-id">${finalStickerId}</div>
-                        <div class="sticker-privacy-strip">✓ Instant Emergency Alert System</div>
+                        <div class="sticker-privacy-strip">- www.alertoqr.in -</div>
                     </div>
                     <button class="btn-mini-download" onclick="downloadSingleTargetPNG('${finalStickerId}', '${targetRedirectionUrl}')">
                         <i class="fa-solid fa-image"></i> Download HD Image
                     </button>
                 `;
                 matrixContainer.appendChild(cardWrapper);
-                new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), { text: targetRedirectionUrl, width: 250, height: 250, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
-                setTimeout(() => { const img = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('img'); if(img) { img.style.width = "120px"; img.style.height = "120px"; } }, 50);
+                
+                new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), { 
+                    text: targetRedirectionUrl, width: 120, height: 120, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
+                });
             }
             if (totalRendered === 0) matrixContainer.innerHTML = "<div style='color:#f59e0b; grid-column: 1/-1;'>⚠️ All IDs in this range are already registered.</div>";
         } catch (e) { matrixContainer.innerHTML = "<div style='color:red; grid-column: 1/-1;'>Error processing generator.</div>"; }
@@ -234,7 +238,9 @@
                     ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
                     : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
 
-                let displayChassis = row.chassis_no ? String(row.chassis_no).slice(-4) : 'N/A';
+                // SMART FIX: Checking all possible chassis column names automatically
+                let rawChassis = row.chassis_no || row.chassis_number || row.chassis || '';
+                let displayChassis = rawChassis ? String(rawChassis).slice(-4) : 'N/A';
                 
                 tr.innerHTML = `
                     <td><strong class="id-link" onclick="viewPremiumStickerPopup('${row.sticker_id}')">${row.sticker_id}</strong></td>
@@ -262,30 +268,41 @@
         document.getElementById('modal-sticker-id-badge').innerText = stickerId;
         const holder = document.getElementById('modal-qr-holder');
         holder.innerHTML = ""; document.getElementById('qrModal').style.display = 'flex';
-        new QRCode(holder, { text: targetUrl, width: 250, height: 250, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
-        setTimeout(() => { const img = holder.querySelector('img'); if(img) { img.style.width = "120px"; img.style.height = "120px"; } }, 120);
+        
+        new QRCode(holder, { 
+            text: targetUrl, width: 120, height: 120, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
+        });
+        
         document.getElementById('btn-modal-download-trigger').onclick = () => { downloadSingleTargetPNG(stickerId, targetUrl); };
     }
 
     function downloadSingleTargetPNG(stickerId, redirectionUrl) {
         const container = document.createElement('div');
         container.style.position = 'fixed'; container.style.left = '-9999px'; container.style.top = '0';
+        
         container.innerHTML = `
-            <div id="render-target-${stickerId}" style="width: 420px; background: #ffffff; border: 8px solid #0f172a; border-radius: 24px; display: flex; flex-direction: column; align-items: center; padding: 0 0 20px 0; box-sizing: border-box; font-family: Arial, sans-serif; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                <div style="background-color: #ef4444; color: #ffffff; width: 100%; text-align: center; font-weight: 900; font-size: 28px; padding: 16px 0; text-transform: uppercase; border-bottom: 4px solid #b91c1c; letter-spacing: 1px;">🚨 CONTACT OWNER</div>
-                <div style="background-color: #f59e0b; color: #000000; width: 100%; text-align: center; font-weight: 900; font-size: 12px; padding: 4px 0; letter-spacing: 2px;">VEHICLE EMERGENCY RESPONSE</div>
-                <div style="font-size: 17px; font-weight: 800; color: #1e293b; margin-top: 15px;">🔒 SCAN TO ALERT CAR OWNER</div>
-                <div id="print-qr-${stickerId}" style="margin: 15px 0; display:flex; justify-content:center; background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;"></div>
-                <div style="font-size: 26px; font-weight: 900; color: #0f172a; background: #f1f5f9; padding: 8px 30px; border-radius: 10px; border: 2px dashed #94a3b8; letter-spacing: 3px; margin-bottom: 15px;">${stickerId}</div>
-                <div style="width: 90%; text-align: center; font-size: 13px; font-weight: 800; color: #166534; background-color: #dcfce7; padding: 8px 0; border-radius: 8px; border: 1px solid #bbf7d0;">✓ Instant Emergency Alert System</div>
+            <div id="render-target-${stickerId}" style="width: 400px; background-color: #111827; border: 4px solid #374151; border-radius: 24px; display: flex; flex-direction: column; align-items: center; padding: 35px 20px 25px 20px; box-sizing: border-box; font-family: Arial, sans-serif; text-align: center;">
+                <div style="color: #fbbf24; font-size: 14px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase;">AlertoQR Verified</div>
+                <div style="color: #ffffff; font-size: 32px; font-weight: 900; line-height: 1.2; margin-bottom: 25px; letter-spacing: 1px;">SCAN TO<br>CONTACT OWNER</div>
+                <div id="print-qr-${stickerId}" style="background: #ffffff; padding: 15px; border-radius: 12px; border: 3px solid #fbbf24; margin-bottom: 20px; display:flex; justify-content:center; align-items:center;"></div>
+                <div style="color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: 3px; margin-bottom: 10px;">${stickerId}</div>
+                <div style="color: #9ca3af; font-size: 13px; font-weight: 600; letter-spacing: 1px;">- www.alertoqr.in -</div>
             </div>
         `;
         document.body.appendChild(container);
-        new QRCode(document.getElementById(`print-qr-${stickerId}`), { text: redirectionUrl, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+        
+        new QRCode(document.getElementById(`print-qr-${stickerId}`), { 
+            text: redirectionUrl, width: 200, height: 200, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
+        });
+        
         setTimeout(() => {
             const target = document.getElementById(`render-target-${stickerId}`);
             html2canvas(target, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
-                const link = document.createElement('a'); link.download = `${stickerId}_AlertoQR.png`; link.href = canvas.toDataURL('image/png'); link.click(); document.body.removeChild(container);
+                const link = document.createElement('a'); 
+                link.download = `${stickerId}_Smart_Sticker.png`; 
+                link.href = canvas.toDataURL('image/png'); 
+                link.click(); 
+                document.body.removeChild(container);
             });
         }, 600);
     }
@@ -300,7 +317,10 @@
         document.getElementById('mdl-title-id').innerText = stickerId;
         document.getElementById('mdl-txt-name').value = matchedRow.owner_name || matchedRow.full_name || "";
         document.getElementById('mdl-txt-vehicle').value = matchedRow.vehicle_number || "";
-        document.getElementById('mdl-txt-chassis').value = matchedRow.chassis_no || ""; // Chassis Edit Link
+        
+        // Form field populate setup
+        document.getElementById('mdl-txt-chassis').value = matchedRow.chassis_no || matchedRow.chassis_number || matchedRow.chassis || "";
+        
         document.getElementById('mdl-txt-mobile').value = matchedRow.mobile_number || "";
         document.getElementById('mdl-txt-alt').value = matchedRow.alternate_number || "";
         document.getElementById('editModal').style.display = 'flex';
@@ -308,15 +328,23 @@
     
     async function saveEdit() {
         if(!activeEditId) return;
+        
+        // Dynamic column handling on save update
+        const chassisVal = document.getElementById('mdl-txt-chassis').value;
+        let updatePayload = { 
+            owner_name: document.getElementById('mdl-txt-name').value, 
+            full_name: document.getElementById('mdl-txt-name').value, 
+            vehicle_number: document.getElementById('mdl-txt-vehicle').value, 
+            mobile_number: document.getElementById('mdl-txt-mobile').value,
+            alternate_number: document.getElementById('mdl-txt-alt').value
+        };
+
+        // We update all potential naming conventions to be completely safe
+        updatePayload.chassis_no = chassisVal;
+        updatePayload.chassis_number = chassisVal;
+
         try {
-            await _supabase.from('registrations').update({ 
-                owner_name: document.getElementById('mdl-txt-name').value, 
-                full_name: document.getElementById('mdl-txt-name').value, 
-                vehicle_number: document.getElementById('mdl-txt-vehicle').value, 
-                chassis_no: document.getElementById('mdl-txt-chassis').value, // Chassis Save
-                mobile_number: document.getElementById('mdl-txt-mobile').value,
-                alternate_number: document.getElementById('mdl-txt-alt').value
-            }).eq('sticker_id', activeEditId);
+            await _supabase.from('registrations').update(updatePayload).eq('sticker_id', activeEditId);
             closeModal(); fetchLiveDatabaseLogs();
         } catch (err) { alert("Error updating"); }
     }
