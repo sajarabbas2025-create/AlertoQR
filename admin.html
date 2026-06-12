@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
         body { background-color: #0b1329; color: #f8fafc; padding: 40px 20px; }
         .admin-wrapper { max-width: 1450px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
 
@@ -32,21 +32,33 @@
         .btn-generate { background-color: #2563eb; color: white; }
         .btn-print { background-color: #10b981; color: white; }
 
-        #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
+        #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
 
-        /* Official Sticker Design */
+        /* NEW PREMIUM GOLD/BLACK STICKER DESIGN */
         .smart-car-sticker {
-            background-color: #111827 !important; 
-            width: 240px; border: 2px solid #374151 !important; border-radius: 16px;
+            background-color: #23272f !important; /* Premium Dark Grey/Black */
+            width: 250px; 
+            border-radius: 16px;
             display: flex; flex-direction: column; align-items: center; 
-            padding: 20px 10px 15px 10px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); 
-            overflow: hidden; text-align: center;
+            padding: 25px 15px 20px 15px; 
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); 
+            text-align: center;
         }
-        .sticker-top-text { color: #fbbf24 !important; font-size: 10px; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; }
-        .sticker-main-text { color: #ffffff !important; font-size: 18px; font-weight: 900; line-height: 1.2; margin-bottom: 15px; letter-spacing: 0.5px; }
-        .sticker-qr-slot { background: #ffffff; padding: 8px; border-radius: 8px; border: 2px solid #fbbf24; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; width: 140px; height: 140px; }
-        .sticker-footer-id { color: #ffffff !important; font-size: 15px; font-weight: 800; letter-spacing: 2px; margin-bottom: 5px; }
-        .sticker-privacy-strip { color: #9ca3af !important; font-size: 9px; font-weight: 600; letter-spacing: 0.5px; }
+        .sticker-main-text { 
+            color: #d8a436 !important; /* Premium Gold */
+            font-size: 22px; font-weight: 900; line-height: 1.1; 
+            margin-bottom: 18px; letter-spacing: 0.5px; 
+        }
+        .sticker-white-box {
+            background: #ffffff !important;
+            border: 5px solid #d8a436 !important; /* Thick Gold Border */
+            border-radius: 12px;
+            padding: 15px; display: flex; flex-direction: column; align-items: center; 
+            width: 100%;
+        }
+        .sticker-qr-slot { display: flex; justify-content: center; align-items: center; width: 130px; height: 130px; }
+        .sticker-footer-id { color: #000000 !important; font-size: 16px; font-weight: 900; letter-spacing: 2px; margin-top: 12px; }
+        .sticker-brand-name { color: #333333 !important; font-size: 11px; font-weight: 800; letter-spacing: 1px; margin-top: 6px; text-transform: uppercase; }
 
         .sticker-card-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .btn-mini-download { background-color: #1e293b; color: #ffffff; border: none; padding: 9px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center; transition: 0.2s; }
@@ -86,7 +98,8 @@
             .panel-header, .config-grid, .action-row-buttons, .table-overflow, .modal, .btn-mini-download { display: none !important; }
             .panel-card { border: none !important; background: white !important; box-shadow: none !important; padding: 0 !important; }
             #bulk-render-matrix { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important; padding: 20px !important; border: none !important; background: white !important; }
-            .smart-car-sticker { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; page-break-inside: avoid !important; box-shadow: none !important; border: 2px solid #000 !important; }
+            .smart-car-sticker { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; page-break-inside: avoid !important; box-shadow: none !important; border: 1px solid #ddd !important; }
+            .sticker-white-box { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; border-color: #d8a436 !important; }
         }
     </style>
 </head>
@@ -130,14 +143,11 @@
         <div class="modal-header">Edit Registration: <span id="mdl-title-id"></span></div>
         <label class="edit-label">OWNER NAME</label><input type="text" id="mdl-txt-name" class="edit-input">
         <label class="edit-label">VEHICLE NUMBER</label><input type="text" id="mdl-txt-vehicle" class="edit-input" style="text-transform:uppercase;">
-        
         <div style="display: flex; gap: 10px;">
             <div style="flex: 1;"><label class="edit-label">CHASSIS (LAST 4)</label><input type="text" id="mdl-txt-chassis" maxlength="4" class="edit-input"></div>
             <div style="flex: 1;"><label class="edit-label">PRIMARY MOBILE</label><input type="tel" id="mdl-txt-mobile" maxlength="10" class="edit-input"></div>
         </div>
-        
         <label class="edit-label">ALTERNATE MOBILE</label><input type="tel" id="mdl-txt-alt" maxlength="10" class="edit-input" placeholder="Optional">
-
         <div class="modal-actions">
             <button class="btn" style="background:#64748b; color:white; padding:10px 18px;" onclick="closeModal()">Cancel</button>
             <button class="btn btn-generate" style="padding:10px 18px;" onclick="saveEdit()">Save Records</button>
@@ -150,11 +160,12 @@
         <div class="modal-header" style="margin-bottom:15px; color:white; border-bottom:1px solid #334155; width:100%; padding-bottom:8px;">Sticker View</div>
         
         <div class="smart-car-sticker" id="modal-sticker-embed">
-            <div class="sticker-top-text">AlertoQR Verified</div>
             <div class="sticker-main-text">SCAN TO<br>CONTACT OWNER</div>
-            <div class="sticker-qr-slot" id="modal-qr-holder"></div>
-            <div class="sticker-footer-id" id="modal-sticker-id-badge">ALQR000</div>
-            <div class="sticker-privacy-strip">- www.alertoqr.in -</div>
+            <div class="sticker-white-box">
+                <div class="sticker-qr-slot" id="modal-qr-holder"></div>
+                <div class="sticker-footer-id" id="modal-sticker-id-badge">ALQR000</div>
+                <div class="sticker-brand-name">- AlertoQR -</div>
+            </div>
         </div>
 
         <div class="modal-actions" style="flex-direction:column; gap:10px; margin-top:18px;">
@@ -200,13 +211,15 @@
                 const cardWrapper = document.createElement('div');
                 cardWrapper.className = 'sticker-card-container';
                 
+                // HTML Layout for Matrix View (Premium Design)
                 cardWrapper.innerHTML = `
                     <div class="smart-car-sticker">
-                        <div class="sticker-top-text">AlertoQR Verified</div>
                         <div class="sticker-main-text">SCAN TO<br>CONTACT OWNER</div>
-                        <div class="sticker-qr-slot" id="matrix-qr-${finalStickerId}"></div>
-                        <div class="sticker-footer-id">${finalStickerId}</div>
-                        <div class="sticker-privacy-strip">- www.alertoqr.in -</div>
+                        <div class="sticker-white-box">
+                            <div class="sticker-qr-slot" id="matrix-qr-${finalStickerId}"></div>
+                            <div class="sticker-footer-id">${finalStickerId}</div>
+                            <div class="sticker-brand-name">- AlertoQR -</div>
+                        </div>
                     </div>
                     <button class="btn-mini-download" onclick="downloadSingleTargetPNG('${finalStickerId}', '${targetRedirectionUrl}')">
                         <i class="fa-solid fa-image"></i> Download HD Image
@@ -238,7 +251,6 @@
                     ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
                     : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
 
-                // SMART FIX: Checking all possible chassis column names automatically
                 let rawChassis = row.chassis_no || row.chassis_number || row.chassis || '';
                 let displayChassis = rawChassis ? String(rawChassis).slice(-4) : 'N/A';
                 
@@ -270,29 +282,32 @@
         holder.innerHTML = ""; document.getElementById('qrModal').style.display = 'flex';
         
         new QRCode(holder, { 
-            text: targetUrl, width: 120, height: 120, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
+            text: targetUrl, width: 130, height: 130, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
         });
         
         document.getElementById('btn-modal-download-trigger').onclick = () => { downloadSingleTargetPNG(stickerId, targetUrl); };
     }
 
+    // HD Download Template (Premium Gold Design)
     function downloadSingleTargetPNG(stickerId, redirectionUrl) {
         const container = document.createElement('div');
         container.style.position = 'fixed'; container.style.left = '-9999px'; container.style.top = '0';
         
         container.innerHTML = `
-            <div id="render-target-${stickerId}" style="width: 400px; background-color: #111827; border: 4px solid #374151; border-radius: 24px; display: flex; flex-direction: column; align-items: center; padding: 35px 20px 25px 20px; box-sizing: border-box; font-family: Arial, sans-serif; text-align: center;">
-                <div style="color: #fbbf24; font-size: 14px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase;">AlertoQR Verified</div>
-                <div style="color: #ffffff; font-size: 32px; font-weight: 900; line-height: 1.2; margin-bottom: 25px; letter-spacing: 1px;">SCAN TO<br>CONTACT OWNER</div>
-                <div id="print-qr-${stickerId}" style="background: #ffffff; padding: 15px; border-radius: 12px; border: 3px solid #fbbf24; margin-bottom: 20px; display:flex; justify-content:center; align-items:center;"></div>
-                <div style="color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: 3px; margin-bottom: 10px;">${stickerId}</div>
-                <div style="color: #9ca3af; font-size: 13px; font-weight: 600; letter-spacing: 1px;">- www.alertoqr.in -</div>
+            <div id="render-target-${stickerId}" style="width: 400px; background-color: #23272f; border-radius: 24px; display: flex; flex-direction: column; align-items: center; padding: 40px 25px 35px 25px; box-sizing: border-box; font-family: Arial, sans-serif; text-align: center;">
+                <div style="color: #d8a436; font-size: 34px; font-weight: 900; line-height: 1.1; margin-bottom: 25px; letter-spacing: 1px;">SCAN TO<br>CONTACT OWNER</div>
+                
+                <div style="background: #ffffff; border: 8px solid #d8a436; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box;">
+                    <div id="print-qr-${stickerId}" style="display:flex; justify-content:center; align-items:center;"></div>
+                    <div style="color: #000000; font-size: 26px; font-weight: 900; letter-spacing: 3px; margin-top: 15px;">${stickerId}</div>
+                    <div style="color: #333333; font-size: 16px; font-weight: 800; letter-spacing: 1px; margin-top: 8px;">- ALERTOQR -</div>
+                </div>
             </div>
         `;
         document.body.appendChild(container);
         
         new QRCode(document.getElementById(`print-qr-${stickerId}`), { 
-            text: redirectionUrl, width: 200, height: 200, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
+            text: redirectionUrl, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
         });
         
         setTimeout(() => {
@@ -317,10 +332,7 @@
         document.getElementById('mdl-title-id').innerText = stickerId;
         document.getElementById('mdl-txt-name').value = matchedRow.owner_name || matchedRow.full_name || "";
         document.getElementById('mdl-txt-vehicle').value = matchedRow.vehicle_number || "";
-        
-        // Form field populate setup
         document.getElementById('mdl-txt-chassis').value = matchedRow.chassis_no || matchedRow.chassis_number || matchedRow.chassis || "";
-        
         document.getElementById('mdl-txt-mobile').value = matchedRow.mobile_number || "";
         document.getElementById('mdl-txt-alt').value = matchedRow.alternate_number || "";
         document.getElementById('editModal').style.display = 'flex';
@@ -328,20 +340,16 @@
     
     async function saveEdit() {
         if(!activeEditId) return;
-        
-        // Dynamic column handling on save update
         const chassisVal = document.getElementById('mdl-txt-chassis').value;
         let updatePayload = { 
             owner_name: document.getElementById('mdl-txt-name').value, 
             full_name: document.getElementById('mdl-txt-name').value, 
             vehicle_number: document.getElementById('mdl-txt-vehicle').value, 
             mobile_number: document.getElementById('mdl-txt-mobile').value,
-            alternate_number: document.getElementById('mdl-txt-alt').value
+            alternate_number: document.getElementById('mdl-txt-alt').value,
+            chassis_no: chassisVal,
+            chassis_number: chassisVal
         };
-
-        // We update all potential naming conventions to be completely safe
-        updatePayload.chassis_no = chassisVal;
-        updatePayload.chassis_number = chassisVal;
 
         try {
             await _supabase.from('registrations').update(updatePayload).eq('sticker_id', activeEditId);
