@@ -3,194 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR - Helper Portal</title>
+    <title>AlertoQR - Helper</title>
     <style>
-        body { font-family: sans-serif; background: #f8f9fa; margin: 0; padding: 20px; }
-        .container { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); max-width: 400px; margin: auto; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f8f9fa; margin: 0; display: flex; justify-content: center; padding: 20px; }
+        .app-container { background: white; width: 100%; max-width: 400px; border-radius: 20px; padding: 25px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        
+        /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .owner-card { border: 1px solid #eee; border-radius: 10px; padding: 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .logo { font-size: 24px; font-weight: 800; color: #000; }
+        .badge { background: #f0f0f0; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; color: #333; }
         
-        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .btn-call { flex: 1; background: black; color: white; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-alt { flex: 1; background: white; color: black; border: 1px solid #ccc; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        /* Owner Card */
+        .owner-card { border: 1px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
+        .label { font-size: 11px; color: #888; font-weight: bold; margin-bottom: 5px; }
+        .owner-name { font-size: 20px; font-weight: bold; color: #222; margin-bottom: 10px; }
+        .plate { background: #000; color: #fff; display: inline-block; padding: 6px 15px; border-radius: 6px; font-weight: bold; font-size: 14px; letter-spacing: 1px; }
         
-        /* Quick Alerts Grid (Sirf 4 buttons ke liye) */
-        .quick-alerts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; margin-top: 10px; }
-        .q-btn { background: white; border: 1px solid #eee; border-radius: 10px; padding: 15px; text-align: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 13px; font-weight: bold; color: #555; }
+        /* Action Row */
+        .action-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn { flex: 1; text-align: center; padding: 12px 5px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; border: none; }
+        .btn-black { background: #000; color: #fff; }
+        .btn-outline { background: #fff; color: #000; border: 1px solid #ddd; }
         
-        /* Main SOS Button */
-        .sos-btn { background: #ff3b30; color: white; padding: 15px; border-radius: 8px; border: none; font-weight: bold; width: 100%; cursor: pointer; margin-bottom: 15px; font-size: 16px; box-shadow: 0 4px 6px rgba(255, 59, 48, 0.3);}
+        /* Grid Menu */
+        .section-title { font-size: 12px; color: #888; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .grid-item { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 15px 5px; text-align: center; text-decoration: none; color: #333; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .grid-icon { font-size: 24px; }
         
-        /* Chote Police & Ambulance Buttons */
-        .police-ambulance-group { display: flex; gap: 10px; }
-        .pa-btn { flex: 1; background: #fff5f5; color: #d32f2f; border: 1px solid #ffcccc; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        /* Emergency & Police */
+        .btn-sos { background: #ff3b30; color: white; width: 100%; padding: 15px; font-size: 16px; margin-bottom: 15px; }
+        .btn-light-red { background: #fff5f5; color: #ff3b30; border: 1px solid #ffd1d1; }
         
-        .input-group { margin-bottom: 15px; display: none; } 
-        .input-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; font-size: 16px;}
-        #statusMsg { text-align: center; font-weight: bold; margin-top: 10px; margin-bottom: 10px; display: none; padding: 12px; border-radius: 8px; font-size: 14px;}
-        
-        .photo-upload { display: none; }
+        #loading-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: white; display: flex; justify-content: center; align-items: center; z-index: 10; font-weight: bold; color: #555; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2 style="margin: 0;">AlertoQR</h2>
-            <span style="background: #f1f3f5; padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: bold; border: 1px solid #e9ecef;" id="displayId">ID: Loading...</span>
-        </div>
 
-        <div class="owner-card">
-            <small style="color: gray; font-weight: bold; font-size: 11px;">VEHICLE OWNER</small>
-            <h3 id="ownerName" style="margin: 5px 0 10px 0; font-size: 20px; color: #212529;">Loading Name...</h3>
-            <span id="vehicleNo" style="background: black; color: white; padding: 6px 12px; border-radius: 5px; font-weight: bold; display: inline-block;">...</span>
-        </div>
+<div id="loading-overlay">Gaadi ka data load ho raha hai...</div>
 
-        <div class="input-group" id="numberInputDiv">
-            <input type="number" id="helperNumber" placeholder="Apna Mobile Number Daalein" required>
-            <button class="btn-call" style="width: 100%;" onclick="initiateCall()">Connect Secure Call</button>
-        </div>
-
-        <div class="btn-group" id="mainButtons">
-            <button class="btn-call" onclick="showNumberInput()">📞 Call Owner</button>
-            <button class="btn-alt">📞 Call Alternate</button>
-        </div>
-
-        <div id="statusMsg"></div>
-
-        <small style="color: gray; font-weight: bold; font-size: 11px; margin-top: 10px; display: block;">QUICK ALERTS</small>
-        <div class="quick-alerts">
-            <div class="q-btn" onclick="sendQuickAlert('Wrong Parking')"><span style="font-size: 24px; display:block; margin-bottom:5px;">⚠️</span>Wrong Parking</div>
-            <div class="q-btn" onclick="sendQuickAlert('Tow Alert')"><span style="font-size: 24px; display:block; margin-bottom:5px;">🚓</span>Tow Alert</div>
-            <div class="q-btn" onclick="sendQuickAlert('Door/Window & Light ON')"><span style="font-size: 24px; display:block; margin-bottom:5px;">🚨</span>Door/Window<br>& Light ON</div>
-            <div class="q-btn" onclick="triggerPhotoUpload()"><span style="font-size: 24px; display:block; margin-bottom:5px;">📸</span>Share Photo</div>
-        </div>
-
-        <input type="file" accept="image/*" capture="environment" id="cameraInput" class="photo-upload" onchange="handlePhotoUpload(event)">
-
-        <button class="sos-btn" id="sosBtn" onclick="triggerSOS()">🚨 EMERGENCY SOS</button>
-
-        <div class="police-ambulance-group">
-            <button class="pa-btn" onclick="window.location.href='tel:112'"><span style="font-size: 16px;">👮‍♂️</span> Call Police</button>
-            <button class="pa-btn" onclick="window.location.href='tel:108'"><span style="font-size: 16px;">🚑</span> Ambulance</button>
-        </div>
+<div class="app-container">
+    <div class="header">
+        <div class="logo">AlertoQR</div>
+        <div class="badge" id="display-id">ID: ------</div>
     </div>
 
-    <script>
-        const BACKEND_URL = 'https://alerto-qr.vercel.app'; 
+    <div class="owner-card">
+        <div class="label">VEHICLE OWNER</div>
+        <div class="owner-name" id="display-name">Loading...</div>
+        <div class="plate" id="display-plate">-------</div>
+    </div>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const stickerId = urlParams.get('id') || 'ALQR1001'; 
-        document.getElementById('displayId').innerText = 'ID: ' + stickerId;
+    <div class="action-row">
+        <a id="btn-call" class="btn btn-black">📞 Call Owner</a>
+        <a class="btn btn-outline" onclick="alert('Alternate number is not available yet.')">📞 Call Alternate</a>
+    </div>
 
-        // Aapka fetch logic yahan aayega
-        document.getElementById('ownerName').innerText = "Sajar Abbas"; 
-        document.getElementById('vehicleNo').innerText = "UP32DD2420"; 
+    <div class="section-title">QUICK ALERTS</div>
+    
+    <div class="grid">
+        <a id="btn-wrong-parking" class="grid-item">
+            <span class="grid-icon">⚠️</span>
+            <span>Wrong Parking</span>
+        </a>
+        <a id="btn-tow" class="grid-item">
+            <span class="grid-icon">🚓</span>
+            <span>Tow Alert</span>
+        </a>
+        <a id="btn-door" class="grid-item">
+            <span class="grid-icon">🚨</span>
+            <span>Door/Window<br>& Light ON</span>
+        </a>
+        <a id="btn-photo" class="grid-item">
+            <span class="grid-icon">📸</span>
+            <span>Share Photo</span>
+        </a>
+    </div>
 
-        function showStatus(msg, isError = false) {
-            const statusDiv = document.getElementById('statusMsg');
-            statusDiv.style.display = 'block';
-            statusDiv.innerText = msg;
-            statusDiv.style.backgroundColor = isError ? '#ffe6e6' : '#eafaf1';
-            statusDiv.style.color = isError ? '#d32f2f' : '#2e7d32';
-            statusDiv.style.border = isError ? '1px solid #f5c6cb' : '1px solid #c3e6cb';
+    <a id="btn-sos" class="btn btn-sos">🚨 EMERGENCY SOS</a>
+
+    <div class="action-row">
+        <a href="tel:112" class="btn btn-light-red">👮‍♂️ Call Police</a>
+        <a href="tel:108" class="btn btn-light-red">🚑 Ambulance</a>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const stickerId = urlParams.get('id');
+
+    window.onload = () => {
+        if (!stickerId) {
+            document.getElementById('loading-overlay').innerText = "Invalid QR Code!";
+        } else {
+            document.getElementById('display-id').innerText = `ID: ${stickerId.toUpperCase()}`;
+            fetchOwnerData();
         }
+    };
 
-        function showNumberInput() {
-            document.getElementById('mainButtons').style.display = 'none';
-            document.getElementById('numberInputDiv').style.display = 'block';
-        }
-
-        async function initiateCall() {
-            const helperNum = document.getElementById('helperNumber').value;
-            if (!helperNum || helperNum.length < 10) {
-                showStatus("Kripya apna sahi 10-digit number daalein!", true);
-                return;
-            }
-
-            showStatus("⏳ Connecting secure bridge...", false);
-
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/send-alert`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ stickerId: stickerId, helperNumber: helperNum })
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    showStatus("✅ Secure Bridge Initiated! Kripya apne phone par aane wali call uthayein.", false);
-                } else {
-                    showStatus("⚠️ Error: " + data.error, true);
-                }
-            } catch (err) {
-                showStatus("⚠️ Server Error. Kripya apna internet check karein.", true);
-            }
-        }
-
-        async function sendQuickAlert(alertType) {
-            let helperNum = document.getElementById('helperNumber').value;
+    async function fetchOwnerData() {
+        try {
+            const response = await fetch('/api/sos-alert', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ stickerId: stickerId })
+            });
             
-            if (!helperNum || helperNum.length < 10) {
-                helperNum = prompt(`${alertType} alert bhejne ke liye kripya apna Mobile Number daalein:`);
-                if (!helperNum || helperNum.length < 10) {
-                    alert("⚠️ Action Canceled: Alert bhejne ke liye mobile number zaroori hai.");
-                    return;
-                }
-                document.getElementById('helperNumber').value = helperNum; 
-            }
-
-            showStatus(`⏳ Sending ${alertType} alert...`, false);
+            const result = await response.json();
             
-            setTimeout(() => {
-                showStatus(`✅ ${alertType} alert Owner ko safaltapurvak bhej diya gaya hai!`, false);
-            }, 1500);
-        }
+            if (result.success && result.mobileNumber) {
+                document.getElementById('loading-overlay').style.display = 'none';
+                
+                // UI Update
+                document.getElementById('display-name').innerText = result.ownerName;
+                document.getElementById('display-plate').innerText = result.vehicleNumber;
+                
+                const num = result.mobileNumber;
 
-        function triggerPhotoUpload() {
-            document.getElementById('cameraInput').click();
-        }
+                // Call Owner
+                document.getElementById('btn-call').href = `tel:+${num}`;
+                
+                // WhatsApp & SMS Links setup
+                const waBase = `https://wa.me/${num}?text=`;
+                const smsBase = `sms:+${num}?body=`;
 
-        function handlePhotoUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                showStatus("⏳ Photo upload ho rahi hai. Kripya pratiksha karein...", false);
-                setTimeout(() => {
-                    showStatus("📸 Photo successfully bhej di gayi hai!", false);
-                }, 2000);
+                // Share Photo (Direct WhatsApp)
+                document.getElementById('btn-photo').href = waBase + encodeURIComponent("Emergency! Main aapki gaadi ke paas hu, aapko photo bhej raha hu.");
+                
+                // Wrong Parking (Direct WhatsApp/SMS)
+                document.getElementById('btn-wrong-parking').href = waBase + encodeURIComponent("Alert! Aapki gaadi galat jagah park hai, kripya ise hatayein.");
+                
+                // Tow Alert
+                document.getElementById('btn-tow').href = waBase + encodeURIComponent("Alert! Aapki gaadi Tow hone wali hai, jaldi aaiye.");
+                
+                // Door/Light
+                document.getElementById('btn-door').href = waBase + encodeURIComponent("Alert! Aapki gaadi ka darwaza khula hai ya light ON rah gayi hai.");
+                
+                // Emergency SOS (Direct Call or SMS)
+                document.getElementById('btn-sos').href = smsBase + encodeURIComponent("🚨 EMERGENCY! Gaadi ke paas emergency hai, turant sampark karein.");
+
+            } else {
+                document.getElementById('loading-overlay').innerText = `Error: ${result.error}`;
             }
+        } catch (err) {
+            document.getElementById('loading-overlay').innerText = "Network issue. Please refresh.";
         }
+    }
+</script>
 
-        async function triggerSOS() {
-            const confirmSOS = confirm("🚨 Kripya dhyaan dein: Yeh ek EMERGENCY alert hai. Kya aap confirm karna chahte hain?");
-            if (!confirmSOS) return;
-
-            const sosBtn = document.getElementById('sosBtn');
-            sosBtn.innerText = "🚨 Alerting Owner...";
-            sosBtn.disabled = true;
-
-            showStatus("⏳ Sending Emergency Signal...", false);
-
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/sos-alert`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ stickerId: stickerId })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showStatus("✅ EMERGENCY Warning Owner ko safaltapurvak bhej di gayi hai!", false);
-                } else {
-                    showStatus("⚠️ SOS Error: " + data.error, true);
-                }
-            } catch (error) {
-                showStatus("⚠️ System Error. Kripya baad mein try karein.", true);
-            }
-            
-            sosBtn.innerText = "🚨 EMERGENCY SOS";
-            sosBtn.disabled = false;
-        }
-    </script>
 </body>
 </html>
