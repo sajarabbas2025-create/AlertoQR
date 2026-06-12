@@ -14,82 +14,122 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
         body { background-color: #0b1329; color: #f8fafc; padding: 40px 20px; }
-        .admin-wrapper { max-width: 1350px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
-        .panel-card { background-color: #1c2541; border: 1px solid #1e293b; border-radius: 12px; padding: 26px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
-        .panel-header { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 12px; }
+
+        .admin-wrapper { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
+
+        .panel-card {
+            background-color: #1c2541; border: 1px solid #1e293b;
+            border-radius: 12px; padding: 26px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header {
+            display: flex; align-items: center; gap: 12px; font-size: 20px;
+            font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 12px;
+        }
+
         .config-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px; margin-bottom: 25px; }
         .input-block { display: flex; flex-direction: column; gap: 8px; }
         .input-block label { font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94a3b8; }
-        .form-input { background-color: #0b1329; border: 1px solid #475569; border-radius: 6px; padding: 12px; color: #ffffff; font-size: 14px; outline: none; }
-        
+        .form-input {
+            background-color: #0b1329; border: 1px solid #475569; border-radius: 6px;
+            padding: 12px; color: #ffffff; font-size: 14px; outline: none;
+        }
+
         .action-row-buttons { display: flex; gap: 15px; margin-bottom: 20px; }
-        .btn { padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; border: none; }
+        .btn {
+            padding: 12px 24px; border-radius: 6px; font-size: 14px; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; gap: 8px; border: none;
+        }
         .btn-generate { background-color: #2563eb; color: white; }
         .btn-print { background-color: #10b981; color: white; }
 
-        #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
+        #bulk-render-matrix {
+            background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px;
+            min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px;
+            text-align: center; justify-items: center;
+        }
 
-        /* Premium Sticker Design Update */
+        /* PREMIUM STICKER DESIGN */
         .smart-car-sticker {
-            background: #ffffff !important; color: #000000 !important; width: 260px; height: 260px;
-            border: 5px solid #000000 !important; border-radius: 16px; display: flex; flex-direction: column;
-            align-items: center; justify-content: space-between; padding: 10px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            position: relative; overflow: hidden;
+            background: #ffffff !important; color: #000000 !important;
+            width: 260px; height: 260px; border: 4px solid #000000 !important; border-radius: 16px;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            padding: 10px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); position: relative; overflow: hidden;
         }
 
-        /* Naya Bada Contact Owner Header */
         .sticker-header {
-            background-color: #e11d48 !important; color: #ffffff !important; width: 106%; margin-top: -3px;
-            text-align: center; font-weight: 900; font-size: 17px; padding: 8px 0; letter-spacing: 1px;
-            text-transform: uppercase;
+            background-color: #ef4444 !important; color: #ffffff !important;
+            width: 105%; margin-top: -2px; text-align: center; font-weight: 900;
+            font-size: 18px; /* Bada Font */
+            padding: 8px 0; letter-spacing: 0.5px; text-transform: uppercase;
+            border-bottom: 2px solid #b91c1c !important;
         }
 
-        .sticker-sub-tag { font-size: 12px; font-weight: 900; color: #1e293b !important; margin-top: 4px; letter-spacing: 0.5px; }
-        .sticker-qr-slot { margin: 2px 0; display: flex; justify-content: center; align-items: center; }
-        .sticker-footer-id { font-size: 14px; font-weight: 900; color: #000000 !important; letter-spacing: 1.5px; background: #f1f5f9 !important; padding: 3px 12px; border-radius: 4px; border: 2px solid #cbd5e1; }
-        .sticker-privacy-strip { width: 100%; text-align: center; font-size: 9px; font-weight: 800; color: #065f46 !important; background-color: #d1fae5 !important; padding: 5px 0; border-radius: 4px; margin-bottom: -2px; text-transform: uppercase; }
+        .sticker-sub-tag { font-size: 11px; font-weight: 800; color: #1d2939 !important; margin-top: 4px; }
+        .sticker-qr-slot { margin: 4px 0; display: flex; justify-content: center; align-items: center; }
+        .sticker-footer-id {
+            font-size: 15px; font-weight: 900; color: #000000 !important; letter-spacing: 1px;
+            background: #f2f4f7 !important; padding: 4px 14px; border-radius: 6px; border: 1px solid #d0d5dd;
+        }
+        .sticker-privacy-strip {
+            width: 100%; text-align: center; font-size: 9px; font-weight: 700; color: #054f31 !important;
+            background-color: #ecfdf3 !important; padding: 4px 0; border-radius: 4px; margin-bottom: -2px;
+        }
+
         .sticker-card-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 
-        .btn-mini-download { background-color: #1e293b; color: #ffffff; border: none; padding: 9px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center; transition: 0.2s; }
+        .btn-mini-download {
+            background-color: #1e293b; color: #ffffff; border: none; padding: 9px 12px;
+            font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; width: 100%; justify-content: center;
+        }
         .btn-mini-download:hover { background-color: #10b981; }
 
+        /* Table Styling */
         .table-overflow { overflow-x: auto; margin-top: 15px; }
         .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
-        .data-table th { background-color: #0b1329; color: #94a3b8; padding: 12px; font-weight: 700; border-bottom: 2px solid #334155; white-space: nowrap; }
-        .data-table td { padding: 12px; border-bottom: 1px solid #334155; color: #e2e8f0; vertical-align: middle; }
+        .data-table th { background-color: #0b1329; color: #94a3b8; padding: 14px; font-weight: 700; border-bottom: 2px solid #334155; white-space: nowrap; }
+        .data-table td { padding: 14px; border-bottom: 1px solid #334155; color: #e2e8f0; vertical-align: middle; white-space: nowrap; }
         
         .id-link { color: #3b82f6; text-decoration: underline; cursor: pointer; font-weight: 600; }
-        .vehicle-tag { background-color: #f59e0b; color: #0b1329; padding: 4px 8px; border-radius: 4px; font-weight: 800; }
+        .vehicle-tag { background-color: #f59e0b; color: #0b1329; padding: 4px 8px; border-radius: 4px; font-weight: 700; }
+        .pin-tag { background-color: #334155; padding: 4px 8px; border-radius: 4px; font-weight: bold; letter-spacing: 2px; }
         
         .status-btn { padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
         .status-active { background-color: #10b981; color: white; }
         .status-deactive { background-color: #64748b; color: white; }
         
-        .btn-action { padding: 6px 10px; border-radius: 4px; border: none; font-size: 11px; cursor: pointer; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;}
+        .btn-action { padding: 6px 10px; border-radius: 4px; border: none; font-size: 11px; cursor: pointer; font-weight: 600; text-transform: uppercase; }
         .btn-edit { background-color: #f59e0b; color: white; margin-right: 3px; }
         .btn-reset { background-color: #3b82f6; color: white; margin-right: 3px; }
         .btn-delete { background-color: #ef4444; color: white; }
 
+        /* Modals */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); align-items: center; justify-content: center; }
-        .modal-content { background: white; color: black; padding: 25px; border-radius: 12px; width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; }
-        .modal-header { font-size: 18px; font-weight: 800; margin-bottom: 20px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .modal-content { background: white; color: black; padding: 25px; border-radius: 12px; width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .modal-header { font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; width: 100%; }
-
-        .form-label { font-size: 11px; color: grey; font-weight: 800; margin-bottom: 4px; display: block; text-transform: uppercase;}
-        .form-field { width: 100%; padding: 11px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 600; background: #f8fafc;}
-
+        
+        /* Print Styles */
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
             .admin-wrapper, .panel-card, .table-overflow, .modal, .btn-mini-download { display: none !important; }
             #bulk-render-matrix { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 35px !important; padding: 20px !important; border: none !important; background: white !important; }
-            .smart-car-sticker { width: 3.5in !important; height: 3.5in !important; border: 6px solid #000000 !important; page-break-inside: avoid !important; box-shadow: none !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            .sticker-header { background-color: #e11d48 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 20px !important; }
-            .sticker-sub-tag { font-size: 14px !important; }
-            .sticker-qr-slot canvas, .smart-car-sticker img { width: 170px !important; height: 170px !important; }
+            .smart-car-sticker { width: 3.5in !important; height: 3.5in !important; border: 5px solid #000000 !important; page-break-inside: avoid !important; box-shadow: none !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .sticker-header { background-color: #ef4444 !important; border-bottom: 2px solid #b91c1c !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 20px !important; }
+            .sticker-sub-tag { font-size: 13px !important; font-weight: 900 !important; }
+            .sticker-qr-slot canvas, .smart-car-sticker img { width: 160px !important; height: 160px !important; }
             .sticker-footer-id { font-size: 16px !important; }
-            .sticker-privacy-strip { background-color: #d1fae5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11px !important; }
+            .sticker-privacy-strip { background-color: #ecfdf3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11px !important; }
         }
     </style>
 </head>
@@ -98,13 +138,20 @@
 <div class="admin-wrapper">
 
     <div class="panel-card">
-        <div class="panel-header">
-            <i class="fa-solid fa-qrcode"></i> Smart Bulk QR Code Generator (HD PNG Downloads)
-        </div>
+        <div class="panel-header"><i class="fa-solid fa-qrcode"></i> Smart Bulk QR Code Generator</div>
         <div class="config-grid">
-            <div class="input-block"><label>Series Code (Prefix)</label><input type="text" id="txt-prefix" class="form-input" value="ALQR"></div>
-            <div class="input-block"><label>Start No.</label><input type="number" id="txt-start" class="form-input" value="1"></div>
-            <div class="input-block"><label>End No.</label><input type="number" id="txt-end" class="form-input" value="10"></div>
+            <div class="input-block">
+                <label>Series Code (Prefix)</label>
+                <input type="text" id="txt-prefix" class="form-input" value="ALQR">
+            </div>
+            <div class="input-block">
+                <label>Start No.</label>
+                <input type="number" id="txt-start" class="form-input" value="1">
+            </div>
+            <div class="input-block">
+                <label>End No.</label>
+                <input type="number" id="txt-end" class="form-input" value="10">
+            </div>
         </div>
         <div class="action-row-buttons">
             <button class="btn btn-generate" onclick="generateHDMatrix()"><i class="fa-solid fa-gear"></i> Generate Smart Stickers</button>
@@ -114,9 +161,7 @@
     </div>
 
     <div class="panel-card">
-        <div class="panel-header">
-            <i class="fa-solid fa-users-gear"></i> Customer Registrations & Plan Controls
-        </div>
+        <div class="panel-header"><i class="fa-solid fa-users-gear"></i> Customer Registrations & Passwords</div>
         <div class="table-overflow">
             <table class="data-table">
                 <thead>
@@ -124,13 +169,14 @@
                         <th>Sticker ID</th>
                         <th>Owner Name</th>
                         <th>Vehicle Number</th>
-                        <th>Chassis (L-4)</th> <th>Sec. PIN</th> <th>Primary Mobile</th>
-                        <th>Status</th>
+                        <th>Chassis (Last 4)</th> <th>Security PIN</th>     <th>Mobile</th>
+                        <th>Status Control</th>
+                        <th>Expiry</th>
                         <th>Action Controls</th>
                     </tr>
                 </thead>
                 <tbody id="table-data-rows">
-                    <tr><td colspan="8" style="text-align:center; padding:30px;">Loading data streams from server configurations...</td></tr>
+                    <tr><td colspan="9" style="text-align:center; padding:30px;">Loading data streams from server...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -141,31 +187,253 @@
 <div id="editModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">Edit Registration: <span id="mdl-title-id"></span></div>
+        <label style="font-size:12px; color:grey; font-weight:700; margin-bottom:4px; display:block;">OWNER NAME</label>
+        <input type="text" id="mdl-txt-name" style="width:100%; padding:11px; margin-bottom:15px; border:1px solid #cbd5e1; border-radius:6px; font-weight:600;">
         
-        <label class="form-label">OWNER FULL NAME</label>
-        <input type="text" id="mdl-txt-name" class="form-field">
+        <label style="font-size:12px; color:grey; font-weight:700; margin-bottom:4px; display:block;">VEHICLE NUMBER</label>
+        <input type="text" id="mdl-txt-vehicle" style="width:100%; padding:11px; margin-bottom:15px; border:1px solid #cbd5e1; border-radius:6px; font-weight:700; text-transform:uppercase;">
         
-        <label class="form-label">VEHICLE NUMBER</label>
-        <input type="text" id="mdl-txt-vehicle" class="form-field" style="text-transform:uppercase;">
-        
-        <label class="form-label" style="color:#f59e0b;">CHASSIS NO. (LAST 4)</label>
-        <input type="text" id="mdl-txt-chassis" class="form-field" maxlength="4" placeholder="Last 4 Digits">
-        
-        <label class="form-label" style="color:#10b981;">SECURITY PIN</label>
-        <input type="text" id="mdl-txt-pin" class="form-field" maxlength="4" placeholder="4 Digit PIN">
+        <label style="font-size:12px; color:grey; font-weight:700; margin-bottom:4px; display:block;">PRIMARY MOBILE</label>
+        <input type="tel" id="mdl-txt-mobile" maxlength="10" style="width:100%; padding:11px; margin-bottom:15px; border:1px solid #cbd5e1; border-radius:6px; font-weight:600;">
 
-        <label class="form-label">PRIMARY MOBILE</label>
-        <input type="tel" id="mdl-txt-mobile" maxlength="10" class="form-field">
-
-        <label class="form-label">ALTERNATE MOBILE</label>
-        <input type="tel" id="mdl-txt-alternate" maxlength="10" class="form-field">
-        
         <div class="modal-actions">
-            <button class="btn" style="background:#64748b; color:white;" onclick="closeModal()">Cancel</button>
-            <button class="btn btn-generate" onclick="saveEdit()">Save Records</button>
+            <button class="btn" style="background:#64748b; color:white; padding:10px 18px;" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-generate" style="padding:10px 18px;" onclick="saveEdit()">Save Records</button>
         </div>
     </div>
 </div>
 
 <div id="qrModal" class="modal">
-    <div class="modal-content" style="width: 340px; display:flex; flex-direction:column; align-items:center; background: #1c2541; border: 1px solid #33415
+    <div class="modal-content" style="width: 340px; display:flex; flex-direction:column; align-items:center; background: #1c2541; border: 1px solid #334155;">
+        <div class="modal-header" style="margin-bottom:15px; color:white; border-bottom:1px solid #334155; width:100%; padding-bottom:8px;">Sticker View: <span id="qr-mdl-id"></span></div>
+        
+        <div class="smart-car-sticker" id="modal-sticker-embed">
+            <div class="sticker-header">🚨 CONTACT OWNER</div>
+            <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
+            <div class="sticker-qr-slot" id="modal-qr-holder"></div>
+            <div class="sticker-footer-id" id="modal-sticker-id-badge">ALQR000</div>
+            <div class="sticker-privacy-strip">🔒 Privacy Safe • Mobile Number Hidden</div>
+        </div>
+
+        <div class="modal-actions" style="flex-direction:column; gap:10px; margin-top:18px;">
+            <button class="btn btn-mini-download" id="btn-modal-download-trigger" style="width:100%; padding:12px; background-color:#10b981; color:white;">
+                <i class="fa-solid fa-image"></i> Download HD Image (PNG)
+            </button>
+            <button class="btn" style="background:#ef4444; color:white; width:100%; justify-content:center; padding:10px; font-weight:700;" onclick="closeModal()">Close Window</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const supabaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
+    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    let globallyRegisteredIds = [];
+    let cachedDatabaseRecords = []; 
+
+    window.addEventListener('DOMContentLoaded', () => {
+        fetchLiveDatabaseLogs();
+    });
+
+    // HD MATRIX GENERATOR
+    async function generateHDMatrix() {
+        const prefix = document.getElementById('txt-prefix').value.trim().toUpperCase();
+        const start = parseInt(document.getElementById('txt-start').value);
+        const end = parseInt(document.getElementById('txt-end').value);
+        const matrixContainer = document.getElementById('bulk-render-matrix');
+        matrixContainer.innerHTML = "<div style='color:#94a3b8; grid-column: 1/-1;'><i class='fa-solid fa-spinner fa-spin'></i> Loading...</div>"; 
+
+        if(!prefix || isNaN(start) || isNaN(end) || start > end) {
+            alert("Configuration settings mismatch."); 
+            matrixContainer.innerHTML = "Click 'Generate' to view sheets.";
+            return;
+        }
+
+        try {
+            const { data, error } = await _supabase.from('registrations').select('sticker_id');
+            if (!error && data) globallyRegisteredIds = data.map(item => String(item.sticker_id).trim().toUpperCase());
+
+            matrixContainer.innerHTML = ""; 
+            let totalRendered = 0;
+
+            for (let i = start; i <= end; i++) {
+                const sequenceStr = String(i).padStart(3, '0');
+                const finalStickerId = `${prefix}${sequenceStr}`;
+                
+                if (globallyRegisteredIds.includes(finalStickerId.toUpperCase())) continue; 
+
+                totalRendered++;
+                const targetRedirectionUrl = `https://alertoqr.in/register.html?id=${finalStickerId}`;
+
+                const cardWrapper = document.createElement('div');
+                cardWrapper.className = 'sticker-card-container';
+                cardWrapper.innerHTML = `
+                    <div class="smart-car-sticker">
+                        <div class="sticker-header">🚨 CONTACT OWNER</div>
+                        <div class="sticker-sub-tag">🔒 SCAN TO ALERT CAR OWNER</div>
+                        <div class="sticker-qr-slot" id="matrix-qr-${finalStickerId}"></div>
+                        <div class="sticker-footer-id">${finalStickerId}</div>
+                        <div class="sticker-privacy-strip">🔒 Privacy Safe • Mobile Number Hidden</div>
+                    </div>
+                    <button class="btn-mini-download" onclick="downloadSingleTargetPNG('${finalStickerId}', '${targetRedirectionUrl}')">
+                        <i class="fa-solid fa-image"></i> Download HD Image
+                    </button>
+                `;
+                matrixContainer.appendChild(cardWrapper);
+
+                new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), {
+                    text: targetRedirectionUrl, width: 250, height: 250, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                setTimeout(() => {
+                    const img = document.getElementById(`matrix-qr-${finalStickerId}`).querySelector('img');
+                    if(img) { img.style.width = "115px"; img.style.height = "115px"; }
+                }, 50);
+            }
+
+            if (totalRendered === 0) matrixContainer.innerHTML = "<div style='color:#f59e0b; grid-column: 1/-1;'>⚠️ All IDs registered.</div>";
+        } catch (e) { matrixContainer.innerHTML = "Error processing."; }
+    }
+
+    // DATABASE LOGS (ADDED CHASSIS AND PIN)
+    async function fetchLiveDatabaseLogs() {
+        const targetTableBody = document.getElementById('table-data-rows');
+        try {
+            const { data, error } = await _supabase.from('registrations').select('*').order('created_at', { ascending: false });
+            if(error) throw error;
+            
+            if(data) {
+                globallyRegisteredIds = data.map(item => String(item.sticker_id).trim().toUpperCase());
+                cachedDatabaseRecords = data; 
+            }
+
+            if(!data || data.length === 0) {
+                targetTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding:20px;">No registered active records.</td></tr>`;
+                return;
+            }
+
+            targetTableBody.innerHTML = "";
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                let expiryString = "1 Year Active";
+                if(row.expiry_date) {
+                    const expDate = new Date(row.expiry_date);
+                    expiryString = `${String(expDate.getDate()).padStart(2, '0')}-${String(expDate.getMonth()+1).padStart(2, '0')}-${expDate.getFullYear()}`;
+                }
+
+                const isCurrentActive = (String(row.status).trim().toLowerCase() === 'active' || String(row.status).trim().toLowerCase() === 'activated');
+                const statusButtonHTML = isCurrentActive 
+                    ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
+                    : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
+
+                tr.innerHTML = `
+                    <td><strong class="id-link" onclick="viewPremiumStickerPopup('${row.sticker_id}')">${row.sticker_id}</strong></td>
+                    <td>${row.full_name || row.owner_name || 'N/A'}</td>
+                    <td><span class="vehicle-tag">${row.vehicle_number || 'N/A'}</span></td>
+                    <td><strong style="color:#fcd34d;">${row.chassis_no || 'N/A'}</strong></td> <td><span class="pin-tag">${row.secret_pin || 'N/A'}</span></td> <td>${row.mobile_number || 'N/A'}</td>
+                    <td>${statusButtonHTML}</td>
+                    <td><strong style="color: #cbd5e1;">${expiryString}</strong></td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="openEditModal('${row.sticker_id}')">Edit</button>
+                        <button class="btn-action btn-reset" onclick="resetCustomerPIN('${row.sticker_id}')">Reset PIN</button>
+                        <button class="btn-action btn-delete" onclick="deleteStickerRow('${row.sticker_id}')">Del</button>
+                    </td>
+                `;
+                targetTableBody.appendChild(tr);
+            });
+        } catch (err) { targetTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color:#ef4444;">Tracking lost.</td></tr>`; }
+    }
+
+    // MODAL & HD PNG DOWNLOAD LOGIC
+    function viewPremiumStickerPopup(stickerId) {
+        const targetUrl = `https://alertoqr.in/helper.html?id=${stickerId}`;
+        document.getElementById('qr-mdl-id').innerText = stickerId;
+        document.getElementById('modal-sticker-id-badge').innerText = stickerId;
+        
+        const holder = document.getElementById('modal-qr-holder');
+        holder.innerHTML = ""; 
+        document.getElementById('qrModal').style.display = 'flex';
+        
+        new QRCode(holder, {
+            text: targetUrl, width: 250, height: 250, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
+        });
+
+        setTimeout(() => {
+            const img = holder.querySelector('img');
+            if(img) { img.style.width = "115px"; img.style.height = "115px"; }
+        }, 120);
+
+        document.getElementById('btn-modal-download-trigger').onclick = () => {
+            downloadSingleTargetPNG(stickerId, targetUrl);
+        };
+    }
+
+    // NAYA LOGIC: HTML2CANVAS SE HIGH QUALITY PNG DOWNLOAD
+    function downloadSingleTargetPNG(stickerId, redirectionUrl) {
+        // Ek chupa hua box banayenge HD render ke liye
+        const container = document.createElement('div');
+        container.style.position = 'fixed';
+        container.style.left = '-9999px';
+        container.style.top = '0';
+        
+        // Inline styles ke sath design takki canvas ekdum perfect bane
+        container.innerHTML = `
+            <div id="render-target-${stickerId}" style="width: 400px; height: 400px; background: #ffffff; border: 8px solid #000000; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 15px; box-sizing: border-box; font-family: Arial, sans-serif;">
+                <div style="background-color: #ef4444; color: #ffffff; width: 108%; text-align: center; font-weight: 900; font-size: 26px; padding: 12px 0; text-transform: uppercase; margin-top: -5px; border-bottom: 3px solid #b91c1c;">🚨 CONTACT OWNER</div>
+                <div style="font-size: 16px; font-weight: 800; color: #1d2939; margin-top: 5px;">🔒 SCAN TO ALERT CAR OWNER</div>
+                <div id="print-qr-${stickerId}" style="margin: 10px 0; display:flex; justify-content:center;"></div>
+                <div style="font-size: 24px; font-weight: 900; color: #000000; background: #f2f4f7; padding: 5px 25px; border-radius: 8px; border: 2px solid #d0d5dd; letter-spacing: 2px;">${stickerId}</div>
+                <div style="width: 100%; text-align: center; font-size: 14px; font-weight: 700; color: #054f31; background-color: #ecfdf3; padding: 8px 0; border-radius: 6px; margin-bottom: -5px;">🔒 Privacy Safe • Mobile Number Hidden</div>
+            </div>
+        `;
+        document.body.appendChild(container);
+
+        new QRCode(document.getElementById(`print-qr-${stickerId}`), {
+            text: redirectionUrl, width: 250, height: 250, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
+        });
+
+        // Thoda wait karke capture karenge taaki QR image load ho jaye
+        setTimeout(() => {
+            const target = document.getElementById(`render-target-${stickerId}`);
+            // Scale: 3 ka matlab 3-guna (3x) High-Definition quality!
+            html2canvas(target, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `${stickerId}_Smart_Sticker.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                document.body.removeChild(container);
+            });
+        }, 500);
+    }
+
+    // UTILITIES
+    function closeModal() { document.getElementById('editModal').style.display = 'none'; document.getElementById('qrModal').style.display = 'none'; }
+    let activeEditId = null;
+    function openEditModal(stickerId) {
+        activeEditId = stickerId;
+        const matchedRow = cachedDatabaseRecords.find(item => item.sticker_id === stickerId);
+        if(!matchedRow) return;
+        document.getElementById('mdl-title-id').innerText = stickerId;
+        document.getElementById('mdl-txt-name').value = matchedRow.owner_name || matchedRow.full_name || "";
+        document.getElementById('mdl-txt-vehicle').value = matchedRow.vehicle_number || "";
+        document.getElementById('mdl-txt-mobile').value = matchedRow.mobile_number || "";
+        document.getElementById('editModal').style.display = 'flex';
+    }
+    
+    async function saveEdit() {
+        if(!activeEditId) return;
+        try {
+            await _supabase.from('registrations').update({ owner_name: document.getElementById('mdl-txt-name').value, full_name: document.getElementById('mdl-txt-name').value, vehicle_number: document.getElementById('mdl-txt-vehicle').value, mobile_number: document.getElementById('mdl-txt-mobile').value }).eq('sticker_id', activeEditId);
+            closeModal(); fetchLiveDatabaseLogs();
+        } catch (err) { alert("Error updating"); }
+    }
+    
+    async function resetCustomerPIN(id) {
+        if(confirm(`Reset PIN for ${id} to '1234'?`)) {
+            await _supabase.from('registrations').update({ secret_pin: '1234' }).eq('sticker_id', id);
+            fetchLiveDatabaseLogs();
+        }
+    }
+    
+    async function toggleStickerStatus(id, stat) { await _supabase.from('registrations').update({ status: stat }).eq('sticker_id', id); fetchLiveDatabaseLogs(); }
