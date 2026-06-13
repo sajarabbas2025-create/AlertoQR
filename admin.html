@@ -35,7 +35,7 @@
 
         #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 30px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
 
-        /* PERFECT FIXED HEIGHT STICKER LAYOUT - SIZE: 420x240 */
+        /* FINAL ADJUSTED STICKER LAYOUT - SIZE: 420x240 */
         .smart-car-sticker { 
             width: 420px; 
             height: 240px; 
@@ -162,14 +162,11 @@
         
         <div class="smart-car-sticker" id="modal-sticker-embed">
             
-            <!-- TOP SECTION (155px strict height to avoid bottom cut-off) -->
             <div style="height: 155px; display: flex; background: #ffffff;">
                 
-                <!-- Left Details -->
-                <div style="flex: 1.4; padding: 10px 10px 5px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <div style="flex: 1.45; padding: 10px 5px 5px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center;">
                     
-                    <!-- Perfect Centered Shield, Logo & Subtitle Block -->
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 5px;">
                         <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                             <i class="fa-solid fa-shield-halved" style="color: #f59e0b; font-size: 24px;"></i>
                             <div style="display: flex; flex-direction: column; align-items: center;">
@@ -177,35 +174,32 @@
                                 <div style="width: 100%; height: 3px; background-color: #f59e0b; margin-top: 2px; border-radius: 2px;"></div>
                             </div>
                         </div>
-                        <div style="font-size: 10px; font-weight: 800; color: #475569; margin-top: 4px; letter-spacing: 0.5px; text-transform: uppercase;">
+                        
+                        <div style="font-size: 10.5px; font-weight: 800; color: #475569; margin-top: 6px; letter-spacing: 0.5px; text-transform: uppercase;">
                             Emergency Vehicle Contact
                         </div>
                     </div>
                     
-                    <!-- Pushed Up & Font Adjusted Text -->
-                    <div style="margin-top: 6px;">
-                        <div style="font-size: 23px; font-weight: 900; color: #0f172a; line-height: 1.15;">
-                            Scan this QR<br>to contact the<br>vehicle owner
+                    <div style="margin-top: 16px;">
+                        <div style="font-size: 27px; font-weight: 900; color: #0f172a; line-height: 1.2; letter-spacing: -0.5px;">
+                            Scan this QR to contact<br>vehicle owner
                         </div>
                     </div>
                 </div>
 
-                <!-- Right QR Code -->
-                <div style="flex: 0.9; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 5px;">
+                <div style="flex: 0.85; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 5px;">
                     <div style="border: 3px solid #f59e0b; border-radius: 10px; padding: 4px; background: white; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center;">
                         <div id="modal-qr-holder"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Full Width Scan Instruction (20px strict height) -->
             <div style="height: 20px; border-top: 1px solid #e2e8f0; background: #ffffff; display: flex; align-items: center; justify-content: center;">
                 <span style="font-size: 10.5px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">
                     scan using google lens, phone camera or any qr scanner app
                 </span>
             </div>
 
-            <!-- Icons Middle Strip (35px strict height) -->
             <div style="height: 35px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-evenly; background: #f8fafc; padding: 0 10px;">
                 <div style="display:flex; align-items:center; gap:5px;">
                     <i class="fa-solid fa-ban" style="font-size:15px; color:#f59e0b;"></i>
@@ -228,7 +222,6 @@
                 </div>
             </div>
 
-            <!-- Bottom Yellow Strip (30px strict height, Centered Perfectly) -->
             <div style="height: 30px; background: #ffcc00; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; color: #000;">
                 <div style="display:flex; align-items:center; gap:5px; font-size:9.5px; font-weight:800; flex:1;">
                     <i class="fa-solid fa-lock" style="font-size:10px;"></i> Your number stays private
@@ -236,7 +229,6 @@
                 <div style="font-size:8px; font-weight:800; text-align:center; line-height:1.2; border-left: 1px solid #000; border-right: 1px solid #000; padding: 0 10px; flex:0.6;">
                     Powered by<br><span style="font-size:9.5px;">AlertoQR</span>
                 </div>
-                <!-- Centered Alignment Applied Here -->
                 <div style="display:flex; align-items:center; justify-content:center; gap:5px; font-size:8px; font-weight:800; text-align:center; flex:1;">
                     <i class="fa-solid fa-globe" style="font-size:11px;"></i> <span>any issue with the vehicle,<br>Scan the QR</span>
                 </div>
@@ -341,8 +333,9 @@
                     <div class="smart-car-sticker">
                         
                         <div style="height: 155px; display: flex; background: #ffffff;">
-                            <div style="flex: 1.4; padding: 10px 10px 5px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-                                <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                            
+                            <div style="flex: 1.45; padding: 10px 5px 5px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center;">
+                                <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 5px;">
                                     <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                                         <i class="fa-solid fa-shield-halved" style="color: #f59e0b; font-size: 24px;"></i>
                                         <div style="display: flex; flex-direction: column; align-items: center;">
@@ -350,18 +343,18 @@
                                             <div style="width: 100%; height: 3px; background-color: #f59e0b; margin-top: 2px; border-radius: 2px;"></div>
                                         </div>
                                     </div>
-                                    <div style="font-size: 10px; font-weight: 800; color: #475569; margin-top: 4px; letter-spacing: 0.5px; text-transform: uppercase;">
+                                    <div style="font-size: 10.5px; font-weight: 800; color: #475569; margin-top: 6px; letter-spacing: 0.5px; text-transform: uppercase;">
                                         Emergency Vehicle Contact
                                     </div>
                                 </div>
-                                <div style="margin-top: 6px;">
-                                    <div style="font-size: 23px; font-weight: 900; color: #0f172a; line-height: 1.15;">
-                                        Scan this QR<br>to contact the<br>vehicle owner
+                                <div style="margin-top: 16px;">
+                                    <div style="font-size: 27px; font-weight: 900; color: #0f172a; line-height: 1.2; letter-spacing: -0.5px;">
+                                        Scan this QR to contact<br>vehicle owner
                                     </div>
                                 </div>
                             </div>
 
-                            <div style="flex: 0.9; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 5px;">
+                            <div style="flex: 0.85; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 5px;">
                                 <div style="border: 3px solid #f59e0b; border-radius: 10px; padding: 4px; background: white; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center;">
                                     <div id="matrix-qr-${finalStickerId}"></div>
                                 </div>
@@ -583,8 +576,8 @@
             <div id="temp-dl-${stickerId}" style="width: 420px; height: 240px; background-color: #ffffff; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; font-family: sans-serif; border: 2px solid #f59e0b; box-sizing: border-box;">
                 
                 <div style="height: 155px; display: flex; background: #ffffff;">
-                    <div style="flex: 1.4; padding: 10px 10px 5px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-                        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    <div style="flex: 1.45; padding: 10px 5px 5px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center;">
+                        <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 5px;">
                             <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                                 <i class="fa-solid fa-shield-halved" style="color: #f59e0b; font-size: 24px;"></i>
                                 <div style="display: flex; flex-direction: column; align-items: center;">
@@ -592,18 +585,18 @@
                                     <div style="width: 100%; height: 3px; background-color: #f59e0b; margin-top: 2px; border-radius: 2px;"></div>
                                 </div>
                             </div>
-                            <div style="font-size: 10.5px; font-weight: 800; color: #475569; margin-top: 4px; letter-spacing: 0.5px; text-transform: uppercase;">
+                            <div style="font-size: 10.5px; font-weight: 800; color: #475569; margin-top: 6px; letter-spacing: 0.5px; text-transform: uppercase;">
                                 Emergency Vehicle Contact
                             </div>
                         </div>
-                        <div style="margin-top: 6px;">
-                            <div style="font-size: 23px; font-weight: 900; color: #0f172a; line-height: 1.15;">
-                                Scan this QR<br>to contact the<br>vehicle owner
+                        <div style="margin-top: 16px;">
+                            <div style="font-size: 27px; font-weight: 900; color: #0f172a; line-height: 1.2; letter-spacing: -0.5px;">
+                                Scan this QR to contact<br>vehicle owner
                             </div>
                         </div>
                     </div>
 
-                    <div style="flex: 0.9; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 5px;">
+                    <div style="flex: 0.85; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 5px;">
                         <div style="border: 3px solid #f59e0b; border-radius: 10px; padding: 4px; background: white; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center;">
                             <div id="temp-qr-${stickerId}"></div>
                         </div>
