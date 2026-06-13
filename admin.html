@@ -34,7 +34,7 @@
 
         #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 30px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
 
-        /* FIXED YELLOW LAYOUT */
+        /* PERFECT STICKER LAYOUT */
         .smart-car-sticker { 
             width: 460px; 
             height: 280px; 
@@ -49,24 +49,6 @@
             -webkit-print-color-adjust: exact !important; 
             print-color-adjust: exact !important; 
         }
-        
-        .st-top { display: flex; flex: 1; background: #ffffff !important; }
-        
-        /* Left Section taking all available space to close the gap */
-        .st-left { flex: 1; padding: 25px 10px 10px 25px; display: flex; flex-direction: column; justify-content: center; text-align: left;}
-        .st-brand { font-size: 28px; font-weight: 900; color: #000000 !important; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; }
-        .st-brand i { color: #f59e0b !important; font-size: 28px; }
-        .st-separator { width: 150px; height: 4px; background-color: #f59e0b !important; margin-top: 6px; margin-bottom: 12px; border-radius: 2px; }
-        .st-heading { font-size: 30px; font-weight: 900; color: #0f172a !important; line-height: 1.15; }
-
-        /* Right Section with fixed width and padding so it doesn't touch the border */
-        .st-right { width: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding-right: 15px;}
-        .st-qr-id { font-size: 13px; font-weight: 900; color: #1e293b !important; margin-bottom: 4px; letter-spacing: 1px; }
-        .st-qr-box { border: 3px solid #f59e0b !important; border-radius: 12px; padding: 8px; background: white !important; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center; margin-bottom: 8px; }
-
-        .st-middle { height: 42px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; background: #f8fafc !important; }
-        
-        .st-bottom { height: 42px; background: #ffcc00 !important; display: flex; align-items: center; justify-content: center; gap: 20px; color: #000000 !important; font-size: 11.5px; font-weight: 800; }
 
         .sticker-card-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .id-label { color: #94a3b8; font-size: 14px; font-weight: bold; margin-bottom: -5px; } 
@@ -110,7 +92,6 @@
             .panel-card { border: none !important; background: white !important; box-shadow: none !important; padding: 0 !important; }
             #bulk-render-matrix { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; padding: 10px !important; border: none !important; background: white !important; }
             .smart-car-sticker { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; page-break-inside: avoid !important; box-shadow: none !important; transform: scale(0.9); transform-origin: top left;}
-            .st-bottom, .st-qr-box, .st-middle, .st-top, .st-left, .st-right, .st-separator { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
     </style>
 </head>
@@ -174,43 +155,60 @@
         
         <div class="smart-car-sticker" id="modal-sticker-embed">
             
-            <div class="st-top">
-                <div class="st-left">
-                    <div class="st-brand">
-                        <i class="fa-solid fa-shield-halved"></i> AlertoQR
+            <div style="display: flex; flex: 1; background: #ffffff;">
+                <div style="flex: 1.4; padding: 15px 10px 10px 25px; display: flex; flex-direction: column; justify-content: flex-start;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                        <i class="fa-solid fa-shield-halved" style="color: #f59e0b; font-size: 32px;"></i>
+                        <div style="display: flex; flex-direction: column; margin-top: 5px;">
+                            <span style="font-size: 28px; font-weight: 900; color: #000; letter-spacing: 0.5px; line-height: 1;">AlertoQR</span>
+                            <div style="width: 100%; height: 4px; background-color: #f59e0b; margin-top: 3px; border-radius: 2px;"></div>
+                        </div>
                     </div>
-                    <div class="st-separator"></div>
-                    <div class="st-heading">
+                    <div style="font-size: 32px; font-weight: 900; color: #0f172a; line-height: 1.15; margin-top: 5px;">
                         Scan the QR<br>to contact the<br>vehicle owner
                     </div>
                 </div>
-                <div class="st-right">
-                    <div class="st-qr-id" id="modal-qr-id-text">ALQR000</div>
-                    <div class="st-qr-box">
+                <div style="flex: 0.9; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 10px;">
+                    <div style="border: 3px solid #f59e0b; border-radius: 12px; padding: 6px; background: white; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center;">
                         <div id="modal-qr-holder"></div>
                     </div>
-                    <div style="display:flex; gap:10px; font-size:18px; color:#f59e0b; align-items:center;">
-                        <i class="fa-solid fa-triangle-exclamation" style="color:#dc2626;"></i>
-                        <i class="fa-solid fa-location-dot" style="color:#dc2626;"></i>
-                        <i class="fa-brands fa-whatsapp"></i>
-                        <i class="fa-solid fa-comment-sms"></i>
-                        <i class="fa-solid fa-phone"></i>
+                    <div style="font-size: 8px; font-weight: 700; color: #475569; text-align: center; margin-top: 8px; line-height: 1.3;">
+                        scan using google lens, phone camera<br>or any qr scanner app
                     </div>
                 </div>
             </div>
 
-            <div class="st-middle">
-                <div style="font-size:11.5px; font-weight:800; color:#334155; text-align:center;">
-                    Wrong Parking, Emergency Contact, any issue with the vehicle, Scan the QR.
+            <div style="height: 50px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-evenly; background: #f8fafc; padding: 0 10px;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <i class="fa-solid fa-ban" style="font-size:18px; color:#f59e0b;"></i>
+                    <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Wrong<br>Parking</div>
+                </div>
+                <div style="width: 1px; height: 25px; background: #cbd5e1;"></div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <i class="fa-solid fa-phone-volume" style="font-size:18px; color:#f59e0b;"></i>
+                    <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Emergency<br>Contact</div>
+                </div>
+                <div style="width: 1px; height: 25px; background: #cbd5e1;"></div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <i class="fa-solid fa-car-burst" style="font-size:18px; color:#f59e0b;"></i>
+                    <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Vehicle<br>Issue</div>
+                </div>
+                <div style="width: 1px; height: 25px; background: #cbd5e1;"></div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <i class="fa-solid fa-headset" style="font-size:18px; color:#f59e0b;"></i>
+                    <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Need<br>Assistance</div>
                 </div>
             </div>
 
-            <div class="st-bottom">
-                <div style="display:flex; align-items:center; gap:6px;">
-                    <i class="fa-solid fa-lock"></i> Your number stays private
+            <div style="height: 42px; background: #ffcc00; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; color: #000;">
+                <div style="display:flex; align-items:center; gap:6px; font-size:10px; font-weight:800; flex:1;">
+                    <i class="fa-solid fa-lock" style="font-size:12px;"></i> Your number stays private
                 </div>
-                <div style="font-size:9.5px; font-weight:800; text-align:center; padding-left:20px; border-left:2px solid #000; line-height:1.2; letter-spacing: 0.5px;">
-                    SCAN USING PHONE CAMERA, GOOGLE LENS<br>OR ANY QR SCANNER APP
+                <div style="font-size:8px; font-weight:800; text-align:center; line-height:1.2; border-left: 1px solid #000; border-right: 1px solid #000; padding: 0 15px; flex:0.6;">
+                    Powered by<br><span style="font-size:11px;">AlertoQR</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px; font-size:8.5px; font-weight:800; text-align:left; flex:1; justify-content:flex-end;">
+                    <i class="fa-solid fa-globe" style="font-size:12px;"></i> <span>any issue with the vehicle,<br>Scan the QR</span>
                 </div>
             </div>
 
@@ -264,43 +262,60 @@
                     <div class="id-label">Admin ID: ${finalStickerId}</div> 
                     <div class="smart-car-sticker">
                         
-                        <div class="st-top">
-                            <div class="st-left">
-                                <div class="st-brand">
-                                    <i class="fa-solid fa-shield-halved"></i> AlertoQR
+                        <div style="display: flex; flex: 1; background: #ffffff;">
+                            <div style="flex: 1.4; padding: 15px 10px 10px 25px; display: flex; flex-direction: column; justify-content: flex-start;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                    <i class="fa-solid fa-shield-halved" style="color: #f59e0b; font-size: 32px;"></i>
+                                    <div style="display: flex; flex-direction: column; margin-top: 5px;">
+                                        <span style="font-size: 28px; font-weight: 900; color: #000; letter-spacing: 0.5px; line-height: 1;">AlertoQR</span>
+                                        <div style="width: 100%; height: 4px; background-color: #f59e0b; margin-top: 3px; border-radius: 2px;"></div>
+                                    </div>
                                 </div>
-                                <div class="st-separator"></div>
-                                <div class="st-heading">
+                                <div style="font-size: 32px; font-weight: 900; color: #0f172a; line-height: 1.15; margin-top: 5px;">
                                     Scan the QR<br>to contact the<br>vehicle owner
                                 </div>
                             </div>
-                            <div class="st-right">
-                                <div class="st-qr-id">${finalStickerId}</div>
-                                <div class="st-qr-box">
+                            <div style="flex: 0.9; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 10px;">
+                                <div style="border: 3px solid #f59e0b; border-radius: 12px; padding: 6px; background: white; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center;">
                                     <div id="matrix-qr-${finalStickerId}"></div>
                                 </div>
-                                <div style="display:flex; gap:10px; font-size:18px; color:#f59e0b; align-items:center;">
-                                    <i class="fa-solid fa-triangle-exclamation" style="color:#dc2626;"></i>
-                                    <i class="fa-solid fa-location-dot" style="color:#dc2626;"></i>
-                                    <i class="fa-brands fa-whatsapp"></i>
-                                    <i class="fa-solid fa-comment-sms"></i>
-                                    <i class="fa-solid fa-phone"></i>
+                                <div style="font-size: 8px; font-weight: 700; color: #475569; text-align: center; margin-top: 8px; line-height: 1.3;">
+                                    scan using google lens, phone camera<br>or any qr scanner app
                                 </div>
                             </div>
                         </div>
 
-                        <div class="st-middle">
-                            <div style="font-size:11.5px; font-weight:800; color:#334155; text-align:center;">
-                                Wrong Parking, Emergency Contact, any issue with the vehicle, Scan the QR.
+                        <div style="height: 50px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-evenly; background: #f8fafc; padding: 0 10px;">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <i class="fa-solid fa-ban" style="font-size:18px; color:#f59e0b;"></i>
+                                <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Wrong<br>Parking</div>
+                            </div>
+                            <div style="width: 1px; height: 25px; background: #cbd5e1;"></div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <i class="fa-solid fa-phone-volume" style="font-size:18px; color:#f59e0b;"></i>
+                                <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Emergency<br>Contact</div>
+                            </div>
+                            <div style="width: 1px; height: 25px; background: #cbd5e1;"></div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <i class="fa-solid fa-car-burst" style="font-size:18px; color:#f59e0b;"></i>
+                                <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Vehicle<br>Issue</div>
+                            </div>
+                            <div style="width: 1px; height: 25px; background: #cbd5e1;"></div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <i class="fa-solid fa-headset" style="font-size:18px; color:#f59e0b;"></i>
+                                <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Need<br>Assistance</div>
                             </div>
                         </div>
 
-                        <div class="st-bottom">
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                <i class="fa-solid fa-lock"></i> Your number stays private
+                        <div style="height: 42px; background: #ffcc00; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; color: #000;">
+                            <div style="display:flex; align-items:center; gap:6px; font-size:10px; font-weight:800; flex:1;">
+                                <i class="fa-solid fa-lock" style="font-size:12px;"></i> Your number stays private
                             </div>
-                            <div style="font-size:9.5px; font-weight:800; text-align:center; padding-left:20px; border-left:2px solid #000; line-height:1.2; letter-spacing: 0.5px;">
-                                SCAN USING PHONE CAMERA, GOOGLE LENS<br>OR ANY QR SCANNER APP
+                            <div style="font-size:8px; font-weight:800; text-align:center; line-height:1.2; border-left: 1px solid #000; border-right: 1px solid #000; padding: 0 15px; flex:0.6;">
+                                Powered by<br><span style="font-size:11px;">AlertoQR</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:6px; font-size:8.5px; font-weight:800; text-align:left; flex:1; justify-content:flex-end;">
+                                <i class="fa-solid fa-globe" style="font-size:12px;"></i> <span>any issue with the vehicle,<br>Scan the QR</span>
                             </div>
                         </div>
 
@@ -312,7 +327,7 @@
                 matrixContainer.appendChild(cardWrapper);
                 
                 new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), { 
-                    text: targetRedirectionUrl, width: 110, height: 110, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
+                    text: targetRedirectionUrl, width: 115, height: 115, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
                 });
             }
             if (totalRendered === 0) matrixContainer.innerHTML = "<div style='color:#f59e0b; grid-column: 1/-1;'>⚠️ All IDs in this range are already registered.</div>";
@@ -462,11 +477,10 @@
         const targetUrl = `https://alertoqr.in/helper.html?id=${stickerId}`;
         const holder = document.getElementById('modal-qr-holder');
         holder.innerHTML = ""; 
-        document.getElementById('modal-qr-id-text').innerText = stickerId;
         document.getElementById('qrModal').style.display = 'flex';
         
         new QRCode(holder, { 
-            text: targetUrl, width: 110, height: 110, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
+            text: targetUrl, width: 115, height: 115, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
         });
         
         document.getElementById('btn-modal-download-trigger').onclick = () => { downloadSingleTargetPNG(stickerId, targetUrl); };
@@ -480,42 +494,59 @@
             <div id="temp-dl-${stickerId}" style="width: 460px; height: 280px; background-color: #ffffff; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; font-family: sans-serif; border: 1px solid #cbd5e1; box-sizing: border-box;">
                 
                 <div style="display: flex; flex: 1; background: #ffffff;">
-                    <div style="flex: 1; padding: 25px 10px 10px 25px; display: flex; flex-direction: column; justify-content: center;">
-                        <div style="font-size: 28px; font-weight: 900; color: #000; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px;">
-                            <i class="fa-solid fa-shield-halved" style="color: #f59e0b; font-size: 28px;"></i> AlertoQR
+                    <div style="flex: 1.4; padding: 15px 10px 10px 25px; display: flex; flex-direction: column; justify-content: flex-start;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                            <i class="fa-solid fa-shield-halved" style="color: #f59e0b; font-size: 32px;"></i>
+                            <div style="display: flex; flex-direction: column; margin-top: 5px;">
+                                <span style="font-size: 28px; font-weight: 900; color: #000; letter-spacing: 0.5px; line-height: 1;">AlertoQR</span>
+                                <div style="width: 100%; height: 4px; background-color: #f59e0b; margin-top: 3px; border-radius: 2px;"></div>
+                            </div>
                         </div>
-                        <div style="width: 150px; height: 4px; background-color: #f59e0b; margin-top: 6px; margin-bottom: 12px; border-radius: 2px;"></div>
-                        <div style="font-size: 30px; font-weight: 900; color: #0f172a; line-height: 1.15;">
+                        <div style="font-size: 32px; font-weight: 900; color: #0f172a; line-height: 1.15; margin-top: 5px;">
                             Scan the QR<br>to contact the<br>vehicle owner
                         </div>
                     </div>
-                    <div style="width: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding-right: 15px;">
-                        <div style="font-size: 13px; font-weight: 900; color: #1e293b; margin-bottom: 4px; letter-spacing: 1px;">${stickerId}</div>
-                        <div style="border: 3px solid #f59e0b; border-radius: 12px; padding: 8px; background: white; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
+                    <div style="flex: 0.9; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 10px;">
+                        <div style="border: 3px solid #f59e0b; border-radius: 12px; padding: 6px; background: white; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center;">
                             <div id="temp-qr-${stickerId}"></div>
                         </div>
-                        <div style="display: flex; gap: 10px; font-size: 18px; color: #f59e0b; align-items: center;">
-                            <i class="fa-solid fa-triangle-exclamation" style="color: #dc2626;"></i>
-                            <i class="fa-solid fa-location-dot" style="color: #dc2626;"></i>
-                            <i class="fa-brands fa-whatsapp"></i>
-                            <i class="fa-solid fa-comment-sms"></i>
-                            <i class="fa-solid fa-phone"></i>
+                        <div style="font-size: 8px; font-weight: 700; color: #475569; text-align: center; margin-top: 8px; line-height: 1.3;">
+                            scan using google lens, phone camera<br>or any qr scanner app
                         </div>
                     </div>
                 </div>
-                
-                <div style="height: 42px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; background: #f8fafc;">
-                    <div style="font-size: 11.5px; font-weight: 800; color: #334155; text-align: center;">
-                        Wrong Parking, Emergency Contact, any issue with the vehicle, Scan the QR.
+
+                <div style="height: 50px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-evenly; background: #f8fafc; padding: 0 10px;">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <i class="fa-solid fa-ban" style="font-size:18px; color:#f59e0b;"></i>
+                        <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Wrong<br>Parking</div>
+                    </div>
+                    <div style="width: 1px; height: 25px; background: #cbd5e1;"></div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <i class="fa-solid fa-phone-volume" style="font-size:18px; color:#f59e0b;"></i>
+                        <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Emergency<br>Contact</div>
+                    </div>
+                    <div style="width: 1px; height: 25px; background: #cbd5e1;"></div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <i class="fa-solid fa-car-burst" style="font-size:18px; color:#f59e0b;"></i>
+                        <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Vehicle<br>Issue</div>
+                    </div>
+                    <div style="width: 1px; height: 25px; background: #cbd5e1;"></div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <i class="fa-solid fa-headset" style="font-size:18px; color:#f59e0b;"></i>
+                        <div style="font-size:9.5px; font-weight:800; color:#334155; line-height:1.2;">Need<br>Assistance</div>
                     </div>
                 </div>
-                
-                <div style="height: 42px; background: #ffcc00; display: flex; align-items: center; justify-content: center; gap: 20px; color: #000; font-size: 11.5px; font-weight: 800;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <i class="fa-solid fa-lock"></i> Your number stays private
+
+                <div style="height: 42px; background: #ffcc00; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; color: #000;">
+                    <div style="display:flex; align-items:center; gap:6px; font-size:10px; font-weight:800; flex:1;">
+                        <i class="fa-solid fa-lock" style="font-size:12px;"></i> Your number stays private
                     </div>
-                    <div style="font-size: 9.5px; font-weight: 800; text-align: center; padding-left: 20px; border-left: 2px solid #000; line-height: 1.2; letter-spacing: 0.5px;">
-                        SCAN USING PHONE CAMERA, GOOGLE LENS<br>OR ANY QR SCANNER APP
+                    <div style="font-size:8px; font-weight:800; text-align:center; line-height:1.2; border-left: 1px solid #000; border-right: 1px solid #000; padding: 0 15px; flex:0.6;">
+                        Powered by<br><span style="font-size:11px;">AlertoQR</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; font-size:8.5px; font-weight:800; text-align:left; flex:1; justify-content:flex-end;">
+                        <i class="fa-solid fa-globe" style="font-size:12px;"></i> <span>any issue with the vehicle,<br>Scan the QR</span>
                     </div>
                 </div>
 
@@ -524,7 +555,7 @@
         document.body.appendChild(container);
         
         new QRCode(document.getElementById(`temp-qr-${stickerId}`), { 
-            text: redirectionUrl, width: 110, height: 110, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
+            text: redirectionUrl, width: 115, height: 115, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
         });
 
         setTimeout(() => {
