@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,27 +36,9 @@
         #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
 
         /* NEW PREMIUM GOLD/BLACK STICKER DESIGN */
-        .smart-car-sticker {
-            background-color: #23272f !important; /* Premium Dark Grey/Black */
-            width: 250px; 
-            border-radius: 16px;
-            display: flex; flex-direction: column; align-items: center; 
-            padding: 25px 15px 20px 15px; 
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); 
-            text-align: center;
-        }
-        .sticker-main-text { 
-            color: #d8a436 !important; /* Premium Gold */
-            font-size: 22px; font-weight: 900; line-height: 1.1; 
-            margin-bottom: 18px; letter-spacing: 0.5px; 
-        }
-        .sticker-white-box {
-            background: #ffffff !important;
-            border: 5px solid #d8a436 !important; /* Thick Gold Border */
-            border-radius: 12px;
-            padding: 15px; display: flex; flex-direction: column; align-items: center; 
-            width: 100%;
-        }
+        .smart-car-sticker { background-color: #23272f !important; width: 250px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; padding: 25px 15px 20px 15px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); text-align: center; }
+        .sticker-main-text { color: #d8a436 !important; font-size: 22px; font-weight: 900; line-height: 1.1; margin-bottom: 18px; letter-spacing: 0.5px; }
+        .sticker-white-box { background: #ffffff !important; border: 5px solid #d8a436 !important; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; align-items: center; width: 100%; }
         .sticker-qr-slot { display: flex; justify-content: center; align-items: center; width: 130px; height: 130px; }
         .sticker-footer-id { color: #000000 !important; font-size: 16px; font-weight: 900; letter-spacing: 2px; margin-top: 12px; }
         .sticker-brand-name { color: #333333 !important; font-size: 11px; font-weight: 800; letter-spacing: 1px; margin-top: 6px; text-transform: uppercase; }
@@ -184,6 +167,7 @@
 
     let globallyRegisteredIds = [];
     let cachedDatabaseRecords = []; 
+    let currentEditingId = null; // Edit ke liye naya variable
 
     window.addEventListener('DOMContentLoaded', () => { fetchLiveDatabaseLogs(); });
 
@@ -211,7 +195,6 @@
                 const cardWrapper = document.createElement('div');
                 cardWrapper.className = 'sticker-card-container';
                 
-                // HTML Layout for Matrix View (Premium Design)
                 cardWrapper.innerHTML = `
                     <div class="smart-car-sticker">
                         <div class="sticker-main-text">SCAN TO<br>CONTACT OWNER</div>
@@ -274,102 +257,34 @@
         } catch (err) {}
     }
 
-    function viewPremiumStickerPopup(stickerId) {
-        const targetUrl = `https://alertoqr.in/helper.html?id=${stickerId}`;
-        document.getElementById('qr-mdl-id').innerText = stickerId;
-        document.getElementById('modal-sticker-id-badge').innerText = stickerId;
-        const holder = document.getElementById('modal-qr-holder');
-        holder.innerHTML = ""; document.getElementById('qrModal').style.display = 'flex';
-        
-        new QRCode(holder, { 
-            text: targetUrl, width: 130, height: 130, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
-        });
-        
-        document.getElementById('btn-modal-download-trigger').onclick = () => { downloadSingleTargetPNG(stickerId, targetUrl); };
-    }
+    // --- NEW EDIT FUNCTIONS ADDED HERE ---
 
-    // HD Download Template (Premium Gold Design)
-    function downloadSingleTargetPNG(stickerId, redirectionUrl) {
-        const container = document.createElement('div');
-        container.style.position = 'fixed'; container.style.left = '-9999px'; container.style.top = '0';
-        
-        container.innerHTML = `
-            <div id="render-target-${stickerId}" style="width: 400px; background-color: #23272f; border-radius: 24px; display: flex; flex-direction: column; align-items: center; padding: 40px 25px 35px 25px; box-sizing: border-box; font-family: Arial, sans-serif; text-align: center;">
-                <div style="color: #d8a436; font-size: 34px; font-weight: 900; line-height: 1.1; margin-bottom: 25px; letter-spacing: 1px;">SCAN TO<br>CONTACT OWNER</div>
-                
-                <div style="background: #ffffff; border: 8px solid #d8a436; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box;">
-                    <div id="print-qr-${stickerId}" style="display:flex; justify-content:center; align-items:center;"></div>
-                    <div style="color: #000000; font-size: 26px; font-weight: 900; letter-spacing: 3px; margin-top: 15px;">${stickerId}</div>
-                    <div style="color: #333333; font-size: 16px; font-weight: 800; letter-spacing: 1px; margin-top: 8px;">- ALERTOQR -</div>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(container);
-        
-        new QRCode(document.getElementById(`print-qr-${stickerId}`), { 
-            text: redirectionUrl, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H 
-        });
-        
-        setTimeout(() => {
-            const target = document.getElementById(`render-target-${stickerId}`);
-            html2canvas(target, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
-                const link = document.createElement('a'); 
-                link.download = `${stickerId}_Smart_Sticker.png`; 
-                link.href = canvas.toDataURL('image/png'); 
-                link.click(); 
-                document.body.removeChild(container);
-            });
-        }, 600);
-    }
-
-    function closeModal() { document.getElementById('editModal').style.display = 'none'; document.getElementById('qrModal').style.display = 'none'; }
-    
-    let activeEditId = null;
     function openEditModal(stickerId) {
-        activeEditId = stickerId;
-        const matchedRow = cachedDatabaseRecords.find(item => item.sticker_id === stickerId);
-        if(!matchedRow) return;
-        document.getElementById('mdl-title-id').innerText = stickerId;
-        document.getElementById('mdl-txt-name').value = matchedRow.owner_name || matchedRow.full_name || "";
-        document.getElementById('mdl-txt-vehicle').value = matchedRow.vehicle_number || "";
-        document.getElementById('mdl-txt-chassis').value = matchedRow.chassis_no || matchedRow.chassis_number || matchedRow.chassis || "";
-        document.getElementById('mdl-txt-mobile').value = matchedRow.mobile_number || "";
-        document.getElementById('mdl-txt-alt').value = matchedRow.alternate_number || "";
-        document.getElementById('editModal').style.display = 'flex';
-    }
-    
-    async function saveEdit() {
-        if(!activeEditId) return;
-        const chassisVal = document.getElementById('mdl-txt-chassis').value;
-        let updatePayload = { 
-            owner_name: document.getElementById('mdl-txt-name').value, 
-            full_name: document.getElementById('mdl-txt-name').value, 
-            vehicle_number: document.getElementById('mdl-txt-vehicle').value, 
-            mobile_number: document.getElementById('mdl-txt-mobile').value,
-            alternate_number: document.getElementById('mdl-txt-alt').value,
-            chassis_no: chassisVal,
-            chassis_number: chassisVal
-        };
-
-        try {
-            await _supabase.from('registrations').update(updatePayload).eq('sticker_id', activeEditId);
-            closeModal(); fetchLiveDatabaseLogs();
-        } catch (err) { alert("Error updating"); }
-    }
-    
-    async function resetCustomerPIN(id) {
-        if(confirm(`Kya aap sach mein ${id} ka PIN '1234' par reset karna chahte hain?`)) {
-            try {
-                const { error } = await _supabase.from('registrations').update({ secret_pin: '1234' }).eq('sticker_id', id);
-                if(error) throw error;
-                alert(`Success! ${id} ka naya PIN '1234' set ho gaya hai.`);
-                fetchLiveDatabaseLogs();
-            } catch(err) { alert("Error: PIN Reset nahi ho paya. Please try again."); }
+        currentEditingId = stickerId;
+        const record = cachedDatabaseRecords.find(r => r.sticker_id === stickerId);
+        
+        if (record) {
+            document.getElementById('mdl-title-id').innerText = stickerId;
+            document.getElementById('mdl-txt-name').value = record.full_name || record.owner_name || '';
+            document.getElementById('mdl-txt-vehicle').value = record.vehicle_number || '';
+            
+            let rawChassis = record.chassis_no || record.chassis_number || record.chassis || '';
+            document.getElementById('mdl-txt-chassis').value = String(rawChassis).slice(-4);
+            
+            document.getElementById('mdl-txt-mobile').value = record.mobile_number || '';
+            document.getElementById('mdl-txt-alt').value = record.alternate_number || '';
+            
+            document.getElementById('editModal').style.display = 'flex';
         }
     }
-    
-    async function toggleStickerStatus(id, stat) { await _supabase.from('registrations').update({ status: stat }).eq('sticker_id', id); fetchLiveDatabaseLogs(); }
-    async function deleteStickerRow(id) { if(confirm(`Warning: Kya aap sach mein ${id} ka record database se DELETE karna chahte hain?`)) { await _supabase.from('registrations').delete().eq('sticker_id', id); fetchLiveDatabaseLogs(); } }
-</script>
-</body>
-</html>
+
+    async function saveEdit() {
+        if (!currentEditingId) return;
+
+        // Button ko loading state me dikhane ke liye
+        const saveBtn = document.querySelector('.modal-actions .btn-generate');
+        const originalText = saveBtn.innerText;
+        saveBtn.innerText = "Saving...";
+        saveBtn.disabled = true;
+
+        const newName = document.getElemen
