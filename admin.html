@@ -35,17 +35,17 @@
 
         #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
 
-        /* REFINED HEIGHT 240x385 VERTICAL STICKER LAYOUT */
+        /* FIXED STICKER LAYOUT - No Overflow, Everything Inside */
         .smart-car-sticker { 
             width: 240px; 
-            height: 385px; 
+            height: 410px; /* Increased to fit everything inside the border safely */
             background-color: #1a1c23 !important; 
             position: relative; 
             display: flex; 
             flex-direction: column;
             align-items: center;
             border-radius: 16px; 
-            padding: 20px 15px 15px 15px; /* Balanced padding */
+            padding: 15px;
             box-sizing: border-box;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); 
             border: 4px solid #eab308 !important; 
@@ -53,18 +53,18 @@
             print-color-adjust: exact !important; 
         }
 
-        .st-title-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 15px; } /* Added margin to push QR down */
-        .st-title-1 { color: #eab308 !important; font-size: 23px; font-weight: 900; text-align: center; line-height: 1.1; margin-bottom: 4px; }
-        .st-title-2 { color: #eab308 !important; font-size: 23px; font-weight: 900; text-align: center; line-height: 1.1; }
+        .st-title-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 12px; }
+        .st-title-1 { color: #eab308 !important; font-size: 20px; font-weight: 900; text-align: center; line-height: 1.1; margin-bottom: 2px; white-space: nowrap; }
+        .st-title-2 { color: #eab308 !important; font-size: 21px; font-weight: 900; text-align: center; line-height: 1.1; white-space: nowrap; }
         
         .st-white-box { background: #ffffff !important; border: 5px solid #eab308 !important; border-radius: 12px; padding: 10px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;}
-        .st-id-text { color: #000000 !important; font-size: 22px; font-weight: 900; margin-top: 8px; letter-spacing: 1px; text-align: center; line-height: 1;}
+        .st-id-text { color: #000000 !important; font-size: 20px; font-weight: 900; margin-top: 5px; letter-spacing: 1px; text-align: center; line-height: 1;}
 
-        .st-icons { display: flex; gap: 14px; font-size: 18px; color: #eab308 !important; margin-top: 18px; margin-bottom: 12px; align-items: center; justify-content: center; width: 100%; } /* Margin adjusted for space */
-        .sos-text { font-weight: 900; font-size: 14px; text-transform: uppercase; }
+        .st-icons { display: flex; gap: 12px; font-size: 16px; color: #eab308 !important; margin-top: 15px; margin-bottom: 10px; align-items: center; justify-content: center; width: 100%; }
+        .sos-text { font-weight: 900; font-size: 13px; text-transform: uppercase; }
         
-        .st-instruction { color: #cbd5e1 !important; font-size: 8.5px; font-weight: 700; text-align: center; line-height: 1.4; margin-bottom: auto; } /* Auto margin pushes the Powered by to the very bottom */
-        .st-power { color: #eab308 !important; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-align: center; } /* Removed uppercase */
+        .st-instruction { color: #cbd5e1 !important; font-size: 8.5px; font-weight: 700; text-align: center; line-height: 1.4; margin-bottom: 10px; }
+        .st-power { color: #eab308 !important; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-align: center; margin-top: auto; }
 
         .sticker-card-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .id-label { color: #94a3b8; font-size: 14px; font-weight: bold; margin-bottom: -5px; } 
@@ -182,7 +182,7 @@
             </div>
             
             <div class="st-white-box">
-                <div style="width: 165px; height: 165px; display: flex; justify-content: center; align-items: center;">
+                <div style="width: 155px; height: 155px; display: flex; justify-content: center; align-items: center;">
                     <div id="modal-qr-holder"></div>
                 </div>
                 <div class="st-id-text" id="modal-qr-id-text">ALQR000</div>
@@ -304,7 +304,7 @@
                         </div>
                         
                         <div class="st-white-box">
-                            <div style="width: 165px; height: 165px; display: flex; justify-content: center; align-items: center;">
+                            <div style="width: 155px; height: 155px; display: flex; justify-content: center; align-items: center;">
                                 <div id="matrix-qr-${finalStickerId}"></div>
                             </div>
                             <div class="st-id-text">${finalStickerId}</div>
@@ -331,7 +331,7 @@
                 matrixContainer.appendChild(cardWrapper);
                 
                 new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), { 
-                    text: targetRedirectionUrl, width: 165, height: 165, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
+                    text: targetRedirectionUrl, width: 155, height: 155, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
                 });
             }
             if (totalRendered === 0) matrixContainer.innerHTML = "<div style='color:#eab308; grid-column: 1/-1;'>⚠️ All IDs in this range are already registered.</div>";
@@ -481,10 +481,11 @@
         const targetUrl = `https://alertoqr.in/helper.html?id=${stickerId}`;
         const holder = document.getElementById('modal-qr-holder');
         holder.innerHTML = ""; 
+        document.getElementById('modal-qr-id-text').innerText = stickerId;
         document.getElementById('qrModal').style.display = 'flex';
         
         new QRCode(holder, { 
-            text: targetUrl, width: 165, height: 165, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
+            text: targetUrl, width: 155, height: 155, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
         });
         
         document.getElementById('btn-modal-download-trigger').onclick = () => { downloadSingleTargetPNG(stickerId, targetUrl); };
@@ -495,40 +496,40 @@
         container.style.position = 'fixed'; container.style.left = '-9999px'; container.style.top = '0';
         
         container.innerHTML = `
-            <div id="temp-dl-${stickerId}" style="width: 240px; height: 385px; background-color: #1a1c23; position: relative; display: flex; flex-direction: column; align-items: center; border-radius: 16px; padding: 20px 15px 15px 15px; box-sizing: border-box; font-family: sans-serif; border: 4px solid #eab308;">
+            <div id="temp-dl-${stickerId}" style="width: 240px; height: 410px; background-color: #1a1c23; position: relative; display: flex; flex-direction: column; align-items: center; border-radius: 16px; padding: 15px; box-sizing: border-box; font-family: sans-serif; border: 4px solid #eab308;">
                 
-                <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 15px;">
-                    <div style="color: #eab308; font-size: 23px; font-weight: 900; text-align: center; line-height: 1.1; margin-bottom: 4px;">SCAN THIS QR TO</div>
-                    <div style="color: #eab308; font-size: 23px; font-weight: 900; text-align: center; line-height: 1.1;">CONTACT OWNER</div>
+                <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 12px;">
+                    <div style="color: #eab308; font-size: 20px; font-weight: 900; text-align: center; line-height: 1.1; margin-bottom: 2px; white-space: nowrap;">SCAN THIS QR TO</div>
+                    <div style="color: #eab308; font-size: 21px; font-weight: 900; text-align: center; line-height: 1.1; white-space: nowrap;">CONTACT OWNER</div>
                 </div>
                 
                 <div style="background: #ffffff; border: 5px solid #eab308; border-radius: 12px; padding: 10px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;">
-                    <div style="width: 165px; height: 165px; display: flex; justify-content: center; align-items: center;">
+                    <div style="width: 155px; height: 155px; display: flex; justify-content: center; align-items: center;">
                         <div id="temp-qr-${stickerId}"></div>
                     </div>
-                    <div style="color: #000000; font-size: 22px; font-weight: 900; margin-top: 8px; letter-spacing: 1px; text-align: center; line-height: 1;">${stickerId}</div>
+                    <div style="color: #000000; font-size: 20px; font-weight: 900; margin-top: 5px; letter-spacing: 1px; text-align: center; line-height: 1;">${stickerId}</div>
                 </div>
 
-                <div style="display: flex; gap: 14px; font-size: 18px; color: #eab308; margin-top: 18px; margin-bottom: 12px; align-items: center; justify-content: center; width: 100%;">
+                <div style="display: flex; gap: 12px; font-size: 16px; color: #eab308; margin-top: 15px; margin-bottom: 10px; align-items: center; justify-content: center; width: 100%;">
                     <i class="fa-solid fa-phone"></i>
                     <i class="fa-brands fa-whatsapp"></i>
                     <i class="fa-solid fa-location-dot"></i>
                     <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span style="font-weight: 900; font-size: 14px; text-transform: uppercase;">SOS</span>
+                    <span style="font-weight: 900; font-size: 13px; text-transform: uppercase;">SOS</span>
                 </div>
 
-                <div style="color: #cbd5e1; font-size: 8.5px; font-weight: 700; text-align: center; line-height: 1.4; margin-bottom: auto;">
+                <div style="color: #cbd5e1; font-size: 8.5px; font-weight: 700; text-align: center; line-height: 1.4; margin-bottom: 10px;">
                     Scan Using Google Lens, Phone Camera<br>Or Any QR Scanner App
                 </div>
 
-                <div style="color: #eab308; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-align: center;">Powered by AlertoQR</div>
+                <div style="color: #eab308; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-align: center; margin-top: auto;">Powered by AlertoQR</div>
 
             </div>
         `;
         document.body.appendChild(container);
         
         new QRCode(document.getElementById(`temp-qr-${stickerId}`), { 
-            text: redirectionUrl, width: 165, height: 165, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
+            text: redirectionUrl, width: 155, height: 155, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
         });
 
         setTimeout(() => {
