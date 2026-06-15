@@ -35,11 +35,11 @@
 
         #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
 
-        /* NEW PORTRAIT (VERTICAL) STICKER LAYOUT */
+        /* PORTRAIT (VERTICAL) STICKER LAYOUT */
         .smart-car-sticker { 
             width: 270px; 
             height: 380px; 
-            background-color: #1a1c23 !important; /* Dark Slate Background */
+            background-color: #1a1c23 !important; 
             position: relative; 
             display: flex; 
             flex-direction: column;
@@ -146,6 +146,7 @@
     </div>
 </div>
 
+<!-- EDIT MODAL -->
 <div id="editModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">Edit Registration: <span id="mdl-title-id"></span></div>
@@ -163,6 +164,7 @@
     </div>
 </div>
 
+<!-- QR VIEW MODAL -->
 <div id="qrModal" class="modal">
     <div class="modal-content wide">
         <div class="modal-header dark">Sticker Layout View</div>
@@ -322,4 +324,171 @@
             const reversedData = [...data].reverse();
 
             reversedData.forEach(row => {
+                const tr = document.createElement('tr');
+                const isCurrentActive = (String(row.status || '').trim().toLowerCase() === 'active' || String(row.status || '').trim().toLowerCase() === 'activated');
+                const statusButtonHTML = isCurrentActive 
+                    ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
+                    : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
+
+                let rawChassis = row.chassis_no || row.chassis_number || row.chassis || '';
+                let displayChassis = rawChassis ? String(rawChassis).slice(-4) : 'N/A';
+                
+                tr.innerHTML = `
+                    <td><strong class="id-link" onclick="viewPremiumStickerPopup('${row.sticker_id}')">${row.sticker_id}</strong></td>
+                    <td>${row.full_name || row.owner_name || 'N/A'}</td>
+                    <td><span class="vehicle-tag">${row.vehicle_number || 'N/A'}</span></td>
+                    <td><strong style="color:#fcd34d;">${displayChassis}</strong></td> 
+                    <td><span class="pin-tag">${row.secret_pin || 'N/A'}</span></td> 
+                    <td>${row.mobile_number || 'N/A'}</td>
+                    <td>${row.alternate_number || 'N/A'}</td>
+                    <td>${statusButtonHTML}</td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="openEditModal('${row.sticker_id}')">Edit</button>
+                        <button class="btn-action btn-reset" onclick="resetCustomerPIN('${row.sticker_id}')">Reset PIN</button>
+                        <button class="btn-action btn-delete" onclick="deleteStickerRow('${row.sticker_id}')">Del</button>
+                    </td>
+                `;
+                targetTableBody.appendChild(tr);
+            });
+        } catch (err) {
+            targetTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #eab308; padding:20px;">Script Error: ${err.message}</td></tr>`;
+        }
+    }
+
+    async function deleteStickerRow(stickerId) {
+        if(confirm("Are you sure you want to delete record for " + stickerId + "?")) {
+            await _supabase.from('registrations').delete().eq('sticker_id', stickerId);
+            fetchLiveDatabaseLogs();
+        }
+    }
+
+    async function toggleStickerStatus(stickerId, newStatus) {
+        await _supabase.from('registrations').update({ status: newStatus }).eq('sticker_id', stickerId);
+        fetchLiveDatabaseLogs();
+    }
+
+    async function resetCustomerPIN(stickerId) {
+        const newPin = prompt("Enter new Secret PIN for " + stickerId + ":");
+        if(newPin) {
+            await _supabase.from('registrations').update({ secret_pin: newPin }).eq('sticker_id', stickerId);
+            fetchLiveDatabaseLogs();
+        }
+    }
+
+    function openEditModal(stickerId) {
+        currentEditingId = stickerId;
+        const record = cachedDatabaseRecords.find(r => r.sticker_id === stickerId);
+        
+        if (record) {
+            document.getElementById('mdl-title-id').innerText = stickerId;
+            document.getElementById('mdl-txt-name').value = record.full_name || record.owner_name || '';
+            document.getElementById('mdl-txt-vehicle').value = record.vehicle_number || '';
             
+            let rawChassis = record.chassis_no || record.chassis_number || record.chassis || '';
+            document.getElementById('mdl-txt-chassis').value = String(rawChassis).slice(-4);
+            
+            document.getElementById('mdl-txt-mobile').value = record.mobile_number || '';
+            document.getElementById('mdl-txt-alt').value = record.alternate_number || '';
+            
+            document.getElementById('editModal').style.display = 'flex';
+        }
+    }
+
+    async function saveEdit() {
+        if (!currentEditingId) return;
+
+        const saveBtn = document.querySelector('.modal-actions .btn-generate');
+        const originalText = saveBtn.innerText;
+        saveBtn.innerText = "Saving...";
+        saveBtn.disabled = true;
+
+        const newName = document.getElementById('mdl-txt-name').value;
+        const newVehicle = document.getElementById('mdl-txt-vehicle').value;
+        const newChassis = document.getElementById('mdl-txt-chassis').value;
+        const newMobile = document.getElementById('mdl-txt-mobile').value;
+        const newAlt = document.getElementById('mdl-txt-alt').value;
+
+        try {
+            const { error } = await _supabase
+                .from('registrations') 
+                .update({
+                    full_name: newName,
+                    vehicle_number: newVehicle,
+                    chassis_no: newChassis, 
+                    mobile_number: newMobile,
+                    alternate_number: newAlt
+                })
+                .eq('sticker_id', currentEditingId);
+
+            if (error) throw error;
+
+            alert("Record successfully updated!");
+            closeModal();
+            fetchLiveDatabaseLogs(); 
+        } catch (err) {
+            alert("Error updating record: " + err.message);
+        } finally {
+            saveBtn.innerText = originalText;
+            saveBtn.disabled = false;
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('editModal').style.display = 'none';
+        document.getElementById('qrModal').style.display = 'none';
+        currentEditingId = null;
+    }
+
+    function viewPremiumStickerPopup(stickerId) {
+        const targetUrl = `https://alertoqr.in/helper.html?id=${stickerId}`;
+        const holder = document.getElementById('modal-qr-holder');
+        holder.innerHTML = ""; 
+        document.getElementById('modal-qr-id-text').innerText = stickerId;
+        document.getElementById('qrModal').style.display = 'flex';
+        
+        new QRCode(holder, { 
+            text: targetUrl, width: 160, height: 160, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
+        });
+        
+        document.getElementById('btn-modal-download-trigger').onclick = () => { downloadSingleTargetPNG(stickerId, targetUrl); };
+    }
+
+    function downloadSingleTargetPNG(stickerId, redirectionUrl) {
+        const container = document.createElement('div');
+        container.style.position = 'fixed'; container.style.left = '-9999px'; container.style.top = '0';
+        
+        container.innerHTML = `
+            <div id="temp-dl-${stickerId}" style="width: 270px; height: 380px; background-color: #1a1c23; display: flex; flex-direction: column; align-items: center; border-radius: 16px; padding: 25px 20px; box-sizing: border-box; font-family: sans-serif;">
+                
+                <div style="color: #94a3b8; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px;">Powered by AlertoQR</div>
+                <div style="color: #eab308; font-size: 20px; font-weight: 900; text-align: center; line-height: 1.3; margin-bottom: 20px; text-transform: uppercase;">SCAN THIS QR TO CONTACT<br>THE VEHICLE OWNER</div>
+                
+                <div style="background: #ffffff; border: 6px solid #eab308; border-radius: 12px; padding: 20px 15px 15px 15px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; box-sizing: border-box;">
+                    <div style="width: 160px; height: 160px; display: flex; justify-content: center; align-items: center;">
+                        <div id="temp-qr-${stickerId}"></div>
+                    </div>
+                    <div style="color: #000000; font-size: 22px; font-weight: 900; margin-top: 15px; letter-spacing: 2px;">${stickerId}</div>
+                    <div style="color: #64748b; font-size: 11px; font-weight: 800; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px;">- AlertoQR -</div>
+                </div>
+
+            </div>
+        `;
+        document.body.appendChild(container);
+        
+        new QRCode(document.getElementById(`temp-qr-${stickerId}`), { 
+            text: redirectionUrl, width: 160, height: 160, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
+        });
+
+        setTimeout(() => {
+            html2canvas(document.getElementById(`temp-dl-${stickerId}`), { scale: 3, backgroundColor: null }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `AlertoQR-Sticker-${stickerId}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                document.body.removeChild(container);
+            });
+        }, 300);
+    }
+</script>
+</body>
+</html>
