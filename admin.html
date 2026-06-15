@@ -31,25 +31,32 @@
         .btn:hover { opacity: 0.9; }
         .btn-generate { background-color: #2563eb; color: white; }
         .btn-print { background-color: #10b981; color: white; }
-        .btn-export { background-color: #f59e0b; color: white; }
+        .btn-export { background-color: #eab308; color: black; }
 
-        #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 30px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
+        #bulk-render-matrix { background-color: #0b1329; padding: 20px; border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; min-height: 80px; border: 1px dashed #475569; color: #64748b; font-size: 13px; text-align: center; justify-items: center; }
 
-        /* PERFECT FIXED HEIGHT STICKER LAYOUT - SIZE: 420x240 */
+        /* NEW PORTRAIT (VERTICAL) STICKER LAYOUT */
         .smart-car-sticker { 
-            width: 420px; 
-            height: 240px; 
-            background-color: #ffffff !important; 
+            width: 270px; 
+            height: 380px; 
+            background-color: #1a1c23 !important; /* Dark Slate Background */
             position: relative; 
             display: flex; 
             flex-direction: column;
-            border-radius: 12px; 
-            overflow: hidden; 
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); 
-            border: 2px solid #f59e0b !important; 
+            align-items: center;
+            border-radius: 16px; 
+            padding: 25px 20px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); 
+            border: none !important; 
             -webkit-print-color-adjust: exact !important; 
             print-color-adjust: exact !important; 
         }
+
+        .st-power { color: #94a3b8 !important; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
+        .st-title { color: #eab308 !important; font-size: 20px; font-weight: 900; text-align: center; line-height: 1.3; margin-bottom: 20px; text-transform: uppercase; }
+        .st-white-box { background: #ffffff !important; border: 6px solid #eab308 !important; border-radius: 12px; padding: 20px 15px 15px 15px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; box-sizing: border-box;}
+        .st-id-text { color: #000000 !important; font-size: 22px; font-weight: 900; margin-top: 15px; letter-spacing: 2px; text-align: center;}
 
         .sticker-card-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .id-label { color: #94a3b8; font-size: 14px; font-weight: bold; margin-bottom: -5px; } 
@@ -62,7 +69,7 @@
         .data-table td { padding: 14px; border-bottom: 1px solid #334155; color: #e2e8f0; vertical-align: middle; white-space: nowrap; }
         
         .id-link { color: #3b82f6; text-decoration: underline; cursor: pointer; font-weight: 600; }
-        .vehicle-tag { background-color: #f59e0b; color: #0b1329; padding: 4px 8px; border-radius: 4px; font-weight: 700; }
+        .vehicle-tag { background-color: #eab308; color: #0b1329; padding: 4px 8px; border-radius: 4px; font-weight: 700; }
         .pin-tag { background-color: #334155; padding: 4px 8px; border-radius: 4px; font-weight: bold; letter-spacing: 2px; }
         
         .status-btn { padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
@@ -70,13 +77,13 @@
         .status-deactive { background-color: #64748b; color: white; }
         
         .btn-action { padding: 6px 10px; border-radius: 4px; border: none; font-size: 11px; cursor: pointer; font-weight: 600; text-transform: uppercase; }
-        .btn-edit { background-color: #f59e0b; color: white; margin-right: 3px; }
+        .btn-edit { background-color: #eab308; color: black; margin-right: 3px; }
         .btn-reset { background-color: #3b82f6; color: white; margin-right: 3px; }
         .btn-delete { background-color: #ef4444; color: white; }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); align-items: center; justify-content: center; }
         .modal-content { background: white; color: black; padding: 25px; border-radius: 12px; width: 450px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .modal-content.wide { width: 480px; background: #1c2541; border: 1px solid #334155; display:flex; flex-direction:column; align-items:center; }
+        .modal-content.wide { width: 340px; background: #1c2541; border: 1px solid #334155; display:flex; flex-direction:column; align-items:center; }
         .modal-header { font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; width: 100%; }
         .modal-header.dark { color: white; border-bottom: 1px solid #334155; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; width: 100%; }
@@ -92,8 +99,8 @@
             .admin-wrapper > *:not(.panel-card:first-child) { display: none !important; }
             .panel-header, .config-grid, .action-row-buttons, .table-overflow, .modal, .btn-mini-download, .id-label { display: none !important; }
             .panel-card { border: none !important; background: white !important; box-shadow: none !important; padding: 0 !important; }
-            #bulk-render-matrix { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 20px !important; padding: 10px !important; border: none !important; background: white !important; }
-            .smart-car-sticker { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; page-break-inside: avoid !important; box-shadow: none !important; transform: scale(0.9); transform-origin: top left;}
+            #bulk-render-matrix { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 30px !important; padding: 10px !important; border: none !important; background: white !important; }
+            .smart-car-sticker { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; page-break-inside: avoid !important; box-shadow: none !important; transform: scale(0.95); transform-origin: top left;}
         }
     </style>
 </head>
@@ -161,79 +168,15 @@
         <div class="modal-header dark">Sticker Layout View</div>
         
         <div class="smart-car-sticker" id="modal-sticker-embed">
+            <div class="st-power">Powered by AlertoQR</div>
+            <div class="st-title">SCAN THIS QR TO CONTACT<br>THE VEHICLE OWNER</div>
             
-            <div style="height: 155px; display: flex; background: #ffffff;">
-                <div style="flex: 1.45; padding: 10px 5px 5px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center;">
-                    <div style="display: flex; flex-direction: column; align-items: flex-start; margin: 0 auto; margin-top: 5px;">
-                        <div style="display: flex; align-items: center; justify-content: flex-start; gap: 5px;">
-                            <i class="fa-solid fa-shield-halved" style="color: #f59e0b; font-size: 24px;"></i>
-                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                <span style="font-size: 24px; font-weight: 900; color: #000; letter-spacing: 0.5px; line-height: 1;">AlertoQR</span>
-                                <div style="width: 100%; height: 3px; background-color: #f59e0b; margin-top: 2px; border-radius: 2px;"></div>
-                            </div>
-                        </div>
-                        <div style="font-size: 10.5px; font-weight: 800; color: #475569; margin-top: 5px; letter-spacing: 0.2px; text-transform: uppercase;">
-                            Emergency Vehicle Contact
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 14px; display: flex; flex-direction: column; align-items: center; gap: 3px;">
-                        <div style="font-size: 26px; font-weight: 900; color: #0f172a; line-height: 1.1; letter-spacing: -0.5px;">
-                            Scan this QR to
-                        </div>
-                        <div style="font-size: 21.5px; font-weight: 900; color: #0f172a; line-height: 1.1; letter-spacing: -0.5px;">
-                            contact vehicle owner
-                        </div>
-                    </div>
+            <div class="st-white-box">
+                <div style="width: 160px; height: 160px; display: flex; justify-content: center; align-items: center;">
+                    <div id="modal-qr-holder"></div>
                 </div>
-
-                <div style="flex: 0.85; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 5px;">
-                    <div style="border: 3px solid #f59e0b; border-radius: 10px; padding: 4px; background: white; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center;">
-                        <div id="modal-qr-holder"></div>
-                    </div>
-                </div>
+                <div class="st-id-text" id="modal-qr-id-text">ALQR000</div>
             </div>
-
-            <div style="height: 20px; border-top: 1px solid #e2e8f0; background: #ffffff; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 10.5px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">
-                    scan using google lens, phone camera or any qr scanner app
-                </span>
-            </div>
-
-            <div style="height: 35px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-evenly; background: #f8fafc; padding: 0 10px;">
-                <div style="display:flex; align-items:center; gap:5px;">
-                    <i class="fa-solid fa-ban" style="font-size:15px; color:#f59e0b;"></i>
-                    <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Wrong<br>Parking</div>
-                </div>
-                <div style="width: 1px; height: 16px; background: #000000;"></div>
-                <div style="display:flex; align-items:center; gap:5px;">
-                    <i class="fa-solid fa-phone-volume" style="font-size:15px; color:#f59e0b;"></i>
-                    <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Emergency<br>Contact</div>
-                </div>
-                <div style="width: 1px; height: 16px; background: #000000;"></div>
-                <div style="display:flex; align-items:center; gap:5px;">
-                    <i class="fa-solid fa-car-burst" style="font-size:15px; color:#f59e0b;"></i>
-                    <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Vehicle<br>Issue</div>
-                </div>
-                <div style="width: 1px; height: 16px; background: #000000;"></div>
-                <div style="display:flex; align-items:center; gap:5px;">
-                    <i class="fa-solid fa-headset" style="font-size:15px; color:#f59e0b;"></i>
-                    <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Need<br>Assistance</div>
-                </div>
-            </div>
-
-            <div style="height: 30px; background: #ffcc00; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; color: #000;">
-                <div style="display:flex; align-items:center; gap:5px; font-size:9.5px; font-weight:800; flex:1;">
-                    <i class="fa-solid fa-lock" style="font-size:10px;"></i> Your number stays private
-                </div>
-                <div style="font-size:8px; font-weight:800; text-align:center; line-height:1.2; border-left: 1px solid #000; border-right: 1px solid #000; padding: 0 10px; flex:0.6;">
-                    Powered by<br><span style="font-size:9.5px;">AlertoQR</span>
-                </div>
-                <div style="display:flex; align-items:center; justify-content:center; gap:5px; font-size:8px; font-weight:800; text-align:center; flex:1;">
-                    <i class="fa-solid fa-globe" style="font-size:11px;"></i> <span>any issue with the vehicle,<br>Scan the QR</span>
-                </div>
-            </div>
-
         </div>
 
         <div class="modal-actions" style="flex-direction:column; gap:10px; margin-top:20px;">
@@ -331,78 +274,15 @@
                 cardWrapper.innerHTML = `
                     <div class="id-label">Admin ID: ${finalStickerId}</div> 
                     <div class="smart-car-sticker">
+                        <div class="st-power">Powered by AlertoQR</div>
+                        <div class="st-title">SCAN THIS QR TO CONTACT<br>THE VEHICLE OWNER</div>
                         
-                        <div style="height: 155px; display: flex; background: #ffffff;">
-                            <div style="flex: 1.45; padding: 10px 5px 5px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center;">
-                                <div style="display: flex; flex-direction: column; align-items: flex-start; margin: 0 auto; margin-top: 5px;">
-                                    <div style="display: flex; align-items: center; justify-content: flex-start; gap: 5px;">
-                                        <i class="fa-solid fa-shield-halved" style="color: #f59e0b; font-size: 24px;"></i>
-                                        <div style="display: flex; flex-direction: column; align-items: center;">
-                                            <span style="font-size: 24px; font-weight: 900; color: #000; letter-spacing: 0.5px; line-height: 1;">AlertoQR</span>
-                                            <div style="width: 100%; height: 3px; background-color: #f59e0b; margin-top: 2px; border-radius: 2px;"></div>
-                                        </div>
-                                    </div>
-                                    <div style="font-size: 10.5px; font-weight: 800; color: #475569; margin-top: 5px; letter-spacing: 0.2px; text-transform: uppercase;">
-                                        Emergency Vehicle Contact
-                                    </div>
-                                </div>
-                                <div style="margin-top: 14px; display: flex; flex-direction: column; align-items: center; gap: 3px;">
-                                    <div style="font-size: 26px; font-weight: 900; color: #0f172a; line-height: 1.1; letter-spacing: -0.5px;">
-                                        Scan this QR to
-                                    </div>
-                                    <div style="font-size: 21.5px; font-weight: 900; color: #0f172a; line-height: 1.1; letter-spacing: -0.5px;">
-                                        contact vehicle owner
-                                    </div>
-                                </div>
+                        <div class="st-white-box">
+                            <div style="width: 160px; height: 160px; display: flex; justify-content: center; align-items: center;">
+                                <div id="matrix-qr-${finalStickerId}"></div>
                             </div>
-
-                            <div style="flex: 0.85; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 5px;">
-                                <div style="border: 3px solid #f59e0b; border-radius: 10px; padding: 4px; background: white; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center;">
-                                    <div id="matrix-qr-${finalStickerId}"></div>
-                                </div>
-                            </div>
+                            <div class="st-id-text">${finalStickerId}</div>
                         </div>
-
-                        <div style="height: 20px; border-top: 1px solid #e2e8f0; background: #ffffff; display: flex; align-items: center; justify-content: center;">
-                            <span style="font-size: 10.5px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">
-                                scan using google lens, phone camera or any qr scanner app
-                            </span>
-                        </div>
-
-                        <div style="height: 35px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-evenly; background: #f8fafc; padding: 0 10px;">
-                            <div style="display:flex; align-items:center; gap:5px;">
-                                <i class="fa-solid fa-ban" style="font-size:15px; color:#f59e0b;"></i>
-                                <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Wrong<br>Parking</div>
-                            </div>
-                            <div style="width: 1px; height: 16px; background: #000000;"></div>
-                            <div style="display:flex; align-items:center; gap:5px;">
-                                <i class="fa-solid fa-phone-volume" style="font-size:15px; color:#f59e0b;"></i>
-                                <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Emergency<br>Contact</div>
-                            </div>
-                            <div style="width: 1px; height: 16px; background: #000000;"></div>
-                            <div style="display:flex; align-items:center; gap:5px;">
-                                <i class="fa-solid fa-car-burst" style="font-size:15px; color:#f59e0b;"></i>
-                                <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Vehicle<br>Issue</div>
-                            </div>
-                            <div style="width: 1px; height: 16px; background: #000000;"></div>
-                            <div style="display:flex; align-items:center; gap:5px;">
-                                <i class="fa-solid fa-headset" style="font-size:15px; color:#f59e0b;"></i>
-                                <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Need<br>Assistance</div>
-                            </div>
-                        </div>
-
-                        <div style="height: 30px; background: #ffcc00; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; color: #000;">
-                            <div style="display:flex; align-items:center; gap:5px; font-size:9.5px; font-weight:800; flex:1;">
-                                <i class="fa-solid fa-lock" style="font-size:10px;"></i> Your number stays private
-                            </div>
-                            <div style="font-size:8px; font-weight:800; text-align:center; line-height:1.2; border-left: 1px solid #000; border-right: 1px solid #000; padding: 0 10px; flex:0.6;">
-                                Powered by<br><span style="font-size:9.5px;">AlertoQR</span>
-                            </div>
-                            <div style="display:flex; align-items:center; justify-content:center; gap:5px; font-size:8px; font-weight:800; text-align:center; flex:1;">
-                                <i class="fa-solid fa-globe" style="font-size:11px;"></i> <span>any issue with the vehicle,<br>Scan the QR</span>
-                            </div>
-                        </div>
-
                     </div>
                     <button class="btn-mini-download" onclick="downloadSingleTargetPNG('${finalStickerId}', '${targetRedirectionUrl}')">
                         <i class="fa-solid fa-download"></i> Download Image
@@ -411,10 +291,10 @@
                 matrixContainer.appendChild(cardWrapper);
                 
                 new QRCode(document.getElementById(`matrix-qr-${finalStickerId}`), { 
-                    text: targetRedirectionUrl, width: 120, height: 120, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
+                    text: targetRedirectionUrl, width: 160, height: 160, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
                 });
             }
-            if (totalRendered === 0) matrixContainer.innerHTML = "<div style='color:#f59e0b; grid-column: 1/-1;'>⚠️ All IDs in this range are already registered.</div>";
+            if (totalRendered === 0) matrixContainer.innerHTML = "<div style='color:#eab308; grid-column: 1/-1;'>⚠️ All IDs in this range are already registered.</div>";
         } catch (e) { matrixContainer.innerHTML = "<div style='color:red; grid-column: 1/-1;'>Error processing generator.</div>"; }
     }
 
@@ -442,230 +322,4 @@
             const reversedData = [...data].reverse();
 
             reversedData.forEach(row => {
-                const tr = document.createElement('tr');
-                const isCurrentActive = (String(row.status || '').trim().toLowerCase() === 'active' || String(row.status || '').trim().toLowerCase() === 'activated');
-                const statusButtonHTML = isCurrentActive 
-                    ? `<button class="status-btn status-active" onclick="toggleStickerStatus('${row.sticker_id}', 'Deactivated')"><i class="fa-solid fa-circle-check"></i> Active</button>`
-                    : `<button class="status-btn status-deactive" onclick="toggleStickerStatus('${row.sticker_id}', 'Active')"><i class="fa-solid fa-circle-minus"></i> Deactivated</button>`;
-
-                let rawChassis = row.chassis_no || row.chassis_number || row.chassis || '';
-                let displayChassis = rawChassis ? String(rawChassis).slice(-4) : 'N/A';
-                
-                tr.innerHTML = `
-                    <td><strong class="id-link" onclick="viewPremiumStickerPopup('${row.sticker_id}')">${row.sticker_id}</strong></td>
-                    <td>${row.full_name || row.owner_name || 'N/A'}</td>
-                    <td><span class="vehicle-tag">${row.vehicle_number || 'N/A'}</span></td>
-                    <td><strong style="color:#fcd34d;">${displayChassis}</strong></td> 
-                    <td><span class="pin-tag">${row.secret_pin || 'N/A'}</span></td> 
-                    <td>${row.mobile_number || 'N/A'}</td>
-                    <td>${row.alternate_number || 'N/A'}</td>
-                    <td>${statusButtonHTML}</td>
-                    <td>
-                        <button class="btn-action btn-edit" onclick="openEditModal('${row.sticker_id}')">Edit</button>
-                        <button class="btn-action btn-reset" onclick="resetCustomerPIN('${row.sticker_id}')">Reset PIN</button>
-                        <button class="btn-action btn-delete" onclick="deleteStickerRow('${row.sticker_id}')">Del</button>
-                    </td>
-                `;
-                targetTableBody.appendChild(tr);
-            });
-        } catch (err) {
-            targetTableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #f59e0b; padding:20px;">Script Error: ${err.message}</td></tr>`;
-        }
-    }
-
-    async function deleteStickerRow(stickerId) {
-        if(confirm("Are you sure you want to delete record for " + stickerId + "?")) {
-            await _supabase.from('registrations').delete().eq('sticker_id', stickerId);
-            fetchLiveDatabaseLogs();
-        }
-    }
-
-    async function toggleStickerStatus(stickerId, newStatus) {
-        await _supabase.from('registrations').update({ status: newStatus }).eq('sticker_id', stickerId);
-        fetchLiveDatabaseLogs();
-    }
-
-    async function resetCustomerPIN(stickerId) {
-        const newPin = prompt("Enter new Secret PIN for " + stickerId + ":");
-        if(newPin) {
-            await _supabase.from('registrations').update({ secret_pin: newPin }).eq('sticker_id', stickerId);
-            fetchLiveDatabaseLogs();
-        }
-    }
-
-    function openEditModal(stickerId) {
-        currentEditingId = stickerId;
-        const record = cachedDatabaseRecords.find(r => r.sticker_id === stickerId);
-        
-        if (record) {
-            document.getElementById('mdl-title-id').innerText = stickerId;
-            document.getElementById('mdl-txt-name').value = record.full_name || record.owner_name || '';
-            document.getElementById('mdl-txt-vehicle').value = record.vehicle_number || '';
             
-            let rawChassis = record.chassis_no || record.chassis_number || record.chassis || '';
-            document.getElementById('mdl-txt-chassis').value = String(rawChassis).slice(-4);
-            
-            document.getElementById('mdl-txt-mobile').value = record.mobile_number || '';
-            document.getElementById('mdl-txt-alt').value = record.alternate_number || '';
-            
-            document.getElementById('editModal').style.display = 'flex';
-        }
-    }
-
-    async function saveEdit() {
-        if (!currentEditingId) return;
-
-        const saveBtn = document.querySelector('.modal-actions .btn-generate');
-        const originalText = saveBtn.innerText;
-        saveBtn.innerText = "Saving...";
-        saveBtn.disabled = true;
-
-        const newName = document.getElementById('mdl-txt-name').value;
-        const newVehicle = document.getElementById('mdl-txt-vehicle').value;
-        const newChassis = document.getElementById('mdl-txt-chassis').value;
-        const newMobile = document.getElementById('mdl-txt-mobile').value;
-        const newAlt = document.getElementById('mdl-txt-alt').value;
-
-        try {
-            const { error } = await _supabase
-                .from('registrations') 
-                .update({
-                    full_name: newName,
-                    vehicle_number: newVehicle,
-                    chassis_no: newChassis, 
-                    mobile_number: newMobile,
-                    alternate_number: newAlt
-                })
-                .eq('sticker_id', currentEditingId);
-
-            if (error) throw error;
-
-            alert("Record successfully updated!");
-            closeModal();
-            fetchLiveDatabaseLogs(); 
-        } catch (err) {
-            alert("Error updating record: " + err.message);
-        } finally {
-            saveBtn.innerText = originalText;
-            saveBtn.disabled = false;
-        }
-    }
-
-    function closeModal() {
-        document.getElementById('editModal').style.display = 'none';
-        document.getElementById('qrModal').style.display = 'none';
-        currentEditingId = null;
-    }
-
-    function viewPremiumStickerPopup(stickerId) {
-        const targetUrl = `https://alertoqr.in/helper.html?id=${stickerId}`;
-        const holder = document.getElementById('modal-qr-holder');
-        holder.innerHTML = ""; 
-        document.getElementById('qrModal').style.display = 'flex';
-        
-        new QRCode(holder, { 
-            text: targetUrl, width: 120, height: 120, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
-        });
-        
-        document.getElementById('btn-modal-download-trigger').onclick = () => { downloadSingleTargetPNG(stickerId, targetUrl); };
-    }
-
-    function downloadSingleTargetPNG(stickerId, redirectionUrl) {
-        const container = document.createElement('div');
-        container.style.position = 'fixed'; container.style.left = '-9999px'; container.style.top = '0';
-        
-        container.innerHTML = `
-            <div id="temp-dl-${stickerId}" style="width: 420px; height: 240px; background-color: #ffffff; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; font-family: sans-serif; border: 2px solid #f59e0b; box-sizing: border-box;">
-                
-                <div style="height: 155px; display: flex; background: #ffffff;">
-                    <div style="flex: 1.45; padding: 10px 5px 5px 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center;">
-                        <div style="display: flex; flex-direction: column; align-items: flex-start; margin: 0 auto; margin-top: 5px;">
-                            <div style="display: flex; align-items: center; justify-content: flex-start; gap: 5px;">
-                                <i class="fa-solid fa-shield-halved" style="color: #f59e0b; font-size: 24px;"></i>
-                                <div style="display: flex; flex-direction: column; align-items: center;">
-                                    <span style="font-size: 24px; font-weight: 900; color: #000; letter-spacing: 0.5px; line-height: 1;">AlertoQR</span>
-                                    <div style="width: 100%; height: 3px; background-color: #f59e0b; margin-top: 2px; border-radius: 2px;"></div>
-                                </div>
-                            </div>
-                            <div style="font-size: 10.5px; font-weight: 800; color: #475569; margin-top: 5px; letter-spacing: 0.2px; text-transform: uppercase;">
-                                Emergency Vehicle Contact
-                            </div>
-                        </div>
-                        <div style="margin-top: 14px; display: flex; flex-direction: column; align-items: center; gap: 3px;">
-                            <div style="font-size: 26px; font-weight: 900; color: #0f172a; line-height: 1.1; letter-spacing: -0.5px;">
-                                Scan this QR to
-                            </div>
-                            <div style="font-size: 21.5px; font-weight: 900; color: #0f172a; line-height: 1.1; letter-spacing: -0.5px;">
-                                contact vehicle owner
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="flex: 0.85; display: flex; flex-direction: column; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; padding: 5px;">
-                        <div style="border: 3px solid #f59e0b; border-radius: 10px; padding: 4px; background: white; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center;">
-                            <div id="temp-qr-${stickerId}"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="height: 20px; border-top: 1px solid #e2e8f0; background: #ffffff; display: flex; align-items: center; justify-content: center;">
-                    <span style="font-size: 10.5px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">
-                        scan using google lens, phone camera or any qr scanner app
-                    </span>
-                </div>
-
-                <div style="height: 35px; border-top: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-evenly; background: #f8fafc; padding: 0 10px;">
-                    <div style="display:flex; align-items:center; gap:5px;">
-                        <i class="fa-solid fa-ban" style="font-size:15px; color:#f59e0b;"></i>
-                        <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Wrong<br>Parking</div>
-                    </div>
-                    <div style="width: 1px; height: 16px; background: #000000;"></div>
-                    <div style="display:flex; align-items:center; gap:5px;">
-                        <i class="fa-solid fa-phone-volume" style="font-size:15px; color:#f59e0b;"></i>
-                        <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Emergency<br>Contact</div>
-                    </div>
-                    <div style="width: 1px; height: 16px; background: #000000;"></div>
-                    <div style="display:flex; align-items:center; gap:5px;">
-                        <i class="fa-solid fa-car-burst" style="font-size:15px; color:#f59e0b;"></i>
-                        <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Vehicle<br>Issue</div>
-                    </div>
-                    <div style="width: 1px; height: 16px; background: #000000;"></div>
-                    <div style="display:flex; align-items:center; gap:5px;">
-                        <i class="fa-solid fa-headset" style="font-size:15px; color:#f59e0b;"></i>
-                        <div style="font-size:8.5px; font-weight:800; color:#334155; line-height:1.2;">Need<br>Assistance</div>
-                    </div>
-                </div>
-
-                <div style="height: 30px; background: #ffcc00; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; color: #000;">
-                    <div style="display:flex; align-items:center; gap:5px; font-size:9.5px; font-weight:800; flex:1;">
-                        <i class="fa-solid fa-lock" style="font-size:10px;"></i> Your number stays private
-                    </div>
-                    <div style="font-size:8px; font-weight:800; text-align:center; line-height:1.2; border-left: 1px solid #000; border-right: 1px solid #000; padding: 0 10px; flex:0.6;">
-                        Powered by<br><span style="font-size:9.5px;">AlertoQR</span>
-                    </div>
-                    <div style="display:flex; align-items:center; justify-content:center; gap:5px; font-size:8px; font-weight:800; text-align:center; flex:1;">
-                        <i class="fa-solid fa-globe" style="font-size:11px;"></i> <span>any issue with the vehicle,<br>Scan the QR</span>
-                    </div>
-                </div>
-
-            </div>
-        `;
-        document.body.appendChild(container);
-        
-        new QRCode(document.getElementById(`temp-qr-${stickerId}`), { 
-            text: redirectionUrl, width: 120, height: 120, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M 
-        });
-
-        setTimeout(() => {
-            html2canvas(document.getElementById(`temp-dl-${stickerId}`), { scale: 3, backgroundColor: null }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `AlertoQR-Sticker-${stickerId}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                document.body.removeChild(container);
-            });
-        }, 300);
-    }
-</script>
-</body>
-</html>
