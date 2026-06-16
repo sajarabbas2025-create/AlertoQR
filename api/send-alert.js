@@ -12,64 +12,33 @@ export default async function handler(req, res) {
   try {
     const { stickerId, helperNumber } = req.body;
     
-    if (!stickerId) return res.status(200).json({ success: false, error: 'Sticker ID is missing' });
-    if (!helperNumber) return res.status(200).json({ success: false, error: 'Helper number is missing' });
-
-    // 1. Fetch Owner Profile
+    // 1. Fetch Owner Number from DB
     const { data, error } = await supabase.from('registrations')
       .select('mobile_number').eq('sticker_id', stickerId.trim().toUpperCase()).single();
     
     if (error || !data) return res.status(200).json({ success: false, error: 'Profile not found.' });
 
-    // 2. Format Numbers (+91XXXXXXXXXX)
-    let helperCleanNumber = helperNumber.toString().replace(/[^0-9]/g, '');
-    if (helperCleanNumber.startsWith('0')) helperCleanNumber = helperCleanNumber.substring(1);
-    if (!helperCleanNumber.startsWith('91')) helperCleanNumber = `91${helperCleanNumber}`;
-
-    let ownerCleanNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
-    if (ownerCleanNumber.startsWith('0')) ownerCleanNumber = ownerCleanNumber.substring(1);
-    if (!ownerCleanNumber.startsWith('91')) ownerCleanNumber = `91${ownerCleanNumber}`;
-
-    // 3. Credentials
-    const SMSCOUNTRY_AUTH_KEY = "M5rIudGBrmiO4pdjCuoz";
-    const SMSCOUNTRY_AUTH_TOKEN = "XWQDjyE87o1PpATFPtVdpXSVoNuSKH6sK6wvRK53";
-    const authHeader = 'Basic ' + Buffer.from(`${SMSCOUNTRY_AUTH_KEY}:${SMSCOUNTRY_AUTH_TOKEN}`).toString('base64');
-
-    const callApiUrl = `https://restapi.smscountry.com/v0.1/Accounts/${SMSCOUNTRY_AUTH_KEY}/GroupCalls/`;
+    // 2. Exotel API Call Trigger
+    const exotelUrl = `https://api.exotel.com/v1/Accounts/${process.env.EXOTEL_SID}/Calls/connect.json`;
     
-    // 4. FIXED PAYLOAD: Added AnswerUrl as demanded by their error message
-    const jsonBodyData = {
-        "Name": `Alert_${stickerId.trim()}`,
-        "AnswerUrl": "https://alertoqr.in/",
-        "Participants": [
-            {
-                "Name": "Helper",
-                "Number": helperCleanNumber
-            },
-            {
-                "Name": "Owner",
-                "Number": ownerCleanNumber
-            }
-        ]
-    };
-
-    // 5. Trigger the Call
-    const response = await fetch(callApiUrl, {
-        method: 'POST',
-        headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-        body: JSON.stringify(jsonBodyData)
+    const body = new URLSearchParams({
+      "From": "YOUR_VIRTUAL_NUMBER", // Yahan apna Exotel virtual number daalein
+      "To": helperNumber,            // Helper ko call jayegi
+      "CallerId": "YOUR_VIRTUAL_NUMBER"
     });
-    
+
+    const response = await fetch(exotelUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + Buffer.from(`${process.env.EXOTEL_KEY}:${process.env.EXOTEL_TOKEN}`).toString('base64')
+      },
+      body: body
+    });
+
     const apiData = await response.json();
-    
-    // 6. Return Result
-    if (response.ok && apiData.Success !== false) {
-        return res.status(200).json({ success: true, message: apiData });
-    } else {
-        return res.status(200).json({ success: false, error: `SMSCountry Error: ${JSON.stringify(apiData)}` });
-    }
+    return res.status(200).json({ success: true, data: apiData });
 
   } catch (err) {
-    return res.status(200).json({ success: false, error: `Backend Crash: ${err.message}` });
+    return res.status(200).json({ success: false, error: err.message });
   }
 }
