@@ -1,3 +1,8 @@
+import { createClient } from '@supabase/supabase-js';
+
+// Supabase client initialize kiya (Jaise send-alert.js mein tha)
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+
 export default async function handler(req, res) {
   // CORS Headers taaki API block na ho
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -10,21 +15,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Incoming data nikalna (GET ya POST)
+    // Incoming data nikalna (GET ya POST)
     const incomingData = req.method === 'POST' ? req.body : req.query;
     
-    console.log("=== SMSCOUNTRY LIVE PING ===");
+    console.log("=== LIVE CALL PING ===");
     console.log(JSON.stringify(incomingData, null, 2));
 
-    // 2. Check karna ki kya SMSCountry ne humein DTMF (Digits) bheja hai
-    // SMSCountry key ka naam 'digits', 'Digits', ya 'keys' rakhta hai
+    // Exotel/SMSCountry se aane wala DTMF digits (Sticker ID / PIN)
     const vehiclePin = incomingData.digits || incomingData.Digits || incomingData.keys || incomingData.dtmf;
 
-    // Response header ko XML set karna kyunki SMSCountry XML samajhta hai
+    // Response header ko XML set karna
     res.setHeader('Content-Type', 'text/xml');
 
     // STEP A: Agar user ne abhi tak PIN nahi dabaya hai (Call bilkul abhi aayi hai)
-    // Toh hum SMSCountry ko XML bhejenge ki 4-digit PIN capture karo
     if (!vehiclePin) {
       console.log("Nayi call aayi hai, DTMF/PIN capture karne ka XML bhej raha hu...");
       
@@ -38,28 +41,18 @@ export default async function handler(req, res) {
       return res.status(200).send(gatherXml);
     }
 
-    // STEP B: Agar helper ke phone ne 4-digit PIN (jaise 1001) bhej diya hai
-    console.log(`System ko PIN mil gaya: ${vehiclePin}`);
+    // STEP B: Agar helper ke phone se PIN/Sticker ID mil gayi hai
+    console.log(`System ko PIN/ID mil gaya: ${vehiclePin}`);
 
-    // Hamari temporary gaadiyon ki list
-    const vehicleDatabase = {
-      "1001": "+916388522427", // Owner 1
-      "2540": "+919218084924"  // Owner 2
-    };
+    // DYNAMIC LOGIC: Hardcoded database hata kar Supabase se live data nikalna
+    const { data, error } = await supabase
+      .from('registrations')
+      .select('mobile_number')
+      .eq('sticker_id', vehiclePin.trim().toUpperCase())
+      .single();
 
-    if (vehicleDatabase[vehiclePin]) {
-      const ownerNumber = vehicleDatabase[vehiclePin];
-      console.log(`PIN Match ho gaya! Call forward ho rahi hai: ${ownerNumber}`);
-
-      // SMSCountry ko Call Forward (Dial/Bridge) karne ka XML dena
-      const forwardXml = `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-    <Dial>${ownerNumber}</Dial>
-</Response>`;
-      
-      return res.status(200).send(forwardXml);
-    } else {
-      console.log("Galat PIN mila, call cut karne ka XML bhej raha hu.");
+    if (error || !data || !data.mobile_number) {
+      console.log(`Supabase mein ID ${vehiclePin} ke liye koi profile nahi mili. Error:`, error);
       
       const rejectXml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
@@ -69,6 +62,22 @@ export default async function handler(req, res) {
       
       return res.status(200).send(rejectXml);
     }
+
+    // Live Number format sahi karna (+91 set karna)
+    let ownerNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
+    if (ownerNumber.startsWith('0')) ownerNumber = ownerNumber.substring(1);
+    if (ownerNumber.length === 10) ownerNumber = `91${ownerNumber}`;
+    
+    const formattedOwnerNumber = `+${ownerNumber}`;
+    console.log(`Supabase se number mil gaya! Call forward ho rahi hai: ${formattedOwnerNumber}`);
+
+    // Call Forward (Dial/Bridge) karne ka XML dena
+    const forwardXml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Dial>${formattedOwnerNumber}</Dial>
+</Response>`;
+      
+    return res.status(200).send(forwardXml);
 
   } catch (error) {
     console.error("Webhook Error:", error);
