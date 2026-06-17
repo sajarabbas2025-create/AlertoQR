@@ -3,23 +3,23 @@ import { createClient } from '@supabase/supabase-js';
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 export default async function handler(req, res) {
-  // Exotel XML response expect karta hai
   res.setHeader('Content-Type', 'application/xml');
 
   try {
     const incomingData = req.method === 'POST' ? req.body : req.query;
-    
-    // Digits capture karna (sabse safe way)
     const pinInput = incomingData.Digits || incomingData.digits || "";
 
-    if (!pinInput) {
-      console.log("No Digits captured in request. Exiting.");
-      return res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
+    // Agar PIN nahi mila ya 4 digit ka nahi hai, toh wapas Gather prompt bhejo
+    if (!pinInput || pinInput.length < 4) {
+      console.log(`Waiting for full 4-digit PIN. Current input: ${pinInput}`);
+      return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Gather numDigits="4" timeout="10" action="https://alerto-qr.vercel.app/api/incoming-call" method="GET"/>
+</Response>`);
     }
 
-    // Database search: ALQR1005 ya 1005 dono ke liye
+    // Database search (ALQR1005 ya 1005)
     const idWithPrefix = `ALQR${pinInput}`;
-    
     const { data, error } = await supabase
       .from('registrations')
       .select('mobile_number')
@@ -31,11 +31,11 @@ export default async function handler(req, res) {
       return res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
     }
 
-    // Number formatting (10-digit number ke aage 0 lagana)
+    // Number formatting: 10-digit number ke aage 0 lagana
     let rawNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
     let ownerNumber = rawNumber.length === 10 ? `0${rawNumber}` : rawNumber;
 
-    // Final XML Response (Caller ID ke sath)
+    // Final Dial Response
     const xmlResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Dial callerId="08047285175">${ownerNumber}</Dial>
