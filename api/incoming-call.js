@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase client initialize kiya (Jaise send-alert.js mein tha)
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 export default async function handler(req, res) {
@@ -44,15 +43,24 @@ export default async function handler(req, res) {
     // STEP B: Agar helper ke phone se PIN/Sticker ID mil gayi hai
     console.log(`System ko PIN/ID mil gaya: ${vehiclePin}`);
 
-    // DYNAMIC LOGIC: Hardcoded database hata kar Supabase se live data nikalna
+    // DYNAMIC LOGIC: Database format se match karne ke liye ALQR add karna
+    let formattedPin = vehiclePin.trim().toUpperCase();
+    
+    // Agar helper ne sirf 4 number dabaye hain (jaise 1005), toh uske aage ALQR laga do
+    if (/^\d{4}$/.test(formattedPin)) {
+        formattedPin = `ALQR${formattedPin}`;
+    }
+
+    console.log(`Supabase mein search kar raha hu: ${formattedPin}`);
+
     const { data, error } = await supabase
       .from('registrations')
       .select('mobile_number')
-      .eq('sticker_id', vehiclePin.trim().toUpperCase())
+      .eq('sticker_id', formattedPin)
       .single();
 
     if (error || !data || !data.mobile_number) {
-      console.log(`Supabase mein ID ${vehiclePin} ke liye koi profile nahi mili. Error:`, error);
+      console.log(`Supabase mein ID ${formattedPin} ke liye koi profile nahi mili. Error:`, error);
       
       const rejectXml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
