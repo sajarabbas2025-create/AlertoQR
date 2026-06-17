@@ -3,17 +3,21 @@ import { createClient } from '@supabase/supabase-js';
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 export default async function handler(req, res) {
+  // Exotel XML response expect karta hai
+  res.setHeader('Content-Type', 'application/xml');
+
   try {
     const incomingData = req.method === 'POST' ? req.body : req.query;
     
-    // 1. PIN capture: Gather se aane wala 'Digits' parameter
+    // Digits capture karna (sabse safe way)
     const pinInput = incomingData.Digits || incomingData.digits || "";
 
     if (!pinInput) {
-      return res.status(200).send("");
+      console.log("No Digits captured in request. Exiting.");
+      return res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
     }
 
-    // 2. Search database (ALQR prefix ke sath)
+    // Database search: ALQR1005 ya 1005 dono ke liye
     const idWithPrefix = `ALQR${pinInput}`;
     
     const { data, error } = await supabase
@@ -23,25 +27,24 @@ export default async function handler(req, res) {
       .single();
 
     if (error || !data || !data.mobile_number) {
-      return res.status(200).send(""); 
+      console.log(`PIN ${pinInput} not found in DB`);
+      return res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
     }
 
-    // 3. Format phone number: 06388522427
+    // Number formatting (10-digit number ke aage 0 lagana)
     let rawNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
     let ownerNumber = rawNumber.length === 10 ? `0${rawNumber}` : rawNumber;
 
-    // 4. XML Response (Caller ID fix ke sath)
-    // IMPORTANT: Yahan apna actual virtual number 08047285175 use karein
+    // Final XML Response (Caller ID ke sath)
     const xmlResponse = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Dial callerId="08047285175">${ownerNumber}</Dial>
 </Response>`;
 
-    res.setHeader('Content-Type', 'application/xml');
     return res.status(200).send(xmlResponse);
 
   } catch (error) {
     console.error("Critical Error:", error);
-    return res.status(200).send("");
+    return res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
   }
 }
