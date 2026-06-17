@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Vercel Environment Variables se URL aur Key uthayega
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 export default async function handler(req, res) {
@@ -8,15 +7,20 @@ export default async function handler(req, res) {
 
   try {
     const incomingData = req.method === 'POST' ? req.body : req.query;
-    const pinInput = incomingData.Digits || incomingData.digits || "";
+    
+    // Yahan hum inputs ko saaf kar rahe hain taaki "1011" match ho sake
+    let pinInput = incomingData.Digits || incomingData.digits || "";
+    pinInput = pinInput.toString().replace(/[^0-9]/g, '');
 
     if (!pinInput || pinInput.length < 4) {
-      return res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
+      return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Gather numDigits="4" timeout="10" action="https://alerto-qr.vercel.app/api/incoming-call" method="GET"/>
+</Response>`);
     }
 
     const idWithPrefix = `ALQR${pinInput}`;
     
-    // Supabase se data fetch
     const { data, error } = await supabase
       .from('registrations')
       .select('mobile_number')
@@ -24,19 +28,20 @@ export default async function handler(req, res) {
       .single();
 
     if (error || !data || !data.mobile_number) {
+      console.log(`PIN ${pinInput} not found or error:`, error);
       return res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
     }
 
     let rawNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
     let ownerNumber = rawNumber.length === 10 ? `0${rawNumber}` : rawNumber;
 
-    // Caller ID fix: Exotel ka virtual number 08047285175
     return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Dial callerId="08047285175">${ownerNumber}</Dial>
 </Response>`);
 
   } catch (error) {
+    console.error("Critical Error:", error);
     return res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
   }
 }
