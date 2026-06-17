@@ -15,25 +15,25 @@ export default async function handler(req, res) {
 
   try {
     const incomingData = req.method === 'POST' ? req.body : req.query;
-    console.log("=== LIVE CALL PING (PLAIN TEXT MODE) ===");
+    console.log("=== EXOTEL CONNECT PING ===");
     console.log(JSON.stringify(incomingData, null, 2));
 
-    // Exotel se aane wala PIN (4 digits)
-    const vehiclePin = incomingData.digits || incomingData.Digits || incomingData.keys || incomingData.dtmf;
+    // Exotel ka Gather block hamesha capital 'Digits' bhejta hai
+    const vehiclePin = incomingData.Digits || incomingData.digits || incomingData.keys || incomingData.dtmf;
 
-    // Agar PIN nahi mila, toh blank bhej do taaki Exotel fallback kare
+    // Agar PIN nahi mila, toh blank bhejkar call safely cut karein
     if (!vehiclePin) {
-      console.log("PIN capture nahi hua.");
+      console.log("Error: Exotel se Digits/PIN nahi mila.");
+      res.setHeader('Content-Type', 'text/plain');
       return res.status(200).send("");
     }
 
-    // Database search ke liye PIN format karna (ALQR lagana)
     let formattedPin = vehiclePin.trim().toUpperCase();
     if (/^\d{4}$/.test(formattedPin)) {
         formattedPin = `ALQR${formattedPin}`;
     }
 
-    console.log(`Supabase mein search kar raha hu: ${formattedPin}`);
+    console.log(`Supabase mein Sticker ID dhoondh raha hu: ${formattedPin}`);
 
     const { data, error } = await supabase
       .from('registrations')
@@ -41,13 +41,13 @@ export default async function handler(req, res) {
       .eq('sticker_id', formattedPin)
       .single();
 
-    // Agar database mein record nahi mila
     if (error || !data || !data.mobile_number) {
-      console.log(`Record nahi mila is ID ke liye: ${formattedPin}`);
+      console.log(`Database mein yeh ID nahi mili: ${formattedPin}`, error);
+      res.setHeader('Content-Type', 'text/plain');
       return res.status(200).send(""); 
     }
 
-    // Number ko Exotel Connect ke hisaab se format karna (0 lagana)
+    // Number format ko Exotel Connect ke liye set karna (0 lagana)
     let ownerNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
     if (ownerNumber.startsWith('91') && ownerNumber.length === 12) {
         ownerNumber = ownerNumber.substring(2);
@@ -56,14 +56,15 @@ export default async function handler(req, res) {
         ownerNumber = `0${ownerNumber}`;
     }
 
-    console.log(`Number mil gaya, Exotel ko bhej raha hu: ${ownerNumber}`);
+    console.log(`Success! Call is number par forward ho rahi hai: ${ownerNumber}`);
 
-    // YAHAN CHANGE HUA HAI: XML nahi, sirf plain text mein number bhejna hai
+    // Exotel ko plain text mein number lautana
     res.setHeader('Content-Type', 'text/plain');
     return res.status(200).send(ownerNumber);
 
   } catch (error) {
-    console.error("Webhook Error:", error);
+    console.error("Critical Webhook Error:", error);
+    res.setHeader('Content-Type', 'text/plain');
     return res.status(500).send("");
   }
 }
