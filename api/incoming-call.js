@@ -6,42 +6,43 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/xml');
 
   try {
-    const incomingData = req.method === 'POST' ? req.body : req.query;
+    // URL ke parameters ko sahi se parse karne ka tareeka
+    const params = new URLSearchParams(req.url.split('?')[1]);
+    let pinInput = params.get('Digits') || params.get('digits') || "";
     
-    // Yahan hum inputs ko saaf kar rahe hain taaki "1011" match ho sake
-    let pinInput = incomingData.Digits || incomingData.digits || "";
+    // Extra quotes ya symbols hatana
     pinInput = pinInput.toString().replace(/[^0-9]/g, '');
 
     if (!pinInput || pinInput.length < 4) {
+      console.log("Waiting for digits. Input:", pinInput);
       return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Gather numDigits="4" timeout="10" action="https://alerto-qr.vercel.app/api/incoming-call" method="GET"/>
+    <Gather numDigits="4" timeout="15" action="https://alerto-qr.vercel.app/api/incoming-call" method="GET"/>
 </Response>`);
     }
 
-    const idWithPrefix = `ALQR${pinInput}`;
-    
+    // Database Search
     const { data, error } = await supabase
       .from('registrations')
       .select('mobile_number')
-      .or(`sticker_id.eq.${idWithPrefix},sticker_id.eq.${pinInput}`)
+      .or(`sticker_id.eq.ALQR${pinInput},sticker_id.eq.${pinInput}`)
       .single();
 
-    if (error || !data || !data.mobile_number) {
-      console.log(`PIN ${pinInput} not found or error:`, error);
+    if (error || !data) {
+      console.log("PIN not found in DB for:", pinInput);
       return res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
     }
 
-    let rawNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
-    let ownerNumber = rawNumber.length === 10 ? `0${rawNumber}` : rawNumber;
+    let ownerNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
+    if (ownerNumber.length === 10) ownerNumber = `0${ownerNumber}`;
 
+    console.log("Dialing:", ownerNumber);
     return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Dial callerId="08047285175">${ownerNumber}</Dial>
 </Response>`);
 
-  } catch (error) {
-    console.error("Critical Error:", error);
+  } catch (e) {
     return res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
   }
 }
