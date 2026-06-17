@@ -46,7 +46,6 @@ export default async function handler(req, res) {
     // DYNAMIC LOGIC: Database format se match karne ke liye ALQR add karna
     let formattedPin = vehiclePin.trim().toUpperCase();
     
-    // Agar helper ne sirf 4 number dabaye hain (jaise 1005), toh uske aage ALQR laga do
     if (/^\d{4}$/.test(formattedPin)) {
         formattedPin = `ALQR${formattedPin}`;
     }
@@ -71,18 +70,25 @@ export default async function handler(req, res) {
       return res.status(200).send(rejectXml);
     }
 
-    // Live Number format sahi karna (+91 set karna)
+    // --- YAHAN CHANGE HUA HAI: Number Format for Exotel ---
     let ownerNumber = data.mobile_number.toString().replace(/[^0-9]/g, '');
-    if (ownerNumber.startsWith('0')) ownerNumber = ownerNumber.substring(1);
-    if (ownerNumber.length === 10) ownerNumber = `91${ownerNumber}`;
     
-    const formattedOwnerNumber = `+${ownerNumber}`;
-    console.log(`Supabase se number mil gaya! Call forward ho rahi hai: ${formattedOwnerNumber}`);
+    // Agar number mein aage 91 laga hai toh use hatayein
+    if (ownerNumber.startsWith('91') && ownerNumber.length === 12) {
+        ownerNumber = ownerNumber.substring(2);
+    }
+    
+    // Exotel standard ke hisaab se 10 digit number ke aage '0' lagana
+    if (ownerNumber.length === 10) {
+        ownerNumber = `0${ownerNumber}`; 
+    }
+    
+    console.log(`Supabase se number mil gaya! Call forward ho rahi hai: ${ownerNumber}`);
 
     // Call Forward (Dial/Bridge) karne ka XML dena
     const forwardXml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Dial>${formattedOwnerNumber}</Dial>
+    <Dial>${ownerNumber}</Dial>
 </Response>`;
       
     return res.status(200).send(forwardXml);
