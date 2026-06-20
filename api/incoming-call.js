@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 export default async function handler(req, res) {
-  // 1. Supabase setup with Fallback
+  // 1. Supabase setup
   const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -11,13 +11,14 @@ export default async function handler(req, res) {
 
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // 2. Safely parse incoming request
+  // 2. Critical Fix: Digits ko body ya query dono se fetch karein
   const body = req.body || {};
-  const digits = body.Digits;
+  const query = req.query || {};
+  const digits = body.Digits || query.Digits;
 
   res.setHeader('Content-Type', 'application/json');
 
-  // 3. Initial check (Exotel hits the URL to check connectivity or wait for input)
+  // 3. Initial connection/Gathering input
   if (!digits) {
     return res.status(200).json({ "Say": "Please enter the 4 digit sticker code." });
   }
