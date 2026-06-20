@@ -175,9 +175,7 @@
 
             if (mobileNum) {
                 globalOwnerMobile = mobileNum; 
-                
-                // EXOTEL DTMF ROUTING FOR OWNER
-                document.getElementById('btn-call-owner').onclick = () => window.location.href = `tel:08047285175,,${urlAssetId}#`;
+                document.getElementById('btn-call-owner').onclick = () => window.location.href = `tel:+${mobileNum}`;
                 
                 const waBase = `https://wa.me/${mobileNum}?text=`;
                 document.getElementById('card-parking').onclick = () => window.location.href = waBase + encodeURIComponent("Alert! Aapki gaadi galat jagah park hai, kripya ise hatayein.");
@@ -195,10 +193,9 @@
             if(altNum.length === 10) altNum = "91" + altNum;
 
             if (altNum) {
-                // EXOTEL DTMF ROUTING FOR ALTERNATE 
-                document.getElementById('btn-call-alt').onclick = () => window.location.href = `tel:08047285175,,${urlAssetId}#`;
+                document.getElementById('btn-call-alt').onclick = () => window.location.href = `tel:+${altNum}`;
             } else {
-                document.getElementById('btn-call-alt').onclick = () => alert("Maaf kijiye, Owner ne Alternate Number set nahi kiya hai.");
+                document.getElementById('btn-call-alt').onclick = () => alert("M معذرت, Owner ne Alternate Number set nahi kiya hai.");
             }
 
             document.getElementById('loading-view').style.display = 'none';
