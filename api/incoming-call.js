@@ -11,14 +11,14 @@ export default async function handler(req, res) {
 
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // 2. Critical Fix: Digits ko body ya query dono se fetch karein
+  // 2. Input fetch (Body ya Query dono se)
   const body = req.body || {};
   const query = req.query || {};
   const digits = body.Digits || query.Digits;
 
   res.setHeader('Content-Type', 'application/json');
 
-  // 3. Initial connection/Gathering input
+  // 3. Agar digits nahi hain, input maangein
   if (!digits) {
     return res.status(200).json({ "Say": "Please enter the 4 digit sticker code." });
   }
@@ -35,11 +35,9 @@ export default async function handler(req, res) {
       return res.status(200).json({ "Say": "Invalid code. Please try again." });
     }
 
-    // 5. Success JSON Response for Exotel
+    // 5. Simplified JSON Response (Exotel specific)
     return res.status(200).json({
-      "Dial": {
-        "Number": `91${data.mobile_number}`
-      }
+      "Dial": `91${data.mobile_number}`
     });
 
   } catch (err) {
