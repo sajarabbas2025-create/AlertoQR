@@ -5,18 +5,13 @@ export default async function handler(req, res) {
   const supabaseKey = process.env.SUPABASE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // 1. Digits dhoondhne ka foolproof tareeka
-  let digits = req.body?.Digits || req.query?.Digits;
-  
-  // Agar digits JSON string mein hain (Exotel kabhi kabhi aisa karta hai)
-  if (typeof digits === 'string') {
-    digits = digits.replace(/["']/g, '');
-  }
+  // Digits fetch aur cleanup
+  const digits = (req.body?.Digits || req.query?.Digits || "").toString().replace(/"/g, '');
 
-  res.setHeader('Content-Type', 'application/json');
-
+  // Agar input nahi hai
   if (!digits) {
-    return res.status(200).json({ "Say": "Please enter the 4 digit sticker code." });
+    res.setHeader('Content-Type', 'application/xml');
+    return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?><Response><Say>Please enter the 4 digit sticker code.</Say></Response>`);
   }
 
   try {
@@ -27,16 +22,16 @@ export default async function handler(req, res) {
       .single();
 
     if (error || !data) {
-      return res.status(200).json({ "Say": "Invalid code." });
+      res.setHeader('Content-Type', 'application/xml');
+      return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?><Response><Say>Invalid code.</Say></Response>`);
     }
 
-    // Exotel ke liye standard format
-    return res.status(200).json({
-      "Dial": { "Number": `91${data.mobile_number}` }
-    });
+    // Exotel ke liye XML format (Dial command)
+    res.setHeader('Content-Type', 'application/xml');
+    return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?><Response><Dial>91${data.mobile_number}</Dial></Response>`);
 
   } catch (err) {
-    // Error ko chupa rahe hain taaki Exotel crash na ho
-    return res.status(200).json({ "Say": "System error." });
+    res.setHeader('Content-Type', 'application/xml');
+    return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?><Response><Say>System error.</Say></Response>`);
   }
 }
