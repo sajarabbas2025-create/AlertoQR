@@ -18,7 +18,8 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
   if (!cleanDigits) {
-    return res.status(200).json({ "numbers": [] });
+    // Agar input nahi hai, Exotel doc ke hisaab se khali destination bhejein
+    return res.status(200).json({ "destination": { "numbers": [] } });
   }
 
   try {
@@ -30,20 +31,22 @@ export default async function handler(req, res) {
 
     if (error || !data) {
       console.log("ID match nahi hui:", searchId);
-      return res.status(200).json({ "numbers": [] });
+      return res.status(200).json({ "destination": { "numbers": [] } });
     }
 
-    // Exotel outbound dialing ke liye '0' prefix best hota hai
-    const destinationNumber = `0${data.mobile_number}`;
+    // EXOTEL REQUIREMENT: +91 lagana zaroori hai (E.164 format)
+    const destinationNumber = `+91${data.mobile_number}`;
     console.log("Match Found! Exotel ko bhej rahe hain:", destinationNumber);
 
-    // EXOTEL KA EXACT FORMAT (Yeh format ab sahi number ke sath jayega)
+    // EXOTEL KA EXACT PROGRAMMABLE CONNECT FORMAT
     return res.status(200).json({
-      "numbers": [destinationNumber]
+      "destination": {
+        "numbers": [destinationNumber]
+      }
     });
 
   } catch (err) {
     console.error("System error:", err);
-    return res.status(200).json({ "numbers": [] });
+    return res.status(200).json({ "destination": { "numbers": [] } });
   }
 }
