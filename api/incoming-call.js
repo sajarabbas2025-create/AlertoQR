@@ -1,26 +1,29 @@
 import { createClient } from '@supabase/supabase-js';
 
 export default async function handler(req, res) {
-  // 1. Supabase Setup
   const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // 2. Fetch Digits (Exotel GET parameters mein 'digits' bhejta hai)
+  // Exotel se digits nikalna (GET request se)
   let rawDigits = req.query.digits || req.query.Digits || "";
   
-  // 3. Clean %22 and quotes (%221005%22 -> 1005)
+  // Digits ko clean karna (%221005%22 -> 1005)
   const cleanDigits = decodeURIComponent(rawDigits).replace(/["']/g, '').trim();
+
+  // Ye Vercel logs mein dikhega debug karne ke liye
+  console.log("Exotel se mila Raw Input:", rawDigits);
+  console.log("Clean kiya hua Sticker ID:", cleanDigits);
 
   res.setHeader('Content-Type', 'application/json');
 
-  // Agar input nahi mila ya galat hai, toh empty array bhejenge
+  // Agar input nahi hai toh khali array bhejenge
   if (!cleanDigits) {
-    return res.status(200).json({ "numbers": [] });
+    console.log("Koi input nahi mila.");
+    return res.status(200).json([]);
   }
 
   try {
-    // 4. Database Se Number Nikalna
     const { data, error } = await supabase
       .from('registrations')
       .select('mobile_number')
@@ -28,15 +31,18 @@ export default async function handler(req, res) {
       .single();
 
     if (error || !data) {
-      return res.status(200).json({ "numbers": [] });
+      console.log("Database mein ye sticker ID nahi mili:", cleanDigits);
+      return res.status(200).json([]);
     }
 
-    // 5. EXOTEL CONNECT APPLET FORMAT (Sirf 'numbers' array chalega)
-    return res.status(200).json({
-      "numbers": [`91${data.mobile_number}`]
-    });
+    const destinationNumber = `91${data.mobile_number}`;
+    console.log("Success! Exotel ko ye number bhej rahe hain:", destinationNumber);
+
+    // EXOTEL REQUIREMENT: Sirf ek simple Array
+    return res.status(200).json([ destinationNumber ]);
 
   } catch (err) {
-    return res.status(500).json({ error: "System error" });
+    console.error("System crash ho gaya:", err);
+    return res.status(200).json([]);
   }
 }
