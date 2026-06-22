@@ -6,24 +6,21 @@ export default async function handler(req, res) {
   const supabaseKey = process.env.SUPABASE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  // 2. The Real Fix: Dono small 'digits' aur capital 'Digits' check karna (bina crash hue)
-  const query = req.query || {};
-  const body = req.body || {};
+  // 2. Fetch Digits (Exotel GET parameters mein 'digits' bhejta hai)
+  let rawDigits = req.query.digits || req.query.Digits || "";
   
-  let rawDigits = query.digits || query.Digits || body.digits || body.Digits;
+  // 3. Clean %22 and quotes (%221005%22 -> 1005)
+  const cleanDigits = decodeURIComponent(rawDigits).replace(/["']/g, '').trim();
 
   res.setHeader('Content-Type', 'application/json');
 
-  // Agar sach mein koi input nahi aaya hai
-  if (!rawDigits) {
-    return res.status(200).json({ "Say": "Please enter the 4 digit sticker code." });
+  // Agar input nahi mila ya galat hai, toh empty array bhejenge
+  if (!cleanDigits) {
+    return res.status(200).json({ "numbers": [] });
   }
 
-  // 3. Exotel %22 (quotes) bhejta hai, use yahan saaf (clean) kar rahe hain
-  const cleanDigits = rawDigits.toString().replace(/["'%]/g, '');
-
   try {
-    // 4. Database Check
+    // 4. Database Se Number Nikalna
     const { data, error } = await supabase
       .from('registrations')
       .select('mobile_number')
@@ -31,15 +28,15 @@ export default async function handler(req, res) {
       .single();
 
     if (error || !data) {
-      return res.status(200).json({ "Say": "Invalid code." });
+      return res.status(200).json({ "numbers": [] });
     }
 
-    // 5. Exotel ke liye Exact JSON (Destination Number)
+    // 5. EXOTEL CONNECT APPLET FORMAT (Sirf 'numbers' array chalega)
     return res.status(200).json({
-      "Dial": `91${data.mobile_number}`
+      "numbers": [`91${data.mobile_number}`]
     });
 
   } catch (err) {
-    return res.status(200).json({ "Say": "System error. Please try again." });
+    return res.status(500).json({ error: "System error" });
   }
 }
