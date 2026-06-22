@@ -35,7 +35,8 @@
         .section-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; }
 
         .alerts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .alert-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .alert-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: 0.2s; }
+        .alert-card:active { background: #f7fafc; }
         .alert-card i { font-size: 26px; }
         .alert-card span { font-size: 13px; font-weight: 700; color: #334155; }
         
@@ -98,9 +99,10 @@
                 <i class="fa-solid fa-car" style="color: #3b82f6;"></i>
                 <span>Tow Alert</span>
             </div>
+            <!-- Modified icon and text here -->
             <div id="card-window" class="alert-card">
-                <i class="fa-solid fa-file-invoice" style="color: #000000;"></i>
-                <span>Window Open</span>
+                <i class="fa-solid fa-lightbulb" style="color: #d69e2e;"></i>
+                <span>Window/Light On</span>
             </div>
             <div id="card-photo" class="alert-card">
                 <i class="fa-solid fa-camera" style="color: #64748b;"></i>
@@ -179,11 +181,11 @@
                 // EXOTEL DTMF ROUTING FOR OWNER
                 document.getElementById('btn-call-owner').onclick = () => window.location.href = `tel:08047285175,,${urlAssetId}#`;
                 
-                const waBase = `https://wa.me/${mobileNum}?text=`;
-                document.getElementById('card-parking').onclick = () => window.location.href = waBase + encodeURIComponent("Alert! Aapki gaadi galat jagah park hai, kripya ise hatayein.");
-                document.getElementById('card-tow').onclick = () => window.location.href = waBase + encodeURIComponent("Alert! Aapki gaadi Tow hone wali hai, jaldi aaiye.");
-                document.getElementById('card-window').onclick = () => window.location.href = waBase + encodeURIComponent("Alert! Aapki gaadi ka window/door khula hai, kripya check karein.");
-                document.getElementById('card-photo').onclick = () => window.location.href = waBase + encodeURIComponent("Emergency! Main aapki gaadi ke paas hu, aapko photo bhej raha hu.");
+                // DISABLED ALERTS: Replaced actual links with alert popups
+                document.getElementById('card-parking').onclick = () => alert("This WhatsApp Alert feature will be activated very soon!");
+                document.getElementById('card-tow').onclick = () => alert("This WhatsApp Alert feature will be activated very soon!");
+                document.getElementById('card-window').onclick = () => alert("This WhatsApp Alert feature will be activated very soon!");
+                document.getElementById('card-photo').onclick = () => alert("This WhatsApp Alert feature will be activated very soon!");
             } else {
                 deployErrorView('Contact Error', 'Gaadi malik ka number update nahi hai.');
                 return;
@@ -209,39 +211,9 @@
         }
     });
 
-    // --- LIVE GPS LOCATION SOS LOGIC ---
+    // --- DISABLED LIVE GPS LOCATION SOS LOGIC ---
     document.getElementById('btn-sos-action').addEventListener('click', function() {
-        if (!globalOwnerMobile) return;
-
-        const btn = this;
-        const originalHtml = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> GPS Location nikal raha hai...';
-        btn.style.opacity = '0.8';
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-                    const sosMessage = `🚨 *EMERGENCY SOS!* 🚨\nAapki gaadi ke paas ek badi emergency hai. Main gaadi ke paas khada hu, kripya turant is location par pahunchein:\n📍 Map Link: ${mapUrl}`;
-                    
-                    window.location.href = `https://wa.me/${globalOwnerMobile}?text=${encodeURIComponent(sosMessage)}`;
-                    setTimeout(() => { btn.innerHTML = originalHtml; btn.style.opacity = '1'; }, 2000);
-                },
-                function(error) {
-                    const fallbackMsg = `🚨 *EMERGENCY SOS!* 🚨\nAapki gaadi ke paas ek badi emergency hai, kripya turant check karein! (Location link failed)`;
-                    window.location.href = `https://wa.me/${globalOwnerMobile}?text=${encodeURIComponent(fallbackMsg)}`;
-                    setTimeout(() => { btn.innerHTML = originalHtml; btn.style.opacity = '1'; }, 2000);
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-        } else {
-            const fallbackMsg = `🚨 *EMERGENCY SOS!* 🚨\nAapki gaadi ke paas ek badi emergency hai, kripya turant check karein!`;
-            window.location.href = `https://wa.me/${globalOwnerMobile}?text=${encodeURIComponent(fallbackMsg)}`;
-            btn.innerHTML = originalHtml;
-            btn.style.opacity = '1';
-        }
+        alert('Emergency SOS feature will be activated very soon!');
     });
 
     function deployErrorView(title, message) {
