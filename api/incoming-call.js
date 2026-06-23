@@ -3,23 +3,34 @@ import { createClient } from '@supabase/supabase-js';
 export default async function handler(req, res) {
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
   
+  // Exotel GET aur POST dono bhej sakta hai, isliye dono ko merge kar diya
+  const params = { ...req.query, ...req.body };
+  
   // 1. Caller ka number nikalo
-  const callFrom = (req.query.CallFrom || "").replace(/\D/g, '').slice(-10); 
+  const callFrom = (params.CallFrom || "").replace(/\D/g, '').slice(-10); 
   
-  // 2. Digits nikalo (Exotel kabhi Digits, kabhi CustomField bhejta hai)
-  const rawDigits = (req.query.Digits || req.query.digits || req.query.CustomField || "").replace(/["']/g, '').trim();
+  // 2. Raw Digits nikalo
+  const rawDigits = (params.Digits || params.digits || params.CustomField || "").replace(/["']/g, '').trim();
   
-  // 3. Agar code mein '#' laga hai, toh use hata do
-  let extractedCode = rawDigits.replace(/#/g, '');
+  // 3. '#' hatao
+  let cleanDigits = rawDigits.replace(/#/g, '');
 
-  console.log("--- DEBUGGING NEW CALL ---");
-  console.log("Caller:", callFrom, "| Raw Digits:", rawDigits, "| Extracted Code:", extractedCode);
+  // 4. SMART FILTER: '2577' ya '2571' ko automatically hata do
+  let extractedCode = cleanDigits;
+  if (extractedCode.startsWith('2577')) {
+      extractedCode = extractedCode.replace(/^2577/, '');
+  } else if (extractedCode.startsWith('2571')) {
+      extractedCode = extractedCode.replace(/^2571/, '');
+  }
 
-  // LOGIC 1: Owner Callback (Agar koi code nahi aaya, toh callback mano)
+  console.log("--- DEBUGGING SMART CALL ---");
+  console.log("Caller:", callFrom, "| Raw Digits:", rawDigits, "| Final Code:", extractedCode);
+
+  // LOGIC 1: Owner Callback (Agar digits khali hain, toh ye owner ki callback call hai)
   if (!extractedCode && callFrom) {
     console.log("Checking database for Owner callback:", callFrom);
     
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('active_calls')
       .select('scanner_number')
       .eq('owner_number', callFrom)
@@ -27,43 +38,45 @@ export default async function handler(req, res) {
       .limit(1)
       .maybeSingle();
 
-    if (error) {
-      console.log("DB Error (Callback):", error.message);
-    } else if (data) {
-      console.log("Match Found! Connecting Owner to Scanner:", data.scanner_number);
-      return res.status(200).json({ "destination": { "numbers": [data.scanner_number] } });
+    if (data) {
+      const targetNumber = data.scanner_number.toString().replace(/\D/g, '').slice(-10);
+      console.log("Match Found! Connecting Owner to Scanner:", targetNumber);
+      
+      // EXOTEL CONNECT APPLET KI DEMAND: Sirf plain text number bhejna hai
+      res.setHeader('Content-Type', 'text/plain');
+      return res.status(200).send(targetNumber);
     }
   }
 
-  // LOGIC 2: Scanner Call (Agar code aaya hai)
+  // LOGIC 2: Scanner Call (Agar helper ne QR scan karke call kiya hai)
   if (extractedCode) {
-    console.log("Searching DB for Code:", extractedCode, "OR ALQR" + extractedCode);
+    console.log("Searching DB for Code:", extractedCode);
     
-    // Yeh line smart hai: Ye '2577' aur 'ALQR2577' dono ko database mein search karegi
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('registrations')
       .select('mobile_number')
       .or(`sticker_id.eq.${extractedCode},sticker_id.eq.ALQR${extractedCode}`)
       .maybeSingle();
 
-    if (error) {
-      console.log("DB Error (Scanner Check):", error.message);
-    } else if (data) {
+    if (data) {
       const ownerNumber = data.mobile_number.toString().replace(/\D/g, '').slice(-10);
       console.log("Match Found! Owner Number:", ownerNumber);
 
-      // Future callbacks ke liye record save karo
+      // Mapping save karo taaki wapas call lag sake
       await supabase.from('active_calls').insert([{ 
         scanner_number: callFrom, 
         owner_number: ownerNumber 
       }]);
       
-      return res.status(200).json({ "destination": { "numbers": [ownerNumber] } });
+      // EXOTEL CONNECT APPLET KI DEMAND: Sirf plain text number bhejna hai
+      res.setHeader('Content-Type', 'text/plain');
+      return res.status(200).send(ownerNumber);
     } else {
-      console.log("No Match Found in database for this code.");
+      console.log("No Match Found in database.");
     }
   }
 
-  console.log("No condition met, ending call.");
-  return res.status(200).json({ "destination": { "numbers": [] } });
+  // Agar koi condition match na ho toh khali response taaki call safe disconnect ho
+  res.setHeader('Content-Type', 'text/plain');
+  return res.status(200).send("");
 }
