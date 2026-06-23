@@ -22,8 +22,7 @@ export default async function handler(req, res) {
   console.log("--- DEBUGGING SMART CALL ---");
   console.log("Caller:", callFrom, "| Raw Digits:", rawDigits, "| Final Code:", extractedCode);
 
-  // LOGIC 1: Owner Callback (Neeche wala Telephone Icon - Connect Applet)
-  // Yeh Exotel ke Connect Applet ke liye PLAIN TEXT number bhejega
+  // LOGIC 1: Owner Callback (Dono blocks dynamic hain, isliye dono mein JSON format jayega)
   if (!extractedCode && callFrom) {
     console.log("Checking database for Owner callback:", callFrom);
     
@@ -39,13 +38,12 @@ export default async function handler(req, res) {
       const targetNumber = data.scanner_number.toString().replace(/\D/g, '').slice(-10);
       console.log("Match Found! Connecting Owner to Scanner:", targetNumber);
       
-      res.setHeader('Content-Type', 'text/plain');
-      return res.status(200).send(targetNumber); // Plain text number for Connect Applet
+      // Pure JSON Format for Dynamic Connect Applet
+      return res.status(200).json({ "destination": { "numbers": [targetNumber] } });
     }
   }
 
-  // LOGIC 2: Scanner Call (Upar wala Cube Icon - Passthru Applet)
-  // Yeh Passthru ke liye JSON format bhejega
+  // LOGIC 2: Scanner Call
   if (extractedCode) {
     console.log("Searching DB for Code:", extractedCode);
     
@@ -64,10 +62,11 @@ export default async function handler(req, res) {
         owner_number: ownerNumber 
       }]);
       
-      return res.status(200).json({ "destination": { "numbers": [ownerNumber] } }); // JSON format
+      // Pure JSON Format for Dynamic Connect Applet
+      return res.status(200).json({ "destination": { "numbers": [ownerNumber] } });
     }
   }
 
-  res.setHeader('Content-Type', 'text/plain');
-  return res.status(200).send("");
+  // Default Fallback
+  return res.status(200).json({ "destination": { "numbers": [] } });
 }
