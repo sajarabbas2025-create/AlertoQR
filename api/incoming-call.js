@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   // Exotel GET aur POST dono bhej sakta hai, isliye dono ko merge kar diya
   const params = { ...req.query, ...req.body };
   
-  // 1. Caller ka number nikalo
+  // 1. Caller ka number nikalo (10 Digits)
   const callFrom = (params.CallFrom || "").replace(/\D/g, '').slice(-10); 
   
   // 2. Raw Digits nikalo
@@ -42,9 +42,10 @@ export default async function handler(req, res) {
       const targetNumber = data.scanner_number.toString().replace(/\D/g, '').slice(-10);
       console.log("Match Found! Connecting Owner to Scanner:", targetNumber);
       
-      // EXOTEL CONNECT APPLET KI DEMAND: Sirf plain text number bhejna hai
-      res.setHeader('Content-Type', 'text/plain');
-      return res.status(200).send(targetNumber);
+      // Sateek JSON format jo Exotel ko chahiye
+      return res.status(200).json({ "destination": { "numbers": [targetNumber] } });
+    } else {
+      console.log("Owner found but no active scanner mapping in active_calls.");
     }
   }
 
@@ -68,15 +69,13 @@ export default async function handler(req, res) {
         owner_number: ownerNumber 
       }]);
       
-      // EXOTEL CONNECT APPLET KI DEMAND: Sirf plain text number bhejna hai
-      res.setHeader('Content-Type', 'text/plain');
-      return res.status(200).send(ownerNumber);
+      // Sateek JSON format jo Exotel ko chahiye
+      return res.status(200).json({ "destination": { "numbers": [ownerNumber] } });
     } else {
       console.log("No Match Found in database.");
     }
   }
 
-  // Agar koi condition match na ho toh khali response taaki call safe disconnect ho
-  res.setHeader('Content-Type', 'text/plain');
-  return res.status(200).send("");
+  // Defaut response agar kuch match na ho
+  return res.status(200).json({ "destination": { "numbers": [] } });
 }
