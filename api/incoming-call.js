@@ -1,9 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
 export default async function handler(req, res) {
+  // Supabase client setup
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
   
-  // Exotel se aane wala data
+  // Exotel se aane wala data - Phone numbers ko 10-digit format mein clean kar rahe hain
   const callFrom = (req.query.CallFrom || "").replace(/\D/g, '').slice(-10); 
   const digits = (req.query.Digits || "").replace(/["']/g, '').trim();
 
@@ -13,20 +14,21 @@ export default async function handler(req, res) {
 
   // LOGIC 1: Owner Callback (Scanner number dhoondhna)
   if (!digits && callFrom) {
-    console.log("Checking database for Owner callback:", callFrom);
+    console.log("Checking database for Owner callback mapping:", callFrom);
     
+    // .maybeSingle() ka use kiya taaki multiple records hone par error na aaye
     const { data, error } = await supabase
       .from('active_calls')
       .select('scanner_number')
       .eq('owner_number', callFrom)
       .order('created_at', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle(); 
 
     if (error) {
       console.log("Supabase Error (Owner Check):", error.message);
     } else if (data) {
-      console.log("Match Found! Connecting to Scanner:", data.scanner_number);
+      console.log("Match Found! Connecting Owner to Scanner:", data.scanner_number);
       return res.status(200).json({ "destination": { "numbers": [data.scanner_number] } });
     }
   }
@@ -39,7 +41,7 @@ export default async function handler(req, res) {
       .from('registrations')
       .select('mobile_number')
       .eq('sticker_id', `ALQR${digits}`)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.log("Supabase Error (Sticker Check):", error.message);
@@ -47,7 +49,7 @@ export default async function handler(req, res) {
       const ownerNumber = data.mobile_number.toString().replace(/\D/g, '').slice(-10);
       console.log("Sticker Match Found! Owner Number:", ownerNumber);
 
-      // Mapping save karo
+      // Mapping save karo taaki Owner baad mein call back kar sake
       await supabase.from('active_calls').insert([{ 
         scanner_number: callFrom, 
         owner_number: ownerNumber 
