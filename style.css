@@ -672,11 +672,13 @@ min-width:180px;
 
 background:var(--card);
 
-padding:30px;
+padding:35px;
 
 text-align:center;
 
 border-radius:18px;
+
+  margin-bottom:30px; 
 
 }
 
@@ -686,7 +688,7 @@ font-size:42px;
 
 color:var(--yellow);
 
-margin-bottom:10px;
+margin-bottom:40px;
 
 }
 
