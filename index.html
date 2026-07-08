@@ -3,102 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR | Official Vehicle Safety Solution</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>ALERTOQR | Official Enterprise Portal</title>
     <style>
-        /* CSS Variables for 1500+ line project structure */
-        :root {
-            --bg: #050505;
-            --primary: #FFD400;
-            --text: #ffffff;
-            --dim: #888888;
-            --card-bg: #0a0a0a;
-            --border: #1a1a1a;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.7; overflow-x: hidden; }
-
-        /* Navigation */
-        .navbar { height: 90px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; position: sticky; top: 0; background: rgba(5,5,5,0.95); z-index: 1000; }
-        .logo { font-size: 24px; font-weight: 800; }
-        .logo span { color: var(--primary); }
-        .nav-items a { color: var(--text); text-decoration: none; margin-left: 30px; font-weight: 500; font-size: 14px; }
-        .cta-btn { background: var(--primary); color: #000; padding: 12px 25px; border-radius: 8px; font-weight: 700; }
-
-        /* Hero Section - The Main Visual */
-        .hero { min-height: 90vh; display: flex; align-items: center; padding: 0 5%; gap: 60px; }
-        .hero-content h1 { font-size: 80px; line-height: 0.9; margin-bottom: 30px; }
-        .hero-content p { font-size: 20px; color: var(--dim); margin-bottom: 40px; }
-        .hero-video { flex: 1; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); }
-
-        /* Features Section (8 Cards) */
-        .features { padding: 100px 5%; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .card { background: var(--card-bg); padding: 40px; border-radius: 20px; border: 1px solid var(--border); transition: 0.3s; }
-        .card:hover { border-color: var(--primary); transform: translateY(-10px); }
-
-        /* Contact Section */
-        .contact { padding: 100px 5%; border-top: 1px solid var(--border); }
-        .info-box { display: flex; justify-content: space-between; margin-top: 50px; }
+        :root { --main-bg: #000000; --gold: #FFD400; --text: #ffffff; --box: #111; }
+        body { background: var(--main-bg); color: var(--text); font-family: 'Segoe UI', sans-serif; }
         
-        /* Footer */
-        footer { padding: 50px 5%; text-align: center; color: var(--dim); font-size: 14px; border-top: 1px solid var(--border); }
+        /* Header Section */
+        .top-bar { background: #000; border-bottom: 2px solid var(--gold); padding: 10px 5%; text-align: right; font-size: 12px; }
+        
+        /* Main Layout - Heavy Density */
+        .container { display: grid; grid-template-columns: 280px 1fr; gap: 20px; padding: 20px; }
+        .sidebar { background: var(--box); padding: 20px; border-radius: 10px; }
+        .main-hero { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('hero-bg.jpg'); padding: 50px; border-radius: 10px; }
+        
+        /* Data Grid */
+        .grid-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .item { background: #0a0a0a; padding: 20px; border: 1px solid #333; }
+        
+        /* Styling */
+        h1 { font-size: 3rem; color: var(--gold); }
+        .btn { background: var(--gold); color: #000; padding: 10px 20px; font-weight: bold; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="logo">ALERTO<span>QR</span></div>
-        <div class="nav-items">
-            <a href="#">Home</a>
-            <a href="#">Privacy</a>
-            <a href="#">About</a>
-            <a href="#" class="cta-btn">Activate Sticker</a>
-        </div>
-    </nav>
+    <div class="top-bar">Helpline: 9105434048 | Email: alertoqr000@gmail.com</div>
 
-    <header class="hero">
-        <div class="hero-content">
-            <h1>ALERTO<span>QR</span></h1>
-            <p>India's Smart Vehicle Safety QR. Never leave your phone number on your dashboard again.</p>
-            <a href="#" class="cta-btn">Activate Your Sticker</a>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Menu</h3>
+            <ul style="list-style: none; margin-top: 20px;">
+                <li>Home</li><li>Features</li><li>Registration</li><li>Privacy Policy</li><li>Contact</li>
+            </ul>
         </div>
-        <div class="hero-video">
-            <video width="100%" autoplay loop muted>
-                <source src="1002434344.mp4" type="video/mp4">
-            </video>
+
+        <div class="main-content">
+            <div class="main-hero">
+                <h1>ALERTO<span>QR</span></h1>
+                <p>India's Smartest Vehicle Safety Network.</p>
+                <button class="btn">ACTIVATE STICKER</button>
+            </div>
+
+            <div class="grid-box">
+                <div class="item"><h3>Wrong Parking</h3><p>Manage parking alerts.</p></div>
+                <div class="item"><h3>Tow Alert</h3><p>Real-time notifications.</p></div>
+                <div class="item"><h3>Emergency SOS</h3><p>Safety first protocol.</p></div>
+                <div class="item"><h3>WhatsApp</h3><p>Direct chat integration.</p></div>
+                <div class="item"><h3>Masked Calling</h3><p>Privacy guaranteed.</p></div>
+                <div class="item"><h3>Headlight ON</h3><p>Battery protection.</p></div>
+                <div class="item"><h3>Open Window</h3><p>Anti-theft alerts.</p></div>
+                <div class="item"><h3>Fleet Mgt</h3><p>Corporate access.</p></div>
+            </div>
+            
+            <div style="margin-top: 40px; background: #111; padding: 30px;">
+                <h2>Registration Guide</h2>
+                <p>Follow our standard operating procedure to register your vehicle identity within our secure database.</p>
+            </div>
         </div>
-    </header>
+    </div>
 
-    <section class="features">
-        <div class="grid">
-            <div class="card"><h3>Wrong Parking</h3></div>
-            <div class="card"><h3>Tow Alert</h3></div>
-            <div class="card"><h3>Emergency SOS</h3></div>
-            <div class="card"><h3>WhatsApp Alert</h3></div>
-            <div class="card"><h3>Masked Calling</h3></div>
-            <div class="card"><h3>Headlights ON</h3></div>
-            <div class="card"><h3>Open Window</h3></div>
-            <div class="card"><h3>Fleet Management</h3></div>
-        </div>
-    </section>
-
-    <section class="contact" id="contact">
-        <h1>Official Contact</h1>
-        <div class="info-box">
-            <div><p>Helpline: 9105434048</p><p>WhatsApp: 9105434048</p></div>
-            <div><p>Email: alertoqr000@gmail.com</p><p>Website: alertoqr.in</p></div>
-        </div>
-    </section>
-
-    <footer>
-        <p>Powered by Globalwide Management Services | © 2026 AlertoQR</p>
-    </footer>
-
-    <script>
-        // Complex interactions can be extended here
-        console.log("AlertoQR Frontend Initialized");
-    </script>
 </body>
 </html>
