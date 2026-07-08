@@ -4,19 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlertoQR | India's Smart Vehicle Safety QR</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --bg: #050505;
+            --accent: #FFD400;
+            --surface: #121212;
+            --text: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        .navbar { position: fixed; width: 100%; z-index: 100; backdrop-filter: blur(20px); border-bottom: 1px solid #222; padding: 20px 0; transition: 0.3s; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 800; }
+        .logo span { color: var(--accent); }
+
+        .hero { padding-top: 150px; min-height: 90vh; display: flex; align-items: center; }
+        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        .hero-title { font-size: 4rem; margin-bottom: 20px; line-height: 1.1; }
+        .hero-img { width: 100%; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+
+        .btn { padding: 15px 30px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none; }
+        .btn-primary { background: var(--accent); color: #000; }
+        .btn-secondary { border: 1px solid #333; color: #fff; margin-left: 10px; }
+
+        .features { padding: 100px 0; }
+        .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .feature-card { background: var(--surface); padding: 30px; border-radius: 16px; border: 1px solid #222; text-align: center; }
+        .feature-card span { font-size: 2rem; display: block; margin-bottom: 10px; }
+
+        .footer { padding: 50px 0; border-top: 1px solid #222; text-align: center; color: #666; }
+    </style>
 </head>
 <body>
 
     <nav class="navbar" id="navbar">
         <div class="container nav-content">
-            <a href="#" class="logo">ALERTO<span class="text-accent">QR</span></a>
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#works">How it Works</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#contact">Contact</a></li>
+            <a href="#" class="logo">ALERTO<span>QR</span></a>
+            <ul class="nav-links" style="display: flex; list-style: none; gap: 20px;">
+                <li><a href="#about" style="color: white; text-decoration: none;">About</a></li>
+                <li><a href="#features" style="color: white; text-decoration: none;">Features</a></li>
             </ul>
             <a href="register.html" class="btn btn-primary">Activate Sticker</a>
         </div>
@@ -25,82 +57,60 @@
     <header class="hero">
         <div class="container hero-grid">
             <div class="hero-content">
-                <div class="badge">Trusted by Smart Vehicle Owners</div>
                 <h1 class="hero-title">Never Leave Your Phone Number On Your Vehicle Again.</h1>
-                <p class="hero-subtitle">India's most sophisticated vehicle communication system. Protect your privacy with AlertoQR's secure, cloud-connected smart decal.</p>
+                <p class="hero-subtitle">Premium, secure vehicle safety solution.</p>
                 <div class="hero-ctas">
                     <a href="register.html" class="btn btn-primary">Activate Sticker</a>
-                    <a href="helper.html?id=ALQR1008" class="btn btn-secondary">Live Demo</a>
+                    <a href="#" class="btn btn-secondary">Live Demo</a>
                 </div>
             </div>
             <div class="hero-visual">
-                <img src="image/hero-image.jpeg" alt="Premium AlertoQR implementation" class="hero-img">
+                <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80" alt="Premium Car" class="hero-img">
             </div>
         </div>
     </header>
 
-    <section class="trust-bar">
-        <div class="container trust-grid">
-            <div class="trust-card"><span>🛡️</span> 100% Privacy</div>
-            <div class="trust-card"><span>⚡</span> No App Required</div>
-            <div class="trust-card"><span>🇮🇳</span> Pan-India Coverage</div>
-            <div class="trust-card"><span>🎧</span> 24×7 Support</div>
-        </div>
-    </section>
-
-    <section id="features" class="features">
+    <section class="features" id="features">
         <div class="container">
-            <h2 class="section-title">Engineered for Control</h2>
             <div class="features-grid">
                 <div class="feature-card"><span>🅿️</span><h3>Wrong Parking</h3></div>
                 <div class="feature-card"><span>🏗️</span><h3>Tow Alert</h3></div>
                 <div class="feature-card"><span>🚨</span><h3>Emergency SOS</h3></div>
-                <div class="feature-card"><span>💬</span><h3>WhatsApp Alerts</h3></div>
                 <div class="feature-card"><span>📞</span><h3>Masked Calling</h3></div>
-                <div class="feature-card"><span>💡</span><h3>Headlight Alert</h3></div>
-                <div class="feature-card"><span>🪟</span><h3>Open Window</h3></div>
-                <div class="feature-card"><span>🏢</span><h3>Fleet Management</h3></div>
-            </div>
-        </div>
-    </section>
-
-    <section id="works" class="how-it-works">
-        <div class="container works-grid">
-            <div class="works-content">
-                <h2 class="section-title">Seamless Interaction</h2>
-                <div class="timeline">
-                    <div class="step"><span>1</span> Vehicle Sighted</div>
-                    <div class="step"><span>2</span> Scan QR</div>
-                    <div class="step"><span>3</span> Helper Page</div>
-                    <div class="step"><span>4</span> Owner Notified</div>
-                </div>
-            </div>
-            <img src="image/how-it-works.png" alt="Workflow Illustration">
-        </div>
-    </section>
-
-    <section id="pricing" class="pricing">
-        <div class="container">
-            <div class="price-card">
-                <h3>Premium Tag</h3>
-                <div class="price">₹299 <span>/ 1st Year</span></div>
-                <p>Renewal at ₹199/year</p>
-                <a href="register.html" class="btn btn-primary">Get Started</a>
             </div>
         </div>
     </section>
 
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2026 AlertoQR | Powered by Globalwide Management Services</p>
-                <div class="footer-links">
-                    <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Refund</a>
-                </div>
-            </div>
+            <p>&copy; 2026 AlertoQR | Engineered by Sajar Abbas</p>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        /* --- JAVASCRIPT --- */
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.feature-card, .hero-content').forEach(el => {
+                el.style.opacity = 0;
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = '0.8s';
+                observer.observe(el);
+            });
+
+            window.addEventListener('scroll', () => {
+                const nav = document.getElementById('navbar');
+                nav.style.background = window.scrollY > 50 ? 'rgba(5,5,5,0.9)' : 'transparent';
+            });
+        });
+    </script>
 </body>
 </html>
