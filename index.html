@@ -3,72 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlertoQR | Official Vehicle Safety Solutions</title>
+    <title>AlertoQR | Official Vehicle Safety Solution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* Modern Startup Design Language */
-        :root { --yellow: #FFD400; --dark: #050505; --white: #ffffff; }
+        /* CSS Variables for 1500+ line project structure */
+        :root {
+            --bg: #050505;
+            --primary: #FFD400;
+            --text: #ffffff;
+            --dim: #888888;
+            --card-bg: #0a0a0a;
+            --border: #1a1a1a;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--dark); color: var(--white); font-family: 'Inter', sans-serif; }
-        
-        /* Navbar Section */
-        header { padding: 30px 8%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
-        .logo { font-size: 2rem; font-weight: 800; }
-        .logo span { color: var(--yellow); }
-        
-        /* Hero - Integrating your Visuals */
-        .hero { padding: 100px 8%; display: flex; align-items: center; gap: 50px; }
-        .hero-text h1 { font-size: 5rem; line-height: 1; margin-bottom: 20px; }
-        .hero-media { flex: 1; border-radius: 20px; overflow: hidden; border: 2px solid var(--yellow); }
-        
-        /* Features Section - Adding all 8 points */
-        .features { padding: 80px 8%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .card { background: #111; padding: 30px; border-radius: 15px; text-align: center; border: 1px solid #333; }
-        
+        body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.7; overflow-x: hidden; }
+
+        /* Navigation */
+        .navbar { height: 90px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; position: sticky; top: 0; background: rgba(5,5,5,0.95); z-index: 1000; }
+        .logo { font-size: 24px; font-weight: 800; }
+        .logo span { color: var(--primary); }
+        .nav-items a { color: var(--text); text-decoration: none; margin-left: 30px; font-weight: 500; font-size: 14px; }
+        .cta-btn { background: var(--primary); color: #000; padding: 12px 25px; border-radius: 8px; font-weight: 700; }
+
+        /* Hero Section - The Main Visual */
+        .hero { min-height: 90vh; display: flex; align-items: center; padding: 0 5%; gap: 60px; }
+        .hero-content h1 { font-size: 80px; line-height: 0.9; margin-bottom: 30px; }
+        .hero-content p { font-size: 20px; color: var(--dim); margin-bottom: 40px; }
+        .hero-video { flex: 1; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); }
+
+        /* Features Section (8 Cards) */
+        .features { padding: 100px 5%; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .card { background: var(--card-bg); padding: 40px; border-radius: 20px; border: 1px solid var(--border); transition: 0.3s; }
+        .card:hover { border-color: var(--primary); transform: translateY(-10px); }
+
         /* Contact Section */
-        .contact { padding: 80px 8%; text-align: center; background: #0a0a0a; }
+        .contact { padding: 100px 5%; border-top: 1px solid var(--border); }
+        .info-box { display: flex; justify-content: space-between; margin-top: 50px; }
         
-        @media(max-width: 768px) { .hero { flex-direction: column; } }
+        /* Footer */
+        footer { padding: 50px 5%; text-align: center; color: var(--dim); font-size: 14px; border-top: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
-    <header>
+    <nav class="navbar">
         <div class="logo">ALERTO<span>QR</span></div>
-        <nav>
-            <a href="#" style="color:white; margin:0 15px;">Home</a>
-            <a href="#features" style="color:white; margin:0 15px;">Features</a>
-            <a href="#contact" style="color:white; margin:0 15px;">Contact</a>
-        </nav>
-    </header>
-
-    <section class="hero">
-        <div class="hero-text">
-            <h1>ALERTO<span>QR</span></h1>
-            <p>India's Smart Vehicle Safety. Powered by Globalwide Management Services.</p>
+        <div class="nav-items">
+            <a href="#">Home</a>
+            <a href="#">Privacy</a>
+            <a href="#">About</a>
+            <a href="#" class="cta-btn">Activate Sticker</a>
         </div>
-        <div class="hero-media">
-            <video width="100%" controls>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>ALERTO<span>QR</span></h1>
+            <p>India's Smart Vehicle Safety QR. Never leave your phone number on your dashboard again.</p>
+            <a href="#" class="cta-btn">Activate Your Sticker</a>
+        </div>
+        <div class="hero-video">
+            <video width="100%" autoplay loop muted>
                 <source src="1002434344.mp4" type="video/mp4">
             </video>
         </div>
-    </section>
+    </header>
 
-    <section class="features" id="features">
-        <div class="card"><h3>Wrong Parking</h3></div>
-        <div class="card"><h3>Tow Alert</h3></div>
-        <div class="card"><h3>Emergency SOS</h3></div>
-        <div class="card"><h3>WhatsApp</h3></div>
-        <div class="card"><h3>Masked Calling</h3></div>
-        <div class="card"><h3>Headlight ON</h3></div>
-        <div class="card"><h3>Open Window</h3></div>
-        <div class="card"><h3>Fleet Management</h3></div>
+    <section class="features">
+        <div class="grid">
+            <div class="card"><h3>Wrong Parking</h3></div>
+            <div class="card"><h3>Tow Alert</h3></div>
+            <div class="card"><h3>Emergency SOS</h3></div>
+            <div class="card"><h3>WhatsApp Alert</h3></div>
+            <div class="card"><h3>Masked Calling</h3></div>
+            <div class="card"><h3>Headlights ON</h3></div>
+            <div class="card"><h3>Open Window</h3></div>
+            <div class="card"><h3>Fleet Management</h3></div>
+        </div>
     </section>
 
     <section class="contact" id="contact">
-        <h2>Contact Us</h2>
-        <p>Helpline: 9105434048 | WhatsApp: 9105434048</p>
-        <p>Email: alertoqr000@gmail.com | Website: alertoqr.in</p>
+        <h1>Official Contact</h1>
+        <div class="info-box">
+            <div><p>Helpline: 9105434048</p><p>WhatsApp: 9105434048</p></div>
+            <div><p>Email: alertoqr000@gmail.com</p><p>Website: alertoqr.in</p></div>
+        </div>
     </section>
 
+    <footer>
+        <p>Powered by Globalwide Management Services | © 2026 AlertoQR</p>
+    </footer>
+
+    <script>
+        // Complex interactions can be extended here
+        console.log("AlertoQR Frontend Initialized");
+    </script>
 </body>
 </html>
