@@ -4,113 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlertoQR | India's Smart Vehicle Safety QR</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS STYLES --- */
-        :root {
-            --bg: #050505;
-            --accent: #FFD400;
-            --surface: #121212;
-            --text: #ffffff;
-        }
-
+        :root { --bg: #050505; --accent: #FFD400; --text: #ffffff; --card: #121212; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-
-        .navbar { position: fixed; width: 100%; z-index: 100; backdrop-filter: blur(20px); border-bottom: 1px solid #222; padding: 20px 0; transition: 0.3s; }
-        .nav-content { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.5rem; font-weight: 800; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+        
+        /* Navbar */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 25px 8%; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #222; }
+        .logo { font-size: 2rem; font-weight: 900; letter-spacing: -1px; }
         .logo span { color: var(--accent); }
+        .nav-links a { color: #fff; text-decoration: none; margin-left: 25px; font-weight: 600; }
+        .cta { background: var(--accent); color: #000; padding: 12px 25px; border-radius: 50px; font-weight: 700; }
 
-        .hero { padding-top: 150px; min-height: 90vh; display: flex; align-items: center; }
-        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
-        .hero-title { font-size: 4rem; margin-bottom: 20px; line-height: 1.1; }
-        .hero-img { width: 100%; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        /* Hero */
+        .hero { padding: 120px 8%; text-align: center; }
+        .hero h1 { font-size: 6rem; font-weight: 900; margin-bottom: 20px; }
+        .hero h1 span { color: var(--accent); }
+        .hero p { font-size: 1.4rem; color: #aaa; max-width: 700px; margin: 0 auto 40px; }
 
-        .btn { padding: 15px 30px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none; }
-        .btn-primary { background: var(--accent); color: #000; }
-        .btn-secondary { border: 1px solid #333; color: #fff; margin-left: 10px; }
-
-        .features { padding: 100px 0; }
-        .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .feature-card { background: var(--surface); padding: 30px; border-radius: 16px; border: 1px solid #222; text-align: center; }
-        .feature-card span { font-size: 2rem; display: block; margin-bottom: 10px; }
-
-        .footer { padding: 50px 0; border-top: 1px solid #222; text-align: center; color: #666; }
+        /* Features */
+        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 50px; }
+        .features { padding: 80px 8%; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid #333; transition: 0.3s; }
+        .card:hover { border-color: var(--accent); transform: translateY(-10px); }
+        
+        /* Footer/Contact */
+        footer { padding: 80px 8%; background: #0a0a0a; text-align: center; border-top: 1px solid #222; }
+        .contact-info { margin-top: 30px; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
-    <nav class="navbar" id="navbar">
-        <div class="container nav-content">
-            <a href="#" class="logo">ALERTO<span>QR</span></a>
-            <ul class="nav-links" style="display: flex; list-style: none; gap: 20px;">
-                <li><a href="#about" style="color: white; text-decoration: none;">About</a></li>
-                <li><a href="#features" style="color: white; text-decoration: none;">Features</a></li>
-            </ul>
-            <a href="register.html" class="btn btn-primary">Activate Sticker</a>
+    <nav>
+        <div class="logo">ALERTO<span>QR</span></div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#features">Features</a>
+            <a href="#contact">Contact</a>
+            <a href="#" class="cta">Activate Sticker</a>
         </div>
     </nav>
 
     <header class="hero">
-        <div class="container hero-grid">
-            <div class="hero-content">
-                <h1 class="hero-title">Never Leave Your Phone Number On Your Vehicle Again.</h1>
-                <p class="hero-subtitle">Premium, secure vehicle safety solution.</p>
-                <div class="hero-ctas">
-                    <a href="register.html" class="btn btn-primary">Activate Sticker</a>
-                    <a href="#" class="btn btn-secondary">Live Demo</a>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80" alt="Premium Car" class="hero-img">
-            </div>
-        </div>
+        <h1>ALERTO<span>QR</span></h1>
+        <p>India's Smart Vehicle Safety QR. Never leave your number again. Secure, Anonymous, and Instant.</p>
+        <a href="#" class="cta" style="font-size: 1.2rem;">Activate Your Sticker Now</a>
     </header>
 
+    <h2 class="section-title">Smart Features</h2>
     <section class="features" id="features">
-        <div class="container">
-            <div class="features-grid">
-                <div class="feature-card"><span>🅿️</span><h3>Wrong Parking</h3></div>
-                <div class="feature-card"><span>🏗️</span><h3>Tow Alert</h3></div>
-                <div class="feature-card"><span>🚨</span><h3>Emergency SOS</h3></div>
-                <div class="feature-card"><span>📞</span><h3>Masked Calling</h3></div>
-            </div>
-        </div>
+        <div class="card"><h3>Wrong Parking</h3><p>Alerts for blocked vehicles.</p></div>
+        <div class="card"><h3>Tow Alert</h3><p>Get notified before towing.</p></div>
+        <div class="card"><h3>Emergency SOS</h3><p>Instant safety notifications.</p></div>
+        <div class="card"><h3>WhatsApp Alerts</h3><p>Seamless messaging integration.</p></div>
+        <div class="card"><h3>Masked Calling</h3><p>100% Privacy for your number.</p></div>
+        <div class="card"><h3>Headlights Left ON</h3><p>Prevent battery drainage.</p></div>
+        <div class="card"><h3>Open Window</h3><p>Secure your belongings.</p></div>
+        <div class="card"><h3>Fleet Management</h3><p>Solutions for corporate fleets.</p></div>
     </section>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2026 AlertoQR | Engineered by Sajar Abbas</p>
+    <footer id="contact">
+        <h2 style="margin-bottom: 20px;">Contact Us</h2>
+        <div class="contact-info">
+            <p>Helpline Number: <b>9105434048</b></p>
+            <p>WhatsApp: <b>9105434048</b></p>
+            <p>Email: <b>alertoqr000@gmail.com</b></p>
+            <p>Website: <b>alertoqr.in</b></p>
         </div>
+        <p style="margin-top: 40px; color: #555;">© 2026 AlertoQR | Powered by Globalwide Management Services</p>
     </footer>
 
-    <script>
-        /* --- JAVASCRIPT --- */
-        document.addEventListener('DOMContentLoaded', () => {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = 1;
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            });
-
-            document.querySelectorAll('.feature-card, .hero-content').forEach(el => {
-                el.style.opacity = 0;
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = '0.8s';
-                observer.observe(el);
-            });
-
-            window.addEventListener('scroll', () => {
-                const nav = document.getElementById('navbar');
-                nav.style.background = window.scrollY > 50 ? 'rgba(5,5,5,0.9)' : 'transparent';
-            });
-        });
-    </script>
 </body>
 </html>
