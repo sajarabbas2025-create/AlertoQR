@@ -4,349 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlertoQR | India's Smart Vehicle Safety QR</title>
-    <meta name="description" content="Never leave your personal phone number on your dashboard again. Premium, secure QR communication for your vehicle.">
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- External CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Sticky Navbar -->
-    <header class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="#home" class="logo">ALERTO<span class="text-primary">QR</span></a>
-            
-            <nav class="nav-links">
-                <a href="#home" class="nav-link">Home</a>
-                <a href="#about" class="nav-link">About</a>
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#how-it-works" class="nav-link">How it Works</a>
-                <a href="#pricing" class="nav-link">Pricing</a>
-                <a href="#faq" class="nav-link">FAQ</a>
-                <a href="#contact" class="nav-link">Contact</a>
-            </nav>
-
-            <div class="nav-actions">
-                <a href="register.html" class="btn btn-primary btn-sm">Activate Sticker</a>
-                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
-                    <span></span><span></span><span></span>
-                </button>
-            </div>
+    <nav class="navbar" id="navbar">
+        <div class="container nav-content">
+            <a href="#" class="logo">ALERTO<span class="text-accent">QR</span></a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#works">How it Works</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="register.html" class="btn btn-primary">Activate Sticker</a>
         </div>
-        <!-- Mobile Menu -->
-        <div class="mobile-menu" id="mobileMenu">
-            <a href="#home" class="mobile-link">Home</a>
-            <a href="#about" class="mobile-link">About</a>
-            <a href="#features" class="mobile-link">Features</a>
-            <a href="#how-it-works" class="mobile-link">How it Works</a>
-            <a href="#pricing" class="mobile-link">Pricing</a>
-            <a href="#faq" class="mobile-link">FAQ</a>
-            <a href="#contact" class="mobile-link">Contact</a>
-            <a href="register.html" class="btn btn-primary mobile-btn">Activate Sticker</a>
+    </nav>
+
+    <header class="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <div class="badge">Trusted by Smart Vehicle Owners</div>
+                <h1 class="hero-title">Never Leave Your Phone Number On Your Vehicle Again.</h1>
+                <p class="hero-subtitle">India's most sophisticated vehicle communication system. Protect your privacy with AlertoQR's secure, cloud-connected smart decal.</p>
+                <div class="hero-ctas">
+                    <a href="register.html" class="btn btn-primary">Activate Sticker</a>
+                    <a href="helper.html?id=ALQR1008" class="btn btn-secondary">Live Demo</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <img src="image/hero-image.jpeg" alt="Premium AlertoQR implementation" class="hero-img">
+            </div>
         </div>
     </header>
 
-    <main>
-        <!-- Hero Section -->
-        <section class="hero" id="home">
-            <div class="hero-container">
-                <div class="hero-content reveal">
-                    <div class="badge">India's Smart Vehicle Safety QR</div>
-                    <h1 class="hero-title">Never Leave Your <span class="text-primary">Phone Number</span> On Your Vehicle Again.</h1>
-                    <p class="hero-subtitle">AlertoQR provides a premium, smart QR decal that connects you to people privately during parking issues or emergencies—without exposing your identity.</p>
-                    <div class="hero-buttons">
-                        <a href="register.html" class="btn btn-primary">Activate Sticker</a>
-                        <a href="helper.html?id=ALQR1008" class="btn btn-secondary">Live Demo</a>
-                    </div>
-                </div>
-                <div class="hero-image-wrapper reveal fade-right">
-                    <div class="glow-effect"></div>
-                    <img src="image/hero-image.jpeg" alt="AlertoQR premium decal on a modern car windshield" class="hero-img">
-                </div>
-            </div>
-        </section>
+    <section class="trust-bar">
+        <div class="container trust-grid">
+            <div class="trust-card"><span>🛡️</span> 100% Privacy</div>
+            <div class="trust-card"><span>⚡</span> No App Required</div>
+            <div class="trust-card"><span>🇮🇳</span> Pan-India Coverage</div>
+            <div class="trust-card"><span>🎧</span> 24×7 Support</div>
+        </div>
+    </section>
 
-        <!-- Trust Section -->
-        <section class="trust" id="trust">
-            <div class="trust-container">
-                <div class="trust-item reveal fade-up">
-                    <div class="trust-icon">🛡️</div>
-                    <span class="trust-text">100% Privacy</span>
-                </div>
-                <div class="trust-item reveal fade-up delay-1">
-                    <div class="trust-icon">🇮🇳</div>
-                    <span class="trust-text">Works Across India</span>
-                </div>
-                <div class="trust-item reveal fade-up delay-2">
-                    <div class="trust-icon">⚡</div>
-                    <span class="trust-text">No App Required</span>
-                </div>
-                <div class="trust-item reveal fade-up delay-3">
-                    <div class="trust-icon">🎧</div>
-                    <span class="trust-text">24×7 Support</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- About Section -->
-        <section class="about" id="about">
-            <div class="container text-center reveal">
-                <h2 class="section-title">What is AlertoQR?</h2>
-                <p class="section-desc max-w-3xl mx-auto">AlertoQR is an enterprise-grade vehicle communication system engineered as a sleek windshield decal. We eliminate the risk of sharing your personal contact details on your dashboard. When your vehicle requires your attention, anyone can securely reach you through our encrypted cloud servers—keeping you instantly informed while maintaining total anonymity.</p>
-            </div>
-        </section>
-
-        <!-- Features Section -->
-        <section class="features" id="features">
-            <div class="container">
-                <h2 class="section-title text-center reveal">Engineered for <span class="text-primary">Control</span></h2>
-                <p class="section-desc text-center reveal">Everything you need to secure your vehicle's communication.</p>
-                
-                <div class="features-grid">
-                    <div class="feature-card reveal fade-up">
-                        <div class="feature-icon">🅿️</div>
-                        <h3>Wrong Parking</h3>
-                        <p>Allow others to respectfully ask you to move your vehicle without sharing your number.</p>
-                    </div>
-                    <div class="feature-card reveal fade-up delay-1">
-                        <div class="feature-icon">🏗️</div>
-                        <h3>Tow Alert</h3>
-                        <p>Get notified instantly before your vehicle is towed away by authorities.</p>
-                    </div>
-                    <div class="feature-card reveal fade-up delay-2">
-                        <div class="feature-icon">🚨</div>
-                        <h3>Emergency Contact</h3>
-                        <p>First responders can alert your family immediately in case of critical situations.</p>
-                    </div>
-                    <div class="feature-card reveal fade-up delay-3">
-                        <div class="feature-icon">💬</div>
-                        <h3>WhatsApp Integration</h3>
-                        <p>Receive seamless alerts and messages directly to your WhatsApp securely.</p>
-                    </div>
-                    <div class="feature-card reveal fade-up">
-                        <div class="feature-icon">📞</div>
-                        <h3>Masked Calling</h3>
-                        <p>Two-way encrypted communication ensuring both parties' phone numbers remain hidden.</p>
-                    </div>
-                    <div class="feature-card reveal fade-up delay-1">
-                        <div class="feature-icon">💡</div>
-                        <h3>Headlights Left ON</h3>
-                        <p>Save your battery. Bystanders can alert you if you forget your lights on.</p>
-                    </div>
-                    <div class="feature-card reveal fade-up delay-2">
-                        <div class="feature-icon">🪟</div>
-                        <h3>Open Window Alert</h3>
-                        <p>Prevent theft or weather damage with instant notifications for unrolled windows.</p>
-                    </div>
-                    <div class="feature-card reveal fade-up delay-3">
-                        <div class="feature-icon">🏢</div>
-                        <h3>Commercial Fleet</h3>
-                        <p>Manage and track alerts for multiple company vehicles from a single dashboard.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- How It Works Section -->
-        <section class="how-it-works" id="how-it-works">
-            <div class="container flex-row">
-                <div class="hiw-content reveal">
-                    <h2 class="section-title">Seamless Experience</h2>
-                    <p class="section-desc">From scan to resolution in seconds.</p>
-                    
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-dot">1</div>
-                            <div class="timeline-text">
-                                <h4>Vehicle Sighted</h4>
-                                <p>A bystander or authority spots your vehicle requiring attention.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot">2</div>
-                            <div class="timeline-text">
-                                <h4>Scan QR</h4>
-                                <p>They scan the premium decal using any standard smartphone camera.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot">3</div>
-                            <div class="timeline-text">
-                                <h4>Helper Page</h4>
-                                <p>Our secure cloud interface opens instantly. No app installation required.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-dot">4</div>
-                            <div class="timeline-text">
-                                <h4>Owner Notified</h4>
-                                <p>You receive a masked call or WhatsApp alert instantly, protecting your privacy.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="hiw-image-wrapper reveal fade-right">
-                    <img src="image/how-it-works.png" alt="AlertoQR workflow interface" class="hiw-img">
-                </div>
-            </div>
-        </section>
-
-        <!-- Pricing Section -->
-        <section class="pricing" id="pricing">
-            <div class="container text-center">
-                <h2 class="section-title reveal">Simple, Transparent <span class="text-primary">Pricing</span></h2>
-                <p class="section-desc reveal">One premium tag. Total peace of mind.</p>
-                
-                <div class="pricing-card reveal fade-up">
-                    <div class="pricing-header">
-                        <h3 class="plan-name">Premium Tag</h3>
-                        <div class="plan-price">₹299</div>
-                        <p class="plan-duration">Includes 1 Year Service</p>
-                    </div>
-                    <ul class="pricing-features">
-                        <li>Premium weather-resistant decal</li>
-                        <li>Unlimited masked calls</li>
-                        <li>Instant WhatsApp alerts</li>
-                        <li>Emergency SOS setup</li>
-                        <li>24/7 dedicated support</li>
-                    </ul>
-                    <div class="renewal-notice">Renewal at just ₹199/year after first year</div>
-                    <a href="register.html" class="btn btn-primary w-full mt-4">Get Yours Now</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- FAQ Section -->
-        <section class="faq" id="faq">
-            <div class="container">
-                <h2 class="section-title text-center reveal">Frequently Asked Questions</h2>
-                
-                <div class="faq-accordion reveal fade-up">
-                    <div class="faq-item">
-                        <button class="faq-question">Does the person scanning need an app? <span class="icon">+</span></button>
-                        <div class="faq-answer">
-                            <p>No. AlertoQR utilizes standard QR technology. Anyone can scan it using their native smartphone camera or Google Lens. No app download is ever required for the scanner.</p>
-                        </div>
-                    </div>
-                    <div class="faq-item">
-                        <button class="faq-question">How is my number protected? <span class="icon">+</span></button>
-                        <div class="faq-answer">
-                            <p>We use enterprise-level cloud routing. When someone initiates a call through the Helper Page, our servers bridge the connection. They see our system number, and you see our system number.</p>
-                        </div>
-                    </div>
-                    <div class="faq-item">
-                        <button class="faq-question">Is the sticker waterproof? <span class="icon">+</span></button>
-                        <div class="faq-answer">
-                            <p>Yes. The AlertoQR decal is manufactured using premium, UV-resistant, and 100% waterproof materials designed to withstand extreme Indian weather conditions without fading.</p>
-                        </div>
-                    </div>
-                    <div class="faq-item">
-                        <button class="faq-question">What happens after the first year? <span class="icon">+</span></button>
-                        <div class="faq-answer">
-                            <p>Your hardware is yours to keep. To maintain the server costs for encrypted routing and messaging, a nominal renewal fee of ₹199 applies annually starting from the second year.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Contact Section -->
-        <section class="contact" id="contact">
-            <div class="container flex-row">
-                <div class="contact-info reveal">
-                    <h2 class="section-title">Get in Touch</h2>
-                    <p class="section-desc">Need assistance with your tag or looking for bulk commercial fleet orders? Our team is here to help.</p>
-                    
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <div class="c-icon">📞</div>
-                            <div>
-                                <h4 class="c-title">Phone</h4>
-                                <a href="tel:+919105434048" class="c-link">+91 9105434048</a>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="c-icon">💬</div>
-                            <div>
-                                <h4 class="c-title">WhatsApp</h4>
-                                <a href="https://wa.me/919105434048" class="c-link">+91 9105434048</a>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="c-icon">✉️</div>
-                            <div>
-                                <h4 class="c-title">Email</h4>
-                                <a href="mailto:alertoqr0000@gmail.com" class="c-link">alertoqr0000@gmail.com</a>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="c-icon">🌐</div>
-                            <div>
-                                <h4 class="c-title">Website</h4>
-                                <a href="https://alertoqr.in" class="c-link">www.alertoqr.in</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="contact-map reveal fade-right">
-                    <div class="map-placeholder">
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113579.80374152774!2d77.90997235!3d27.1761495!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39740d857c2f41d9%3A0x784aef38a9523b42!2sAgra%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
-                            width="100%" 
-                            height="100%" 
-                            style="border:0;" 
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container footer-grid">
-            <div class="footer-brand">
-                <a href="#home" class="logo text-xl">ALERTO<span class="text-primary">QR</span></a>
-                <p class="mt-4 text-muted">India's most advanced smart vehicle safety and privacy tag. Protecting your identity on every journey.</p>
-            </div>
-            
-            <div class="footer-links-col">
-                <h4 class="footer-title">Quick Links</h4>
-                <nav class="footer-nav">
-                    <a href="#home">Home</a>
-                    <a href="#about">About</a>
-                    <a href="#features">Features</a>
-                    <a href="helper.html?id=ALQR1008">Live Demo</a>
-                    <a href="#contact">Contact</a>
-                </nav>
-            </div>
-
-            <div class="footer-links-col">
-                <h4 class="footer-title">Legal</h4>
-                <nav class="footer-nav">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Refund Policy</a>
-                    <a href="#">Shipping Policy</a>
-                </nav>
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Engineered for Control</h2>
+            <div class="features-grid">
+                <div class="feature-card"><span>🅿️</span><h3>Wrong Parking</h3></div>
+                <div class="feature-card"><span>🏗️</span><h3>Tow Alert</h3></div>
+                <div class="feature-card"><span>🚨</span><h3>Emergency SOS</h3></div>
+                <div class="feature-card"><span>💬</span><h3>WhatsApp Alerts</h3></div>
+                <div class="feature-card"><span>📞</span><h3>Masked Calling</h3></div>
+                <div class="feature-card"><span>💡</span><h3>Headlight Alert</h3></div>
+                <div class="feature-card"><span>🪟</span><h3>Open Window</h3></div>
+                <div class="feature-card"><span>🏢</span><h3>Fleet Management</h3></div>
             </div>
         </div>
-        
-        <div class="footer-bottom container">
-            <p>&copy; 2026 AlertoQR. All rights reserved.</p>
-            <p class="powered-by">Powered by <span class="text-white">Globalwide Management Services</span></p>
+    </section>
+
+    <section id="works" class="how-it-works">
+        <div class="container works-grid">
+            <div class="works-content">
+                <h2 class="section-title">Seamless Interaction</h2>
+                <div class="timeline">
+                    <div class="step"><span>1</span> Vehicle Sighted</div>
+                    <div class="step"><span>2</span> Scan QR</div>
+                    <div class="step"><span>3</span> Helper Page</div>
+                    <div class="step"><span>4</span> Owner Notified</div>
+                </div>
+            </div>
+            <img src="image/how-it-works.png" alt="Workflow Illustration">
+        </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="price-card">
+                <h3>Premium Tag</h3>
+                <div class="price">₹299 <span>/ 1st Year</span></div>
+                <p>Renewal at ₹199/year</p>
+                <a href="register.html" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2026 AlertoQR | Powered by Globalwide Management Services</p>
+                <div class="footer-links">
+                    <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Refund</a>
+                </div>
+            </div>
         </div>
     </footer>
 
-    <!-- External JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
