@@ -4,215 +4,361 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlertoQR | Premium Vehicle Privacy & Safety</title>
-    <meta name="description" content="India's most advanced Smart Vehicle Safety QR. Protect your privacy while allowing instant contact during emergencies.">
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-</head>
-<body class="loaded">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --primary: #FFD700; /* Premium Gold/Yellow */
+            --primary-hover: #E6C200;
+            --bg-dark: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --text-light: #f4f4f4;
+            --text-muted: #a0a0a0;
+            --accent: #222;
+        }
 
-    <!-- Premium Sticky Navbar -->
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Typography */
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
+        .text-primary { color: var(--primary); }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .btn-gold {
+            background-color: var(--primary);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        .btn-gold:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: #000;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--accent);
+            padding: 15px 0;
+        }
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--primary); }
+
+        /* Hero Section */
+        .hero {
+            padding: 150px 0 100px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: radial-gradient(circle at top right, #1a1a1a, #000);
+        }
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+        }
+        .hero-left { flex: 1; }
+        .hero-right { flex: 1; text-align: right; }
+        
+        .hero h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .hero-desc {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .hero-img {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            border: 1px solid #333;
+        }
+
+        /* What is AlertoQR Section */
+        .about-section {
+            padding: 100px 0;
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--accent);
+            border-bottom: 1px solid var(--accent);
+        }
+        .about-content {
+            text-align: center;
+            max-width: 900px;
+        }
+        .about-section h2 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        .about-section p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+        }
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .card {
+            background: var(--bg-card);
+            padding: 40px 30px;
+            border-radius: 10px;
+            border: 1px solid var(--accent);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+        }
+        .card-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Showroom/B2B Section */
+        .showroom-section {
+            padding: 80px 0;
+            background: linear-gradient(45deg, #111, #222);
+            text-align: center;
+        }
+        .showroom-box {
+            border: 2px dashed var(--primary);
+            padding: 50px;
+            border-radius: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #000;
+            padding: 60px 0 20px;
+            border-top: 1px solid var(--accent);
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content { flex-direction: column; text-align: center; }
+            .hero-right { text-align: center; margin-top: 40px; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero-desc { margin: 0 auto 30px; }
+            .hero-btns { justify-content: center; flex-direction: column; }
+            .nav-links { display: none; } /* Hide links on mobile for simplicity */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="container nav-content">
-            <div class="logo">Alerto<span>QR</span></div>
+            <div class="logo">ALERTO<span class="text-primary">QR</span></div>
             <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
+                <li><a href="#about">What is it?</a></li>
                 <li><a href="#features">Features</a></li>
-                <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#showroom">For Showrooms</a></li>
             </ul>
-            <a href="register.html" class="btn-yellow">Activate Sticker</a>
+            <button onclick="alert('Activation Portal Opening... (Demo)')" class="btn btn-gold" style="padding: 10px 20px;">Activate Tag</button>
         </div>
     </nav>
 
-    <!-- Luxury Hero Section -->
+    <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="container hero-content">
-            <div class="hero-left fade-in">
-                <span class="badge">🚗 Next-Generation Vehicle Security</span>
-                <h1>Your Vehicle. Your Privacy. <br><span style="color: #FFD400;">Perfectly Secured.</span></h1>
-                <p>Upgrade your vehicle with AlertoQR. Allow others to contact you instantly during wrong parking, emergencies, or towing—without ever exposing your personal mobile number.</p>
+            <div class="hero-left">
+                <span style="color: var(--primary); font-weight: 600; letter-spacing: 2px; text-transform: uppercase;">Next-Gen Vehicle Security</span>
+                <h1>Smart QR Tag For <span class="text-primary">Your Car.</span></h1>
+                <p class="hero-desc">Never stick your phone number on your dashboard again. Let people contact you instantly during emergencies or parking issues while keeping your personal number 100% hidden.</p>
                 <div class="hero-btns">
-                    <a href="register.html" class="btn-yellow">Get Yours Now</a>
-                    <a href="#how-it-works" class="btn-outline">See How It Works</a>
+                    <button onclick="alert('Proceeding to Purchase Portal...')" class="btn btn-gold">Get Your Sticker</button>
+                    <button onclick="alert('Playing Demo Video...')" class="btn btn-outline">▶ Watch Demo</button>
                 </div>
-                <div class="trust-signals">
-                    <span>✔ 100% Privacy Protected</span>
-                    <span>✔ No App Required</span>
-                    <span>✔ Instant Alerts</span>
-                    <span>✔ 24×7 Active Routing</span>
+                <div style="font-size: 0.9rem; color: #888; margin-top: 20px;">
+                    ✔ 100% Privacy &nbsp; | &nbsp; ✔ No App Needed &nbsp; | &nbsp; ✔ Scan & Connect
                 </div>
             </div>
-            <div class="hero-right fade-in">
-                <div class="image-wrapper">
-                    <!-- Sajar, yahan ek Luxury Car (Audi/BMW) ki photo lagaiye jisme sticker ho -->
-                    <img src="hero-image.jpeg" alt="AlertoQR Premium Sticker" class="hero-img">
-                </div>
+            <div class="hero-right">
+                <!-- High Quality Car Image Placeholder -->
+                <img src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Luxury Car showing AlertoQR" class="hero-img">
             </div>
         </div>
     </section>
 
-    <!-- Elite Trust Section -->
-    <section class="trust-section">
-        <div class="container">
-            <div class="section-header fade-in">
-                <h2>Trusted by Smart Vehicle Owners</h2>
-                <p>Engineered to make vehicle communication safe, fast, and completely private.</p>
-            </div>
-            <div class="trust-grid">
-                <div class="glass-card fade-in">
-                    <div class="feature-icon" style="font-size: 30px; margin-bottom: 15px;">🔒</div>
-                    <h3>Privacy Shield</h3>
-                    <p>Your phone number remains hidden behind our encrypted routing system.</p>
-                </div>
-                <div class="glass-card fade-in">
-                    <div class="feature-icon" style="font-size: 30px; margin-bottom: 15px;">⚡</div>
-                    <h3>Instant Connect</h3>
-                    <p>Anyone can contact you in seconds using a standard smartphone camera.</p>
-                </div>
-                <div class="glass-card fade-in">
-                    <div class="feature-icon" style="font-size: 30px; margin-bottom: 15px;">🚗</div>
-                    <h3>Universal Fit</h3>
-                    <p>Seamlessly integrates with luxury sedans, SUVs, and commercial fleets.</p>
-                </div>
-                <div class="glass-card fade-in">
-                    <div class="feature-icon" style="font-size: 30px; margin-bottom: 15px;">🇮🇳</div>
-                    <h3>Made For India</h3>
-                    <p>Designed specifically to handle Indian parking and traffic scenarios.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Description / About Section -->
+    <!-- Clear Description Section -->
     <section class="about-section" id="about">
         <div class="container about-content">
-            <div class="about-text fade-in">
-                <h2 style="color: #FFD400;">What is AlertoQR?</h2>
-                <p>Writing your phone number on your dashboard is a massive privacy risk. AlertoQR replaces that outdated method with a highly secure, smart QR code decal.</p>
-                <br>
-                <p>When scanned, it opens a secure, premium interface allowing the scanner to call or WhatsApp you instantly. Whether your headlights are left on, your car is blocking a driveway, or there is an emergency, you stay connected while your identity stays protected.</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card fade-in"><h3>🅿️ Wrong Parking</h3></div>
-                <div class="feature-card fade-in"><h3>🚨 Emergency Alert</h3></div>
-                <div class="feature-card fade-in"><h3>🏗️ Tow Warning</h3></div>
-                <div class="feature-card fade-in"><h3>💡 Headlights ON</h3></div>
-            </div>
+            <h2>What exactly is <span class="text-primary">AlertoQR?</span></h2>
+            <p><strong>AlertoQR is a highly secure, premium QR code sticker that goes on your vehicle's windshield.</strong></p>
+            <p>If your car is parked wrong, about to be towed, or involved in an emergency, anyone can simply scan the QR code using their smartphone camera. A secure webpage opens, allowing them to Call or WhatsApp you instantly.</p>
+            <p style="color: var(--primary); font-weight: 600; font-size: 1.4rem; margin-top: 30px;">Your actual phone number is NEVER shown to the scanner.</p>
         </div>
     </section>
 
-    <!-- Premium How It Works -->
-    <section class="how-it-works" id="how-it-works">
+    <!-- Detailed Features Section -->
+    <section class="features" id="features">
         <div class="container">
-            <div class="section-header fade-in">
-                <h2>Three Steps to Absolute Peace of Mind</h2>
-            </div>
-            <div class="timeline">
-                <div class="timeline-step fade-in">
-                    <div class="step-number">01. SCAN</div>
-                    <h3>Scan the QR Decal</h3>
-                    <p>Anyone with a smartphone camera can scan the premium AlertoQR placed on your windshield.</p>
+            <h2 class="section-title">Everything You Need. <br><span class="text-primary">Nothing You Don't.</span></h2>
+            <div class="grid-cards">
+                
+                <!-- Feature 1 -->
+                <div class="card">
+                    <div class="card-icon">🅿️</div>
+                    <h3>Wrong Parking Alerts</h3>
+                    <p>Accidentally blocked someone's driveway? Instead of towing or scratching your car, they can scan the QR and ask you to move it instantly.</p>
                 </div>
-                <div class="timeline-divider" style="color: #FFD400; font-size: 24px;">↓</div>
-                <div class="timeline-step fade-in">
-                    <div class="step-number">02. CONNECT</div>
-                    <h3>Secure Helper Interface</h3>
-                    <p>A professional, app-like page opens, giving the scanner options to Call or WhatsApp you.</p>
+
+                <!-- Feature 2 -->
+                <div class="card">
+                    <div class="card-icon">🔒</div>
+                    <h3>Number Masking</h3>
+                    <p>Total privacy. Our secure cloud routing connects the call to your phone without ever displaying your actual 10-digit mobile number to strangers.</p>
                 </div>
-                <div class="timeline-divider" style="color: #FFD400; font-size: 24px;">↓</div>
-                <div class="timeline-step fade-in">
-                    <div class="step-number">03. COMMUNICATE</div>
-                    <h3>Instant Privacy-Masked Alert</h3>
-                    <p>You receive the alert instantly. Your personal mobile number is never revealed to the scanner.</p>
+
+                <!-- Feature 3 -->
+                <div class="card">
+                    <div class="card-icon">🚨</div>
+                    <h3>Emergency Contact</h3>
+                    <p>In case of an accident or medical emergency, bystanders can easily scan the tag to notify your family members with a single tap.</p>
                 </div>
+
+                <!-- Feature 4 -->
+                <div class="card">
+                    <div class="card-icon">💡</div>
+                    <h3>Headlight / Window Warning</h3>
+                    <p>Left your windows down in the rain? Or forgot your headlights on? Good Samaritans can scan and alert you before your battery dies or interior gets ruined.</p>
+                </div>
+
             </div>
         </div>
     </section>
 
-    <!-- Pricing / Conversion Section -->
-    <section class="pricing-section">
+    <!-- B2B / Showroom Pitch Section -->
+    <section class="showroom-section" id="showroom">
         <div class="container">
-            <div class="section-header fade-in">
-                <h2>Simple, Transparent Pricing</h2>
-            </div>
-            <div class="pricing-card fade-in">
-                <div class="price-tag">₹299</div>
-                <h3 style="margin-bottom: 20px;">Premium Membership</h3>
-                <ul class="features-list">
-                    <li><span style="color: #FFD400;">✔</span> High-Quality QR Decal</li>
-                    <li><span style="color: #FFD400;">✔</span> 1 Year Call Masking Service</li>
-                    <li><span style="color: #FFD400;">✔</span> Custom Owner Dashboard</li>
-                    <li><span style="color: #FFD400;">✔</span> Priority Customer Support</li>
-                </ul>
-                <p style="color: #666; margin-bottom: 20px; font-size: 14px;">Renewal at just ₹199/year</p>
-                <a href="register.html" class="btn-yellow" style="width: 100%; text-align: center;">Buy & Activate Now</a>
+            <div class="showroom-box">
+                <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Perfect for <span class="text-primary">Car Dealerships</span></h2>
+                <p style="font-size: 1.2rem; color: #ddd; margin-bottom: 30px;">Add modern value to every car you sell. Provide your customers with premium privacy technology right out of the showroom. Bulk activation and custom branding available.</p>
+                <button onclick="alert('Opening B2B Contact Form...')" class="btn btn-gold">Partner With Us Today</button>
             </div>
         </div>
     </section>
 
-    <!-- Contact & Support Section -->
-    <section class="contact-section" id="contact">
-        <div class="container">
-            <div class="section-header fade-in">
-                <h2>We're Here to Help</h2>
-                <p>Got a question? Our support team is available 24/7.</p>
-            </div>
-            <div class="contact-grid">
-                <div class="contact-card fade-in">
-                    <h4 style="color: #FFD400; margin-bottom: 10px;">WhatsApp Support</h4>
-                    <p style="font-size: 18px; font-weight: 600;">+91 9105434048</p>
-                </div>
-                <div class="contact-card fade-in">
-                    <h4 style="color: #FFD400; margin-bottom: 10px;">Direct Call</h4>
-                    <p style="font-size: 18px; font-weight: 600;">+91 9105434048</p>
-                </div>
-                <div class="contact-card fade-in">
-                    <h4 style="color: #FFD400; margin-bottom: 10px;">Email Us</h4>
-                    <p style="font-size: 16px;">alertoqr0000@gmail.com</p>
-                </div>
-                <div class="contact-card fade-in">
-                    <h4 style="color: #FFD400; margin-bottom: 10px;">Business Inquiries</h4>
-                    <p style="font-size: 16px;">Partner with AlertoQR</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Professional Footer -->
+    <!-- Footer -->
     <footer class="footer">
-        <div class="container footer-grid">
-            <div class="footer-col">
-                <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 15px;">Alerto<span style="color: #FFD400;">QR</span></h3>
-                <p style="color: #888;">Protecting vehicles and owner privacy across India with next-generation smart QR technology.</p>
-            </div>
-            <div class="footer-col">
-                <h4 style="margin-bottom: 15px; color: #fff;">Quick Links</h4>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 10px;"><a href="#home" style="color: #888; text-decoration: none;">Home</a></li>
-                    <li style="margin-bottom: 10px;"><a href="#about" style="color: #888; text-decoration: none;">About</a></li>
-                    <li style="margin-bottom: 10px;"><a href="#how-it-works" style="color: #888; text-decoration: none;">How It Works</a></li>
-                    <li><a href="#contact" style="color: #888; text-decoration: none;">Contact Support</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4 style="margin-bottom: 15px; color: #fff;">Legal</h4>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 10px;"><a href="#" style="color: #888; text-decoration: none;">Privacy Policy</a></li>
-                    <li style="margin-bottom: 10px;"><a href="#" style="color: #888; text-decoration: none;">Terms of Service</a></li>
-                    <li><a href="#" style="color: #888; text-decoration: none;">Refund Policy</a></li>
-                </ul>
-            </div>
-        </div>
-        <div style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px solid #222; color: #555;">
-            <p>&copy; 2026 AlertoQR | Powered by Globalwide Management Services</p>
+        <div class="container">
+            <h2 class="logo" style="margin-bottom: 10px;">ALERTO<span class="text-primary">QR</span></h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">India's Most Trusted Vehicle Safety Tag.</p>
+            <p style="color: #555; font-size: 0.9rem;">&copy; 2026 AlertoQR | A Project by Sajar Abbas</p>
         </div>
     </footer>
 
-    <!-- Floating Actions -->
-    <a href="https://wa.me/919105434048" class="float-whatsapp" target="_blank" title="Chat on WhatsApp">💬</a>
-    <button class="scroll-top" title="Back to Top">↑</button>
-
-    <script src="script.js"></script>
+    <!-- Simple Script for smooth interactions -->
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html>
