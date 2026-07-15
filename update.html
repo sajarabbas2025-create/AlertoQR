@@ -56,27 +56,29 @@
     <div id="login-msg" class="status-msg"></div>
 </div>
 
-<div id="forgot-section" class="form-container" style="display: none;">
-    <div style="margin-bottom: 20px; font-size: 14px; color: #cbd5e1; text-align: center;">Verify identity to reset your PIN</div>
-    <div class="input-group">
-        <label class="input-label">Sticker ID *</label>
-        <div class="input-wrapper"><i class="fa-solid fa-qrcode"></i><input type="text" id="reset-id" class="input-field" placeholder="ALQR1001" style="text-transform: uppercase;"></div>
+<!-- Support aur Reset PIN section (Chassis No fields ki jagah ye direct buttons dikhenge) -->
+<div id="forgot-section" class="form-container" style="display: none; text-align: center;">
+    <div style="font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 8px;">Reset Security PIN</div>
+    <div style="margin-bottom: 24px; font-size: 14px; color: #94a3b8; line-height: 1.5;">
+        Agar aap apna PIN bhool gaye hain, toh kripya niche diye gaye buttons ka upyog karke hamare support team se sampark karein. Hum turant aapka PIN reset karne mein madad karenge.
     </div>
-    <div class="input-group">
-        <label class="input-label">Vehicle Number *</label>
-        <div class="input-wrapper"><i class="fa-solid fa-car"></i><input type="text" id="reset-veh" class="input-field" placeholder="UP32DD2420" style="text-transform: uppercase;"></div>
-    </div>
-    <div class="input-group">
-        <label class="input-label">Chassis No. (Last 4 Digits) *</label>
-        <div class="input-wrapper"><i class="fa-solid fa-fingerprint"></i><input type="text" id="reset-chassis" class="input-field" placeholder="Last 4 digits" maxlength="4"></div>
-    </div>
-    <div class="input-group" id="new-pin-group" style="display: none;">
-        <label class="input-label" style="color: #4ade80;">Create New 4-Digit PIN *</label>
-        <div class="input-wrapper"><i class="fa-solid fa-key" style="color: #4ade80;"></i><input type="password" id="new-set-pin" class="input-field" placeholder="****" maxlength="4" inputmode="numeric" style="border-color: #4ade80;"></div>
-    </div>
-    <button id="btn-verify-reset" class="btn-main" onclick="verifyForReset()"><i class="fa-solid fa-shield-check"></i> Verify Details</button>
+    
+    <!-- WhatsApp Support Button -->
+    <a href="https://wa.me/919105434048?text=Hello%2C%20main%20apna%20AlertoQR%20password%20bhool%20gaya%20hu.%20Kripya%20isse%20reset%20karne%20me%20meri%20madad%20karein." 
+       target="_blank" 
+       class="btn-main" 
+       style="background: #25d366; text-decoration: none; color: #ffffff; margin-bottom: 12px;">
+        <i class="fa-brands fa-whatsapp" style="font-size: 18px;"></i> WhatsApp Support
+    </a>
+    
+    <!-- Call Support Button -->
+    <a href="tel:+919105434048" 
+       class="btn-main" 
+       style="background: #3b82f6; text-decoration: none; color: #ffffff; margin-bottom: 24px;">
+        <i class="fa-solid fa-phone"></i> Direct Call Support
+    </a>
+    
     <a class="text-link" style="text-align: center; margin-top: 15px;" onclick="showSection('login-section')">Back to Login</a>
-    <div id="forgot-msg" class="status-msg"></div>
 </div>
 
 <div id="update-section" class="form-container" style="display: none;">
@@ -116,7 +118,6 @@
     const _supabase = supabase.createClient(databaseUrl, databaseKey);
 
     let loggedInId = "";
-    let isResetVerified = false;
 
     function showSection(sectionId) {
         document.getElementById('login-section').style.display = 'none';
@@ -148,36 +149,6 @@
                 showSection('update-section');
             } else { showMsg('login-msg', "Galat PIN! Kripya dobara try karein.", "error"); }
         } catch(err) { showMsg('login-msg', "Network Error", "error"); }
-    }
-
-    async function verifyForReset() {
-        const id = document.getElementById('reset-id').value.trim().toUpperCase();
-        const veh = document.getElementById('reset-veh').value.replace(/\s+/g, '').toUpperCase();
-        const chas = document.getElementById('reset-chassis').value.trim();
-
-        if(!isResetVerified) {
-            if(!id || !veh || chas.length !== 4) { showMsg('forgot-msg', "Saari details sahi format mein daalein.", "error"); return; }
-            try {
-                const { data, error } = await _supabase.from('registrations').select('*').eq('sticker_id', id).eq('vehicle_number', veh).single();
-                if (error || !data) { showMsg('forgot-msg', "Galat details! Record match nahi hua.", "error"); return; }
-                if(data.chassis_no && data.chassis_no.toString().slice(-4) === chas) {
-                    showMsg('forgot-msg', "Details Verified! Naya PIN set karein.", "success");
-                    isResetVerified = true;
-                    document.getElementById('new-pin-group').style.display = 'block';
-                    document.getElementById('btn-verify-reset').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Update New PIN';
-                    document.getElementById('reset-id').disabled = true; document.getElementById('reset-veh').disabled = true; document.getElementById('reset-chassis').disabled = true;
-                } else { showMsg('forgot-msg', "Galat Chassis Number!", "error"); }
-            } catch(err) { showMsg('forgot-msg', "Network Error", "error"); }
-        } else {
-            const newPin = document.getElementById('new-set-pin').value.trim();
-            if(newPin.length !== 4) { showMsg('forgot-msg', "Naya PIN 4 digit ka hona chahiye.", "error"); return; }
-            try {
-                const { error } = await _supabase.from('registrations').update({ secret_pin: newPin }).eq('sticker_id', id);
-                if (error) throw error;
-                showMsg('forgot-msg', "PIN successfully reset ho gaya!", "success");
-                setTimeout(() => { window.location.reload(); }, 2000);
-            } catch(err) { showMsg('forgot-msg', "Update fail hua. Try again.", "error"); }
-        }
     }
 
     async function saveProfile() {
