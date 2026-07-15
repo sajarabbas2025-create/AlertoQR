@@ -221,14 +221,6 @@
             </div>
 
             <div class="form-group">
-                <label for="txt-chassis">Chassis No. (Last 4 Digits) *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-fingerprint"></i>
-                    <input type="text" id="txt-chassis" class="form-control" placeholder="Forgot PIN ke waqt security ke liye" maxlength="4" required>
-                </div>
-            </div>
-
-            <div class="form-group">
                 <label for="txt-pin">Create 4-Digit Security PIN *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-lock"></i>
@@ -307,7 +299,6 @@
         const mobileNumber = document.getElementById('txt-mobile').value.trim();
         const alternateNumber = document.getElementById('txt-alternate').value.trim();
         const vehicleNumber = document.getElementById('txt-vehicle').value.trim().toUpperCase();
-        const chassisNumber = document.getElementById('txt-chassis').value.trim();
         const secretPin = document.getElementById('txt-pin').value.trim();
         
         if(secretPin.length !== 4) {
@@ -329,7 +320,6 @@
                     mobile_number: mobileNumber,
                     alternate_number: alternateNumber || null,
                     vehicle_number: vehicleNumber,
-                    chassis_last_4: chassisNumber, 
                     secret_pin: secretPin,
                     status: 'Active'
                 }, { onConflict: 'sticker_id' });
