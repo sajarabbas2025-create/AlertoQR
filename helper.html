@@ -8,63 +8,293 @@
     <meta http-equiv="Expires" content="0">
     <title>AlertoQR Helper Portal</title>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #f8fafc; color: #0f172a; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 16px; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
 
-        .helper-container { width: 100%; max-width: 480px; background: #ffffff; border-radius: 24px; padding: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        body { 
+            background-color: #f8fafc; 
+            color: #0f172a; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            min-height: 100vh; 
+            padding: 16px; 
+        }
+
+        .helper-container { 
+            width: 100%; 
+            max-width: 480px; 
+            background: #ffffff; 
+            border-radius: 24px; 
+            padding: 24px; 
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); 
+            border: 1px solid #e2e8f0; 
+            position: relative;
+        }
         
-        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; }
-        .brand-name { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
-        .sticker-id-badge { background: #f1f5f9; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; color: #475569; border: 1px solid #e2e8f0; }
+        .header-section { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 24px; 
+            border-bottom: 1px solid #e2e8f0; 
+            padding-bottom: 16px; 
+        }
+
+        .brand-name { 
+            font-size: 22px; 
+            font-weight: 800; 
+            color: #0f172a; 
+            letter-spacing: -0.5px; 
+        }
+
+        .sticker-id-badge { 
+            background: #f1f5f9; 
+            padding: 6px 12px; 
+            border-radius: 8px; 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: #475569; 
+            border: 1px solid #e2e8f0; 
+        }
         
-        .owner-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: center; }
-        .meta-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
-        .vehicle-number-plate { background: #000000; color: #ffffff; display: inline-block; padding: 8px 20px; border-radius: 8px; font-size: 20px; font-weight: 800; letter-spacing: 1.5px; }
+        .owner-card { 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 16px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            text-align: center; 
+        }
+
+        .meta-label { 
+            font-size: 11px; 
+            font-weight: 700; 
+            color: #94a3b8; 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            letter-spacing: 0.5px; 
+        }
+
+        .vehicle-number-plate { 
+            background: #000000; 
+            color: #ffffff; 
+            display: inline-block; 
+            padding: 8px 20px; 
+            border-radius: 8px; 
+            font-size: 20px; 
+            font-weight: 800; 
+            letter-spacing: 1.5px; 
+        }
         
-        .calling-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .btn-call { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-owner { background: #000000; color: white; }
-        .btn-alternate { background: #ffffff; color: #000000; border: 1px solid #cbd5e1; }
+        .calling-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            margin-bottom: 24px; 
+        }
 
-        .section-title { font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 12px; }
+        .btn-call { 
+            padding: 16px; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            font-weight: 700; 
+            border: none; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            transition: transform 0.1s ease;
+        }
 
-        .alerts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .alert-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 16px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .alert-card i { font-size: 26px; }
-        .alert-card span { font-size: 13px; font-weight: 700; color: #334155; }
+        .btn-call:active {
+            transform: scale(0.98);
+        }
+
+        .btn-owner { 
+            background: #000000; 
+            color: white; 
+        }
+
+        .btn-alternate { 
+            background: #ffffff; 
+            color: #000000; 
+            border: 1px solid #cbd5e1; 
+        }
+
+        .section-title { 
+            font-size: 12px; 
+            font-weight: 800; 
+            color: #94a3b8; 
+            text-transform: uppercase; 
+            margin-bottom: 12px; 
+        }
+
+        .alerts-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            margin-bottom: 24px; 
+        }
+
+        .alert-card { 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 14px; 
+            padding: 20px 16px; 
+            text-align: center; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 10px; 
+            transition: all 0.2s ease;
+        }
+
+        .alert-card:hover {
+            border-color: #cbd5e1;
+            background-color: #f8fafc;
+        }
+
+        .alert-card i { 
+            font-size: 26px; 
+        }
+
+        .alert-card span { 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: #334155; 
+        }
         
-        .btn-sos-heavy { background: #ff3b30; color: white; width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 800; border: none; cursor: pointer; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(255, 59, 48, 0.3); display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-sos-heavy { 
+            background: #ff3b30; 
+            color: white; 
+            width: 100%; 
+            padding: 16px; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-weight: 800; 
+            border: none; 
+            cursor: pointer; 
+            margin-bottom: 24px; 
+            box-shadow: 0 4px 15px rgba(255, 59, 48, 0.3); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; 
+            transition: background 0.2s ease;
+        }
 
-        .emergency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn-emergency { padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-police { background: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
-        .btn-ambulance { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
+        .btn-sos-heavy:active {
+            background: #dc2626;
+        }
 
-        .state-shell-view { text-align: center; padding: 40px 10px; }
-        .spinner-engine { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top: 3px solid #000000; border-radius: 50%; margin: 0 auto 16px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .emergency-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+        }
+
+        .btn-emergency { 
+            padding: 12px; 
+            border-radius: 10px; 
+            font-size: 13px; 
+            font-weight: 700; 
+            border: none; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+        }
+
+        .btn-police { 
+            background: #fef2f2; 
+            color: #dc2626; 
+            border: 1px solid #fee2e2; 
+        }
+
+        .btn-ambulance { 
+            background: #f0fdf4; 
+            color: #16a34a; 
+            border: 1px solid #dcfce7; 
+        }
+
+        .state-shell-view { 
+            text-align: center; 
+            padding: 40px 10px; 
+        }
+
+        .spinner-engine { 
+            width: 40px; 
+            height: 40px; 
+            border: 3px solid #f1f5f9; 
+            border-top: 3px solid #000000; 
+            border-radius: 50%; 
+            margin: 0 auto 16px; 
+            animation: spin 1s linear infinite; 
+        }
+
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #0f172a;
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast-notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
 
 <div class="helper-container">
     
+    <!-- State 1: Loading State -->
     <div id="loading-view" class="state-shell-view">
         <div class="spinner-engine"></div>
         <p id="loading-text" style="color: #64748b; font-size: 14px; font-weight: 500;">Connecting secure network...</p>
     </div>
 
+    <!-- State 2: Error State -->
     <div id="error-view" class="state-shell-view" style="display: none;">
         <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; color: #ef4444; margin-bottom: 12px;"></i>
         <h3 id="error-heading" style="font-size: 16px; margin-bottom: 6px;">Network Fault</h3>
         <p id="error-subtext" style="color: #64748b; font-size: 13px;"></p>
     </div>
 
+    <!-- State 3: Helper Portal Dashboard -->
     <div id="dashboard-view" style="display: none;">
         <div class="header-section">
             <div class="brand-name">AlertoQR</div>
@@ -125,13 +355,51 @@
     </div>
 </div>
 
-<script>
-    const databaseUrl = 'https://cefzsgchfdvtyfmcrsda.supabase.co';
-    const databaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlZnpzZ2NoZmR2dHlmbWNyc2RhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTU5NTgsImV4cCI6MjA5NDQzMTk1OH0.JhuJVKqX6xMbWQ7bmsraY3DjVKbsXMNzl0h6ljePTxs';
-    const _supabase = supabase.createClient(databaseUrl, databaseKey);
+<!-- Custom Toast Message UI -->
+<div id="toast-banner" class="toast-notification">
+    <i class="fa-solid fa-circle-info" style="color: #38bdf8;"></i>
+    <span id="toast-message">Message text</span>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+    // Your Web App's Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBUdqNEiX0lnJwp2pRvIfRYROF74XW79Hs",
+        authDomain: "alertoqr.firebaseapp.com",
+        projectId: "alertoqr",
+        storageBucket: "alertoqr.firebasestorage.app",
+        messagingSenderId: "592797368348",
+        appId: "1:592797368348:web:559e08c2c2569da9a39fd9"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
     let urlAssetId = "";
     let globalOwnerMobile = "";
+
+    // Toast Notification helper
+    function showToast(message) {
+        const toast = document.getElementById('toast-banner');
+        const msgEl = document.getElementById('toast-message');
+        msgEl.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3500);
+    }
+
+    function deployErrorView(title, message) {
+        document.getElementById('loading-view').style.display = 'none';
+        document.getElementById('error-heading').innerText = title;
+        document.getElementById('error-subtext').innerText = message;
+        document.getElementById('error-view').style.display = 'block';
+    }
 
     window.addEventListener('DOMContentLoaded', async () => {
         const queryStrings = new URLSearchParams(window.location.search);
@@ -152,10 +420,32 @@
         document.getElementById('dom-sticker-badge').innerText = `ID: ${urlAssetId}`;
 
         try {
-            const { data, error } = await _supabase.from('registrations').select('*').eq('sticker_id', urlAssetId).single();
-            
-            // SMART ROUTING LOGIC: Agar record nahi mila, toh seedha Register page par bhej do!
-            if (error || !data) { 
+            // Ensure Auth is initialized
+            try {
+                await signInAnonymously(auth);
+            } catch (e) {
+                console.log("Auth notice:", e.message);
+            }
+
+            let vehicleData = null;
+
+            // Strategy 1: Check document by ID directly
+            const docRef = doc(db, 'registrations', urlAssetId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                vehicleData = docSnap.data();
+            } else {
+                // Strategy 2: Query collection by sticker_id field
+                const q = query(collection(db, 'registrations'), where('sticker_id', '==', urlAssetId));
+                const querySnap = await getDocs(q);
+                if (!querySnap.empty) {
+                    vehicleData = querySnap.docs[0].data();
+                }
+            }
+
+            // If registration record does not exist -> Redirect to Registration page
+            if (!vehicleData) { 
                 document.getElementById('loading-text').innerText = "New QR Detected! Redirecting to Registration...";
                 setTimeout(() => {
                     window.location.href = `register.html?id=${urlAssetId}`;
@@ -163,12 +453,12 @@
                 return; 
             }
             
-            document.getElementById('dom-plate-number').innerText = data.vehicle_number || "VEHICLE";
+            // Render vehicle details (Name is hidden for privacy)
+            document.getElementById('dom-plate-number').innerText = vehicleData.vehicle_number || "VEHICLE";
 
-            // Primary Mobile Setup
-            let mobileNum = data.mobile_number ? data.mobile_number.toString().replace(/[^0-9]/g, '') : "";
-            if(mobileNum.startsWith('0')) mobileNum = mobileNum.substring(1);
-            if(mobileNum.length === 10) mobileNum = "91" + mobileNum;
+            let mobileNum = vehicleData.mobile_number ? vehicleData.mobile_number.toString().replace(/[^0-9]/g, '') : "";
+            if (mobileNum.startsWith('0')) mobileNum = mobileNum.substring(1);
+            if (mobileNum.length === 10) mobileNum = "91" + mobileNum;
 
             if (mobileNum) {
                 globalOwnerMobile = mobileNum; 
@@ -184,26 +474,25 @@
                 return;
             }
 
-            // Alternate Mobile Setup
-            let altNum = data.alternate_number ? data.alternate_number.toString().replace(/[^0-9]/g, '') : "";
-            if(altNum.startsWith('0')) altNum = altNum.substring(1);
-            if(altNum.length === 10) altNum = "91" + altNum;
+            let altNum = vehicleData.alternate_number ? vehicleData.alternate_number.toString().replace(/[^0-9]/g, '') : "";
+            if (altNum.startsWith('0')) altNum = altNum.substring(1);
+            if (altNum.length === 10) altNum = "91" + altNum;
 
             if (altNum) {
                 document.getElementById('btn-call-alt').onclick = () => window.location.href = `tel:+${altNum}`;
             } else {
-                document.getElementById('btn-call-alt').onclick = () => alert("Owner ne Alternate Number set nahi kiya hai.");
+                document.getElementById('btn-call-alt').onclick = () => showToast("Owner ne Alternate Number set nahi kiya hai.");
             }
 
             document.getElementById('loading-view').style.display = 'none';
             document.getElementById('dashboard-view').style.display = 'block';
             
         } catch (err) {
+            console.error("Firestore Error:", err);
             deployErrorView('Network Error', 'Server connection timeout. Please scan again.');
         }
     });
 
-    // --- LIVE GPS LOCATION SOS LOGIC ---
     document.getElementById('btn-sos-action').addEventListener('click', function() {
         if (!globalOwnerMobile) return;
 
@@ -237,13 +526,6 @@
             btn.style.opacity = '1';
         }
     });
-
-    function deployErrorView(title, message) {
-        document.getElementById('loading-view').style.display = 'none';
-        document.getElementById('error-heading').innerText = title;
-        document.getElementById('error-subtext').innerText = message;
-        document.getElementById('error-view').style.display = 'block';
-    }
 </script>
 </body>
 </html>
