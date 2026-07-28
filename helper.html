@@ -22,10 +22,9 @@
         .brand-name { font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
         .sticker-id-badge { background: #f1f5f9; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; color: #475569; border: 1px solid #e2e8f0; }
         
-        .owner-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 20px; }
-        .meta-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 6px; }
-        .owner-name { font-size: 26px; font-weight: 800; color: #0f172a; margin-bottom: 12px; text-transform: uppercase; }
-        .vehicle-number-plate { background: #000000; color: #ffffff; display: inline-block; padding: 6px 16px; border-radius: 6px; font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+        .owner-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 20px; text-align: center; }
+        .meta-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
+        .vehicle-number-plate { background: #000000; color: #ffffff; display: inline-block; padding: 8px 20px; border-radius: 8px; font-size: 20px; font-weight: 800; letter-spacing: 1.5px; }
         
         .calling-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
         .btn-call { padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -73,8 +72,7 @@
         </div>
 
         <div class="owner-card">
-            <div class="meta-label">Vehicle Owner</div>
-            <div id="owner-name-section" style="display: none;"> ... </div>
+            <div class="meta-label">AlertoQR Registered Vehicle</div>
             <div class="vehicle-number-plate" id="dom-plate-number">------</div>
         </div>
 
@@ -194,7 +192,7 @@
             if (altNum) {
                 document.getElementById('btn-call-alt').onclick = () => window.location.href = `tel:+${altNum}`;
             } else {
-                document.getElementById('btn-call-alt').onclick = () => alert("M معذرت, Owner ne Alternate Number set nahi kiya hai.");
+                document.getElementById('btn-call-alt').onclick = () => alert("Owner ne Alternate Number set nahi kiya hai.");
             }
 
             document.getElementById('loading-view').style.display = 'none';
